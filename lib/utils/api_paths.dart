@@ -52,3 +52,14 @@ const String reset_password = "user/reset_password";
 // Follow
 const String follow_User = "follow";
 const String unfollow_user = "unfollow";
+
+
+// category
+const String allCategoryList = "category/tree";
+
+// Restaurants
+const String restaurants = "menu/home";
+const String restaurantMenu = "restaurent/menu";
+
+// review
+const String userReview = "reviews/submit";

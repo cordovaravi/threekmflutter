@@ -110,6 +110,9 @@ class ThreeKmTextConstants {
   static TextStyle tk14PXWorkSansBlackRegular =
       GoogleFonts.workSans().copyWith(color: black, fontSize: 14);
 
+  static TextStyle tk20PXPoppinsRedBold = GoogleFonts.poppins()
+      .copyWith(color: red1, fontSize: 20, fontWeight: FontWeight.bold);
+
   ///////////////////////  11 //////////////////////////////////////////
 
   static TextStyle tk11PXLatoGreyBold = GoogleFonts.lato()

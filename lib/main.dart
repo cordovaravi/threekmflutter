@@ -3,8 +3,11 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:provider/provider.dart';
+import 'package:threekm/Models/shopModel/cart_hive_model.dart';
 import 'package:threekm/UI/walkthrough/splash_screen.dart';
 import 'package:threekm/providers/auth/Forgetpassword_provider.dart';
 import 'package:threekm/providers/auth/signIn_Provider.dart';
@@ -18,6 +21,13 @@ import 'package:threekm/providers/main/home1_provider.dart';
 import 'package:threekm/providers/main/home2_provider.dart';
 import 'package:threekm/providers/main/newsList_provider.dart';
 import 'package:threekm/providers/main/singlePost_provider.dart';
+import 'package:threekm/providers/shop/all_category_provider.dart';
+import 'package:threekm/providers/shop/cart_provider.dart';
+import 'package:threekm/providers/shop/product_details_provider.dart';
+import 'package:threekm/providers/shop/product_listing_provider.dart';
+import 'package:threekm/providers/shop/restaurant_menu_provider.dart';
+import 'package:threekm/providers/shop/shop_home_provider.dart';
+import 'package:threekm/providers/shop/user_review_provider.dart';
 import 'package:threekm/theme/setup.dart';
 
 ///Top level set
@@ -99,6 +109,12 @@ void main() async {
 
   //fcm code------------------------------------------------------------
 
+// Hive code ----------
+  Hive
+    ..initFlutter()
+    ..registerAdapter(CartHiveModelAdapter());
+// Hive code ----------
+
   runApp(MyApp());
 }
 
@@ -129,7 +145,21 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider<LikeListProvider>(
             create: (context) => LikeListProvider()),
         ChangeNotifierProvider<QuizProvider>(
-            create: (context) => QuizProvider())
+            create: (context) => QuizProvider()),
+        ChangeNotifierProvider<ShopHomeProvider>(
+            create: (context) => ShopHomeProvider()),
+        ChangeNotifierProvider<AllCategoryListProvider>(
+            create: (context) => AllCategoryListProvider()),
+        ChangeNotifierProvider<ProductListingProvider>(
+            create: (context) => ProductListingProvider()),
+        ChangeNotifierProvider<ProductDetailsProvider>(
+            create: (context) => ProductDetailsProvider()),
+        ChangeNotifierProvider<UserReviewProvider>(
+            create: (context) => UserReviewProvider()),
+        ChangeNotifierProvider<RestaurantMenuProvider>(
+            create: (context) => RestaurantMenuProvider()),
+        ChangeNotifierProvider<CartProvider>(
+            create: (context) => CartProvider())
       ],
       child: MaterialApp(
         // localizationsDelegates: [

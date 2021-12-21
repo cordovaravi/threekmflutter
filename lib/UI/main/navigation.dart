@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:threekm/UI/main/draggableex.dart';
 import 'package:threekm/UI/main/pollex.dart';
+import 'package:threekm/widgets/shop/home_3km.dart';
 
 class TabBarNavigation extends StatefulWidget {
   const TabBarNavigation({Key? key}) : super(key: key);
@@ -92,7 +93,7 @@ class _TabBarNavigationState extends State<TabBarNavigation>
                 onPageChanged: onPageChanged,
                 controller: _pageController,
                 physics: NeverScrollableScrollPhysics(),
-                children: [DraggablePage(), DraggablePage(), PollView()],
+                children: [DraggablePage(), Home3KM(), PollView()],
               ),
               onWillPop: onWillPop)),
       bottomNavigationBar: BottomNavigationBar(
