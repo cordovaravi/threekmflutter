@@ -133,6 +133,13 @@ class Banner {
 class Imageswcta {
   Imageswcta({
     this.image,
+    this.type,
+    this.player,
+    this.postId,
+    this.video,
+    this.vimeoUrl,
+    this.header,
+    this.post,
     this.business,
     this.website,
     this.product,
@@ -140,13 +147,29 @@ class Imageswcta {
   });
 
   String? image;
-  int? business;
+  String? type;
+  String? player;
+  int? postId;
+  String? video;
+  String? vimeoUrl;
+  String? header;
+  List<int>? post;
+  String? business;
   String? website;
   String? product;
   String? phone;
 
   factory Imageswcta.fromJson(Map<String, dynamic> json) => Imageswcta(
-        image: json["image"],
+        image: json["image"] == null ? null : json["image"],
+        type: json["type"] == null ? null : json["type"],
+        player: json["player"] == null ? null : json["player"],
+        postId: json["post_id"] == null ? null : json["post_id"],
+        video: json["video"] == null ? null : json["video"],
+        vimeoUrl: json["vimeo_url"] == null ? null : json["vimeo_url"],
+        header: json["header"] == null ? null : json["header"],
+        post: json["post"] == null
+            ? null
+            : List<int>.from(json["post"].map((x) => x)),
         business: json["business"] == null ? null : json["business"],
         website: json["website"] == null ? null : json["website"],
         product: json["product"] == null ? null : json["product"],

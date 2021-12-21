@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:provider/provider.dart';
 import 'package:threekm/UI/walkthrough/splash_screen.dart';
+import 'package:threekm/providers/Location/locattion_Provider.dart';
 import 'package:threekm/providers/auth/Forgetpassword_provider.dart';
 import 'package:threekm/providers/auth/signIn_Provider.dart';
 import 'package:threekm/providers/auth/signUp_Provider.dart';
@@ -129,7 +130,9 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider<LikeListProvider>(
             create: (context) => LikeListProvider()),
         ChangeNotifierProvider<QuizProvider>(
-            create: (context) => QuizProvider())
+            create: (context) => QuizProvider()),
+        ChangeNotifierProvider<LocationProvider>(
+            create: (context) => LocationProvider())
       ],
       child: MaterialApp(
         // localizationsDelegates: [
