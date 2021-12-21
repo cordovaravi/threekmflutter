@@ -131,7 +131,7 @@ class _DraggableHomeState extends State<DraggableHome> {
         MediaQuery.of(context).size.height * widget.headerExpandedHeight;
 
     final double fullyExpandedHeight =
-        MediaQuery.of(context).size.height * 0.4 * (widget.stretchMaxHeight);
+        MediaQuery.of(context).size.height * 0.55 * (widget.stretchMaxHeight);
 
     return Scaffold(
       backgroundColor:

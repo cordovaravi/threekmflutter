@@ -21,6 +21,7 @@ const String shopList = "shop/list";
 const String shopView = "shop/view";
 const String menuList = "menu/list";
 const String productList = "shop/list";
+const String submitQuizAnswer = "quiz/submit_answer";
 
 // login
 const String login_with_password = "user/login";

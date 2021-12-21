@@ -70,6 +70,7 @@ class _NewsListPageState extends State<NewsListPage> {
     return IndexedStack(children: [
       Scaffold(
         appBar: AppBar(
+          elevation: 0.0,
           iconTheme: Theme.of(context).iconTheme.copyWith(color: Colors.black),
           backgroundColor: Colors.white,
           title: Text(
@@ -174,8 +175,7 @@ class _NewsPostCardState extends State<NewsPostCard>
               controller: _scrollController,
               itemCount: //50,
                   widget.newsListProvider.newsBycategory!.data!.result!.posts!
-                          .length -
-                      3,
+                      .length,
               itemBuilder: (context, postIndex) {
                 final newsData = widget.newsListProvider.newsBycategory!.data!
                     .result!.posts![postIndex];
@@ -194,7 +194,8 @@ class _NewsPostCardState extends State<NewsPostCard>
                                   color: Colors.white,
                                   boxShadow: [
                                     BoxShadow(
-                                        color: Colors.black38, blurRadius: 8),
+                                        color: Color(0xff32335E26),
+                                        blurRadius: 8),
                                   ],
                                   borderRadius: BorderRadius.circular(10)),
                               child: Container(

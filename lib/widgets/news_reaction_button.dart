@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
@@ -13,7 +12,7 @@ class NewsReactionButton extends StatefulWidget {
 
 class NewsReactionButtonState extends State<NewsReactionButton>
     with TickerProviderStateMixin {
-  late AudioPlayer audioPlayer;
+  //late AudioPlayer audioPlayer;
 
   int durationAnimationBox = 500;
   int durationAnimationBtnLongPress = 150;
@@ -83,7 +82,7 @@ class NewsReactionButtonState extends State<NewsReactionButton>
   void initState() {
     super.initState();
 
-    audioPlayer = AudioPlayer();
+    // audioPlayer = AudioPlayer();
 
     // Button Like
     initAnimationBtnLike();
@@ -1282,10 +1281,10 @@ class NewsReactionButtonState extends State<NewsReactionButton>
 
   Future playSound(String nameSound) async {
     // Sometimes multiple sound will play the same time, so we'll stop all before play the newest
-    await audioPlayer.stop();
+    //await audioPlayer.stop();
     final file = File('${(await getTemporaryDirectory()).path}/$nameSound');
     await file.writeAsBytes((await loadAsset(nameSound)).buffer.asUint8List());
-    await audioPlayer.play(file.path, isLocal: true);
+    //await audioPlayer.play(file.path, isLocal: true);
   }
 
   Future loadAsset(String nameSound) async {

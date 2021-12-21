@@ -17,7 +17,6 @@ import 'package:threekm/providers/main/comment_Provider.dart';
 import 'package:threekm/providers/main/singlePost_provider.dart';
 import 'package:threekm/utils/threekm_textstyles.dart';
 import 'package:provider/provider.dart';
-import 'package:threekm/widgets/emotion_Button.dart';
 import 'package:threekm/widgets/video_widget.dart';
 import 'package:threekm/widgets/reactions_assets.dart' as reactionAsset;
 
@@ -180,7 +179,7 @@ class _PostviewState extends State<Postview> {
                                         CachedNetworkImage(
                                           height: 254,
                                           width: 338,
-                                          fit: BoxFit.fill,
+                                          fit: BoxFit.cover,
                                           imageUrl: '${newsData.images!.first}',
                                         )
                                       } else if (newsData.videos!.isNotEmpty ||

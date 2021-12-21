@@ -15,17 +15,17 @@ final reactions = [
   Reaction(
     id: 1,
     //title: _buildTitle('Like'),
-    previewIcon: _buildReactionsPreviewIcon('assets/fblike2x.png'),
+    previewIcon: _buildReactionsPreviewIcon('assets/icons8-facebook-like.gif'),
     icon: _buildReactionsIcon(
-      'assets/fblike2x.png',
+      'assets/icons8-facebook-like-96.png',
     ),
   ),
   Reaction(
     id: 2,
     title: _buildTitle('Heart'),
-    previewIcon: _buildReactionsPreviewIcon('assets/heart2x.png'),
+    previewIcon: _buildReactionsPreviewIcon('assets/icons8-heart.gif'),
     icon: Image.asset(
-      'assets/heart2x.png',
+      'assets/icons8-heart-96.png',
       height: 30,
       width: 30,
     ),
@@ -33,25 +33,33 @@ final reactions = [
   Reaction(
     id: 3,
     title: _buildTitle('Trust'),
-    previewIcon: _buildReactionsPreviewIcon('assets/trust2x.png'),
+    previewIcon: _buildReactionsPreviewIcon('assets/icons8-trust.gif'),
     icon: _buildReactionsIcon(
-      'assets/trust2x.png',
+      'assets/icons8-trust-96.png',
     ),
   ),
   Reaction(
     id: 4,
     title: _buildTitle('Sad'),
-    previewIcon: _buildReactionsPreviewIcon('assets/sad2x.png'),
+    previewIcon: _buildReactionsPreviewIcon('assets/icons8-disappointed.gif'),
     icon: _buildReactionsIcon(
-      'assets/sad2x.png',
+      'assets/icons8-disappointed-96.png',
+    ),
+  ),
+  Reaction(
+    id: 5,
+    title: _buildTitle('Lol'),
+    previewIcon: _buildReactionsPreviewIcon('assets/icons8-lol.gif'),
+    icon: _buildReactionsIcon(
+      'assets/icons8-lol-96.png',
     ),
   ),
   Reaction(
     id: 6,
-    title: _buildTitle('Lol'),
-    previewIcon: _buildReactionsPreviewIcon('assets/lol2x.png'),
+    title: _buildTitle('wink'),
+    previewIcon: _buildReactionsPreviewIcon('assets/icons8-wink.gif'),
     icon: _buildReactionsIcon(
-      'assets/lol2x.png',
+      'assets/icons8-wink-96.png',
     ),
   ),
 ];

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:threekm/commenwidgets/commenwidget.dart';
 
 const Color bgColor = Color(0xFF0044CE);
 
@@ -13,5 +14,6 @@ class CustomSnackBar {
 
     ScaffoldMessenger.of(context).hideCurrentSnackBar();
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    hideLoading();
   }
 }

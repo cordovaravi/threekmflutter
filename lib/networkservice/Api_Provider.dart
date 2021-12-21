@@ -1,10 +1,13 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:threekm/commenwidgets/CustomSnakBar.dart';
 import 'package:threekm/commenwidgets/commenwidget.dart';
 import 'package:threekm/exceptions/custom_exception.dart';
+import 'package:threekm/main.dart';
 import 'package:threekm/utils/api_paths.dart';
 
 class ApiProvider {
@@ -60,7 +63,8 @@ class ApiProvider {
           })
           .timeout(Duration(seconds: 15))
           .onError((error, stackTrace) {
-            hideLoading();
+            CustomSnackBar(navigatorKey.currentContext!,
+                Text("Your Internet Connection is weak"));
             throw error.toString();
           });
       responseJson = _response(response);

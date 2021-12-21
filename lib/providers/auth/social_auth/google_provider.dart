@@ -35,7 +35,9 @@ class GoogleSignInprovider extends ChangeNotifier {
   Future<dynamic> handleSignIn(context) async {
     try {
       showLoading();
-      UserCredential? response = await _signInWithGoogle();
+      UserCredential? response = await _signInWithGoogle().onError(
+          (error, stackTrace) =>
+              CustomSnackBar(context, Text("Request Failed")));
       if (response != null) {
         await response.user!.getIdTokenResult().then((value) {
           accessToken = value.token;

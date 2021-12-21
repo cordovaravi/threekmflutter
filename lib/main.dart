@@ -1,10 +1,9 @@
-import 'dart:io';
-
-import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:provider/provider.dart';
 import 'package:threekm/UI/walkthrough/splash_screen.dart';
 import 'package:threekm/providers/auth/Forgetpassword_provider.dart';
@@ -21,34 +20,84 @@ import 'package:threekm/providers/main/newsList_provider.dart';
 import 'package:threekm/providers/main/singlePost_provider.dart';
 import 'package:threekm/theme/setup.dart';
 
+///Top level set
+final _player = AudioPlayer();
+
 //late List<CameraDescription> cameras;
 final navigatorKey = GlobalKey<NavigatorState>();
+//Fcm code------------------------------------------------------------------------
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  // If you're going to use other Firebase services in the background, such as Firestore,
+  // make sure you call `initializeApp` before using other Firebase services.
+  await Firebase.initializeApp();
+  print('Handling a background message ${message.messageId}');
+  // await AwesomeNotifications().createNotification(
+  //     content: NotificationContent(
+  //         autoDismissible: false,
+  //         displayOnForeground: true,
+  //         locked: true,
+  //         displayOnBackground: true,
+  //         id: 1,
+  //         channelKey: 'key1',
+  //         title: '${message.notification?.title}',
+  //         body: '${message.notification?.body}',
+  //         notificationLayout: NotificationLayout.BigText),
+  //     actionButtons: [
+  //       NotificationActionButton(key: "disableSound", label: "Stop Buzzer")
+  //     ]).then((value) async {
+  //   var audiofile = await AudioSource.uri(Uri.parse(
+  //       "https://file-examples-com.github.io/uploads/2017/11/file_example_MP3_700KB.mp3"));
+  //   await _player.setAsset(audiofile.uri.path);
+  //   await _player.play();
+  // });
+  // AwesomeNotifications().actionStream.listen((event) {
+  //   print("top evenent");
+  //   print(event);
+  // });
+}
+
+//end fcm code------------------------------------------------------------
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
     statusBarColor: Colors.transparent,
   ));
-  if (Platform.isAndroid) {
-    await AndroidInAppWebViewController.setWebContentsDebuggingEnabled(true);
 
-    var swAvailable = await AndroidWebViewFeature.isFeatureSupported(
-        AndroidWebViewFeature.SERVICE_WORKER_BASIC_USAGE);
-    var swInterceptAvailable = await AndroidWebViewFeature.isFeatureSupported(
-        AndroidWebViewFeature.SERVICE_WORKER_SHOULD_INTERCEPT_REQUEST);
+  //// fcm code-------------
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  await FirebaseMessaging.instance.getToken().then((value) => print(value));
 
-    if (swAvailable && swInterceptAvailable) {
-      AndroidServiceWorkerController serviceWorkerController =
-          AndroidServiceWorkerController.instance();
+  if (!kIsWeb) {
+    // channel = const AndroidNotificationChannel(
+    //   'high_importance_channel', // id
+    //   'High Importance Notifications', // title
+    //   importance: Importance.high,
+    // );
 
-      serviceWorkerController.serviceWorkerClient = AndroidServiceWorkerClient(
-        shouldInterceptRequest: (request) async {
-          print(request);
-          return null;
-        },
-      );
-    }
+    // flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+
+    // /// Create an Android Notification Channel.
+    // ///
+    // /// We use this channel in the `AndroidManifest.xml` file to override the
+    // /// default FCM channel to enable heads up notifications.
+    // await flutterLocalNotificationsPlugin
+    //     .resolvePlatformSpecificImplementation<
+    //         AndroidFlutterLocalNotificationsPlugin>()
+    //     ?.createNotificationChannel(channel);
+
+    /// Update the iOS foreground notification presentation options to allow
+    /// heads up notifications.
+    await FirebaseMessaging.instance
+        .setForegroundNotificationPresentationOptions(
+      alert: true,
+      badge: true,
+      sound: true,
+    );
   }
+
+  //fcm code------------------------------------------------------------
 
   runApp(MyApp());
 }
@@ -108,29 +157,4 @@ class MyApp extends StatelessWidget {
       ),
     );
   }
-}
-
-Future _ringAlarm() async {
-  AwesomeNotifications().initialize('resource://drawable/ic_launcher', [
-    NotificationChannel(
-        channelKey: 'basic_channel',
-        groupKey: 'basic_tests',
-        channelName: 'Basic notifications',
-        channelDescription: 'Notification channel for basic tests',
-        defaultColor: Color(0xFF9D50DD),
-        ledColor: Colors.white)
-  ]);
-
-  AwesomeNotifications().isNotificationAllowed().then((isAllowed) {
-    if (!isAllowed) {
-      AwesomeNotifications().requestPermissionToSendNotifications();
-    }
-  });
-
-  AwesomeNotifications().createNotification(
-      content: NotificationContent(
-          id: 10,
-          channelKey: 'basic_channel',
-          title: 'Simple Notification',
-          body: 'Simple body'));
 }

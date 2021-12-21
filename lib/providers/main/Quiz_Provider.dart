@@ -1,4 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:threekm/networkservice/Api_Provider.dart';
+import 'package:threekm/utils/api_paths.dart';
 
 class QuizProvider extends ChangeNotifier {
   bool? _isCorectAns;
@@ -23,14 +27,43 @@ class QuizProvider extends ChangeNotifier {
   int? _selecctedIndex;
   int? get selectedIndex => _selecctedIndex;
 
+  bool _shake = false;
+  bool get shake => this._shake;
+
+  bool _showBlast = false;
+  bool get showBlast => this._showBlast;
+
   Future<void> checkAns(int selectedIndex, int correctAnsIndex) async {
     _isAnsnwred = true;
-    // if (selectedIndex == correctAnsIndex) {
-    //   _isCorectAns == true;
-    //   notifyListeners();
-    // }
+    if (selectedIndex == correctAnsIndex) {
+      _isCorectAns == true;
+      _showBlast = true;
+      notifyListeners();
+    } else {
+      _shake = true;
+      notifyListeners();
+    }
     _selecctedIndex = selectedIndex;
     _answredIndex = correctAnsIndex;
     notifyListeners();
+    Future.delayed(Duration(seconds: 1), () {
+      _shake = false;
+      _showBlast = false;
+      notifyListeners();
+    });
+  }
+
+  //// serivice calls
+
+  ApiProvider _apiProvider = ApiProvider();
+
+  Future<Null> submitQuiz(int quizId, String submittedAns) async {
+    String _token = await _apiProvider.getToken();
+    String _requestJson = json.encode(
+        {"quiz_id": quizId, "selected_option": submittedAns, "token": _token});
+    final response = await _apiProvider.post(submitQuizAnswer, _requestJson);
+    if (response != null) {
+      print(response);
+    }
   }
 }

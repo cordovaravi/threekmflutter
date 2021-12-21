@@ -24,7 +24,7 @@ class EmotionButton extends StatelessWidget {
     return FittedBox(
       child: FlutterReactionButtonCheck(
           boxAlignment: Alignment.center,
-          boxPosition: Position.TOP,
+          //boxPosition: Position.TOP,
           onReactionChanged: (reaction, index, isChecked) {
             print('reaction selected index: $index');
             print("is checked $isChecked");
@@ -41,6 +41,35 @@ class EmotionButton extends StatelessWidget {
                   .postLike(this.postId.toString(), null);
             } else {
               print("emotion like");
+              print("emotion is : ${reaction!.id}");
+              if (reaction.id! == 1) {
+                context
+                    .read<NewsListProvider>()
+                    .postLike(this.postId.toString(), "like");
+              } else if (reaction.id == 2) {
+                context
+                    .read<NewsListProvider>()
+                    .postLike(this.postId.toString(), "heart");
+              } else if (reaction.id == 3) {
+                context
+                    .read<NewsListProvider>()
+                    .postLike(this.postId.toString(), "trust");
+              } else if (reaction.id == 4) {
+                context
+                    .read<NewsListProvider>()
+                    .postLike(this.postId.toString(), "sad");
+              } else if (reaction.id == 5) {
+                context
+                    .read<NewsListProvider>()
+                    .postLike(this.postId.toString(), "lol");
+              } else if (reaction.id == 6) {
+                context
+                    .read<NewsListProvider>()
+                    .postLike(this.postId.toString(), "wink");
+              }
+              // context
+              //     .read<NewsListProvider>()
+              //     .postLike(this.postId.toString(), null);
             }
           },
           reactions: this.reactions,

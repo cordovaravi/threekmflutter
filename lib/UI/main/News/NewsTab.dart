@@ -1,10 +1,14 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:ui';
+import 'package:animated_widgets/animated_widgets.dart';
+import 'package:animated_widgets/widgets/shake_animated_widget.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
+import 'package:simple_polls/simple_polls.dart';
 import 'package:threekm/Custom_library/BouncingWidget.dart';
 import 'package:threekm/Models/home1_model.dart';
 import 'package:threekm/UI/main/News/NewsList.dart';
@@ -24,13 +28,16 @@ class NewsTab extends StatefulWidget {
   _NewsTabState createState() => _NewsTabState();
 }
 
-class _NewsTabState extends State<NewsTab> with AutomaticKeepAliveClientMixin {
+class _NewsTabState extends State<NewsTab>
+    with AutomaticKeepAliveClientMixin, TickerProviderStateMixin {
+  late final AnimationController _controller;
   String? requestJson;
   int _current = 0;
 
   @override
   void initState() {
     super.initState();
+    _controller = AnimationController(vsync: this);
     Future.delayed(Duration.zero, () {
       requestJson = json.encode({
         "lat": "",
@@ -50,6 +57,7 @@ class _NewsTabState extends State<NewsTab> with AutomaticKeepAliveClientMixin {
 
   @override
   void dispose() {
+    _controller.dispose();
     super.dispose();
   }
 
@@ -81,133 +89,144 @@ class _NewsTabState extends State<NewsTab> with AutomaticKeepAliveClientMixin {
                 itemBuilder: (context, index) {
                   final finalPost = newsFirstProvider
                       .homeNewsFirst!.data!.result!.finalposts![index];
-                  return finalPost.type == "banner"
-                      ? ListView.builder(
-                          shrinkWrap: true,
-                          itemCount: 1,
-                          physics: NeverScrollableScrollPhysics(),
-                          itemBuilder: (context, i) {
-                            if (finalPost.banners![i].images!.length > 1 &&
-                                finalPost.bannertype == "RWC") {
-                              return Padding(
-                                padding: EdgeInsets.zero,
-                                child: Container(
-                                    child: CarouselSlider(
-                                  options: CarouselOptions(
-                                    aspectRatio: 0.8,
-                                    enlargeCenterPage: true,
-                                    scrollDirection: Axis.horizontal,
-                                    autoPlay: true,
-                                  ),
-                                  items: finalPost.banners![i].imageswcta!
-                                      .map((items) => GestureDetector(
-                                            onTap: () => {
-                                              showDialog(
-                                                context: context,
-                                                builder: (_) => AdspopUp(
-                                                  phoneNumber:
-                                                      items.phone.toString(),
-                                                  url: items.website.toString(),
+                  if (finalPost.type == "banner" &&
+                      finalPost.banners != null &&
+                      finalPost.banners?.length != 0) {
+                    return ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: 1,
+                      physics: NeverScrollableScrollPhysics(),
+                      itemBuilder: (context, i) {
+                        if (finalPost.banners![i].images!.length > 1 &&
+                            finalPost.bannertype == "RWC") {
+                          return Padding(
+                            padding: EdgeInsets.zero,
+                            child: Container(
+                                child: CarouselSlider(
+                              options: CarouselOptions(
+                                aspectRatio: 0.8,
+                                enlargeCenterPage: true,
+                                scrollDirection: Axis.horizontal,
+                                autoPlay: true,
+                              ),
+                              items: finalPost.banners![i].imageswcta!
+                                  .map((items) => GestureDetector(
+                                        onTap: () => {
+                                          showDialog(
+                                            context: context,
+                                            builder: (_) => AdspopUp(
+                                              phoneNumber:
+                                                  items.phone.toString(),
+                                              url: items.website.toString(),
+                                            ),
+                                          )
+                                        },
+                                        child: Container(
+                                          child: CachedNetworkImage(
+                                            fit: BoxFit.contain,
+                                            imageUrl: items.image.toString(),
+                                            imageBuilder:
+                                                (context, imageProvider) =>
+                                                    Container(
+                                              decoration: BoxDecoration(
+                                                image: DecorationImage(
+                                                  image: imageProvider,
+                                                  fit: BoxFit.cover,
                                                 ),
-                                              )
-                                            },
-                                            child: Container(
-                                              child: CachedNetworkImage(
-                                                imageUrl:
-                                                    items.image.toString(),
-                                                imageBuilder:
-                                                    (context, imageProvider) =>
-                                                        Container(
-                                                  decoration: BoxDecoration(
-                                                    image: DecorationImage(
-                                                      image: imageProvider,
-                                                      fit: BoxFit.cover,
-                                                    ),
-                                                  ),
-                                                ),
-                                                errorWidget:
-                                                    (context, url, error) =>
-                                                        Icon(Icons.error),
                                               ),
                                             ),
-                                          ))
-                                      .toList(),
-                                )),
-                              );
-
-                              /// ads carousal
-                            } else if (finalPost.bannertype == "BWC") {
-                              return Column(
-                                children: [
-                                  CarouselSlider.builder(
-                                    itemCount: finalPost.banners!.length,
-                                    itemBuilder: (BuildContext context,
-                                            int bannerIndex, heroIndex) =>
-                                        GestureDetector(
-                                            child: BouncingWidget(
-                                      scaleFactor: 1.5,
-                                      onPressed: () {
-                                        print("ontap");
-                                      },
-                                      child: CachedNetworkImage(
-                                          fit: BoxFit.cover,
-                                          width: 1000,
-                                          imageUrl: finalPost
-                                              .banners![bannerIndex]
-                                              .images!
-                                              .first
-                                              .toString()),
-                                    )),
-                                    options: CarouselOptions(
-                                        viewportFraction:
-                                            finalPost.banners!.length > 1
-                                                ? 0.85
-                                                : 0.95,
-                                        scrollPhysics: finalPost
-                                                    .banners!.length >
-                                                1
-                                            ? ScrollPhysics()
-                                            : NeverScrollableScrollPhysics(),
-                                        autoPlayAnimationDuration:
-                                            const Duration(microseconds: 1200),
-                                        autoPlay: true,
-                                        enlargeCenterPage: true,
-                                        initialPage: 0,
-                                        autoPlayInterval: Duration(seconds: 15),
-                                        onPageChanged: (index, reason) {
-                                          setState(() {
-                                            _current = index;
-                                          });
-                                        }),
-                                  ),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: finalPost.banners!.map((banner) {
-                                      int index =
-                                          finalPost.banners!.indexOf(banner);
-                                      return Container(
-                                        width: 8.0,
-                                        height: 8.0,
-                                        margin: EdgeInsets.symmetric(
-                                            vertical: 10.0, horizontal: 2.0),
-                                        decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          color: _current == index
-                                              ? Color.fromRGBO(0, 0, 0, 0.9)
-                                              : Color.fromRGBO(0, 0, 0, 0.4),
+                                            errorWidget:
+                                                (context, url, error) =>
+                                                    Icon(Icons.error),
+                                          ),
                                         ),
-                                      );
-                                    }).toList(),
-                                  ),
-                                ],
-                              );
-                            }
-                            //if condiation not true return empty
-                            return Container();
-                          },
-                        )
-                      // news container
-                      : NewsContainer(finalPost: finalPost);
+                                      ))
+                                  .toList(),
+                            )),
+                          );
+
+                          /// ads carousal
+                        } else if (finalPost.bannertype == "BWC") {
+                          return finalPost.banners?.length != null
+                              ? Column(
+                                  children: [
+                                    CarouselSlider.builder(
+                                      itemCount: finalPost.banners!.length,
+                                      itemBuilder: (BuildContext context,
+                                              int bannerIndex, heroIndex) =>
+                                          GestureDetector(
+                                              child: BouncingWidget(
+                                        scaleFactor: 1.5,
+                                        onPressed: () {
+                                          print("ontap");
+                                        },
+                                        child: CachedNetworkImage(
+                                            fit: BoxFit.cover,
+                                            width: 1000,
+                                            imageUrl: finalPost
+                                                .banners![bannerIndex]
+                                                .images!
+                                                .first
+                                                .toString()),
+                                      )),
+                                      options: CarouselOptions(
+                                          viewportFraction:
+                                              finalPost.banners!.length > 1
+                                                  ? 0.85
+                                                  : 0.99,
+                                          scrollPhysics: finalPost
+                                                      .banners!.length >
+                                                  1
+                                              ? ScrollPhysics()
+                                              : NeverScrollableScrollPhysics(),
+                                          autoPlayAnimationDuration:
+                                              const Duration(
+                                                  microseconds: 1200),
+                                          autoPlay: true,
+                                          enlargeCenterPage: true,
+                                          initialPage: 0,
+                                          autoPlayInterval:
+                                              Duration(seconds: 15),
+                                          onPageChanged: (index, reason) {
+                                            // setState(() {
+                                            //   _current = index;
+                                            // });
+                                          }),
+                                    ),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children:
+                                          finalPost.banners!.map((banner) {
+                                        int index =
+                                            finalPost.banners!.indexOf(banner);
+                                        return Container(
+                                          width: 8.0,
+                                          height: 8.0,
+                                          margin: EdgeInsets.symmetric(
+                                              vertical: 10.0, horizontal: 2.0),
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: _current == index
+                                                ? Color.fromRGBO(0, 0, 0, 0.9)
+                                                : Color.fromRGBO(0, 0, 0, 0.4),
+                                          ),
+                                        );
+                                      }).toList(),
+                                    ),
+                                  ],
+                                )
+                              : Container();
+                        }
+                        //if condiation not true return empty
+                        return Container();
+                      },
+                    );
+                  } else if (finalPost.type == "news_cat") {
+                    return NewsContainer(finalPost: finalPost);
+                  } else {
+                    return Container();
+                  }
                 },
               )
             else
@@ -230,10 +249,12 @@ class _NewsTabState extends State<NewsTab> with AutomaticKeepAliveClientMixin {
                     return Container(
                       child: Text("quiz carousal"),
                     );
-                  } else if (finalScondPost.type == "quiz") {
+                  } else if (finalScondPost.type == "quiz" &&
+                      finalScondPost.quiz!.type == "quiz") {
                     //return Container(child: Text("quiz"));
                     return Consumer<QuizProvider>(
                       builder: (context, quizProvider, _) {
+                        // print(quizProvider.shake);
                         return Container(
                           margin: EdgeInsets.only(
                               top: 8, bottom: 8, left: 4, right: 4),
@@ -264,109 +285,135 @@ class _NewsTabState extends State<NewsTab> with AutomaticKeepAliveClientMixin {
                                               color: Colors.black38,
                                               blurRadius: 0.8)
                                         ]),
-                                    child: Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Text(
-                                              finalScondPost.quiz!.question
-                                                  .toString(),
-                                              style: ThreeKmTextConstants
-                                                  .tk16PXPoppinsWhiteBold,
-                                              textAlign: TextAlign.center),
-                                          SizedBox(height: 20),
-                                          Container(
-                                            padding: EdgeInsets.only(top: 10),
-                                            decoration: BoxDecoration(),
-                                            child: ListView.builder(
-                                              shrinkWrap: true,
-                                              physics:
-                                                  NeverScrollableScrollPhysics(),
-                                              itemCount: finalScondPost
-                                                  .quiz!.options!.length,
-                                              itemBuilder:
-                                                  (context, quizIndex) {
-                                                return Option(
-                                                  text: finalScondPost
-                                                      .quiz!
-                                                      .options![quizIndex]
-                                                      .bullets
-                                                      .toString(),
-                                                  index: quizIndex,
-                                                  option: finalScondPost.quiz!
-                                                      .options![quizIndex].text
-                                                      .toString(),
-                                                  correctAnsIndex:
-                                                      finalScondPost
-                                                                  .quiz!.answer
-                                                                  .toString() ==
-                                                              finalScondPost
-                                                                  .quiz!
-                                                                  .options![
-                                                                      quizIndex]
-                                                                  .text
-                                                          ? quizIndex
-                                                          : 100,
-                                                );
-                                                // return GestureDetector(
-                                                //   onTap: () {
+                                    child: ShakeAnimatedWidget(
+                                      duration: Duration(microseconds: 800),
+                                      shakeAngle: Rotation.radians(z: 0.05),
+                                      enabled: quizProvider.shake,
+                                      child: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Text(
+                                                finalScondPost.quiz!.question
+                                                    .toString(),
+                                                style: ThreeKmTextConstants
+                                                    .tk16PXPoppinsWhiteBold,
+                                                textAlign: TextAlign.center),
+                                            SizedBox(height: 20),
+                                            Container(
+                                              padding: EdgeInsets.only(top: 10),
+                                              decoration: BoxDecoration(),
+                                              child: ListView.builder(
+                                                shrinkWrap: true,
+                                                physics:
+                                                    NeverScrollableScrollPhysics(),
+                                                itemCount: finalScondPost
+                                                    .quiz!.options!.length,
+                                                itemBuilder:
+                                                    (context, quizIndex) {
+                                                  return Option(
+                                                    quizId: finalScondPost
+                                                        .quiz!.quizId,
+                                                    text: finalScondPost
+                                                        .quiz!
+                                                        .options![quizIndex]
+                                                        .bullets
+                                                        .toString(),
+                                                    index: quizIndex,
+                                                    option: finalScondPost
+                                                        .quiz!
+                                                        .options![quizIndex]
+                                                        .text
+                                                        .toString(),
+                                                    correctAnsIndex: finalScondPost
+                                                                .quiz!.answer
+                                                                .toString() ==
+                                                            finalScondPost
+                                                                .quiz!
+                                                                .options![
+                                                                    quizIndex]
+                                                                .text
+                                                        ? quizIndex
+                                                        : 100,
+                                                  );
+                                                  // return GestureDetector(
+                                                  //   onTap: () {
 
-                                                //   },
-                                                //   child: Padding(
-                                                //     padding:
-                                                //         const EdgeInsets.only(
-                                                //             bottom: 8),
-                                                //     child: Container(
-                                                //       padding: EdgeInsets.all(3),
-                                                //       decoration: BoxDecoration(
-                                                //           borderRadius:
-                                                //               BorderRadius
-                                                //                   .circular(20),
-                                                //           color: quizProvider
-                                                //               .provideColor),
-                                                //       child: Row(children: [
-                                                //         Container(
-                                                //           height: 30,
-                                                //           width: 30,
-                                                //           decoration:
-                                                //               BoxDecoration(
-                                                //             border: Border.all(
-                                                //                 color:
-                                                //                     Colors.black),
-                                                //             shape:
-                                                //                 BoxShape.circle,
-                                                //           ),
-                                                //           child: Center(
-                                                //             child: Text(
-                                                //                 finalScondPost
-                                                //                     .quiz!
-                                                //                     .options![
-                                                //                         quizIndex]
-                                                //                     .bullets
-                                                //                     .toString()),
-                                                //           ),
-                                                //         ),
-                                                //         Container(
-                                                //             child: Padding(
-                                                //           padding:
-                                                //               const EdgeInsets
-                                                //                   .only(left: 8),
-                                                //           child: Text(
-                                                //               finalScondPost
-                                                //                   .quiz!
-                                                //                   .options![
-                                                //                       quizIndex]
-                                                //                   .text
-                                                //                   .toString()),
-                                                //         ))
-                                                //       ]),
-                                                //     ),
-                                                //   ),
-                                                // );
-                                              },
-                                            ),
-                                          )
-                                        ])),
-                              )
+                                                  //   },
+                                                  //   child: Padding(
+                                                  //     padding:
+                                                  //         const EdgeInsets.only(
+                                                  //             bottom: 8),
+                                                  //     child: Container(
+                                                  //       padding: EdgeInsets.all(3),
+                                                  //       decoration: BoxDecoration(
+                                                  //           borderRadius:
+                                                  //               BorderRadius
+                                                  //                   .circular(20),
+                                                  //           color: quizProvider
+                                                  //               .provideColor),
+                                                  //       child: Row(children: [
+                                                  //         Container(
+                                                  //           height: 30,
+                                                  //           width: 30,
+                                                  //           decoration:
+                                                  //               BoxDecoration(
+                                                  //             border: Border.all(
+                                                  //                 color:
+                                                  //                     Colors.black),
+                                                  //             shape:
+                                                  //                 BoxShape.circle,
+                                                  //           ),
+                                                  //           child: Center(
+                                                  //             child: Text(
+                                                  //                 finalScondPost
+                                                  //                     .quiz!
+                                                  //                     .options![
+                                                  //                         quizIndex]
+                                                  //                     .bullets
+                                                  //                     .toString()),
+                                                  //           ),
+                                                  //         ),
+                                                  //         Container(
+                                                  //             child: Padding(
+                                                  //           padding:
+                                                  //               const EdgeInsets
+                                                  //                   .only(left: 8),
+                                                  //           child: Text(
+                                                  //               finalScondPost
+                                                  //                   .quiz!
+                                                  //                   .options![
+                                                  //                       quizIndex]
+                                                  //                   .text
+                                                  //                   .toString()),
+                                                  //         ))
+                                                  //       ]),
+                                                  //     ),
+                                                  //   ),
+                                                  // );
+                                                },
+                                              ),
+                                            )
+                                          ]),
+                                    )),
+                              ),
+                              quizProvider.showBlast
+                                  ? Positioned(
+                                      bottom: 80,
+                                      right: 30,
+                                      left: 30,
+                                      child: Lottie.asset(
+                                        'assets/blast.json',
+                                        // controller: _controller,
+                                        // onLoaded: (composition) {
+                                        //   // Configure the AnimationController with the duration of the
+                                        //   // Lottie file and start the animation.
+                                        //   _controller
+                                        //     ..duration = composition.duration
+                                        //     ..forward();
+                                        // },
+                                      ),
+                                    )
+                                  : SizedBox.shrink(),
                             ],
                           ),
                         );
@@ -551,6 +598,88 @@ class _NewsTabState extends State<NewsTab> with AutomaticKeepAliveClientMixin {
                     //     ),
                     //   );
                     // }
+                  } else if (finalScondPost.type == "quiz" &&
+                      finalScondPost.quiz?.type == "poll") {
+                    return Container(
+                        height: MediaQuery.of(context).size.height * 0.7,
+                        width: MediaQuery.of(context).size.width,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(16),
+                          image: DecorationImage(
+                              fit: BoxFit.fill,
+                              image: CachedNetworkImageProvider(
+                                  finalScondPost.quiz!.image.toString())),
+                        ),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Spacer(),
+                            SimplePollsWidget(
+                              margin: EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(17),
+                                  color: Colors.white),
+                              onSelection: (PollFrameModel model,
+                                  PollOptions selectedOptionModel) {
+                                print('Now total polls are : ' +
+                                    model.totalPolls.toString());
+                                print('Selected option has label : ' +
+                                    selectedOptionModel.label);
+                              },
+                              // onReset: (PollFrameModel model) {
+                              //   print(
+                              //       'Poll has been reset, this happens only in case of editable polls');
+                              // },
+                              optionsBorderShape:
+                                  StadiumBorder(), //Its Default so its not necessary to write this line
+                              model: PollFrameModel(
+                                  title: Container(
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(
+                                      finalScondPost.quiz!.question.toString(),
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ),
+                                  totalPolls: 100,
+                                  endTime: DateTime.now()
+                                      .toUtc()
+                                      .add(Duration(days: 10)),
+                                  hasVoted: finalScondPost.quiz!.isAnswered!,
+                                  editablePoll: false,
+                                  options: finalScondPost.quiz!.options!
+                                      .map((option) {
+                                    return PollOptions(
+                                        label: option.text.toString(),
+                                        pollsCount: option.percent!.toInt(),
+                                        id: UniqueKey());
+                                  }).toList()
+                                  // options: <PollOptions>[
+                                  //   PollOptions(
+                                  //     label: "Option 1",
+                                  //     pollsCount: 40,
+                                  //     isSelected: false,
+                                  //     id: 1,
+                                  //   ),
+                                  //   PollOptions(
+                                  //     label: "Option 2",
+                                  //     pollsCount: 25,
+                                  //     isSelected: false,
+                                  //     id: 2,
+                                  //   ),
+                                  //   PollOptions(
+                                  //     label: "Option 3",
+                                  //     pollsCount: 35,
+                                  //     isSelected: false,
+                                  //     id: 3,
+                                  //   ),
+                                  // ],
+                                  ),
+                            )
+                          ],
+                        ));
                   }
                   // else if (finalScondPost.type == "product") {
                   //   return Container(
@@ -805,13 +934,18 @@ class NewsContainer extends StatelessWidget {
                       width: 30,
                       decoration: BoxDecoration(
                           image: DecorationImage(
-                              image: NetworkImage(
-                                  this.finalPost.category!.icon.toString()))),
+                              image: this.finalPost.category?.icon != null
+                                  ? NetworkImage(
+                                      this.finalPost.category!.icon.toString())
+                                  : NetworkImage(
+                                      "https://png.pngitem.com/pimgs/s/378-3788573_white-circle-fade-transparent-png-download-white-fade.png"))),
                     ),
                   ),
                   Padding(
                     padding: EdgeInsets.only(left: 5),
-                    child: Text(finalPost.category!.name.toString()),
+                    child: finalPost.category?.name != null
+                        ? Text(finalPost.category!.name.toString())
+                        : Text(""),
                   ),
                   Spacer(),
                   Padding(
@@ -833,59 +967,63 @@ class NewsContainer extends StatelessWidget {
             Container(
               height: 150,
               width: double.infinity,
-              child: ListView.builder(
-                cacheExtent: 9999,
-                physics: BouncingScrollPhysics(),
-                scrollDirection: Axis.horizontal,
-                itemCount: finalPost.category!.posts!.length,
-                itemBuilder: (context, postIndex) {
-                  final contentPost = finalPost.category!.posts;
-                  return InkWell(
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => Postview(
-                                  image:
-                                      contentPost![postIndex].image.toString(),
-                                  postId: contentPost[postIndex]
-                                      .postId
-                                      .toString())));
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Container(
-                          height: 145,
-                          width: 150,
-                          child: Column(children: [
-                            Container(
-                              height: 100,
-                              width: 150,
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.only(
-                                      topLeft: Radius.circular(10),
-                                      topRight: Radius.circular(10)),
-                                  image: DecorationImage(
-                                      fit: BoxFit.cover,
-                                      image: CachedNetworkImageProvider(
-                                          contentPost![postIndex]
-                                              .image
-                                              .toString()))),
-                              child: Stack(
-                                children: [],
-                              ),
-                            ),
-                            Container(
-                              height: 34,
-                              width: 150,
-                              child: Text(
-                                  contentPost[postIndex].headline.toString()),
-                            ),
-                          ])),
-                    ),
-                  );
-                },
-              ),
+              child: finalPost.category?.posts != null
+                  ? ListView.builder(
+                      cacheExtent: 9999,
+                      physics: BouncingScrollPhysics(),
+                      scrollDirection: Axis.horizontal,
+                      itemCount: finalPost.category!.posts!.length,
+                      itemBuilder: (context, postIndex) {
+                        final contentPost = finalPost.category!.posts;
+                        return InkWell(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => Postview(
+                                        image: contentPost![postIndex]
+                                            .image
+                                            .toString(),
+                                        postId: contentPost[postIndex]
+                                            .postId
+                                            .toString())));
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Container(
+                                height: 145,
+                                width: 150,
+                                child: Column(children: [
+                                  Container(
+                                    height: 100,
+                                    width: 150,
+                                    decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.only(
+                                            topLeft: Radius.circular(10),
+                                            topRight: Radius.circular(10)),
+                                        image: DecorationImage(
+                                            fit: BoxFit.cover,
+                                            image: CachedNetworkImageProvider(
+                                                contentPost![postIndex]
+                                                    .image
+                                                    .toString()))),
+                                    child: Stack(
+                                      children: [],
+                                    ),
+                                  ),
+                                  Container(
+                                    height: 34,
+                                    width: 150,
+                                    child: Text(contentPost[postIndex]
+                                        .headline
+                                        .toString()),
+                                  ),
+                                ])),
+                          ),
+                        );
+                      },
+                    )
+                  : Container(),
             )
           ],
         ));
@@ -912,11 +1050,13 @@ class Option extends StatelessWidget {
       {required this.text,
       required this.index,
       required this.option,
+      required this.quizId,
       this.correctAnsIndex});
   final String option;
   final String text;
   final int index;
   final int? correctAnsIndex;
+  final int? quizId;
   @override
   Widget build(BuildContext context) {
     return Consumer<QuizProvider>(builder: (context, model, _) {
@@ -937,6 +1077,8 @@ class Option extends StatelessWidget {
         onTap: () {
           context.read<QuizProvider>().checkAns(index, correctAnsIndex!);
           print(index);
+          print(this.option);
+          context.read<QuizProvider>().submitQuiz(quizId!, this.option);
         },
         child: Padding(
           padding: const EdgeInsets.only(bottom: 8),
@@ -968,59 +1110,5 @@ class Option extends StatelessWidget {
         ),
       );
     });
-    // return GetBuilder<QuestionController>(
-    //     init: QuestionController(),
-    //     builder: (qnController) {
-    //       Color getTheRightColor() {
-    //         if (qnController.isAnswered) {
-    //           if (index == qnController.correctAns) {
-    //             return kGreenColor;
-    //           } else if (index == qnController.selectedAns &&
-    //               qnController.selectedAns != qnController.correctAns) {
-    //             return kRedColor;
-    //           }
-    //         }
-    //         return kGrayColor;
-    //       }
-
-    //       IconData getTheRightIcon() {
-    //         return getTheRightColor() == kRedColor ? Icons.close : Icons.done;
-    //       }
-
-    //       return InkWell(
-    //         onTap: press,
-    //         child: Container(
-    //           margin: EdgeInsets.only(top: kDefaultPadding),
-    //           padding: EdgeInsets.all(kDefaultPadding),
-    //           decoration: BoxDecoration(
-    //             border: Border.all(color: getTheRightColor()),
-    //             borderRadius: BorderRadius.circular(15),
-    //           ),
-    //           child: Row(
-    //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    //             children: [
-    //               Text(
-    //                 "${index + 1}. $text",
-    //                 style: TextStyle(color: getTheRightColor(), fontSize: 16),
-    //               ),
-    //               Container(
-    //                 height: 26,
-    //                 width: 26,
-    //                 decoration: BoxDecoration(
-    //                   color: getTheRightColor() == kGrayColor
-    //                       ? Colors.transparent
-    //                       : getTheRightColor(),
-    //                   borderRadius: BorderRadius.circular(50),
-    //                   border: Border.all(color: getTheRightColor()),
-    //                 ),
-    //                 child: getTheRightColor() == kGrayColor
-    //                     ? null
-    //                     : Icon(getTheRightIcon(), size: 16),
-    //               )
-    //             ],
-    //           ),
-    //         ),
-    //       );
-    //     });
   }
 }
