@@ -104,7 +104,8 @@ class _TabBarNavigationState extends State<TabBarNavigation>
           BottomNavigationBarItem(
               icon: new Icon(Icons.shopping_bag), title: new Text('Shopping')),
           BottomNavigationBarItem(
-              icon: new Icon(Icons.business_center), label: 'business')
+              icon: new Icon(Icons.business_center),
+              title: new Text('business'))
         ],
         onTap: (int index) {
           _pageController.jumpToPage(index);
