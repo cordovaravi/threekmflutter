@@ -1,4 +1,5 @@
-const String GMap_Api_Key = "AIzaSyCK9Q9Rt0k-q6HxqRNR5FtpssJZTXtmqsg";
+const String GMap_Api_Key = "";
+
 const String baseUrl = "https://bulbandkey.com/gateway/sakal/mobile/";
 const String news_geo_page_list = "newspost/listpages";
 const String news_geo_list = "newspost/geolist";
