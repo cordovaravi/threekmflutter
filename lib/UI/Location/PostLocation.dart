@@ -13,6 +13,6 @@ class PostLocation extends StatefulWidget {
 class _PostLocationState extends State<PostLocation> {
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Scaffold();
   }
 }

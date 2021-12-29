@@ -655,14 +655,14 @@ class Option {
   });
 
   String? text;
-  int? percent;
+  double? percent;
   int? count;
   String? bullets;
   String? dPercent;
 
   factory Option.fromJson(Map<String, dynamic> json) => Option(
         text: json["text"] == null ? null : json["text"],
-        percent: json["percent"] == null ? null : json["percent"],
+        percent: json["percent"] == null ? null : json["percent"].toDouble(),
         count: json["count"] == null ? null : json["count"],
         bullets: json["bullets"] == null ? null : json["bullets"],
         dPercent: json["d_percent"] == null ? null : json["d_percent"],

@@ -6,11 +6,13 @@ class LocationProvider extends ChangeNotifier {
   double? _longitude;
   double? get getLatitude => _lattitude;
   double? get getLangitude => _longitude;
+  LocationData? _getlocationData;
+  LocationData? get getlocationData => _getlocationData;
   bool _ispermmitionGranted = false;
   bool get ispermitionGranted => _ispermmitionGranted;
-  Future<dynamic> getLocation() async {
-    Location location = new Location();
 
+  Future<Null> getLocation() async {
+    Location location = new Location();
     bool _serviceEnabled;
     PermissionStatus _permissionGranted;
     LocationData _locationData;
@@ -38,7 +40,11 @@ class LocationProvider extends ChangeNotifier {
         }
       }
       _locationData = await location.getLocation();
+      print(_locationData);
+      print("locatio is :${_locationData.latitude}");
+      print(_locationData.longitude);
       if (_locationData != null) {
+        _getlocationData = _locationData;
         _lattitude = _locationData.latitude;
         _longitude = _locationData.longitude;
         notifyListeners();

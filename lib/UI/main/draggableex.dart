@@ -1,11 +1,13 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/src/provider.dart';
 import 'package:threekm/Custom_library/draggable_home.dart';
 import 'package:threekm/UI/main/AddPost/ImageEdit/editImage.dart';
 import 'package:threekm/UI/main/News/NewsTab.dart';
+import 'package:threekm/providers/main/AddPost_Provider.dart';
 import 'package:threekm/utils/utils.dart';
+
+import 'News/NewsList.dart';
 
 class DraggablePage extends StatelessWidget {
   final ImagePicker _imagePicker = ImagePicker();
@@ -27,15 +29,17 @@ class DraggablePage extends StatelessWidget {
                 children: [
                   InkWell(
                     onTap: () async {
-                      final image = await _imagePicker.pickImage(
-                          source: ImageSource.gallery);
-                      if (image != null) {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    EditImage(images: image)));
-                      }
+                      _showImageVideoBottomModalSheet(context);
+                      // final image = await _imagePicker.pickImage(
+                      //     source: ImageSource.gallery);
+                      // if (image != null) {
+                      //   Navigator.push(
+                      //       context,
+                      //       MaterialPageRoute(
+                      //           builder: (context) =>
+                      //               EditImage(images: image)));
+                      // }
+                      //-----------
                       // List<XFile>? imageFileList = [];
                       // final List<XFile>? images =
                       //     await _imagePicker.pickMultiImage();
@@ -253,6 +257,110 @@ class DraggablePage extends StatelessWidget {
           subtitle: Text("Subtitile"),
         ),
       ),
+    );
+  }
+
+  _showImageVideoBottomModalSheet(BuildContext context) {
+    showModalBottomSheet<void>(
+      backgroundColor: Colors.transparent,
+      context: context,
+      isScrollControlled: true,
+      builder: (BuildContext context) {
+        return Padding(
+          padding: MediaQuery.of(context).viewInsets,
+          child: StatefulBuilder(
+            builder: (BuildContext context, StateSetter setModalState) {
+              return ClipPath(
+                clipper: OvalTopBorderClipper(),
+                child: Container(
+                  color: Colors.white,
+                  height: MediaQuery.of(context).size.height / 4,
+                  padding: const EdgeInsets.all(15.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      SizedBox(
+                        height: 20,
+                      ),
+                      InkWell(
+                        onTap: () async {
+                          List<XFile>? imageFileList = [];
+                          final List<XFile>? images =
+                              await _imagePicker.pickMultiImage();
+                          if (imageFileList.isEmpty) {
+                            imageFileList.addAll(images!);
+                          }
+                          imageFileList.forEach((element) {
+                            print(element.name);
+                            print(element.path);
+                          });
+                          if (imageFileList != null) {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        EditImage(images: imageFileList)));
+                          }
+
+                          //final image = await _imagePicker.pickMultiImage();
+                          // if (image != null) {
+                          //   //context.read<AddPostProvider>().addImages(widget.imageFile);
+                          //   Navigator.push(
+                          //       context,
+                          //       MaterialPageRoute(
+                          //           builder: (context) =>
+                          //               EditImage(images: image)));
+                          // }
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(
+                                color: Color(0xff0F0F2D),
+                              )),
+                          child: ListTile(
+                            leading: Image.asset(
+                              "assets/camera.png",
+                              color: Color(0xff0F0F2D),
+                            ),
+                            title: Text(
+                              "Upload Image via Gallery",
+                              style: ThreeKmTextConstants.tk14PXLatoBlackBold,
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      InkWell(
+                        onTap: () {},
+                        child: Container(
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(
+                                color: Color(0xff0F0F2D),
+                              )),
+                          child: ListTile(
+                            leading: Image.asset(
+                              "assets/videocam.png",
+                              color: Color(0xff0F0F2D),
+                            ),
+                            title: Text(
+                              "Upload Video via Gallery",
+                              style: ThreeKmTextConstants.tk14PXLatoBlackBold,
+                            ),
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+        );
+      },
     );
   }
 }

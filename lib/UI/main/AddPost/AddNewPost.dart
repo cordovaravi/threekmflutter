@@ -3,19 +3,23 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:threekm/UI/Location/PostLocation.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:threekm/Custom_library/GooleMapsWidget/src/place_picker.dart';
 import 'package:threekm/providers/Location/locattion_Provider.dart';
+import 'package:threekm/providers/main/AddPost_Provider.dart';
+import 'package:threekm/utils/api_paths.dart';
 import 'package:threekm/utils/utils.dart';
 import 'package:provider/provider.dart';
 
 class AddNewPost extends StatefulWidget {
-  const AddNewPost({Key? key}) : super(key: key);
+  AddNewPost({Key? key}) : super(key: key);
 
   @override
   _AddNewPostState createState() => _AddNewPostState();
 }
 
 class _AddNewPostState extends State<AddNewPost> {
+  TextEditingController _tagscontroller = TextEditingController();
   var padding = EdgeInsets.only(
     right: 18,
     left: 18,
@@ -23,6 +27,7 @@ class _AddNewPostState extends State<AddNewPost> {
 
   int headlineCount = 0;
   int descriptionCount = 0;
+  String? _selecetdAddress;
 
   @override
   Widget build(BuildContext context) {
@@ -181,7 +186,7 @@ class _AddNewPostState extends State<AddNewPost> {
                     height: 12,
                   ),
                   // Tag List
-                  //buildTags,
+                  buildTags,
                   // Spacer for divider on location
                   SizedBox(
                     height: 16,
@@ -217,41 +222,63 @@ class _AddNewPostState extends State<AddNewPost> {
                             child: Container(
                               padding: EdgeInsets.symmetric(
                                   vertical: 8, horizontal: 12),
-                              // child: Text(
-                              //   "${_controller.address?.street ?? "Unspecified location"}"
-                              //       .toUpperCase(),
-                              //   style: ThreeKmTextConstants
-                              //       .tk12PXPoppinsWhiteRegular
-                              //       .copyWith(
-                              //     fontSize: 14,
-                              //     fontWeight: FontWeight.w500,
-                              //     color: Color(0xFF0F0F2D),
-                              //   ),
-                              //   maxLines: 1,
-                              //   overflow: TextOverflow.ellipsis,
-                              // ),
+                              child: Text(
+                                "${_selecetdAddress ?? "Unspecified location"}"
+                                    .toUpperCase(),
+                                style: ThreeKmTextConstants
+                                    .tk12PXPoppinsWhiteRegular
+                                    .copyWith(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                  color: Color(0xFF0F0F2D),
+                                ),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                              ),
                             ),
                           ),
                           SizedBox(width: 16),
                           InkWell(
                             onTap: () async {
-                              context
-                                  .read<LocationProvider>()
-                                  .getLocation()
-                                  .whenComplete(() {
-                                final locationProvider =
-                                    context.watch<LocationProvider>();
-                                if (locationProvider.ispermitionGranted) {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => PostLocation(
-                                              lattitude:
-                                                  locationProvider.getLatitude!,
-                                              longitude: locationProvider
-                                                  .getLangitude!)));
-                                }
+                              Future.delayed(Duration.zero, () {
+                                context
+                                    .read<LocationProvider>()
+                                    .getLocation()
+                                    .whenComplete(() {
+                                  final _locationProvider = context
+                                      .read<LocationProvider>()
+                                      .getlocationData;
+                                  final kInitialPosition = LatLng(
+                                      _locationProvider!.latitude!,
+                                      _locationProvider.longitude!);
+                                  if (_locationProvider != null) {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => PlacePicker(
+                                            apiKey: GMap_Api_Key,
+                                            // initialMapType: MapType.satellite,
+                                            onPlacePicked: (result) {
+                                              //print(result.formattedAddress);
+                                              setState(() {
+                                                _selecetdAddress =
+                                                    result.formattedAddress;
+                                                print(
+                                                    result.geometry!.toJson());
+                                              });
+                                              Navigator.of(context).pop();
+                                            },
+                                            initialPosition: kInitialPosition,
+                                            useCurrentLocation: true,
+                                            selectInitialPosition: true,
+                                            usePinPointingSearch: true,
+                                            usePlaceDetailSearch: true,
+                                          ),
+                                        ));
+                                  }
+                                });
                               });
+                              FocusScope.of(context).unfocus();
                               // await Navigator.of(context)
                               //     .pushNamed(LocationBasePage.path);
                             },
@@ -289,7 +316,7 @@ class _AddNewPostState extends State<AddNewPost> {
                 ],
               ),
             ),
-            buildFooter
+            // buildFooter
           ],
         ),
       ),
@@ -351,127 +378,222 @@ class _AddNewPostState extends State<AddNewPost> {
     );
   }
 
-  Widget get buildFooter {
-    return Positioned(
-      bottom: 0,
-      right: 0,
-      left: 0,
-      child: Container(
-        height: 84,
-        width: MediaQuery.of(context).size.width,
-        padding: EdgeInsets.symmetric(vertical: 16, horizontal: 18),
-        color: Color(0xFFF4F3F8),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Icon(
-              Icons.grid_view,
-              size: 24,
-            ),
-            SizedBox(
-              width: 8,
-            ),
-            Expanded(
-              child: Container(
-                margin: EdgeInsets.only(top: 2),
-                child: Text(
-                  "Advance".toUpperCase(),
-                  style: ThreeKmTextConstants.tk14PXPoppinsWhiteMedium.copyWith(
-                    color: Color(0xFF0F0F2D),
-                  ),
-                ),
-              ),
-            ),
-            SizedBox(
-              width: 8,
-            ),
-            Icon(
-              Icons.arrow_forward,
-              size: 24,
-            ),
-          ],
+  // Widget get buildFooter {
+  //   return Positioned(
+  //     bottom: 0,
+  //     right: 0,
+  //     left: 0,
+  //     child: Container(
+  //       height: 84,
+  //       width: MediaQuery.of(context).size.width,
+  //       padding: EdgeInsets.symmetric(vertical: 16, horizontal: 18),
+  //       color: Color(0xFFF4F3F8),
+  //       child: Row(
+  //         crossAxisAlignment: CrossAxisAlignment.start,
+  //         children: [
+  //           Icon(
+  //             Icons.grid_view,
+  //             size: 24,
+  //           ),
+  //           SizedBox(
+  //             width: 8,
+  //           ),
+  //           Expanded(
+  //             child: Container(
+  //               margin: EdgeInsets.only(top: 2),
+  //               child: Text(
+  //                 "Advance".toUpperCase(),
+  //                 style: ThreeKmTextConstants.tk14PXPoppinsWhiteMedium.copyWith(
+  //                   color: Color(0xFF0F0F2D),
+  //                 ),
+  //               ),
+  //             ),
+  //           ),
+  //           SizedBox(
+  //             width: 8,
+  //           ),
+  //           IconButton(
+  //             icon: Icon(
+  //               Icons.arrow_forward,
+  //               size: 24,
+  //             ),
+  //             onPressed: () {
+  //               FocusScope.of(context).unfocus();
+
+  //               Navigator.push(
+  //                   context,
+  //                   MaterialPageRoute(
+  //                       builder: (context) => AddmorePhotos(
+  //                           //imageFile: widget.imageFile,
+  //                           )));
+  //             },
+  //           ),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
+
+  Widget get buildTags {
+    return Container(
+      padding: padding,
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Consumer<AddPostProvider>(
+          builder: (context, addpostProvider, _) {
+            return Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: addpostProvider.tagsList.length > 0
+                    ? [
+                        ...addpostProvider.tagsList.map((value) {
+                          return GestureDetector(
+                            onTap: () {
+                              context.read<AddPostProvider>().removeTag(value);
+                            },
+                            child: Container(
+                                margin: EdgeInsets.only(right: 12),
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 8, vertical: 4),
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(20),
+                                    //color: Colors.blue
+                                    // color: e.value.active
+                                    //     ? Colors.blue
+                                    //     : Colors.white,
+                                    border: Border.all(
+                                        color: Color(0xFF979EA4), width: 1)
+                                    //     : Border.all(color: Colors.transparent)
+                                    ),
+                                child: Row(
+                                  children: [
+                                    Center(
+                                      child: Text(
+                                        value.toString(),
+                                        style: ThreeKmTextConstants
+                                            .tk12PXPoppinsWhiteRegular
+                                            .copyWith(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w700,
+                                          color: Color(0xFF979EA4),
+                                        ),
+                                      ),
+                                    ),
+                                    Icon(Icons.cancel_outlined)
+                                  ],
+                                )),
+                          );
+                        }).toList(),
+                        InkWell(
+                          onTap: () => addTag(context),
+                          child: Container(
+                            margin: EdgeInsets.only(right: 12),
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 8, vertical: 4),
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(20),
+                                color: Colors.white,
+                                border: Border.all(
+                                    color: Color(0xFF979EA4), width: 1)),
+                            child: Center(
+                              child: Text(
+                                "+ Add",
+                                style: ThreeKmTextConstants
+                                    .tk12PXPoppinsWhiteRegular
+                                    .copyWith(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w700,
+                                        color: Colors.black),
+                              ),
+                            ),
+                          ),
+                        )
+                      ]
+                    : [
+                        InkWell(
+                          onTap: () => addTag(context),
+                          child: Container(
+                            margin: EdgeInsets.only(right: 12),
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 8, vertical: 4),
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(20),
+                                color: Colors.white,
+                                border: Border.all(
+                                    color: Color(0xFF979EA4), width: 1)),
+                            child: Center(
+                              child: Text(
+                                "+ Add",
+                                style: ThreeKmTextConstants
+                                    .tk12PXPoppinsWhiteRegular
+                                    .copyWith(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w700,
+                                        color: Colors.black),
+                              ),
+                            ),
+                          ),
+                        )
+                      ]);
+          },
         ),
       ),
     );
   }
 
-  // Widget get buildTags {
-  //   return Container(
-  //     padding: padding,
-  //     child: SingleChildScrollView(
-  //       scrollDirection: Axis.horizontal,
-  //       child: Builder(
-  //         builder: (controller) => Row(
-  //             mainAxisAlignment: MainAxisAlignment.start,
-  //             children: controller.tags.length > 0
-  //                 ? [
-  //                     ...controller.tags.asMap().entries.map((e) {
-  //                       return GestureDetector(
-  //                         onTap: () => controller.changeTagStatus(e.key),
-  //                         child: Container(
-  //                           margin: EdgeInsets.only(right: 12),
-  //                           padding: EdgeInsets.symmetric(
-  //                               horizontal: 8, vertical: 4),
-  //                           decoration: BoxDecoration(
-  //                               borderRadius: BorderRadius.circular(20),
-  //                               color:
-  //                                   e.value.active ? Colors.blue : Colors.white,
-  //                               border: !e.value.active
-  //                                   ? Border.all(
-  //                                       color: Color(0xFF979EA4), width: 1)
-  //                                   : Border.all(color: Colors.transparent)),
-  //                           child: Center(
-  //                             child: Text(
-  //                               e.value.tag,
-  //                               style: e.value.active
-  //                                   ? ThreeKmTextConstants
-  //                                       .tk12PXPoppinsWhiteRegular
-  //                                       .copyWith(
-  //                                           fontSize: 12,
-  //                                           fontWeight: FontWeight.w700)
-  //                                   : ThreeKmTextConstants
-  //                                       .tk12PXPoppinsWhiteRegular
-  //                                       .copyWith(
-  //                                       fontSize: 12,
-  //                                       fontWeight: FontWeight.w700,
-  //                                       color: Color(0xFF979EA4),
-  //                                     ),
-  //                             ),
-  //                           ),
-  //                         ),
-  //                       );
-  //                     }).toList(),
-  //                     InkWell(
-  //                       onTap: () => controller.addTag(context),
-  //                       child: Container(
-  //                         margin: EdgeInsets.only(right: 12),
-  //                         padding:
-  //                             EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-  //                         decoration: BoxDecoration(
-  //                             borderRadius: BorderRadius.circular(20),
-  //                             color: Colors.white,
-  //                             border: Border.all(
-  //                                 color: Color(0xFF979EA4), width: 1)),
-  //                         child: Center(
-  //                           child: Text(
-  //                             "+ Add",
-  //                             style: ThreeKmTextConstants
-  //                                 .tk12PXPoppinsWhiteRegular
-  //                                 .copyWith(
-  //                               fontSize: 12,
-  //                               fontWeight: FontWeight.w700,
-  //                               color: Color(0xFF979EA4),
-  //                             ),
-  //                           ),
-  //                         ),
-  //                       ),
-  //                     )
-  //                   ]
-  //                 : [Container()]),
-  //       ),
-  //     ),
-  //   );
-  // }
+  addTag(BuildContext context) async {
+    String? tag = await showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          title: Text(
+            "Add Tag",
+            style: ThreeKmTextConstants.tk14PXPoppinsBlackSemiBold
+                .copyWith(color: Colors.black, fontWeight: FontWeight.w900),
+          ),
+          content: TextField(
+            controller: _tagscontroller,
+            decoration: InputDecoration(
+                hintText: "Tag",
+                hintStyle: ThreeKmTextConstants.tk14PXPoppinsBlackSemiBold
+                    .copyWith(color: Colors.grey, fontWeight: FontWeight.w500),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                )),
+          ),
+          actions: [
+            TextButton(
+              child: Text(
+                "Cancel",
+                style: ThreeKmTextConstants.tk14PXPoppinsBlackSemiBold
+                    .copyWith(color: Colors.red),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text(
+                "Continue",
+                style: ThreeKmTextConstants.tk14PXPoppinsBlackSemiBold
+                    .copyWith(color: Colors.blue),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop(_tagscontroller.text);
+              },
+            )
+          ],
+        );
+      },
+    );
+    if (tag != null && _tagscontroller.text.isNotEmpty) {
+      context
+          .read<AddPostProvider>()
+          .addTags(_tagscontroller.text)
+          .whenComplete(() => _tagscontroller.clear());
+    }
+  }
 
   // Widget get buildFooter {
   //   return Positioned(

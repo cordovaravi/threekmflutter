@@ -1,3 +1,4 @@
+const String GMap_Api_Key = "AIzaSyCK9Q9Rt0k-q6HxqRNR5FtpssJZTXtmqsg";
 const String baseUrl = "https://bulbandkey.com/gateway/sakal/mobile/";
 const String news_geo_page_list = "newspost/listpages";
 const String news_geo_list = "newspost/geolist";
@@ -40,6 +41,8 @@ const String verifyForgetPassword = "user/forgot_password_verify";
 
 // post
 const String upload_post = "newspost/save";
+const String upload_Imagefile =
+    "https://bulbandkey.com/gateway/addfile?ext=png";
 
 // address
 const String address_list = "address/list";

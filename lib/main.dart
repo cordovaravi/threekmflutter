@@ -1,9 +1,12 @@
+import 'dart:io';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:just_audio/just_audio.dart';
+import 'package:hive/hive.dart';
+import 'package:path_provider/path_provider.dart' as pathProvider;
 import 'package:provider/provider.dart';
 import 'package:threekm/UI/walkthrough/splash_screen.dart';
 import 'package:threekm/providers/Location/locattion_Provider.dart';
@@ -20,9 +23,7 @@ import 'package:threekm/providers/main/home2_provider.dart';
 import 'package:threekm/providers/main/newsList_provider.dart';
 import 'package:threekm/providers/main/singlePost_provider.dart';
 import 'package:threekm/theme/setup.dart';
-
-///Top level set
-final _player = AudioPlayer();
+import 'providers/main/AddPost_Provider.dart';
 
 //late List<CameraDescription> cameras;
 final navigatorKey = GlobalKey<NavigatorState>();
@@ -100,6 +101,8 @@ void main() async {
 
   //fcm code------------------------------------------------------------
 
+  Directory directory = await pathProvider.getApplicationDocumentsDirectory();
+  Hive.init(directory.path);
   runApp(MyApp());
 }
 
@@ -132,7 +135,9 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider<QuizProvider>(
             create: (context) => QuizProvider()),
         ChangeNotifierProvider<LocationProvider>(
-            create: (context) => LocationProvider())
+            create: (context) => LocationProvider()),
+        ChangeNotifierProvider<AddPostProvider>(
+            create: (context) => AddPostProvider())
       ],
       child: MaterialApp(
         // localizationsDelegates: [

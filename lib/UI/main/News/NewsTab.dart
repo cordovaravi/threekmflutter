@@ -651,6 +651,9 @@ class _NewsTabState extends State<NewsTab>
                                   editablePoll: false,
                                   options: finalScondPost.quiz!.options!
                                       .map((option) {
+                                    print(option.dPercent.toString());
+                                    print(option.percent);
+                                    print(option.count);
                                     return PollOptions(
                                         label: option.text.toString(),
                                         pollsCount: option.percent!.toInt(),
