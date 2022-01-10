@@ -30,7 +30,8 @@ class DraggableHome extends StatefulWidget {
   final double headerExpandedHeight;
 
   /// Header Widget: A widget to display Header above body.
-  final Widget headerWidget;
+  /// removing header for now jan 4 new update
+  // final Widget headerWidget;
 
   /// headerBottomBar: AppBar or toolBar like widget just above the body.
   final Widget? headerBottomBar;
@@ -83,7 +84,9 @@ class DraggableHome extends StatefulWidget {
     this.actions,
     this.alwaysShowLeadingAndAction = false,
     this.headerExpandedHeight = 0.35,
-    required this.headerWidget,
+
+    /// removed header at jan 4 update
+    //required this.headerWidget,
     this.headerBottomBar,
     this.backgroundColor,
     this.curvedBodyRadius = 20,
@@ -102,7 +105,7 @@ class DraggableHome extends StatefulWidget {
   })  : assert(headerExpandedHeight > 0.0 &&
             headerExpandedHeight < stretchMaxHeight),
         assert(
-          (stretchMaxHeight > headerExpandedHeight) && (stretchMaxHeight < .95),
+          (stretchMaxHeight > headerExpandedHeight) && (stretchMaxHeight < .99),
         ),
         super(key: key);
 }
@@ -122,20 +125,20 @@ class _DraggableHomeState extends State<DraggableHome> {
 
   @override
   Widget build(BuildContext context) {
-    final double appBarHeight =
-        AppBar().preferredSize.height + widget.curvedBodyRadius;
+    // final double appBarHeight =
+    //     AppBar().preferredSize.height + widget.curvedBodyRadius;
 
-    final double topPadding = MediaQuery.of(context).padding.top;
+    // final double topPadding = MediaQuery.of(context).padding.top;
 
     final double expandedHeight =
         MediaQuery.of(context).size.height * widget.headerExpandedHeight;
 
     final double fullyExpandedHeight =
-        MediaQuery.of(context).size.height * 0.55 * (widget.stretchMaxHeight);
+        MediaQuery.of(context).size.height * 0.43 * (widget.stretchMaxHeight);
 
     return Scaffold(
-      backgroundColor:
-          widget.backgroundColor ?? Theme.of(context).scaffoldBackgroundColor,
+      // backgroundColor:
+      //     widget.backgroundColor ?? Theme.of(context).scaffoldBackgroundColor,
       drawer: widget.drawer,
       body: NotificationListener<ScrollNotification>(
         onNotification: (notification) {
@@ -146,8 +149,7 @@ class _DraggableHomeState extends State<DraggableHome> {
               isFullyExpanded.add(false);
             }
             //isFullyCollapsed
-            if (notification.metrics.extentBefore >
-                expandedHeight - AppBar().preferredSize.height - 40) {
+            if (notification.metrics.extentBefore > expandedHeight) {
               if (!(isFullyCollapsed.value)) isFullyCollapsed.add(true);
             } else {
               if ((isFullyCollapsed.value)) isFullyCollapsed.add(false);
@@ -155,8 +157,7 @@ class _DraggableHomeState extends State<DraggableHome> {
           }
           return false;
         },
-        child: sliver(context, appBarHeight, fullyExpandedHeight,
-            expandedHeight, topPadding),
+        child: sliver(context, fullyExpandedHeight, expandedHeight),
       ),
       bottomSheet: widget.bottomSheet,
       bottomNavigationBar: widget.bottomNavigationBar,
@@ -168,20 +169,25 @@ class _DraggableHomeState extends State<DraggableHome> {
 
   CustomScrollView sliver(
     BuildContext context,
-    double appBarHeight,
+    //double appBarHeight,
     double fullyExpandedHeight,
     double expandedHeight,
-    double topPadding,
+    //double topPadding,
   ) {
     return CustomScrollView(
       physics: BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
       slivers: [
+        //////// removed jan 4 update
         StreamBuilder<List<bool>>(
           stream: CombineLatestStream.list<bool>(
               [isFullyCollapsed.stream, isFullyExpanded.stream]),
           builder: (BuildContext context, AsyncSnapshot<List<bool>> snapshot) {
             List<bool> streams = (snapshot.data ?? [false, false]);
-
+            // return SliverAppBar(
+            //   flexibleSpace: Placeholder(),
+            //   expandedHeight: 300,
+            //   collapsedHeight: 50,
+            // );
             return SliverAppBar(
               leading: widget.alwaysShowLeadingAndAction
                   ? widget.leading
@@ -194,20 +200,23 @@ class _DraggableHomeState extends State<DraggableHome> {
                       ? []
                       : widget.actions,
               elevation: 0,
-              pinned: true,
+              pinned: false,
               stretch: true,
+              //jan 4 update added height as 0
+              toolbarHeight: 0,
               centerTitle: widget.centerTitle,
-              title: StreamBuilder<bool>(
-                stream: null,
-                builder: (context, snapshot) {
-                  return AnimatedOpacity(
-                    opacity: streams[0] ? 1 : 0,
-                    duration: Duration(milliseconds: 100),
-                    child: widget.headerWidget, // old is widget.title
-                  );
-                },
-              ),
-              collapsedHeight: appBarHeight,
+              // title: StreamBuilder<bool>(
+              //   stream: null,
+              //   builder: (context, snapshot) {
+              //     return AnimatedOpacity(
+              //       opacity: streams[0] ? 1 : 0,
+              //       duration: Duration(milliseconds: 100),
+              //       // removed header widget jan 4
+              //       //child: widget.headerWidget, // old is widget.title
+              //     );
+              //   },
+              // ),
+              //collapsedHeight: appBarHeight,
               expandedHeight: streams[1] ? fullyExpandedHeight : expandedHeight,
               flexibleSpace: Stack(
                 children: [
@@ -229,7 +238,7 @@ class _DraggableHomeState extends State<DraggableHome> {
                   Positioned(
                     bottom: 0 + widget.curvedBodyRadius,
                     child: AnimatedContainer(
-                      padding: EdgeInsets.only(left: 10, right: 10),
+                      // padding: EdgeInsets.only(left: 10, right: 10),
                       curve: Curves.easeInOutCirc,
                       duration: Duration(milliseconds: 100),
                       height: streams[0]
@@ -256,7 +265,9 @@ class _DraggableHomeState extends State<DraggableHome> {
             );
           },
         ),
-        sliverList(context, appBarHeight + topPadding),
+
+        /// changed jan 4 update
+        sliverList(context, 0),
       ],
     );
   }
@@ -282,13 +293,13 @@ class _DraggableHomeState extends State<DraggableHome> {
         [
           Stack(
             children: [
-              Container(
-                height: MediaQuery.of(context).size.height -
-                    topHeight -
-                    bottomPadding,
-                color: widget.backgroundColor ??
-                    Theme.of(context).scaffoldBackgroundColor,
-              ),
+              // Container(
+              //   height: MediaQuery.of(context).size.height -
+              //       topHeight -
+              //       bottomPadding,
+              //   color: widget.backgroundColor ??
+              //       Theme.of(context).scaffoldBackgroundColor,
+              // ),
               Column(
                 children: [
                   expandedUpArrow(),

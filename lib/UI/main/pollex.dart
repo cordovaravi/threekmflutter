@@ -551,8 +551,7 @@
 // }
 
 import 'package:flutter/material.dart';
-import 'package:simple_polls/simple_polls.dart';
-import 'package:threekm/widgets/news_reaction_button.dart';
+import 'package:threekm/Custom_library/Polls/simple_polls.dart';
 
 class PollView extends StatefulWidget {
   const PollView({Key? key}) : super(key: key);

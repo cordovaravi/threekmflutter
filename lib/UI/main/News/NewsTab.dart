@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 import 'dart:ui';
 import 'package:animated_widgets/animated_widgets.dart';
@@ -8,11 +9,15 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
-import 'package:simple_polls/simple_polls.dart';
-import 'package:threekm/Custom_library/BouncingWidget.dart';
+import 'package:threekm/Custom_library/Polls/simple_polls.dart';
 import 'package:threekm/Models/home1_model.dart';
 import 'package:threekm/UI/main/News/NewsList.dart';
 import 'package:threekm/UI/main/News/PostView.dart';
+import 'package:threekm/UI/main/navigation.dart';
+import 'package:threekm/commenwidgets/CustomSnakBar.dart';
+import 'package:threekm/networkservice/Api_Provider.dart';
+import 'package:threekm/providers/main/AddPost_Provider.dart';
+import 'package:threekm/providers/main/AthorProfile_Provider.dart';
 import 'package:threekm/providers/main/Quiz_Provider.dart';
 import 'package:threekm/providers/main/home1_provider.dart';
 import 'package:provider/provider.dart';
@@ -23,7 +28,8 @@ import 'Widgets/Adspopup.dart';
 
 class NewsTab extends StatefulWidget {
   final String? deviceId;
-  NewsTab({this.deviceId});
+  final bool? reload;
+  NewsTab({this.reload, this.deviceId});
   @override
   _NewsTabState createState() => _NewsTabState();
 }
@@ -32,27 +38,39 @@ class _NewsTabState extends State<NewsTab>
     with AutomaticKeepAliveClientMixin, TickerProviderStateMixin {
   late final AnimationController _controller;
   String? requestJson;
-  int _current = 0;
 
   @override
   void initState() {
     super.initState();
     _controller = AnimationController(vsync: this);
-    Future.delayed(Duration.zero, () {
-      requestJson = json.encode({
-        "lat": "",
-        "lng": "",
-        "ios": Platform.isAndroid ? false : true,
-        "lang": "en",
-        "device": widget.deviceId ?? ""
-      });
-      context.read<HomefirstProvider>().getNewsfirst(requestJson).then((value) {
-        Future.delayed(Duration(milliseconds: 100), () {
-          context.read<HomeSecondProvider>().getNewsSecond(requestJson);
+    if (widget.reload != true) {
+      Future.delayed(Duration.zero, () async {
+        String token = await ApiProvider().getToken();
+        requestJson = json.encode({
+          "lat": "",
+          "lng": "",
+          "ios": Platform.isAndroid ? false : true,
+          "lang": "en",
+          "device": widget.deviceId ?? "",
+          "token": "$token"
         });
+        context
+            .read<HomefirstProvider>()
+            .getNewsfirst(requestJson)
+            .then((value) {
+          Future.delayed(Duration(milliseconds: 100), () {
+            context.read<HomeSecondProvider>().getNewsSecond(requestJson);
+          });
+        });
+        //context.read<HomeSecondProvider>().getNewsSecond(requestJson);
+        context.read<AddPostProvider>();
       });
-      //context.read<HomeSecondProvider>().getNewsSecond(requestJson);
-    });
+    }
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
   }
 
   @override
@@ -64,8 +82,20 @@ class _NewsTabState extends State<NewsTab>
   @override
   Widget build(BuildContext context) {
     super.build(context);
+    log("main building");
     final newsFirstProvider = context.watch<HomefirstProvider>();
     final newsSecondProvider = context.watch<HomeSecondProvider>();
+    final addpostProvider = context.watch<AddPostProvider>();
+    if (addpostProvider.ispostUploaded != null &&
+        addpostProvider.ispostUploaded == true) {
+      Future.delayed(Duration(seconds: 1), () {
+        CustomSnackBar(context, Text("Post has been submmitted"));
+      }).then((value) => addpostProvider.removeSnack());
+    } else if (addpostProvider.isUploadError) {
+      Future.delayed(Duration(seconds: 1), () {
+        CustomSnackBar(context, Text("Upload Failed!"));
+      });
+    }
     return RefreshIndicator(
       onRefresh: () {
         return context
@@ -78,6 +108,68 @@ class _NewsTabState extends State<NewsTab>
       child: SingleChildScrollView(
         child: Column(
           children: [
+            Container(
+              child: Padding(
+                padding: EdgeInsets.zero,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      height: 32,
+                      width: 250,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(21),
+                          border: Border.all(color: Color(0xffDFE5EE))),
+                      child: Row(
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.only(left: 15),
+                            child: Icon(
+                              Icons.search_rounded,
+                              color: Colors.grey,
+                            ),
+                          ),
+                          Padding(
+                              padding: EdgeInsets.only(left: 11),
+                              child: Text(
+                                "Search Hyperlocal News",
+                                style: ThreeKmTextConstants.tk12PXLatoBlackBold
+                                    .copyWith(color: Colors.grey),
+                              ))
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(left: 12),
+                      child: Container(
+                          height: 32,
+                          width: 32,
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                                image: AssetImage("assets/bell.png")),
+                            shape: BoxShape.circle,
+                            //color: Color(0xff7572ED)
+                          )),
+                    ),
+                    InkWell(
+                      onTap: () => drawerController.open!(),
+                      child: Padding(
+                        padding: EdgeInsets.only(left: 12),
+                        child: Container(
+                            height: 32,
+                            width: 32,
+                            decoration: BoxDecoration(
+                              image: DecorationImage(
+                                  image: AssetImage("assets/male-user.png")),
+                              shape: BoxShape.circle,
+                              //color: Color(0xffFF464B)
+                            )),
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            ),
             // Banner
             if (newsFirstProvider.homeNewsFirst != null)
               ListView.builder(
@@ -155,11 +247,12 @@ class _NewsTabState extends State<NewsTab>
                                       itemBuilder: (BuildContext context,
                                               int bannerIndex, heroIndex) =>
                                           GestureDetector(
-                                              child: BouncingWidget(
-                                        scaleFactor: 1.5,
-                                        onPressed: () {
-                                          print("ontap");
-                                        },
+                                              child: Container(
+                                        //BouncingWidget(
+                                        // scaleFactor: 1.5,
+                                        // onPressed: () {
+                                        //   print("ontap");
+                                        // },
                                         child: CachedNetworkImage(
                                             fit: BoxFit.cover,
                                             width: 1000,
@@ -193,27 +286,29 @@ class _NewsTabState extends State<NewsTab>
                                             // });
                                           }),
                                     ),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children:
-                                          finalPost.banners!.map((banner) {
-                                        int index =
-                                            finalPost.banners!.indexOf(banner);
-                                        return Container(
-                                          width: 8.0,
-                                          height: 8.0,
-                                          margin: EdgeInsets.symmetric(
-                                              vertical: 10.0, horizontal: 2.0),
-                                          decoration: BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            color: _current == index
-                                                ? Color.fromRGBO(0, 0, 0, 0.9)
-                                                : Color.fromRGBO(0, 0, 0, 0.4),
-                                          ),
-                                        );
-                                      }).toList(),
-                                    ),
+                                    // Row(
+                                    //   mainAxisAlignment:
+                                    //      MainAxisAlignment.center,
+                                    // children:
+                                    //     finalPost.banners!.map((banner) {
+                                    //   int index = finalPost.banners!
+                                    //       .indexOf(banner);
+                                    //   return Container(
+                                    //     width: 8.0,
+                                    //     height: 8.0,
+                                    //     margin: EdgeInsets.symmetric(
+                                    //         vertical: 10.0,
+                                    //         horizontal: 2.0),
+                                    //     decoration: BoxDecoration(
+                                    //       shape: BoxShape.circle,
+                                    //       color: _current == index
+                                    //           ? Color.fromRGBO(0, 0, 0, 0.9)
+                                    //           : Color.fromRGBO(
+                                    //               0, 0, 0, 0.4),
+                                    //     ),
+                                    //   );
+                                    // }).toList(),
+                                    // ),
                                   ],
                                 )
                               : Container();
@@ -274,7 +369,7 @@ class _NewsTabState extends State<NewsTab>
                                 right: 30,
                                 left: 30,
                                 child: Container(
-                                    padding: EdgeInsets.all(10),
+                                    //padding: EdgeInsets.all(10),
                                     //height: 300,
                                     //width: 250,
                                     decoration: BoxDecoration(
@@ -292,16 +387,21 @@ class _NewsTabState extends State<NewsTab>
                                       child: Column(
                                           mainAxisSize: MainAxisSize.min,
                                           children: [
-                                            Text(
-                                                finalScondPost.quiz!.question
-                                                    .toString(),
-                                                style: ThreeKmTextConstants
-                                                    .tk16PXPoppinsWhiteBold,
-                                                textAlign: TextAlign.center),
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
+                                              child: Text(
+                                                  finalScondPost.quiz!.question
+                                                      .toString(),
+                                                  style: ThreeKmTextConstants
+                                                      .tk16PXPoppinsWhiteBold,
+                                                  textAlign: TextAlign.center),
+                                            ),
                                             SizedBox(height: 20),
                                             Container(
                                               padding: EdgeInsets.only(top: 10),
-                                              decoration: BoxDecoration(),
+                                              decoration: BoxDecoration(
+                                                  color: Colors.white),
                                               child: ListView.builder(
                                                 shrinkWrap: true,
                                                 physics:
@@ -310,86 +410,48 @@ class _NewsTabState extends State<NewsTab>
                                                     .quiz!.options!.length,
                                                 itemBuilder:
                                                     (context, quizIndex) {
-                                                  return Option(
-                                                    quizId: finalScondPost
-                                                        .quiz!.quizId,
-                                                    text: finalScondPost
-                                                        .quiz!
-                                                        .options![quizIndex]
-                                                        .bullets
-                                                        .toString(),
-                                                    index: quizIndex,
-                                                    option: finalScondPost
-                                                        .quiz!
-                                                        .options![quizIndex]
-                                                        .text
-                                                        .toString(),
-                                                    correctAnsIndex: finalScondPost
-                                                                .quiz!.answer
-                                                                .toString() ==
-                                                            finalScondPost
-                                                                .quiz!
-                                                                .options![
-                                                                    quizIndex]
-                                                                .text
-                                                        ? quizIndex
-                                                        : 100,
+                                                  return Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            left: 4, right: 4),
+                                                    child: Option(
+                                                      selectedOptionIndex:
+                                                          finalScondPost.quiz!
+                                                                      .answer
+                                                                      .toString() ==
+                                                                  finalScondPost
+                                                                      .quiz!
+                                                                      .selectedOption
+                                                              ? quizIndex
+                                                              : 100,
+                                                      isAnswred: finalScondPost
+                                                          .quiz!.isAnswered!,
+                                                      quizId: finalScondPost
+                                                          .quiz!.quizId,
+                                                      text: finalScondPost
+                                                          .quiz!
+                                                          .options![quizIndex]
+                                                          .bullets
+                                                          .toString(),
+                                                      index: quizIndex,
+                                                      option: finalScondPost
+                                                          .quiz!
+                                                          .options![quizIndex]
+                                                          .text
+                                                          .toString(),
+                                                      correctAnsIndex: finalScondPost
+                                                                  .quiz!.answer
+                                                                  .toString() ==
+                                                              finalScondPost
+                                                                  .quiz!
+                                                                  .options![
+                                                                      quizIndex]
+                                                                  .text
+                                                          ? quizIndex
+                                                          : 100,
+                                                      //rightAnswer: finalScondPost.quiz!.answer.toString()
+                                                    ),
                                                   );
-                                                  // return GestureDetector(
-                                                  //   onTap: () {
-
-                                                  //   },
-                                                  //   child: Padding(
-                                                  //     padding:
-                                                  //         const EdgeInsets.only(
-                                                  //             bottom: 8),
-                                                  //     child: Container(
-                                                  //       padding: EdgeInsets.all(3),
-                                                  //       decoration: BoxDecoration(
-                                                  //           borderRadius:
-                                                  //               BorderRadius
-                                                  //                   .circular(20),
-                                                  //           color: quizProvider
-                                                  //               .provideColor),
-                                                  //       child: Row(children: [
-                                                  //         Container(
-                                                  //           height: 30,
-                                                  //           width: 30,
-                                                  //           decoration:
-                                                  //               BoxDecoration(
-                                                  //             border: Border.all(
-                                                  //                 color:
-                                                  //                     Colors.black),
-                                                  //             shape:
-                                                  //                 BoxShape.circle,
-                                                  //           ),
-                                                  //           child: Center(
-                                                  //             child: Text(
-                                                  //                 finalScondPost
-                                                  //                     .quiz!
-                                                  //                     .options![
-                                                  //                         quizIndex]
-                                                  //                     .bullets
-                                                  //                     .toString()),
-                                                  //           ),
-                                                  //         ),
-                                                  //         Container(
-                                                  //             child: Padding(
-                                                  //           padding:
-                                                  //               const EdgeInsets
-                                                  //                   .only(left: 8),
-                                                  //           child: Text(
-                                                  //               finalScondPost
-                                                  //                   .quiz!
-                                                  //                   .options![
-                                                  //                       quizIndex]
-                                                  //                   .text
-                                                  //                   .toString()),
-                                                  //         ))
-                                                  //       ]),
-                                                  //     ),
-                                                  //   ),
-                                                  // );
                                                 },
                                               ),
                                             )
@@ -403,14 +465,6 @@ class _NewsTabState extends State<NewsTab>
                                       left: 30,
                                       child: Lottie.asset(
                                         'assets/blast.json',
-                                        // controller: _controller,
-                                        // onLoaded: (composition) {
-                                        //   // Configure the AnimationController with the duration of the
-                                        //   // Lottie file and start the animation.
-                                        //   _controller
-                                        //     ..duration = composition.duration
-                                        //     ..forward();
-                                        // },
                                       ),
                                     )
                                   : SizedBox.shrink(),
@@ -419,185 +473,6 @@ class _NewsTabState extends State<NewsTab>
                         );
                       },
                     );
-                    // if (finalScondPost.quiz!.type == "poll") {
-                    //   return Container(
-                    //     height: MediaQuery.of(context).size.height * 0.6,
-                    //     width: MediaQuery.of(context).size.width,
-                    //     decoration: BoxDecoration(
-                    //         image: DecorationImage(
-                    //             fit: BoxFit.cover,
-                    //             image: CachedNetworkImageProvider(
-                    //                 finalScondPost.quiz!.image.toString()))),
-                    //     child: Stack(
-                    //       children: [
-                    //         Positioned(
-                    //           bottom: 20,
-                    //           left: 20,
-                    //           right: 20,
-                    //           child: Container(
-                    //             height: 150,
-                    //             width: 300,
-                    //             //color: Colors.amber,
-                    //             child: Column(
-                    //                 mainAxisAlignment: MainAxisAlignment.start,
-                    //                 children: [
-                    //                   Text(
-                    //                     finalScondPost.quiz!.question
-                    //                         .toString(),
-                    //                     textAlign: TextAlign.center,
-                    //                     style: ThreeKmTextConstants
-                    //                         .tk16PXPoppinsWhiteBold,
-                    //                   ),
-                    //                   Container(
-                    //                     child: Row(
-                    //                       children: [
-                    //                         Flexible(
-                    //                             fit: FlexFit.tight,
-                    //                             flex: 1,
-                    //                             child: Container(
-                    //                               decoration: BoxDecoration(
-                    //                                   borderRadius:
-                    //                                       BorderRadius.circular(
-                    //                                           20)),
-                    //                               height: 60,
-                    //                               //color: Colors.black12,
-                    //                               child: Center(
-                    //                                 child: Text(
-                    //                                   finalScondPost.quiz!
-                    //                                       .options!.first.text
-                    //                                       .toString(),
-                    //                                   style: ThreeKmTextConstants
-                    //                                       .tk12PXPoppinsWhiteRegular,
-                    //                                 ),
-                    //                               ),
-                    //                             )),
-                    //                         Flexible(
-                    //                             fit: FlexFit.tight,
-                    //                             flex: 1,
-                    //                             child: Container(
-                    //                               height: 60,
-                    //                               child: Center(
-                    //                                 child: Text(
-                    //                                   finalScondPost.quiz!
-                    //                                       .options!.last.text
-                    //                                       .toString(),
-                    //                                   style: ThreeKmTextConstants
-                    //                                       .tk12PXPoppinsWhiteRegular,
-                    //                                 ),
-                    //                               ),
-                    //                             ))
-                    //                       ],
-                    //                     ),
-                    //                   )
-                    //                   // Polls(children: [
-                    //                   //   Poll
-                    //                   // ],
-                    //                   // question: Text( finalScondPost.quiz!.question
-                    //                   //       .toString()),
-                    //                   // voteData: voteData,
-                    //                   // currentUser: currentUser,
-                    //                   // creatorID: creatorID)
-                    //                 ]),
-                    //           ),
-                    //         )
-                    //       ],
-                    //     ),
-                    //   );
-                    // }
-                    //else
-                    // if (finalScondPost.quiz!.type == "quiz") {
-                    //   return Container(
-                    //     height: MediaQuery.of(context).size.height * 0.6,
-                    //     width: MediaQuery.of(context).size.width,
-                    //     decoration: BoxDecoration(
-                    //       image: DecorationImage(
-                    //           image: CachedNetworkImageProvider(
-                    //               finalScondPost.quiz!.image.toString())),
-                    //     ),
-                    //     child: Stack(
-                    //       children: [
-                    //         Positioned(
-                    //           bottom: 80,
-                    //           right: 30,
-                    //           left: 30,
-                    //           child: Container(
-                    //               padding: EdgeInsets.all(10),
-                    //               //height: 300,
-                    //               //width: 250,
-                    //               decoration: BoxDecoration(
-                    //                   color: Colors.grey.shade600,
-                    //                   borderRadius: BorderRadius.circular(20),
-                    //                   boxShadow: [
-                    //                     BoxShadow(
-                    //                         color: Colors.black38,
-                    //                         blurRadius: 0.8)
-                    //                   ]),
-                    //               child: Column(
-                    //                   mainAxisSize: MainAxisSize.min,
-                    //                   children: [
-                    //                     Text(
-                    //                       finalScondPost.quiz!.question
-                    //                           .toString(),
-                    //                       style: ThreeKmTextConstants
-                    //                           .tk16PXPoppinsWhiteBold,
-                    //                     ),
-                    //                     SizedBox(height: 20),
-                    //                     ListView.builder(
-                    //                       shrinkWrap: true,
-                    //                       physics:
-                    //                           NeverScrollableScrollPhysics(),
-                    //                       itemCount: finalScondPost
-                    //                           .quiz!.options!.length,
-                    //                       itemBuilder: (context, quizIndex) {
-                    //                         return Padding(
-                    //                           padding: const EdgeInsets.only(
-                    //                               bottom: 8),
-                    //                           child: Container(
-                    //                             padding: EdgeInsets.all(3),
-                    //                             decoration: BoxDecoration(
-                    //                                 borderRadius:
-                    //                                     BorderRadius.circular(
-                    //                                         20),
-                    //                                 color: Colors.white),
-                    //                             child: Row(children: [
-                    //                               Container(
-                    //                                 height: 30,
-                    //                                 width: 30,
-                    //                                 decoration: BoxDecoration(
-                    //                                   border: Border.all(
-                    //                                       color: Colors.black),
-                    //                                   shape: BoxShape.circle,
-                    //                                 ),
-                    //                                 child: Center(
-                    //                                   child: Text(finalScondPost
-                    //                                       .quiz!
-                    //                                       .options![quizIndex]
-                    //                                       .bullets
-                    //                                       .toString()),
-                    //                                 ),
-                    //                               ),
-                    //                               Container(
-                    //                                   child: Padding(
-                    //                                 padding:
-                    //                                     const EdgeInsets.only(
-                    //                                         left: 8),
-                    //                                 child: Text(finalScondPost
-                    //                                     .quiz!
-                    //                                     .options![quizIndex]
-                    //                                     .text
-                    //                                     .toString()),
-                    //                               ))
-                    //                             ]),
-                    //                           ),
-                    //                         );
-                    //                       },
-                    //                     )
-                    //                   ])),
-                    //         )
-                    //       ],
-                    //     ),
-                    //   );
-                    // }
                   } else if (finalScondPost.type == "quiz" &&
                       finalScondPost.quiz?.type == "poll") {
                     return Container(
@@ -621,15 +496,15 @@ class _NewsTabState extends State<NewsTab>
                                   color: Colors.white),
                               onSelection: (PollFrameModel model,
                                   PollOptions selectedOptionModel) {
+                                context.read<QuizProvider>().submitPollAnswer(
+                                    answer: selectedOptionModel.label,
+                                    quizId: finalScondPost.quiz!.id!.toInt());
                                 print('Now total polls are : ' +
                                     model.totalPolls.toString());
                                 print('Selected option has label : ' +
                                     selectedOptionModel.label);
                               },
-                              // onReset: (PollFrameModel model) {
-                              //   print(
-                              //       'Poll has been reset, this happens only in case of editable polls');
-                              // },
+
                               optionsBorderShape:
                                   StadiumBorder(), //Its Default so its not necessary to write this line
                               model: PollFrameModel(
@@ -656,30 +531,12 @@ class _NewsTabState extends State<NewsTab>
                                     print(option.count);
                                     return PollOptions(
                                         label: option.text.toString(),
-                                        pollsCount: option.percent!.toInt(),
+                                        pollsCount: option.percent != 0 &&
+                                                option.percent != null
+                                            ? option.percent!.toInt()
+                                            : 0,
                                         id: UniqueKey());
-                                  }).toList()
-                                  // options: <PollOptions>[
-                                  //   PollOptions(
-                                  //     label: "Option 1",
-                                  //     pollsCount: 40,
-                                  //     isSelected: false,
-                                  //     id: 1,
-                                  //   ),
-                                  //   PollOptions(
-                                  //     label: "Option 2",
-                                  //     pollsCount: 25,
-                                  //     isSelected: false,
-                                  //     id: 2,
-                                  //   ),
-                                  //   PollOptions(
-                                  //     label: "Option 3",
-                                  //     pollsCount: 35,
-                                  //     isSelected: false,
-                                  //     id: 3,
-                                  //   ),
-                                  // ],
-                                  ),
+                                  }).toList()),
                             )
                           ],
                         ));
@@ -922,16 +779,19 @@ class NewsContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-        height: 210,
-        width: double.infinity,
+        margin: EdgeInsets.only(top: 5),
+        height: 280,
+        // width: double.infinity,
+        width: MediaQuery.of(context).size.width,
+        color: Colors.white,
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.only(top: 10),
+              padding: EdgeInsets.zero,
               child: Row(
                 children: [
                   Padding(
-                    padding: const EdgeInsets.only(left: 5),
+                    padding: EdgeInsets.only(left: 5),
                     child: Container(
                       height: 30,
                       width: 30,
@@ -947,7 +807,9 @@ class NewsContainer extends StatelessWidget {
                   Padding(
                     padding: EdgeInsets.only(left: 5),
                     child: finalPost.category?.name != null
-                        ? Text(finalPost.category!.name.toString())
+                        ? Text(finalPost.category!.name.toString(),
+                            style:
+                                ThreeKmTextConstants.tk16PXPoppinsBlackMedium)
                         : Text(""),
                   ),
                   Spacer(),
@@ -968,8 +830,10 @@ class NewsContainer extends StatelessWidget {
               ),
             ),
             Container(
-              height: 150,
+              height: 220,
               width: double.infinity,
+              color: Colors.white,
+              //margin: EdgeInsets.only(bottom: 12),
               child: finalPost.category?.posts != null
                   ? ListView.builder(
                       cacheExtent: 9999,
@@ -992,36 +856,95 @@ class NewsContainer extends StatelessWidget {
                                             .toString())));
                           },
                           child: Padding(
-                            padding: const EdgeInsets.all(8.0),
+                            padding: EdgeInsets.only(left: 13),
                             child: Container(
-                                height: 145,
-                                width: 150,
-                                child: Column(children: [
-                                  Container(
-                                    height: 100,
-                                    width: 150,
-                                    decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.only(
-                                            topLeft: Radius.circular(10),
-                                            topRight: Radius.circular(10)),
-                                        image: DecorationImage(
-                                            fit: BoxFit.cover,
-                                            image: CachedNetworkImageProvider(
-                                                contentPost![postIndex]
-                                                    .image
-                                                    .toString()))),
-                                    child: Stack(
-                                      children: [],
-                                    ),
-                                  ),
-                                  Container(
-                                    height: 34,
-                                    width: 150,
-                                    child: Text(contentPost[postIndex]
-                                        .headline
-                                        .toString()),
-                                  ),
-                                ])),
+                                height: 195,
+                                width: 147,
+                                margin: EdgeInsets.only(bottom: 10),
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    color: Colors.white,
+                                    boxShadow: [
+                                      BoxShadow(
+                                          color: Colors.grey.shade300,
+                                          blurRadius: 8)
+                                    ]),
+                                child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Container(
+                                          height: 100,
+                                          width: 157,
+                                          decoration: BoxDecoration(
+                                              borderRadius: BorderRadius.only(
+                                                  topLeft: Radius.circular(10),
+                                                  topRight:
+                                                      Radius.circular(10)),
+                                              image: DecorationImage(
+                                                  fit: BoxFit.cover,
+                                                  image:
+                                                      CachedNetworkImageProvider(
+                                                          contentPost![
+                                                                  postIndex]
+                                                              .image
+                                                              .toString()))),
+                                          child: Stack(
+                                            children: [
+                                              contentPost[postIndex]
+                                                              .postCreatedDate !=
+                                                          null ||
+                                                      contentPost[postIndex]
+                                                          .postCreatedDate!
+                                                          .isNotEmpty
+                                                  ? Positioned(
+                                                      bottom: 0,
+                                                      child: Container(
+                                                          height: 21,
+                                                          width: 75,
+                                                          decoration: BoxDecoration(
+                                                              color: Color(
+                                                                  0xff0F0F2D),
+                                                              borderRadius: BorderRadius.only(
+                                                                  topRight: Radius
+                                                                      .circular(
+                                                                          10),
+                                                                  bottomRight: Radius
+                                                                      .circular(
+                                                                          10))),
+                                                          child: Padding(
+                                                            padding:
+                                                                EdgeInsets.only(
+                                                                    left: 4),
+                                                            child: Text(
+                                                              contentPost[
+                                                                      postIndex]
+                                                                  .postCreatedDate
+                                                                  .toString(),
+                                                              style: ThreeKmTextConstants
+                                                                  .tk12PXPoppinsWhiteRegular,
+                                                            ),
+                                                          )),
+                                                    )
+                                                  : SizedBox(),
+                                            ],
+                                          )),
+                                      SizedBox(
+                                        height: 10,
+                                      ),
+                                      Container(
+                                        height: 95,
+                                        width: 150,
+                                        padding:
+                                            EdgeInsets.only(left: 8, right: 8),
+                                        child: Text(
+                                            contentPost[postIndex]
+                                                .headline
+                                                .toString(),
+                                            overflow: TextOverflow.fade,
+                                            style: ThreeKmTextConstants
+                                                .tk14PXPoppinsBlackSemiBold),
+                                      ),
+                                    ])),
                           ),
                         );
                       },
@@ -1054,12 +977,17 @@ class Option extends StatelessWidget {
       required this.index,
       required this.option,
       required this.quizId,
+      required this.isAnswred,
+      required this.selectedOptionIndex,
+      //required this.rightAnswer,
       this.correctAnsIndex});
   final String option;
   final String text;
   final int index;
   final int? correctAnsIndex;
   final int? quizId;
+  final bool isAnswred;
+  final int selectedOptionIndex;
   @override
   Widget build(BuildContext context) {
     return Consumer<QuizProvider>(builder: (context, model, _) {
@@ -1076,27 +1004,54 @@ class Option extends StatelessWidget {
         return Colors.white;
       }
 
+      Color GetColorAlreadyAnwer(
+          {required int answerIndex,
+          required int index,
+          required int selectedIndex}) {
+        if (index == answerIndex) {
+          return Colors.green;
+        } else if (index == selectedIndex) {
+          return Colors.red;
+        }
+        return Colors.grey;
+      }
+
       return GestureDetector(
-        onTap: () {
-          context.read<QuizProvider>().checkAns(index, correctAnsIndex!);
-          print(index);
-          print(this.option);
-          context.read<QuizProvider>().submitQuiz(quizId!, this.option);
-        },
+        onTap: this.isAnswred == null || this.isAnswred == false
+            ? () {
+                context.read<QuizProvider>().checkAns(index, correctAnsIndex!);
+                print(index);
+                print(this.option);
+                context.read<QuizProvider>().submitQuiz(quizId!, this.option);
+              }
+            : null,
         child: Padding(
           padding: const EdgeInsets.only(bottom: 8),
           child: Container(
             padding: EdgeInsets.all(3),
             decoration: BoxDecoration(
-                border: Border.all(color: getTheRightColor(), width: 1),
+                border: Border.all(
+                    color: this.isAnswred == true
+                        ? GetColorAlreadyAnwer(
+                            selectedIndex: this.selectedOptionIndex,
+                            index: this.index,
+                            answerIndex: this.correctAnsIndex!)
+                        : getTheRightColor(),
+                    width: 1),
                 borderRadius: BorderRadius.circular(20),
-                color: Colors.grey),
+                color: Colors.white),
             child: Row(children: [
               Container(
                 height: 30,
                 width: 30,
                 decoration: BoxDecoration(
-                  border: Border.all(color: getTheRightColor()),
+                  border: Border.all(
+                      color: this.isAnswred == true
+                          ? GetColorAlreadyAnwer(
+                              selectedIndex: this.selectedOptionIndex,
+                              index: this.index,
+                              answerIndex: this.correctAnsIndex!)
+                          : getTheRightColor()),
                   shape: BoxShape.circle,
                 ),
                 child: Center(

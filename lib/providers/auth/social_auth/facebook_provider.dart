@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:threekm/commenwidgets/CustomSnakBar.dart';
 import 'package:threekm/commenwidgets/commenwidget.dart';
 import 'package:threekm/networkservice/Api_Provider.dart';
@@ -40,6 +41,14 @@ class FaceAuthProvider extends ChangeNotifier {
           accessToken = value.token;
           notifyListeners();
         });
+        if (response != null) {
+          SharedPreferences _prefs = await SharedPreferences.getInstance();
+          _prefs.setString(
+              "userfname", response.user!.displayName!.split(" ").first);
+          _prefs.setString(
+              "userlname", response.user!.displayName!.split(" ").last);
+          _prefs.setString("user_email", response.user!.email.toString());
+        }
         String requestJson = json.encode({
           "platform": "facebook",
           "platform_response": {

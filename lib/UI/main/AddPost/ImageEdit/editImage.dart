@@ -12,7 +12,6 @@ import 'package:threekm/UI/main/AddPost/AddNewPost.dart';
 import 'package:threekm/UI/main/News/NewsList.dart';
 import 'package:threekm/providers/main/AddPost_Provider.dart';
 import 'package:threekm/utils/utils.dart';
-import 'package:threekm/widgets/video_widget.dart';
 import 'package:video_player/video_player.dart';
 
 import 'EditHelper.dart';
@@ -61,8 +60,12 @@ class _EditImageState extends State<EditImage> {
             if (imageList.getMoreImages.length == 0) {
               _showImageVideoBottomModalSheet(context);
             } else {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => AddNewPost()));
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => AddNewPost(
+                            imageFile: ImageEditingFile!,
+                          )));
             }
             // context.read<AddPostProvider>().addImages(ImageEditingFile);
             // Navigator.push(
@@ -578,6 +581,7 @@ class _EditImageState extends State<EditImage> {
                           final pickedVideo = await _imagePicker.pickVideo(
                               source: ImageSource.gallery);
                           //final file = XFile(pickedVideo!.path);
+                          Navigator.pop(context);
                           if (pickedVideo != null) {
                             context
                                 .read<AddPostProvider>()

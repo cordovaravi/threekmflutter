@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:threekm/commenwidgets/commenwidget.dart';
 
 const Color bgColor = Color(0xFF0044CE);
+const Color uploadColor = Color(0xff0F0F2D);
 
 class CustomSnackBar {
   CustomSnackBar(BuildContext context, Widget content,
@@ -14,6 +14,20 @@ class CustomSnackBar {
 
     ScaffoldMessenger.of(context).hideCurrentSnackBar();
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
-    hideLoading();
+    //hideLoading();
+  }
+}
+
+class UploadingSnackBar {
+  UploadingSnackBar(BuildContext context, Widget content,
+      {SnackBarAction? snackBarAction, Color backgroundColor = uploadColor}) {
+    final SnackBar snackBar = SnackBar(
+        action: snackBarAction,
+        backgroundColor: backgroundColor,
+        content: content,
+        duration: Duration(days: 100),
+        behavior: SnackBarBehavior.fixed);
+    // ScaffoldMessenger.of(context).hideCurrentSnackBar();
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 }

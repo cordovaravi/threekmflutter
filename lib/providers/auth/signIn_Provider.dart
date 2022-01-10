@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -22,14 +24,16 @@ class SignInProvider extends ChangeNotifier {
           await _apiProvider.auth(login_with_password, requestJson);
       if (response != null) {
         hideLoading();
-        print(response);
+        log("$response");
         if (response['status'] == 'success') {
           // CustomSnackBar(context, Text("Login Successfull"));
           _apiProvider.saveLoginCredentials(
-              response['data']['result']['token'],
-              response['data']['result']['firstname'],
-              response['data']['result']['lastname'],
-              response['data']['result']['phone_no']);
+            response['data']['result']['token'],
+            response['data']['result']['firstname'],
+            response['data']['result']['lastname'],
+            response['data']['result']['phone_no'],
+            response['data']['result']['avatar'],
+          );
           Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(builder: (context) => TabBarNavigation()),
@@ -56,10 +60,12 @@ class SignInProvider extends ChangeNotifier {
         _wrongOTP = false;
         notifyListeners();
         _apiProvider.saveLoginCredentials(
-            response['data']['result']['token'],
-            response['data']['result']['firstname'],
-            response['data']['result']['lastname'],
-            response['data']['result']['phone_no']);
+          response['data']['result']['token'],
+          response['data']['result']['firstname'],
+          response['data']['result']['lastname'],
+          response['data']['result']['phone_no'],
+          response['data']['result']['avatar'],
+        );
         Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(builder: (context) => TabBarNavigation()),

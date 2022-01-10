@@ -408,6 +408,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.7.0"
+  flutter_zoom_drawer:
+    dependency: "direct main"
+    description:
+      name: flutter_zoom_drawer
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.1.2"
   fluttertoast:
     dependency: "direct main"
     description:
@@ -548,6 +555,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.10.0+3"
+  hidden_drawer_menu:
+    dependency: "direct main"
+    description:
+      name: hidden_drawer_menu
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "3.0.1"
   hive:
     dependency: "direct main"
     description:
@@ -1024,13 +1038,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.0"
-  simple_polls:
-    dependency: "direct main"
-    description:
-      name: simple_polls
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.0.6"
   sky_engine:
     dependency: transitive
     description: flutter
@@ -1107,7 +1114,7 @@ packages:
     source: hosted
     version: "0.4.2"
   timeago:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: timeago
       url: "https://pub.dartlang.org"

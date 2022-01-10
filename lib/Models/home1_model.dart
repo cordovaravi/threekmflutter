@@ -688,6 +688,7 @@ class Quiz {
     this.id,
     this.itemType,
     this.isAnswered,
+    this.selectedOption,
   });
 
   int? quizId;
@@ -701,6 +702,7 @@ class Quiz {
   int? id;
   String? itemType;
   bool? isAnswered;
+  String? selectedOption;
 
   factory Quiz.fromJson(Map<String, dynamic> json) => Quiz(
         quizId: json["quiz_id"] == null ? null : json["quiz_id"],
@@ -719,6 +721,8 @@ class Quiz {
         id: json["id"] == null ? null : json["id"],
         itemType: json["item_type"] == null ? null : json["item_type"],
         isAnswered: json["is_answered"] == null ? null : json["is_answered"],
+        selectedOption:
+            json["selected_option"] == null ? null : json["selected_option"],
       );
 }
 

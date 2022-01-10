@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/cupertino.dart';
 import 'package:threekm/Models/home1_model.dart';
 import 'package:threekm/commenwidgets/commenwidget.dart';
@@ -10,13 +12,15 @@ class HomefirstProvider extends ChangeNotifier {
   NewsHomeModel? get homeNewsFirst => _homeModel;
 
   Future<Null> getNewsfirst(requestJson) async {
+    String token = await _apiProvider.getToken();
+    log("token is $token");
     try {
       showLoading();
       final response = await _apiProvider.post(getHomePage, requestJson);
       if (response != null) {
         hideLoading();
         _homeModel = NewsHomeModel.fromJson(response);
-        print(_homeModel);
+
         notifyListeners();
       }
     } on Exception catch (e) {

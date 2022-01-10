@@ -1,7 +1,9 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:threekm/commenwidgets/CustomSnakBar.dart';
 import 'package:threekm/commenwidgets/commenwidget.dart';
 import 'package:threekm/networkservice/Api_Provider.dart';
@@ -35,14 +37,23 @@ class GoogleSignInprovider extends ChangeNotifier {
   Future<dynamic> handleSignIn(context) async {
     try {
       showLoading();
-      UserCredential? response = await _signInWithGoogle().onError(
-          (error, stackTrace) =>
-              CustomSnackBar(context, Text("Request Failed")));
+      UserCredential? response =
+          await _signInWithGoogle().onError((error, stackTrace) {
+        hideLoading();
+        CustomSnackBar(context, Text("Request Failed"));
+      });
       if (response != null) {
-        await response.user!.getIdTokenResult().then((value) {
+        await response.user!.getIdTokenResult().then((value) async {
           accessToken = value.token;
           notifyListeners();
+          SharedPreferences _prefs = await SharedPreferences.getInstance();
+          _prefs.setString(
+              "userfname", response.user!.displayName!.split(" ").first);
+          _prefs.setString(
+              "userlname", response.user!.displayName!.split(" ").last);
+          _prefs.setString("user_email", response.user!.email.toString());
         });
+
         String requestJson = json.encode({
           "platform": "google-plus",
           "platform_response": {
@@ -63,6 +74,7 @@ class GoogleSignInprovider extends ChangeNotifier {
         if (registerResponse != null) {
           hideLoading();
           if (registerResponse['status'] == 'success') {
+            log(registerResponse);
             CustomSnackBar(context, Text("User Registered successfully"));
           } else {
             CustomSnackBar(context, Text("Google Api error"));

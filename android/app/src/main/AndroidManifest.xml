@@ -91,7 +91,7 @@
             android:stopWithTask="true" />
         <!--google maps api-->
         <meta-data android:name="com.google.android.geo.API_KEY"
-        android:value=""/>
+        android:value="AIzaSyCK9Q9Rt0k-q6HxqRNR5FtpssJZTXtmqsg"/>
         <!--end of gmap-->
     </application>
 </manifest>

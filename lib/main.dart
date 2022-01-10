@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
@@ -15,6 +14,7 @@ import 'package:threekm/providers/auth/signIn_Provider.dart';
 import 'package:threekm/providers/auth/signUp_Provider.dart';
 import 'package:threekm/providers/auth/social_auth/facebook_provider.dart';
 import 'package:threekm/providers/auth/social_auth/google_provider.dart';
+import 'package:threekm/providers/main/AthorProfile_Provider.dart';
 import 'package:threekm/providers/main/LikeList_Provider.dart';
 import 'package:threekm/providers/main/Quiz_Provider.dart';
 import 'package:threekm/providers/main/comment_Provider.dart';
@@ -137,7 +137,9 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider<LocationProvider>(
             create: (context) => LocationProvider()),
         ChangeNotifierProvider<AddPostProvider>(
-            create: (context) => AddPostProvider())
+            create: (context) => AddPostProvider()),
+        ChangeNotifierProvider<AutthorProfileProvider>(
+            create: (context) => AutthorProfileProvider())
       ],
       child: MaterialApp(
         // localizationsDelegates: [

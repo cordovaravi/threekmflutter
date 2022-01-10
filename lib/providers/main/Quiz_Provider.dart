@@ -66,4 +66,18 @@ class QuizProvider extends ChangeNotifier {
       print(response);
     }
   }
+
+  // bool _ispollAnswred = false;
+  // bool get ispollAnswred => _ispollAnswred;
+
+  void submitPollAnswer({required int quizId, required String answer}) async {
+    String _token = await _apiProvider.getToken();
+    String _requestJson = json.encode(
+        {"quiz_id": quizId, "selected_option": "$answer", "token": "$_token"});
+    final response = await _apiProvider.post(poll_Submit_Answer, _requestJson);
+    if (response != null) {
+      print(response);
+      if (response["StatusCode"] == "200") {}
+    }
+  }
 }

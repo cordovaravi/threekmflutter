@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -20,13 +21,14 @@ class ApiProvider {
   }
 
   //save login Token and user credentials
-  saveLoginCredentials(
-      String userToken, String fname, String lname, String phone) async {
+  saveLoginCredentials(String userToken, String fname, String lname,
+      String phone, String avatar) async {
     SharedPreferences _pref = await SharedPreferences.getInstance();
     await _pref.setString("token", "$userToken");
     await _pref.setString("userfname", "$fname");
     await _pref.setString("userlname", "$lname");
     await _pref.setString("userphone", "$phone");
+    await _pref.setString("avatar", "$avatar");
   }
 
   // Auth
@@ -123,7 +125,7 @@ class ApiProvider {
     switch (response.statusCode) {
       case 200:
         var responseJson = json.decode(utf8.decode(response.bodyBytes));
-        print(responseJson);
+        //log("$responseJson");
         return responseJson;
       case 400:
         throw BadRequestException(response.body.toString());

@@ -15,7 +15,8 @@ class VideoWidget extends StatefulWidget {
   _VideoWidgetState createState() => _VideoWidgetState();
 }
 
-class _VideoWidgetState extends State<VideoWidget> {
+class _VideoWidgetState extends State<VideoWidget>
+    with AutomaticKeepAliveClientMixin {
   late VideoPlayerController _videoPlayerController1;
   late VideoPlayerController _videoPlayerController2;
   ChewieController? _chewieController;
@@ -64,6 +65,7 @@ class _VideoWidgetState extends State<VideoWidget> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Container(
       child: _chewieController != null &&
               _chewieController!.videoPlayerController.value.isInitialized
@@ -80,6 +82,9 @@ class _VideoWidgetState extends State<VideoWidget> {
             ),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }
 
 

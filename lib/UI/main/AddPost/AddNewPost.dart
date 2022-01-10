@@ -1,10 +1,13 @@
 import 'dart:ui';
 
+import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:google_maps_webservice/directions.dart';
 import 'package:threekm/Custom_library/GooleMapsWidget/src/place_picker.dart';
+import 'package:threekm/UI/main/navigation.dart';
 import 'package:threekm/providers/Location/locattion_Provider.dart';
 import 'package:threekm/providers/main/AddPost_Provider.dart';
 import 'package:threekm/utils/api_paths.dart';
@@ -12,7 +15,8 @@ import 'package:threekm/utils/utils.dart';
 import 'package:provider/provider.dart';
 
 class AddNewPost extends StatefulWidget {
-  AddNewPost({Key? key}) : super(key: key);
+  final File imageFile;
+  AddNewPost({required this.imageFile, Key? key}) : super(key: key);
 
   @override
   _AddNewPostState createState() => _AddNewPostState();
@@ -20,6 +24,9 @@ class AddNewPost extends StatefulWidget {
 
 class _AddNewPostState extends State<AddNewPost> {
   TextEditingController _tagscontroller = TextEditingController();
+  TextEditingController _storyController = TextEditingController();
+  TextEditingController _headLineController = TextEditingController();
+  Geometry? _geometry;
   var padding = EdgeInsets.only(
     right: 18,
     left: 18,
@@ -39,7 +46,50 @@ class _AddNewPostState extends State<AddNewPost> {
         ),
         actions: [
           TextButton(
-              onPressed: () {},
+              onPressed: () {
+                context
+                    .read<AddPostProvider>()
+                    .uploadPng(
+                        context,
+                        _headLineController.text,
+                        _storyController.text,
+                        _selecetdAddress ?? "",
+                        _geometry!.location.lat,
+                        _geometry!.location.lng)
+                    .whenComplete(() {
+                  Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => TabBarNavigation(
+                                redirectedFromPost: true,
+                              )),
+                      (route) => false);
+                  // context
+                  //     .read<AddPostProvider>()
+                  //     .uploadPost(
+                  //         _headLineController.text,
+                  //         _storyController.text,
+                  //         _selecetdAddress ?? "",
+                  //         _geometry!.location.lat,
+                  //         _geometry!.location.lng)
+                  //     .then((value) =>
+                  //         context.read<AddPostProvider>().resetUpload(context));
+                  // // if (context.watch<AddPostProvider>().ispostUploading ==
+                  // //     false) {
+                  // //   context
+                  // //       .read<AddPostProvider>()
+                  // //       .uploadPost(
+                  // //           _headLineController.text,
+                  // //           _storyController.text,
+                  //           _selecetdAddress ?? "",
+                  //           _geometry?.location.lat ?? 0,
+                  //           _geometry?.location.lng ?? 0)
+                  //       .then((value) => context
+                  //           .read<AddPostProvider>()
+                  //           .resetUpload(context));
+                  // }
+                });
+              },
               child: Text(
                 "Post",
                 style: ThreeKmTextConstants.tk14PXPoppinsWhiteMedium,
@@ -71,7 +121,7 @@ class _AddNewPostState extends State<AddNewPost> {
                     padding: padding,
                     height: 52,
                     child: TextField(
-                      // controller: controller.headlineController,
+                      controller: _headLineController,
                       maxLines: 1,
                       minLines: null,
                       expands: false,
@@ -125,7 +175,7 @@ class _AddNewPostState extends State<AddNewPost> {
                     padding: padding,
                     height: 135,
                     child: TextField(
-                      //controller: controller.descriptionController,
+                      controller: _storyController,
                       maxLines: null,
                       minLines: null,
                       expands: true,
@@ -265,6 +315,7 @@ class _AddNewPostState extends State<AddNewPost> {
                                                     result.formattedAddress;
                                                 print(
                                                     result.geometry!.toJson());
+                                                _geometry = result.geometry;
                                               });
                                               Navigator.of(context).pop();
                                             },
@@ -316,7 +367,7 @@ class _AddNewPostState extends State<AddNewPost> {
                 ],
               ),
             ),
-            // buildFooter
+            //buildFooter
           ],
         ),
       ),
@@ -377,6 +428,59 @@ class _AddNewPostState extends State<AddNewPost> {
       ),
     );
   }
+
+  // Widget get buildFooter {
+  //   return Positioned(
+  //     bottom: 0,
+  //     child: Container(
+
+  //       height: 68,
+  //       width: MediaQuery.of(context).size.width,
+  //       child: Row(
+  //         mainAxisSize: MainAxisSize.min,
+  //         children: [
+  //           Padding(
+  //             padding: EdgeInsets.only(
+  //               top: 12,
+  //               right: 12,
+  //               left: 18,
+  //             ),
+  //             child: Container(
+  //                 height: 48,
+  //                 width: 48,
+  //                 child: Image.file(
+  //                   widget.imageFile,
+  //                   fit: BoxFit.cover,
+  //                 )),
+  //           ),
+  //           Column(
+  //             mainAxisSize: MainAxisSize.min,
+  //             mainAxisAlignment: MainAxisAlignment.start,
+  //             crossAxisAlignment: CrossAxisAlignment.start,
+  //             children: [
+  //               Text(
+  //                 "Uploading Post",
+  //                 style: ThreeKmTextConstants.tk14PXPoppinsWhiteMedium,
+  //               ),
+  //               SizedBox(
+  //                 height: 8,
+  //               ),
+  //               Container(
+  //                   height: 5,
+  //                   width: MediaQuery.of(context).size.width * 0.65,
+  //                   alignment: Alignment.topCenter,
+  //                   child: LinearProgressIndicator(
+  //                     minHeight: 1,
+  //                     value: 0.7,
+  //                     color: Color(0xffFF5858),
+  //                   ))
+  //             ],
+  //           )
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
 
   // Widget get buildFooter {
   //   return Positioned(
@@ -571,6 +675,7 @@ class _AddNewPostState extends State<AddNewPost> {
               ),
               onPressed: () {
                 Navigator.of(context).pop();
+                FocusScope.of(context).unfocus();
               },
             ),
             TextButton(
@@ -581,6 +686,7 @@ class _AddNewPostState extends State<AddNewPost> {
               ),
               onPressed: () {
                 Navigator.of(context).pop(_tagscontroller.text);
+                FocusScope.of(context).unfocus();
               },
             )
           ],
