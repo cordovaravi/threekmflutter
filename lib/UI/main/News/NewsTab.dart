@@ -410,20 +410,32 @@ class _NewsTabState extends State<NewsTab>
                                                     .quiz!.options!.length,
                                                 itemBuilder:
                                                     (context, quizIndex) {
+                                                  // print(finalScondPost
+                                                  //     .quiz!.selectedOption);
                                                   return Padding(
                                                     padding:
                                                         const EdgeInsets.only(
                                                             left: 4, right: 4),
                                                     child: Option(
-                                                      selectedOptionIndex:
-                                                          finalScondPost.quiz!
-                                                                      .answer
-                                                                      .toString() ==
-                                                                  finalScondPost
-                                                                      .quiz!
-                                                                      .selectedOption
-                                                              ? quizIndex
-                                                              : 100,
+                                                      selectedOptionIndex: finalScondPost
+                                                                  .quiz!
+                                                                  .selectedOption
+                                                                  .toString() ==
+                                                              finalScondPost
+                                                                  .quiz!
+                                                                  .options![
+                                                                      quizIndex]
+                                                                  .text
+                                                          ? quizIndex
+                                                          : 100,
+                                                      // finalScondPost.quiz!
+                                                      //             .answer
+                                                      //             .toString() ==
+                                                      //         finalScondPost
+                                                      //             .quiz!
+                                                      //             .selectedOption
+                                                      //     ? quizIndex
+                                                      //     : 100,
                                                       isAnswred: finalScondPost
                                                           .quiz!.isAnswered!,
                                                       quizId: finalScondPost
@@ -996,19 +1008,18 @@ class Option extends StatelessWidget {
           if (model.answredIndex == model.selectedIndex &&
               index == correctAnsIndex) {
             return Colors.green;
-          } else if (index == model.selectedIndex &&
-              index != model.answredIndex) {
+          } else if (index == model.selectedIndex) {
             return Colors.red;
           }
         }
-        return Colors.white;
+        return Colors.grey;
       }
 
       Color GetColorAlreadyAnwer(
           {required int answerIndex,
           required int index,
           required int selectedIndex}) {
-        if (index == answerIndex) {
+        if (index == answerIndex && index == selectedIndex) {
           return Colors.green;
         } else if (index == selectedIndex) {
           return Colors.red;

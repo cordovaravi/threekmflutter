@@ -17,12 +17,13 @@ const String businessHome = "business/home";
 const String businessList = "business/list";
 const String businessGeoList = "business/geolist";
 const String businessView = "business/view";
-const String shopHome = "shop/home";
-const String shopHomeFlutter = "shop/home_flutter";
-const String shopList = "shop/list";
-const String shopView = "shop/view";
-const String menuList = "menu/list";
-const String productList = "shop/list";
+
+// const String shopHome = "shop/home";
+// const String shopHomeFlutter = "shop/home_flutter";
+// const String shopList = "shop/list";
+// const String shopView = "shop/view";
+// const String menuList = "menu/list";
+// const String productList = "shop/list";
 const String submitQuizAnswer = "quiz/submit_answer";
 
 // login
@@ -59,6 +60,30 @@ const String add_About = "user/about";
 // Follow
 const String follow_User = "follow";
 const String unfollow_user = "unfollow";
+const String get_Follows = "getfollows";
 
 // Poll
 const String poll_Submit_Answer = "quiz/submit_poll_answer";
+
+// shop Home
+const String shopHome = "shop/home";
+const String shopHomeFlutter = "shop/home_flutter";
+const String shopList = "shop/list";
+const String shopView = "shop/view";
+const String menuList = "menu/list";
+const String productList = "shop/list";
+const String shopCheckout = "shop/checkout";
+
+//shipping rate
+const String shippingRate = 'menu/shiprates';
+const String shopShippingRate = 'shop/shiprates';
+
+// review
+const String userReview = "reviews/submit";
+
+// category
+const String allCategoryList = "category/tree";
+
+// Restaurants
+const String restaurants = "menu/home";
+const String restaurantMenu = "restaurent/menu";

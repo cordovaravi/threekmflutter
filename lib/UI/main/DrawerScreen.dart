@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:threekm/UI/main/Profile/AuthorProfile.dart';
+import 'package:threekm/UI/main/Profile/MyProfilePost.dart';
 import 'package:threekm/UI/main/navigation.dart';
 import 'package:threekm/UI/walkthrough/splash_screen.dart';
 import 'package:threekm/providers/main/AthorProfile_Provider.dart';
@@ -36,7 +36,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
   @override
   Widget build(BuildContext context) {
     //final authorPostProvider = context.watch<AutthorProfileProvider>();
-    final selfProfileProvider = context.watch<AutthorProfileProvider>();
+    //final selfProfileProvider = context.watch<AutthorProfileProvider>();
     return Scaffold(
       body:
           // RotatedBox(
@@ -199,7 +199,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => AuthorProfile(
+                    builder: (context) => MyProfilePost(
                         isFromSelfProfileNavigate: true,
                         page: 1,
                         authorType: "user",

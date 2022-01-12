@@ -17,8 +17,8 @@ class VideoWidget extends StatefulWidget {
 
 class _VideoWidgetState extends State<VideoWidget>
     with AutomaticKeepAliveClientMixin {
-  late VideoPlayerController _videoPlayerController1;
-  late VideoPlayerController _videoPlayerController2;
+  VideoPlayerController? _videoPlayerController1;
+  VideoPlayerController? _videoPlayerController2;
   ChewieController? _chewieController;
 
   @override
@@ -30,7 +30,7 @@ class _VideoWidgetState extends State<VideoWidget>
   Future<void> initializePlayer() async {
     _videoPlayerController1 = VideoPlayerController.network(widget.url);
     await Future.wait([
-      _videoPlayerController1.initialize(),
+      _videoPlayerController1!.initialize(),
     ]);
     _createChewieController();
     setState(() {});
@@ -38,7 +38,7 @@ class _VideoWidgetState extends State<VideoWidget>
 
   void _createChewieController() {
     _chewieController = ChewieController(
-      videoPlayerController: _videoPlayerController1,
+      videoPlayerController: _videoPlayerController1!,
       autoPlay: widget.play,
       looping: false,
       subtitleBuilder: (context, dynamic subtitle) => Container(
@@ -57,8 +57,8 @@ class _VideoWidgetState extends State<VideoWidget>
 
   @override
   void dispose() {
-    _videoPlayerController1.dispose();
-    _videoPlayerController2.dispose();
+    _videoPlayerController1!.dispose();
+    _videoPlayerController2!.dispose();
     _chewieController?.dispose();
     super.dispose();
   }

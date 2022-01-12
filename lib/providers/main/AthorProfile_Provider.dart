@@ -1,30 +1,15 @@
 import 'dart:convert';
-import 'dart:developer';
-
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:threekm/Models/ProfilePostModel.dart';
 import 'package:threekm/Models/SelfProfile_Model.dart';
 import 'package:threekm/commenwidgets/CustomSnakBar.dart';
+import 'package:threekm/main.dart';
 import 'package:threekm/networkservice/Api_Provider.dart';
 import 'package:threekm/utils/api_paths.dart';
 
 class AutthorProfileProvider extends ChangeNotifier {
   ApiProvider _apiProvider = ApiProvider();
-  ProfilePostModel? _profilePostModel;
-  ProfilePostModel? get profilePostData => _profilePostModel;
-
-  Future<Null> getAuthorProfile() async {
-    String requestJson = json.encode({
-      "id": 286,
-      "author_type": "user",
-      "token": "60b5a1411c1a7d0e85370a83"
-    });
-    final response = await _apiProvider.post(Author_Profile, requestJson);
-    if (response != null) {
-      print(response);
-      _profilePostModel = ProfilePostModel.fromJson(response);
-    }
-  }
 
   ////// self profile
   SelfProfileModel? _selfProfile;
@@ -103,48 +88,123 @@ class AutthorProfileProvider extends ChangeNotifier {
     if (response != null && response["status"] == "success") {}
   }
 
-  // Future<Null> followUser(int autherId) async {
-  //   String requestJson =
-  //       json.encode({"entity": "user", "type": "user", "entity_id": autherId});
-  //   final response = await _apiProvider.post(follow_User, requestJson);
-  //   print(response);
-  //   notifyListeners();
-  //   try {
-  //     if (response != null && response["status"] == "success") {
-  //       _selfProfile!.data!.result!.posts!.forEach((element) {
-  //         if (element.author?.id == autherId) {
-  //           element.author!.isFollowed = true;
-  //           notifyListeners();
-  //           print(element.author!.isFollowed);
-  //         }
-  //       });
-  //       notifyListeners();
-  //     } else {
-  //       CustomSnackBar(navigatorKey.currentContext!,
-  //           Text("Error occuered.Please try later.!"));
-  //     }
-  //   } on SocketException {
-  //     print("socket Exception");
-  //     CustomSnackBar(
-  //         navigatorKey.currentContext!, Text("Check your internet Connection"));
+  //////////// author profile providers
+
+  // void getfollowers({required int authorId}) async {
+  //   String _token = await _apiProvider.getToken();
+  //   String requestJson = json.encode({
+  //     {"id": authorId, "author_type": "user", "token": "$_token"}
+  //   });
+  //   final response = await _apiProvider.post(get_Follows, requestJson);
+  //   if (response != null) {
+  //     if (response["status"] == "sucess") {}
   //   }
   // }
 
-  // Future<Null> unfollowUser(int autherId) async {
-  //   String requestJson =
-  //       json.encode({"entity": "user", "type": "user", "entity_id": autherId});
-  //   final response = await _apiProvider.post(unfollow_user, requestJson);
-  //   print(response);
-  //   if (response != null && response["status"] == "success") {
-  //     _newsbyCategories!.data!.result!.posts!.forEach((element) {
-  //       if (element.author?.id == autherId) {
-  //         element.author!.isFollowed = false;
-  //         notifyListeners();
-  //         print(element.author!.isFollowed);
-  //       }
-  //     });
-  //     //notifyListeners();
-  //   }
-  //   notifyListeners();
-  // }
+  //postmodel gettr
+  ProfilePostModel? _authorProfilePostModel;
+  ProfilePostModel? get authorProfilePostData => _authorProfilePostModel;
+
+  // Floowing getter
+  bool _followLoading = false;
+  bool get followLoading => this._followLoading;
+
+  //getting authorprofile getter
+  bool _gettingAuthorprofile = false;
+  bool get gettingAuthorprofile => _gettingAuthorprofile;
+
+  // get Author profile data and post
+  Future<Null> getAuthorProfile({required int authorId}) async {
+    _gettingAuthorprofile = true;
+    notifyListeners();
+    String _token = await _apiProvider.getToken();
+    String requestJson =
+        json.encode({"id": authorId, "author_type": "user", "token": _token});
+    final response = await _apiProvider.post(Author_Profile, requestJson);
+    if (response != null) {
+      print(response);
+      if (response["status"] == "success") {
+        _authorProfilePostModel = ProfilePostModel.fromJson(response);
+        _gettingAuthorprofile = false;
+        notifyListeners();
+      }
+    }
+  }
+
+  // followathor
+  Future<Null> followAuthor(int autherId) async {
+    _followLoading = true;
+    notifyListeners();
+    String requestJson =
+        json.encode({"entity": "user", "type": "user", "entity_id": autherId});
+    final response = await _apiProvider.post(follow_User, requestJson);
+    print(response);
+    notifyListeners();
+    try {
+      if (response != null && response["status"] == "success") {
+        _authorProfilePostModel!.data.result!.author!.isFollowed = true;
+        _authorProfilePostModel!.data.result!.author!.followers =
+            _authorProfilePostModel!.data.result!.author!.followers! + 1;
+        _followLoading = false;
+        notifyListeners();
+      } else {
+        CustomSnackBar(navigatorKey.currentContext!,
+            Text("Error occuered.Please try later.!"));
+      }
+    } on SocketException {
+      print("socket Exception");
+      CustomSnackBar(
+          navigatorKey.currentContext!, Text("Check your internet Connection"));
+    }
+  }
+
+  //Unfollow author
+
+  Future<Null> unfollowAuthor(int autherId) async {
+    _followLoading = true;
+    notifyListeners();
+    String requestJson =
+        json.encode({"entity": "user", "type": "user", "entity_id": autherId});
+    final response = await _apiProvider.post(unfollow_user, requestJson);
+    print(response);
+    if (response != null && response["status"] == "success") {
+      _authorProfilePostModel!.data.result!.author!.isFollowed = false;
+      _authorProfilePostModel!.data.result!.author!.followers =
+          _authorProfilePostModel!.data.result!.author!.followers! - 1;
+      _followLoading = false;
+      notifyListeners();
+    }
+    //notifyListeners();
+  }
+
+  Future<Null> authorPostLike(String postId, String? emotion) async {
+    String requestJson = json.encode(
+        {"module": "news_post", "entity_id": postId, "emotion": "$emotion"});
+    _authorProfilePostModel!.data.result!.posts!.forEach((element) {
+      if (element.postId.toString() == postId) {
+        element.likes = element.likes! + 1;
+        element.isLiked = true;
+        notifyListeners();
+      }
+      //notifyListeners();
+    });
+    final response = await _apiProvider.post(like, requestJson);
+    print(response);
+    if (response != null && response["status"] == "success") {}
+  }
+
+  Future<Null> authorPostUnLike(String postId) async {
+    String requestJson =
+        json.encode({"module": "news_post", "entity_id": postId});
+    _authorProfilePostModel!.data.result!.posts!.forEach((element) {
+      if (element.postId.toString() == postId) {
+        element.isLiked = false;
+        element.likes = element.likes! - 1;
+        notifyListeners();
+      }
+    });
+    final response = await _apiProvider.post(unlike, requestJson);
+    print(response);
+    if (response != null && response["status"] == "success") {}
+  }
 }

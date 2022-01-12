@@ -135,8 +135,13 @@ class NewsListProvider extends ChangeNotifier {
   }
 
   Future<Null> followUser(int autherId) async {
-    String requestJson =
-        json.encode({"entity": "user", "type": "user", "entity_id": autherId});
+    String _token = await _apiProvider.getToken();
+    String requestJson = json.encode({
+      "entity": "user",
+      "type": "user",
+      "entity_id": autherId,
+      "token": "$_token"
+    });
     final response = await _apiProvider.post(follow_User, requestJson);
     print(response);
     notifyListeners();

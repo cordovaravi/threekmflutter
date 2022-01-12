@@ -12,6 +12,7 @@ import 'package:share_plus/share_plus.dart';
 import 'package:threekm/Custom_library/flutter_reaction_button.dart';
 import 'package:threekm/UI/main/News/Widgets/comment_Loading.dart';
 import 'package:threekm/UI/main/News/Widgets/likes_Loading.dart';
+import 'package:threekm/UI/main/Profile/AuthorProfile.dart';
 import 'package:threekm/commenwidgets/CustomSnakBar.dart';
 import 'package:threekm/commenwidgets/commenwidget.dart';
 import 'package:threekm/providers/main/LikeList_Provider.dart';
@@ -212,32 +213,55 @@ class _NewsPostCardState extends State<NewsPostCard>
                                             margin: EdgeInsets.only(right: 10),
                                             height: 50,
                                             width: 50,
-                                            child: Container(
-                                              height: 50,
-                                              width: 50,
-                                              decoration: BoxDecoration(
-                                                  shape: BoxShape.circle,
-                                                  image: DecorationImage(
-                                                      fit: BoxFit.cover,
-                                                      image:
-                                                          CachedNetworkImageProvider(
-                                                              newsData
-                                                                  .author!.image
-                                                                  .toString()))),
-                                              child: newsData.isVerified == true
-                                                  ? Stack(
-                                                      children: [
-                                                        Positioned(
-                                                            left: 0,
-                                                            child: Image.asset(
-                                                              'assets/verified.png',
-                                                              height: 15,
-                                                              width: 15,
-                                                              fit: BoxFit.cover,
-                                                            ))
-                                                      ],
-                                                    )
-                                                  : Container(),
+                                            child: GestureDetector(
+                                              onTap: () {
+                                                Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            AuthorProfile(
+                                                                // page: 1,
+                                                                // authorType:
+                                                                //     "user",
+                                                                id: newsData
+                                                                    .author!
+                                                                    .id!,
+                                                                avatar: newsData
+                                                                    .author!
+                                                                    .image!,
+                                                                userName: newsData
+                                                                    .author!
+                                                                    .name!)));
+                                              },
+                                              child: Container(
+                                                height: 50,
+                                                width: 50,
+                                                decoration: BoxDecoration(
+                                                    shape: BoxShape.circle,
+                                                    image: DecorationImage(
+                                                        fit: BoxFit.cover,
+                                                        image: CachedNetworkImageProvider(
+                                                            newsData
+                                                                .author!.image
+                                                                .toString()))),
+                                                child: newsData.isVerified ==
+                                                        true
+                                                    ? Stack(
+                                                        children: [
+                                                          Positioned(
+                                                              left: 0,
+                                                              child:
+                                                                  Image.asset(
+                                                                'assets/verified.png',
+                                                                height: 15,
+                                                                width: 15,
+                                                                fit: BoxFit
+                                                                    .cover,
+                                                              ))
+                                                        ],
+                                                      )
+                                                    : Container(),
+                                              ),
                                             )),
                                         Column(
                                           crossAxisAlignment:
@@ -281,9 +305,12 @@ class _NewsPostCardState extends State<NewsPostCard>
                                                       .unfollowUser(newsData
                                                           .author!.id!
                                                           .toInt());
-                                                } else if (newsData
-                                                        .author!.isFollowed ==
-                                                    false) {
+                                                } else if (newsData.author!
+                                                            .isFollowed ==
+                                                        false ||
+                                                    newsData.author!
+                                                            .isFollowed ==
+                                                        null) {
                                                   print("is followed: false");
                                                   context
                                                       .read<NewsListProvider>()
@@ -301,17 +328,7 @@ class _NewsPostCardState extends State<NewsPostCard>
                                                           .tk11PXLatoGreyBold)
                                                   : Text("Follow",
                                                       style: ThreeKmTextConstants
-                                                          .tk14PXPoppinsBlueMedium)
-                                              // child: Text(
-                                              //   newsData.author!.isFollowed != true
-                                              //       ? "follow"
-                                              //       : "following",
-                                              //   style: newsData.author!.isFollowed == true
-                                              //       ? ThreeKmTextConstants.tk11PXLatoGreyBold
-                                              //       : ThreeKmTextConstants
-                                              //           .tk14PXPoppinsBlueMedium,
-                                              // ),
-                                              );
+                                                          .tk14PXPoppinsBlueMedium));
                                         }),
                                         Spacer(),
                                         showPopMenu(newsData.postId.toString(),
@@ -364,11 +381,11 @@ class _NewsPostCardState extends State<NewsPostCard>
                                             children: [
                                               Text('👍❤️😩'),
                                               Container(
-                                                height: 30,
-                                                width: 30,
-                                                decoration: BoxDecoration(
-                                                    shape: BoxShape.circle,
-                                                    color: Color(0xffFC5E6A)),
+                                                // height: 30,
+                                                // width: 30,
+                                                // decoration: BoxDecoration(
+                                                //     shape: BoxShape.circle,
+                                                //     color: Color(0xffFC5E6A)),
                                                 child: Center(
                                                     child: Text('+' +
                                                         newsData.likes
@@ -677,37 +694,57 @@ class _NewsPostCardState extends State<NewsPostCard>
                                 child: Row(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Container(
-                                        margin: EdgeInsets.only(right: 10),
-                                        height: 50,
-                                        width: 50,
-                                        child: Container(
+                                    InkWell(
+                                      onTap: () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    AuthorProfile(
+                                                        // page: 1,
+                                                        // authorType:
+                                                        //     "user",
+                                                        id: newsData
+                                                            .author!.id!,
+                                                        avatar: newsData
+                                                            .author!.image!,
+                                                        userName: newsData
+                                                            .author!.name!)));
+                                      },
+                                      child: Container(
+                                          margin: EdgeInsets.only(right: 10),
                                           height: 50,
                                           width: 50,
-                                          decoration: BoxDecoration(
-                                              shape: BoxShape.circle,
-                                              image: DecorationImage(
-                                                  fit: BoxFit.cover,
-                                                  image:
-                                                      CachedNetworkImageProvider(
-                                                          newsData.author!.image
-                                                              .toString()))),
-                                        )),
+                                          child: Container(
+                                            height: 50,
+                                            width: 50,
+                                            decoration: BoxDecoration(
+                                                shape: BoxShape.circle,
+                                                image: DecorationImage(
+                                                    fit: BoxFit.cover,
+                                                    image:
+                                                        CachedNetworkImageProvider(
+                                                            newsData
+                                                                .author!.image
+                                                                .toString()))),
+                                          )),
+                                    ),
                                     Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       //mainAxisAlignment: MainAxisAlignment.center,
                                       children: [
                                         Container(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.4,
+                                          // width: MediaQuery.of(context)
+                                          //         .size
+                                          //         .width *
+                                          //     0.4,
                                           child: Text(
                                             newsData.author!.name.toString(),
                                             style: ThreeKmTextConstants
                                                 .tk14PXPoppinsBlackBold,
-                                            overflow: TextOverflow.ellipsis,
+                                            overflow: TextOverflow.fade,
+                                            maxLines: 1,
                                           ),
                                         ),
                                         Text(newsData.createdDate.toString())
@@ -717,11 +754,15 @@ class _NewsPostCardState extends State<NewsPostCard>
                                       width: 10,
                                     ),
                                     newsData.isVerified == true
-                                        ? Image.asset(
-                                            'assets/verified.png',
-                                            height: 15,
-                                            width: 15,
-                                            fit: BoxFit.cover,
+                                        ? Padding(
+                                            padding:
+                                                const EdgeInsets.only(top: 8),
+                                            child: Image.asset(
+                                              'assets/verified.png',
+                                              height: 15,
+                                              width: 15,
+                                              fit: BoxFit.cover,
+                                            ),
                                           )
                                         : Container(),
                                     Spacer(),
