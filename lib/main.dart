@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path_provider/path_provider.dart' as pathProvider;
 import 'package:provider/provider.dart';
 import 'package:threekm/UI/walkthrough/splash_screen.dart';
@@ -22,8 +23,19 @@ import 'package:threekm/providers/main/home1_provider.dart';
 import 'package:threekm/providers/main/home2_provider.dart';
 import 'package:threekm/providers/main/newsList_provider.dart';
 import 'package:threekm/providers/main/singlePost_provider.dart';
+import 'package:threekm/providers/shop/shop_home_provider.dart';
 import 'package:threekm/theme/setup.dart';
+import 'Models/shopModel/cart_hive_model.dart';
 import 'providers/main/AddPost_Provider.dart';
+import 'providers/shop/address_list_provider.dart';
+import 'providers/shop/all_category_provider.dart';
+import 'providers/shop/cart_provider.dart';
+import 'providers/shop/checkout/checkout_provider.dart';
+import 'providers/shop/product_details_provider.dart';
+import 'providers/shop/product_listing_provider.dart';
+import 'providers/shop/restaurant_menu_provider.dart';
+import 'providers/shop/user_review_provider.dart';
+import 'providers/shop/wish_list_provide.dart';
 
 //late List<CameraDescription> cameras;
 final navigatorKey = GlobalKey<NavigatorState>();
@@ -62,6 +74,9 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  Hive
+    ..initFlutter()
+    ..registerAdapter(CartHiveModelAdapter());
   await Firebase.initializeApp();
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
     statusBarColor: Colors.transparent,
@@ -139,7 +154,31 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider<AddPostProvider>(
             create: (context) => AddPostProvider()),
         ChangeNotifierProvider<AutthorProfileProvider>(
-            create: (context) => AutthorProfileProvider())
+            create: (context) => AutthorProfileProvider()),
+
+        ///shops begin
+        ChangeNotifierProvider<ShopHomeProvider>(
+            create: (context) => ShopHomeProvider()),
+        ChangeNotifierProvider<AllCategoryListProvider>(
+            create: (context) => AllCategoryListProvider()),
+        ChangeNotifierProvider<ProductListingProvider>(
+            create: (context) => ProductListingProvider()),
+        ChangeNotifierProvider<ProductDetailsProvider>(
+            create: (context) => ProductDetailsProvider()),
+        ChangeNotifierProvider<UserReviewProvider>(
+            create: (context) => UserReviewProvider()),
+        ChangeNotifierProvider<RestaurantMenuProvider>(
+            create: (context) => RestaurantMenuProvider()),
+        ChangeNotifierProvider<CartProvider>(
+            create: (context) => CartProvider()),
+        ChangeNotifierProvider<AddressListProvider>(
+            create: (context) => AddressListProvider()),
+        ChangeNotifierProvider<WishListProvider>(
+            create: (context) => WishListProvider()),
+        ChangeNotifierProvider<LocationProvider>(
+            create: (context) => LocationProvider()),
+        ChangeNotifierProvider<CheckoutProvider>(
+            create: (context) => CheckoutProvider())
       ],
       child: MaterialApp(
         // localizationsDelegates: [
