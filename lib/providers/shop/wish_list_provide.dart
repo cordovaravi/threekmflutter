@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
-import 'package:threekm_test/Models/shopModel/cart_hive_model.dart';
+import 'package:threekm/Models/shopModel/cart_hive_model.dart';
 
 class WishListProvider extends ChangeNotifier {
   String? _state;

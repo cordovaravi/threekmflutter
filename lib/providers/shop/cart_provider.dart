@@ -2,8 +2,8 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
-import 'package:threekm_test/Models/shopModel/cart_hive_model.dart';
-import 'package:threekm_test/widget/shop/cart/clear_and_add_to_cart.dart';
+import 'package:threekm/Models/shopModel/cart_hive_model.dart';
+import 'package:threekm/widgets/shop/cart/clear_and_add_to_cart.dart';
 
 class CartProvider extends ChangeNotifier {
   String? _state;
@@ -71,8 +71,8 @@ class CartProvider extends ChangeNotifier {
       if (creatorId == Cid) {
         addToCart(image, name, quantity, price, id, variationId, weight);
       } else {
-        clearAndAddToCartModal(context, image, name, quantity, price,creatorId, id,
-            variationId, weight, 'shop');
+        clearAndAddToCartModal(context, image, name, quantity, price, creatorId,
+            id, variationId, weight, 'shop');
       }
     }
 
@@ -141,8 +141,8 @@ class CartProvider extends ChangeNotifier {
         addToRestaurantCart(
             image, name, quantity, price, id, variationId, weight);
       } else {
-        clearAndAddToCartModal(context, image, name, quantity, price,creatorId, id,
-            variationId, weight, 'restro');
+        clearAndAddToCartModal(context, image, name, quantity, price, creatorId,
+            id, variationId, weight, 'restro');
       }
     }
 

@@ -94,4 +94,19 @@
         android:value="AIzaSyCK9Q9Rt0k-q6HxqRNR5FtpssJZTXtmqsg"/>
         <!--end of gmap-->
     </application>
+    <queries>
+            <intent>
+              <action android:name="android.intent.action.DIAL" />
+              <data android:scheme="tel" />
+            </intent>
+             <intent>
+              <action android:name="android.intent.action.VIEW" />
+              <data android:scheme="https" />
+            </intent>
+             <intent>
+              <action android:name="android.intent.action.VIEW" />
+              <data android:scheme="http" />
+            </intent>
+
+</queries>
 </manifest>

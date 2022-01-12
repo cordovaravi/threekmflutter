@@ -4,12 +4,12 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/src/provider.dart';
-import 'package:threekm_test/constant.dart';
-import 'package:threekm_test/providers/shop/product_listing_provider.dart';
-import 'package:threekm_test/Models/shopModel/product_listing_model.dart';
-import 'package:threekm_test/utils/screen_util.dart';
-import 'package:threekm_test/utils/threekm_textstyles.dart';
-import 'package:threekm_test/widget/shop/product/product_details.dart';
+
+import 'package:threekm/providers/shop/product_listing_provider.dart';
+import 'package:threekm/Models/shopModel/product_listing_model.dart';
+import 'package:threekm/utils/screen_util.dart';
+import 'package:threekm/utils/threekm_textstyles.dart';
+import '../shop/product/product_details.dart';
 
 class ProductListing extends StatefulWidget {
   const ProductListing({Key? key, this.productData}) : super(key: key);

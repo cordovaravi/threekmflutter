@@ -1,10 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/src/provider.dart';
-import 'package:threekm_test/Models/shopModel/address_list_model.dart';
-import 'package:threekm_test/providers/shop/checkout/checkout_provider.dart';
-import 'package:threekm_test/utils/screen_util.dart';
-import 'package:threekm_test/utils/threekm_textstyles.dart';
+import 'package:threekm/Models/shopModel/address_list_model.dart';
+import 'package:threekm/providers/shop/checkout/checkout_provider.dart';
+import 'package:threekm/utils/screen_util.dart';
+import 'package:threekm/utils/threekm_textstyles.dart';
 
 class PaymentConfirmingScreen extends StatefulWidget {
   PaymentConfirmingScreen(

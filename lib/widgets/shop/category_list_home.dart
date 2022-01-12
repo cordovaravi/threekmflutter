@@ -1,13 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:threekm_test/Models/shopModel/shop_home_model.dart';
-import 'package:threekm_test/utils/screen_util.dart';
-import 'package:threekm_test/utils/spacing_util.dart';
-import 'package:threekm_test/utils/threekm_textstyles.dart';
-import 'package:threekm_test/widget/shop/all_categorylist.dart';
-import 'package:threekm_test/widget/shop/product_listing.dart';
-
-import '../../constant.dart';
+import 'package:threekm/Models/shopModel/shop_home_model.dart';
+import 'package:threekm/utils/screen_util.dart';
+import 'package:threekm/utils/spacing_util.dart';
+import 'package:threekm/utils/threekm_textstyles.dart';
+import '../shop/all_categorylist.dart';
+import '../shop/product_listing.dart';
 
 class CategoryListHome extends StatelessWidget {
   const CategoryListHome({Key? key, required this.category}) : super(key: key);

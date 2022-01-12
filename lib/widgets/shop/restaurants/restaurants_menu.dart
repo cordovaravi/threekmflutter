@@ -6,18 +6,16 @@ import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/src/provider.dart';
-import 'package:threekm_test/providers/shop/cart_provider.dart';
-import 'package:threekm_test/providers/shop/restaurant_menu_provider.dart';
-import 'package:threekm_test/Models/shopModel/restaurants_menu_model.dart';
-import 'package:threekm_test/Models/shopModel/restaurants_model.dart';
+import 'package:threekm/providers/shop/cart_provider.dart';
+import 'package:threekm/providers/shop/restaurant_menu_provider.dart';
+import 'package:threekm/Models/shopModel/restaurants_menu_model.dart';
+import 'package:threekm/Models/shopModel/restaurants_model.dart';
 import 'package:dotted_border/dotted_border.dart';
-import 'package:threekm_test/utils/screen_util.dart';
-import 'package:threekm_test/utils/utils.dart';
-import 'package:threekm_test/widget/shop/cart/cart_item_list_modal.dart';
-import 'package:threekm_test/widget/shop/restaurants/checkbox.dart';
-import 'package:threekm_test/widget/shop/restaurants/restaurant_details.dart';
-
-import '../../../constant.dart';
+import 'package:threekm/utils/screen_util.dart';
+import 'package:threekm/utils/utils.dart';
+import '../../shop/cart/cart_item_list_modal.dart';
+import '../../shop/restaurants/checkbox.dart';
+import '../../shop/restaurants/restaurant_details.dart';
 
 final GlobalKey<_RestaurantMenuState> restaurantMenuKey = GlobalKey();
 
@@ -42,8 +40,8 @@ class _RestaurantMenuState extends State<RestaurantMenu> {
   }
 
   refresh() {
-  setState(() {});
-}
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {

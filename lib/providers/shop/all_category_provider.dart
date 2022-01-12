@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:threekm_test/commenwidgets/commenwidget.dart';
-import 'package:threekm_test/networkservice/Api_Provider.dart';
-import 'package:threekm_test/Models/shopModel/all_category_model.dart';
-import 'package:threekm_test/utils/api_paths.dart';
+import 'package:threekm/commenwidgets/commenwidget.dart';
+import 'package:threekm/networkservice/Api_Provider.dart';
+import 'package:threekm/Models/shopModel/all_category_model.dart';
+import 'package:threekm/utils/api_paths.dart';
 
 class AllCategoryListProvider extends ChangeNotifier {
   final ApiProvider _apiProvider = ApiProvider();

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:threekm_test/Models/shopModel/all_category_model.dart';
-import 'package:threekm_test/widget/shop/product_listing.dart';
+import 'package:threekm/Models/shopModel/all_category_model.dart';
+import '../shop/product_listing.dart';
 
 class SubCategoryList extends StatelessWidget {
   const SubCategoryList({

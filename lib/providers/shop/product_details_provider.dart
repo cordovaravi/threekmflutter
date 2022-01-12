@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:threekm_test/commenwidgets/commenwidget.dart';
-import 'package:threekm_test/networkservice/Api_Provider.dart';
-import 'package:threekm_test/Models/shopModel/product_details_model.dart';
-import 'package:threekm_test/utils/api_paths.dart';
+import 'package:threekm/networkservice/Api_Provider.dart';
+import 'package:threekm/Models/shopModel/product_details_model.dart';
+import 'package:threekm/utils/api_paths.dart';
 
 class ProductDetailsProvider extends ChangeNotifier {
   final ApiProvider _apiProvider = ApiProvider();

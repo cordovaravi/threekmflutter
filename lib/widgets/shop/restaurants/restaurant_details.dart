@@ -1,9 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:threekm_test/Models/shopModel/restaurants_menu_model.dart';
-import 'package:threekm_test/utils/screen_util.dart';
+import 'package:threekm/Models/shopModel/restaurants_menu_model.dart';
+import 'package:threekm/utils/screen_util.dart';
 
-import '../../../constant.dart';
+
 
 class RestaurantDetails extends StatefulWidget {
   const RestaurantDetails({Key? key, this.result, this.tags}) : super(key: key);

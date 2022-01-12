@@ -1,4 +1,4 @@
-import 'package:threekm_test/Models/shopModel/shop_home_model.dart';
+import 'package:threekm/Models/shopModel/shop_home_model.dart';
 
 class RestaurantsModel {
   late int statusCode;

@@ -3,10 +3,10 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
-import 'package:threekm_test/commenwidgets/commenwidget.dart';
-import 'package:threekm_test/networkservice/Api_Provider.dart';
-import 'package:threekm_test/Models/shopModel/review_model.dart';
-import 'package:threekm_test/utils/api_paths.dart';
+import 'package:threekm/commenwidgets/commenwidget.dart';
+import 'package:threekm/networkservice/Api_Provider.dart';
+import 'package:threekm/Models/shopModel/review_model.dart';
+import 'package:threekm/utils/api_paths.dart';
 
 class UserReviewProvider extends ChangeNotifier {
   final ApiProvider _apiProvider = ApiProvider();

@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
 
-import 'package:threekm_test/networkservice/Api_Provider.dart';
-import 'package:threekm_test/Models/shopModel/restaurants_model.dart';
-import 'package:threekm_test/Models/shopModel/shop_home_model.dart';
-import 'package:threekm_test/utils/api_paths.dart';
+import 'package:threekm/networkservice/Api_Provider.dart';
+import 'package:threekm/Models/shopModel/restaurants_model.dart';
+import 'package:threekm/Models/shopModel/shop_home_model.dart';
+import 'package:threekm/utils/api_paths.dart';
 
 class ShopHomeProvider extends ChangeNotifier {
   final ApiProvider _apiProvider = ApiProvider();

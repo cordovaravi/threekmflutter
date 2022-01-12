@@ -3,11 +3,11 @@ import 'dart:convert';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/src/provider.dart';
-import 'package:threekm_test/constant.dart';
-import 'package:threekm_test/providers/shop/shop_home_provider.dart';
-import 'package:threekm_test/utils/threekm_textstyles.dart';
-import 'package:threekm_test/utils/utils.dart';
-import 'package:threekm_test/widget/shop/restaurants/restaurants_menu.dart';
+
+import 'package:threekm/providers/shop/shop_home_provider.dart';
+import 'package:threekm/utils/threekm_textstyles.dart';
+import 'package:threekm/utils/utils.dart';
+import '../../shop/restaurants/restaurants_menu.dart';
 
 class AllRestaurantList extends StatefulWidget {
   const AllRestaurantList({Key? key}) : super(key: key);

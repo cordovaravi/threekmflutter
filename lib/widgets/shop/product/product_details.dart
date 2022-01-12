@@ -7,18 +7,17 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/src/provider.dart';
-import 'package:threekm_test/constant.dart';
 
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
-import 'package:threekm_test/providers/shop/cart_provider.dart';
-import 'package:threekm_test/providers/shop/product_details_provider.dart';
-import 'package:threekm_test/providers/shop/wish_list_provide.dart';
-import 'package:threekm_test/utils/screen_util.dart';
-import 'package:threekm_test/utils/threekm_textstyles.dart';
-import 'package:threekm_test/widget/shop/cart/cart_item_list_modal.dart';
-import 'package:threekm_test/widget/shop/cart/clear_and_add_to_cart.dart';
-import 'package:threekm_test/widget/shop/product/full_image.dart';
-import 'package:threekm_test/widget/shop/product/post_review_form.dart';
+import 'package:threekm/providers/shop/cart_provider.dart';
+import 'package:threekm/providers/shop/product_details_provider.dart';
+import 'package:threekm/providers/shop/wish_list_provide.dart';
+import 'package:threekm/utils/screen_util.dart';
+import 'package:threekm/utils/threekm_textstyles.dart';
+import '../../shop/cart/cart_item_list_modal.dart';
+import '../../shop/cart/clear_and_add_to_cart.dart';
+import '../../shop/product/full_image.dart';
+import '../../shop/product/post_review_form.dart';
 import 'dart:ui' as ui;
 import 'package:visibility_detector/visibility_detector.dart';
 
@@ -346,7 +345,8 @@ class _ProductDetailsState extends State<ProductDetails> {
                                                     style: ThreeKmTextConstants
                                                         .tk14PXPoppinsBlackMedium
                                                         .copyWith(
-                                                            color: Color(vdata.variationId ==
+                                                            color: Color(vdata
+                                                                        .variationId ==
                                                                     variationid
                                                                 ? 0xFF43B978
                                                                 : 0xFF000000)),

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/src/provider.dart';
-import 'package:threekm_test/providers/shop/all_category_provider.dart';
-import 'package:threekm_test/Models/shopModel/all_category_model.dart';
-import 'package:threekm_test/widget/shop/sub_categorylist.dart';
+import 'package:threekm/providers/shop/all_category_provider.dart';
+import 'package:threekm/Models/shopModel/all_category_model.dart';
+import '../shop/sub_categorylist.dart';
 
 
 class AllCategoryList extends StatefulWidget {

@@ -3,13 +3,12 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:provider/src/provider.dart';
-import 'package:threekm_test/constant.dart';
-import 'package:threekm_test/providers/shop/user_review_provider.dart';
 
-import 'package:threekm_test/utils/constants.dart';
+import 'package:threekm/providers/shop/user_review_provider.dart';
+
 import 'package:image_picker/image_picker.dart';
-import 'package:threekm_test/utils/screen_util.dart';
-
+import 'package:threekm/utils/screen_util.dart';
+ Color textColor = Color(0xFF0F0F2D);
 class PostReview extends StatefulWidget {
   PostReview({Key? key, required this.name, required this.catalogId})
       : super(key: key);
@@ -192,13 +191,13 @@ class _PostReviewState extends State<PostReview> {
                       padding: const EdgeInsets.only(top: 20, bottom: 30),
                       child: Text(
                         widget.name,
-                        style: const TextStyle(
+                        style:  TextStyle(
                             color: textColor,
                             fontWeight: FontWeight.bold,
                             fontSize: 22),
                       ),
                     ),
-                    const Text(
+                     Text(
                       '1.   Select a rating',
                       style: TextStyle(color: textColor, fontSize: 18),
                     ),
@@ -266,7 +265,7 @@ class _PostReviewState extends State<PostReview> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Text(
+                           Text(
                             '2.   Add Review Title',
                             style: TextStyle(color: textColor, fontSize: 18),
                           ),
@@ -293,7 +292,7 @@ class _PostReviewState extends State<PostReview> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Text(
+                           Text(
                             '3.   Detailed Review',
                             style: TextStyle(color: textColor, fontSize: 18),
                           ),
@@ -316,7 +315,7 @@ class _PostReviewState extends State<PostReview> {
                           border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(20))),
                     ),
-                    const Padding(
+                     Padding(
                       padding: EdgeInsets.only(top: 30),
                       child: Text(
                         '4.   Add a Photo(optional)',
@@ -393,7 +392,7 @@ class _PostReviewState extends State<PostReview> {
                                 ))
                       ],
                     ),
-                    const Padding(
+                     Padding(
                       padding: EdgeInsets.only(top: 30),
                       child: Text(
                         '5.   Rate Delivery Experience',
