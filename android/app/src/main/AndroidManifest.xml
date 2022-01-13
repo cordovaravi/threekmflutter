@@ -18,6 +18,11 @@
         android:label="threekm"
         android:icon="@mipmap/ic_launcher"
         android:usesCleartextTraffic="true">
+        <activity
+                android:name="com.razorpay.CheckoutActivity"
+                android:label="Razorpay Checkout" 
+                android:exported="false">
+        </activity>
         <!-- Fabcebook Auth integrational -->
         <meta-data android:name="com.facebook.sdk.ApplicationId" 
         android:value="@string/facebook_app_id"/>

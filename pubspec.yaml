@@ -86,8 +86,8 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  hive_generator:
-  build_runner: ^2.1.7
+  hive_generator: ^1.1.0 # dont change version
+  build_runner: ^2.0.3   # dont change version
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
