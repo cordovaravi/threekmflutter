@@ -156,7 +156,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider<AutthorProfileProvider>(
             create: (context) => AutthorProfileProvider()),
 
-        ///shops begin
+        ///shops providers
         ChangeNotifierProvider<ShopHomeProvider>(
             create: (context) => ShopHomeProvider()),
         ChangeNotifierProvider<AllCategoryListProvider>(
@@ -188,8 +188,8 @@ class MyApp extends StatelessWidget {
         // ],
         // supportedLocales: [
         //   const Locale('en', ''), // English, no country code
-        //   const Locale('mr', ''), // Arabic, no country code
-        //   const Locale('hi', ''), // Arabic, no country code
+        //   const Locale('mr', ''), // Marathi, no country code
+        //   const Locale('hi', ''), // Hindi, no country code
         //   // ... other locales the app supports
         // ],
         title: '3km.in',

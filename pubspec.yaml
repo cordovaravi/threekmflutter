@@ -32,14 +32,14 @@ dependencies:
   flutter_feather_icons:
   carousel_slider: ^4.0.0
   cached_network_image: ^3.1.0
-  shifting_tabbar: ^1.0.2
+  #shifting_tabbar: ^1.0.2
   flutter_widget_from_html:
-  inview_notifier_list: ^2.0.0
+  #inview_notifier_list: ^2.0.0
   vimeoplayer_trinity:
   chewie: ^1.2.2
   video_player:
   shimmer: ^2.0.0
-  awesome_notifications: ^0.6.18+2
+  #awesome_notifications: ^0.6.18+2
   in_app_update: ^2.0.0
   flutter_inappwebview: ^5.3.2
   animated_widgets: ^1.1.0
@@ -67,8 +67,8 @@ dependencies:
   #social
   google_sign_in:
   flutter_facebook_auth: ^3.5.0
-  audio_service: ^0.18.2
-  just_audio: ^0.9.18
+ # audio_service: ^0.18.2
+ # just_audio: ^0.9.18
   path_provider:
   animations:
   share_plus:
@@ -79,9 +79,10 @@ dependencies:
   visibility_detector:
   im_stepper:
   razorpay_flutter: ^1.2.7
-  url_launcher: ^6.0.18
+  url_launcher: 
   dotted_border:
   flutter_rating_bar:
+ 
 dev_dependencies:
   flutter_test:
     sdk: flutter

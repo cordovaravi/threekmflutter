@@ -1,13 +1,10 @@
-import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/src/provider.dart';
 import 'package:threekm/Models/shopModel/address_list_model.dart';
 import 'package:threekm/Models/shopModel/cart_hive_model.dart';
-import 'package:threekm/Models/shopModel/restaurants_menu_model.dart';
 import 'package:threekm/Models/shopModel/shipping_rate_model.dart';
 import 'package:threekm/providers/shop/address_list_provider.dart';
 import 'package:threekm/providers/shop/cart_provider.dart';
@@ -358,7 +355,7 @@ class _RestaurantsCheckOutScreenState extends State<RestaurantsCheckOutScreen> {
                                                                 shape: BoxShape
                                                                     .circle),
                                                         child: address
-                                                                    ?.addressType ==
+                                                                    .addressType ==
                                                                 'home'
                                                             ? const Icon(Icons
                                                                 .home_rounded)
@@ -370,7 +367,7 @@ class _RestaurantsCheckOutScreenState extends State<RestaurantsCheckOutScreen> {
                                                             const EdgeInsets
                                                                 .only(top: 10),
                                                         child: Text(
-                                                          '${address?.addressType}',
+                                                          '${address.addressType}',
                                                           style: ThreeKmTextConstants
                                                               .tk14PXPoppinsBlackSemiBold
                                                               .copyWith(
@@ -383,7 +380,7 @@ class _RestaurantsCheckOutScreenState extends State<RestaurantsCheckOutScreen> {
                                                                 .start,
                                                         children: [
                                                           Text(
-                                                              '${address?.flatNo}, ${address?.area}, ${address?.city}',
+                                                              '${address.flatNo}, ${address.area}, ${address.city}',
                                                               style: ThreeKmTextConstants
                                                                   .tk14PXPoppinsBlackSemiBold
                                                                   .copyWith(
@@ -400,7 +397,7 @@ class _RestaurantsCheckOutScreenState extends State<RestaurantsCheckOutScreen> {
                                                           selectedAddress.get(
                                                                       'address') ==
                                                                   address
-                                                                      ?.addressId
+                                                                      .addressId
                                                               ? selectedAddress
                                                                   .put(
                                                                       'address',
@@ -408,7 +405,7 @@ class _RestaurantsCheckOutScreenState extends State<RestaurantsCheckOutScreen> {
                                                               : selectedAddress.put(
                                                                   'address',
                                                                   address
-                                                                      ?.addressId);
+                                                                      .addressId);
                                                           setState(() {});
                                                         },
                                                         child: Container(

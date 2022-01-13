@@ -357,7 +357,7 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
                                                                 shape: BoxShape
                                                                     .circle),
                                                         child: address
-                                                                    ?.addressType ==
+                                                                    .addressType ==
                                                                 'home'
                                                             ? const Icon(Icons
                                                                 .home_rounded)
@@ -369,7 +369,7 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
                                                             const EdgeInsets
                                                                 .only(top: 10),
                                                         child: Text(
-                                                          '${address?.addressType}',
+                                                          '${address.addressType}',
                                                           style: ThreeKmTextConstants
                                                               .tk14PXPoppinsBlackSemiBold
                                                               .copyWith(
@@ -382,7 +382,7 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
                                                                 .start,
                                                         children: [
                                                           Text(
-                                                              '${address?.flatNo}, ${address?.area}, ${address?.city}',
+                                                              '${address.flatNo}, ${address.area}, ${address.city}',
                                                               style: ThreeKmTextConstants
                                                                   .tk14PXPoppinsBlackSemiBold
                                                                   .copyWith(
@@ -399,7 +399,7 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
                                                           selectedAddress.get(
                                                                       'address') ==
                                                                   address
-                                                                      ?.addressId
+                                                                      .addressId
                                                               ? selectedAddress
                                                                   .put(
                                                                       'address',
@@ -407,7 +407,7 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
                                                               : selectedAddress.put(
                                                                   'address',
                                                                   address
-                                                                      ?.addressId);
+                                                                      .addressId);
                                                           setState(() {});
                                                         },
                                                         child: Container(

@@ -19,7 +19,6 @@ import '../shop/restaurants/restaurants_home_page.dart';
 import '../shop/restaurants/restaurants_menu.dart';
 import '../shop/restaurants/view_all_restaurant.dart';
 
-
 import 'category_list_home.dart';
 import 'product_card_home.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -143,10 +142,10 @@ class _ShopHomeState extends State<ShopHome> with TickerProviderStateMixin {
                       width: double.infinity,
                       child: ElevatedButton.icon(
                           onPressed: () {
-                            (data?.imageswcta?[0].website)!.startsWith('http')
-                                ? launch('${data?.imageswcta?[0].website}')
+                            (data!.imageswcta![0].website)!.startsWith('http')
+                                ? launch('${data.imageswcta![0].website}')
                                 : launch(
-                                    'https://${data?.imageswcta?[0].website}');
+                                    'https://${data.imageswcta![0].website}');
                           },
                           icon: Icon(Icons.web),
                           label: Text('${data?.imageswcta?[0].website}')),
