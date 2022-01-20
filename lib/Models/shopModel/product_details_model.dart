@@ -318,7 +318,7 @@ class Variations {
   });
   late final int variationId;
   late final int price;
-  late final int weight;
+  late var weight;
   late final List<dynamic> imagesLinks;
   late final bool isInStock;
   late final Null masterStock;

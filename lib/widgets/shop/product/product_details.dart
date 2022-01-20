@@ -263,8 +263,10 @@ class _ProductDetailsState extends State<ProductDetails> {
                                   Padding(
                                     padding: const EdgeInsets.only(
                                         top: 10, bottom: 20),
-                                    child:
-                                        HtmlWidget('${product?.description}'),
+                                    child: HtmlWidget(
+                                      '${product?.description}',
+                                      textStyle: TextStyle(color: Colors.black),
+                                    ),
                                   ),
                                   SizedBox(
                                     height: 50,

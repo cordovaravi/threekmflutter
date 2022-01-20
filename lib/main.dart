@@ -15,6 +15,7 @@ import 'package:threekm/providers/auth/signIn_Provider.dart';
 import 'package:threekm/providers/auth/signUp_Provider.dart';
 import 'package:threekm/providers/auth/social_auth/facebook_provider.dart';
 import 'package:threekm/providers/auth/social_auth/google_provider.dart';
+import 'package:threekm/providers/businesses/businesses_home_provider.dart';
 import 'package:threekm/providers/main/AthorProfile_Provider.dart';
 import 'package:threekm/providers/main/LikeList_Provider.dart';
 import 'package:threekm/providers/main/Quiz_Provider.dart';
@@ -25,7 +26,10 @@ import 'package:threekm/providers/main/newsList_provider.dart';
 import 'package:threekm/providers/main/singlePost_provider.dart';
 import 'package:threekm/providers/shop/shop_home_provider.dart';
 import 'package:threekm/theme/setup.dart';
+import 'Models/businessesModel/businesses_wishlist_model.dart';
 import 'Models/shopModel/cart_hive_model.dart';
+import 'providers/businesses/businesses_detail_provider.dart';
+import 'providers/businesses/businesses_wishlist_provider.dart';
 import 'providers/main/AddPost_Provider.dart';
 import 'providers/shop/address_list_provider.dart';
 import 'providers/shop/all_category_provider.dart';
@@ -76,7 +80,8 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   Hive
     ..initFlutter()
-    ..registerAdapter(CartHiveModelAdapter());
+    ..registerAdapter(CartHiveModelAdapter())
+      ..registerAdapter(BusinesseswishListHiveModelAdapter());
   await Firebase.initializeApp();
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
     statusBarColor: Colors.transparent,
@@ -178,7 +183,14 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider<LocationProvider>(
             create: (context) => LocationProvider()),
         ChangeNotifierProvider<CheckoutProvider>(
-            create: (context) => CheckoutProvider())
+            create: (context) => CheckoutProvider()),
+        // business provider
+         ChangeNotifierProvider<BusinessesHomeProvider>(
+            create: (context) => BusinessesHomeProvider()),
+        ChangeNotifierProvider<BusinessDetailProvider>(
+            create: (context) => BusinessDetailProvider()),
+        ChangeNotifierProvider<BusinessesWishListProvider>(
+            create: (context) => BusinessesWishListProvider())
       ],
       child: MaterialApp(
         // localizationsDelegates: [

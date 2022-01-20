@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:threekm/commenwidgets/commenwidget.dart';
 
 import 'package:threekm/networkservice/Api_Provider.dart';
 import 'package:threekm/Models/shopModel/restaurants_model.dart';
@@ -16,16 +17,20 @@ class ShopHomeProvider extends ChangeNotifier {
 
   Future<Null> getShopHome(mounted) async {
     if (mounted) {
+      //_state = 'loading';
+      showLoading();
       try {
         final response = await _apiProvider.get(shopHome);
         if (response != null) {
           // print(response);
           _shopHomeData = ShopHomeModel.fromJson(response);
+          hideLoading();
           _state = 'loaded';
           notifyListeners();
         }
       } on Exception {
         _state = 'error';
+        hideLoading();
         notifyListeners();
       }
     }
@@ -35,12 +40,16 @@ class ShopHomeProvider extends ChangeNotifier {
   RestaurantsModel? get restaurantData => _restaurantData;
   Future<Null> getRestaurants(requestJson, mounted) async {
     if (mounted) {
+      _state = 'loading';
+
       try {
         final response = await _apiProvider.post(restaurants, requestJson);
-        _restaurantData = RestaurantsModel.fromJson(response);
-        print(response);
-        _state = 'loaded';
-        notifyListeners();
+        if (response != null) {
+          _restaurantData = RestaurantsModel.fromJson(response);
+          print(response);
+          _state = 'loaded';
+          notifyListeners();
+        }
       } on Exception catch (e) {
         _state = 'error';
         notifyListeners();

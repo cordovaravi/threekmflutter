@@ -42,7 +42,11 @@ class Result {
         products.add(Products.fromJson(v));
       });
     }
-    total = json['total'];
+    if (double.tryParse(json['total']) != null) {
+      total = json['total']['value'];
+    } else {
+      json['total'];
+    }
     if (json['menus'] != null) {
       menus = [];
       json['menus'].forEach((v) {

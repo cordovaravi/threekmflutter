@@ -9,6 +9,7 @@ import 'package:threekm/UI/main/DrawerScreen.dart';
 import 'package:threekm/UI/main/draggableex.dart';
 import 'package:threekm/providers/main/AthorProfile_Provider.dart';
 import 'package:threekm/utils/spacings.dart';
+import 'package:threekm/widgets/businesses/businesses_home.dart';
 import 'package:threekm/widgets/shop/home_3km.dart';
 
 final drawerController = ZoomDrawerController();
@@ -354,12 +355,9 @@ class _TabBarNavigationState extends State<TabBarNavigation>
               TabsWrapper(
                 animation: _animationController2!,
                 bodyWidget: Container(
-                  height: MediaQuery.of(context).size.height,
-                  width: MediaQuery.of(context).size.width,
-                  child: DraggablePage(
-                    isredirected: widget.redirectedFromPost,
-                  ),
-                ),
+                    height: MediaQuery.of(context).size.height,
+                    width: MediaQuery.of(context).size.width,
+                    child: BusinessesHome()),
               ),
 
               // NewsTab1(animation: _animationController2!),

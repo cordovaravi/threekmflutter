@@ -1,32 +1,32 @@
-import 'dart:developer';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/src/provider.dart';
-
-import 'package:threekm/providers/shop/product_listing_provider.dart';
 import 'package:threekm/Models/shopModel/product_listing_model.dart';
+import 'package:threekm/providers/shop/product_listing_provider.dart';
 import 'package:threekm/utils/screen_util.dart';
 import 'package:threekm/utils/threekm_textstyles.dart';
-import '../shop/product/product_details.dart';
+import 'package:threekm/widgets/shop/product/product_details.dart';
 
-class ProductListing extends StatefulWidget {
-  const ProductListing({Key? key, this.productData}) : super(key: key);
-  final productData;
+class ViewAllOffering extends StatefulWidget {
+  const ViewAllOffering({Key? key, required this.creatorId, required this.name})
+      : super(key: key);
+
+  final int creatorId;
+  final String name;
 
   @override
-  State<ProductListing> createState() => _ProductListingState();
+  State<ViewAllOffering> createState() => _ViewAllOfferingState();
 }
 
-class _ProductListingState extends State<ProductListing> {
+class _ViewAllOfferingState extends State<ViewAllOffering> {
   bool end = false;
   int page = 0;
 
   @override
   void initState() {
     context.read<ProductListingProvider>().getProductListing(
-        mounted: mounted, page: 1, query: widget.productData);
+        mounted: mounted, page: 1, creatorId: widget.creatorId);
     super.initState();
   }
 
@@ -43,7 +43,6 @@ class _ProductListingState extends State<ProductListing> {
     final data = context.watch<ProductListingProvider>().allproductList;
     final productdata =
         context.watch<ProductListingProvider>().productListingData;
-
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(60),
@@ -52,7 +51,7 @@ class _ProductListingState extends State<ProductListing> {
           backgroundColor: Colors.white,
           iconTheme: const IconThemeData(color: Colors.black),
           title: Text(
-            '${widget.productData}',
+            'Offering by ${widget.name}',
           ),
           titleTextStyle: const TextStyle(
               color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold),
@@ -152,7 +151,7 @@ class _ProductListingState extends State<ProductListing> {
                         mounted: mounted,
                         page: context.read<ProductListingProvider>().prepageno +
                             1,
-                        query: widget.productData);
+                        creatorId: widget.creatorId);
                     return const SizedBox(
                       height: 80,
                       child: Center(child: CircularProgressIndicator()),

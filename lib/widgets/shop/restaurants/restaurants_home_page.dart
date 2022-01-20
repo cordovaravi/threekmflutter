@@ -65,9 +65,15 @@ class _RestaurantsHomeState extends State<RestaurantsHome> {
                 padding: const EdgeInsets.all(15.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: const [
-                    Text('Baner-Pashan Link Road'),
-                    Text('Change Location')
+                  children: [
+                    Text(
+                      'Baner-Pashan Link Road',
+                      style: ThreeKmTextConstants.tk12PXPoppinsBlackSemiBold,
+                    ),
+                    Text(
+                      'Change Location',
+                      style: ThreeKmTextConstants.tk12PXPoppinsBlackSemiBold,
+                    )
                   ],
                 ),
               ),
@@ -402,39 +408,39 @@ class _RestaurantsHomeState extends State<RestaurantsHome> {
                                       fit: BoxFit.fill,
                                     ),
                                   ),
-                                  Row(
-                                    children: [
-                                      Container(
-                                        padding: EdgeInsets.all(10),
-                                        margin: EdgeInsets.all(10),
-                                        decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(15),
-                                            color: Colors.white),
-                                        child: const Text(
-                                          'Best Safety',
-                                          style: TextStyle(
-                                              color: Color(0xFF3E7EFF)),
-                                        ),
-                                      ),
-                                      Container(
-                                        padding: EdgeInsets.all(10),
-                                        margin: EdgeInsets.all(10),
-                                        decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(15),
-                                            gradient: const LinearGradient(
-                                                colors: [
-                                                  Color(0xFFFF5C3D),
-                                                  Color(0xFFFF2A5F)
-                                                ])),
-                                        child: const Text(
-                                          '50% off',
-                                          style: TextStyle(color: Colors.white),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
+                                  // Row(
+                                  //   children: [
+                                  //     Container(
+                                  //       padding: EdgeInsets.all(10),
+                                  //       margin: EdgeInsets.all(10),
+                                  //       decoration: BoxDecoration(
+                                  //           borderRadius:
+                                  //               BorderRadius.circular(15),
+                                  //           color: Colors.white),
+                                  //       child: const Text(
+                                  //         'Best Safety',
+                                  //         style: TextStyle(
+                                  //             color: Color(0xFF3E7EFF)),
+                                  //       ),
+                                  //     ),
+                                  //     Container(
+                                  //       padding: EdgeInsets.all(10),
+                                  //       margin: EdgeInsets.all(10),
+                                  //       decoration: BoxDecoration(
+                                  //           borderRadius:
+                                  //               BorderRadius.circular(15),
+                                  //           gradient: const LinearGradient(
+                                  //               colors: [
+                                  //                 Color(0xFFFF5C3D),
+                                  //                 Color(0xFFFF2A5F)
+                                  //               ])),
+                                  //       child: const Text(
+                                  //         '50% off',
+                                  //         style: TextStyle(color: Colors.white),
+                                  //       ),
+                                  //     ),
+                                  //   ],
+                                  // ),
                                 ],
                               ),
                             ),

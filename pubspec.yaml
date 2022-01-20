@@ -67,8 +67,8 @@ dependencies:
   #social
   google_sign_in:
   flutter_facebook_auth: ^3.5.0
- # audio_service: ^0.18.2
- # just_audio: ^0.9.18
+  # audio_service: ^0.18.2
+  # just_audio: ^0.9.18
   path_provider:
   animations:
   share_plus:
@@ -79,15 +79,15 @@ dependencies:
   visibility_detector:
   im_stepper:
   razorpay_flutter: ^1.2.7
-  url_launcher: 
+  url_launcher:
   dotted_border:
   flutter_rating_bar:
- 
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
   hive_generator: ^1.1.0 # dont change version
-  build_runner: ^2.0.3   # dont change version
+  build_runner: ^2.0.3 # dont change version
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -105,6 +105,7 @@ flutter:
     - assets/i18n/en.json
     - assets/i18n/hi.json
     - assets/shopImg/
+    - assets/BusinessesImg/
     #- buzzer.mp3
 
   # An image asset can refer to one or more resolution-specific "variants", see

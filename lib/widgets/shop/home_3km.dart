@@ -40,8 +40,8 @@ class _Home3KMState extends State<Home3KM> {
   @override
   void initState() {
     var initJson = json.encode({"lat": '', "lng": '', "page": 1});
-    context.read<ShopHomeProvider>().getShopHome(mounted);
     context.read<ShopHomeProvider>().getRestaurants(initJson, mounted);
+    context.read<ShopHomeProvider>().getShopHome(mounted);
     super.initState();
   }
 
@@ -67,7 +67,7 @@ class _Home3KMState extends State<Home3KM> {
                   imgSrg: imgSrg,
                   shopHomeProvider: shopHomeProvider,
                 )
-              : Text("null");
+              : Center(child: Text("null"));
         }
         return Container();
       })),
@@ -186,7 +186,7 @@ class _ShopHomeState extends State<ShopHome> with TickerProviderStateMixin {
       child: Container(
         color: Color(0xFFF4F3F8),
         padding: const EdgeInsets.only(
-          top: 60,
+          top: 10,
           // left: 10,
         ),
         width: ThreeKmScreenUtil.screenWidthDp,

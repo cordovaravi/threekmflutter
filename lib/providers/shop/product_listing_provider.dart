@@ -12,6 +12,8 @@ class ProductListingProvider extends ChangeNotifier {
   String? _state;
   int _prepageno = 0;
   get prepageno => _prepageno;
+  bool _end = false;
+  get end => _end;
 
   String? get state => _state;
   ProductListingModel _productList = ProductListingModel();
@@ -20,19 +22,21 @@ class ProductListingProvider extends ChangeNotifier {
   List<Products> _allproductList = [];
   List<Products> get allproductList => _allproductList;
 
-  Future<Null> getProductListing(mounted, page, query) async {
+  Future<Null> getProductListing({mounted, page, query, creatorId = 0}) async {
     if (mounted) {
       showLoading();
 
       try {
         final response = await _apiProvider.post(
             productList,
-            jsonEncode({
-              "page": page,
-              "query": query,
-              "lat": 18.5061068,
-              "lng": 73.7598362,
-            }));
+            query != null
+                ? jsonEncode({
+                    "page": page,
+                    "query": query,
+                    "lat": 18.5061068,
+                    "lng": 73.7598362,
+                  })
+                : jsonEncode({"page": page, "creator_id": creatorId}));
         if (response != null) {
           hideLoading();
           // print(response);
@@ -61,7 +65,7 @@ class ProductListingProvider extends ChangeNotifier {
   }
 
   Future<void> onRefresh(mounted, page, query) async {
-    await getProductListing(mounted, page, query)
+    await getProductListing(mounted: mounted, page: page, query: query)
         .whenComplete(() => notifyListeners());
   }
 }
