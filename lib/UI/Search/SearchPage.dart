@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:threekm/UI/businesses/businesses_detail.dart';
 import 'package:threekm/UI/shop/product/product_details.dart';
 import 'package:threekm/providers/Search/Search_Provider.dart';
 
@@ -478,20 +479,31 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
               itemCount:
                   controller.BusinessSearchData!.data!.result!.creators!.length,
               itemBuilder: (context, index) {
-                return BizCategoryCardSearch(
-                    image: controller.BusinessSearchData!.data!.result!
-                        .creators![index].image
-                        .toString(),
-                    name: controller.BusinessSearchData!.data!.result!
-                        .creators![index].businessName
-                        .toString(),
-                    tags:
-                        "${controller.BusinessSearchData!.data!.result!.creators![index].tags!.first.toString()},  ${controller.BusinessSearchData!.data!.result!.creators![index].tags!.last.toString()}",
-                    ownername:
-                        "${controller.BusinessSearchData!.data!.result!.creators![index].firstname} ${controller.BusinessSearchData!.data!.result!.creators![index].lastname}",
-                    id: controller.BusinessSearchData!.data!.result!
-                        .creators![index].creatorId!
-                        .toInt());
+                return InkWell(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => BusinessDetail(
+                                id: controller.BusinessSearchData!.data!.result!
+                                    .creators![index].creatorId!
+                                    .toInt())));
+                  },
+                  child: BizCategoryCardSearch(
+                      image: controller.BusinessSearchData!.data!.result!
+                          .creators![index].image
+                          .toString(),
+                      name: controller.BusinessSearchData!.data!.result!
+                          .creators![index].businessName
+                          .toString(),
+                      tags:
+                          "${controller.BusinessSearchData!.data!.result!.creators![index].tags!.first.toString()},  ${controller.BusinessSearchData!.data!.result!.creators![index].tags!.last.toString()}",
+                      ownername:
+                          "${controller.BusinessSearchData!.data!.result!.creators![index].firstname} ${controller.BusinessSearchData!.data!.result!.creators![index].lastname}",
+                      id: controller.BusinessSearchData!.data!.result!
+                          .creators![index].creatorId!
+                          .toInt()),
+                );
               })
           : CupertinoActivityIndicator();
     });
