@@ -5,7 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:provider/src/provider.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:threekm/UI/Search/SearchPage.dart';
 import 'package:threekm/UI/businesses/businesses_detail.dart';
+import 'package:threekm/UI/main/navigation.dart';
 import 'package:threekm/UI/shop/cart/cart_item_list_modal.dart';
 import 'package:threekm/providers/businesses/businesses_home_provider.dart';
 import 'package:threekm/utils/screen_util.dart';
@@ -21,7 +23,8 @@ class BusinessesHome extends StatefulWidget {
   State<BusinessesHome> createState() => _BusinessesHomeState();
 }
 
-class _BusinessesHomeState extends State<BusinessesHome> {
+class _BusinessesHomeState extends State<BusinessesHome>
+    with AutomaticKeepAliveClientMixin {
   @override
   void initState() {
     context.read<BusinessesHomeProvider>().getBusinesses(mounted);
@@ -37,6 +40,7 @@ class _BusinessesHomeState extends State<BusinessesHome> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     // context.read<BusinessesHomeProvider>().getBusinesses(mounted);
     final businessesHomeProvider = context.watch<BusinessesHomeProvider>();
     return Scaffold(
@@ -65,6 +69,9 @@ class _BusinessesHomeState extends State<BusinessesHome> {
       ),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }
 
 class Home extends StatefulWidget {
@@ -91,55 +98,78 @@ class _HomeState extends State<Home> {
               children: [
                 Container(
                   color: Colors.white,
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      Container(
-                        width: ThreeKmScreenUtil.screenWidthDp / 1.5,
-                        child: TextFormField(
-                          keyboardType: TextInputType.text,
-                          validator: (val) {},
-                          autofocus: false,
-                          decoration: InputDecoration(
-                            hintText: 'Search for a store/item',
-                            hintStyle:
-                                ThreeKmTextConstants.tk14PXLatoGreyRegular,
-                            counterText: '',
-                            filled: true,
-                            prefixIcon: const Icon(Icons.search,
-                                color: Color(0xFF0F0F2D)),
-                            fillColor: Colors.grey[200],
-                            //isDense: true,
-                            contentPadding:
-                                const EdgeInsets.fromLTRB(10, 13, 10, 13),
-                            // enabledBorder: OutlineInputBorder(
-                            //     borderSide: BorderSide(color: Colors.grey[400])),
-                            // focusedBorder: OutlineInputBorder(
-                            //     borderSide: BorderSide(color: Colors.grey[400])),
-                            border: const OutlineInputBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(20)),
-                                borderSide: BorderSide.none),
+                  child: Padding(
+                    padding: EdgeInsets.zero,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        InkWell(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => SearchPage(
+                                          tabNuber: 2,
+                                        )));
+                          },
+                          child: Container(
+                            height: 32,
+                            width: 250,
+                            decoration: BoxDecoration(
+                                //color: Colors.white,
+                                borderRadius: BorderRadius.circular(21),
+                                border: Border.all(color: Color(0xffDFE5EE))),
+                            child: Row(
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.only(left: 15),
+                                  child: Icon(
+                                    Icons.search_rounded,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                                Padding(
+                                    padding: EdgeInsets.only(left: 11),
+                                    child: Text(
+                                      "Search Hyperlocal Business",
+                                      style: ThreeKmTextConstants
+                                          .tk12PXLatoBlackBold
+                                          .copyWith(color: Colors.grey),
+                                    ))
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                      InkWell(
-                        onTap: () {},
-                        child: const Image(
-                            image: AssetImage(
-                                'assets/shopImg/icons8-male-user-4.png'),
-                            width: 40),
-                      ),
-                      InkWell(
-                        onTap: () {
-                          viewCart(context, 'shop');
-                        },
-                        child: const Image(
-                            image: AssetImage('assets/shopImg/Group 40724.png'),
-                            width: 40),
-                      )
-                    ],
+                        Padding(
+                          padding: EdgeInsets.only(left: 12),
+                          child: Container(
+                              height: 32,
+                              width: 32,
+                              decoration: BoxDecoration(
+                                image: DecorationImage(
+                                    image: AssetImage("assets/bell.png")),
+                                shape: BoxShape.circle,
+                                //color: Color(0xff7572ED)
+                              )),
+                        ),
+                        InkWell(
+                          onTap: () => drawerController.open!(),
+                          child: Padding(
+                            padding: EdgeInsets.only(left: 12),
+                            child: Container(
+                                height: 32,
+                                width: 32,
+                                decoration: BoxDecoration(
+                                  image: DecorationImage(
+                                      image:
+                                          AssetImage("assets/male-user.png")),
+                                  shape: BoxShape.circle,
+                                  //color: Color(0xffFF464B)
+                                )),
+                          ),
+                        )
+                      ],
+                    ),
                   ),
                 ),
                 Container(

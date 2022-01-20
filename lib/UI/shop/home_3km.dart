@@ -87,7 +87,8 @@ class ShopHome extends StatefulWidget {
   State<ShopHome> createState() => _ShopHomeState();
 }
 
-class _ShopHomeState extends State<ShopHome> with TickerProviderStateMixin {
+class _ShopHomeState extends State<ShopHome>
+    with TickerProviderStateMixin, AutomaticKeepAliveClientMixin {
   ScrollController? _scrollController;
   double? _scrollPosition = 0.0;
   late AnimationController _controller;
@@ -172,6 +173,7 @@ class _ShopHomeState extends State<ShopHome> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     _controller.repeat();
     var shopAdvData = widget.shopHomeProvider.shopHomeData!.result!.shopAdv;
     var shopsData = widget.shopHomeProvider.shopHomeData?.result?.shops;
@@ -751,4 +753,7 @@ class _ShopHomeState extends State<ShopHome> with TickerProviderStateMixin {
       ),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }
