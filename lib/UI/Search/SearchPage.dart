@@ -9,7 +9,8 @@ import 'package:threekm/utils/utils.dart';
 import 'package:provider/provider.dart';
 
 class SearchPage extends StatefulWidget {
-  SearchPage({Key? key}) : super(key: key);
+  final int tabNuber;
+  SearchPage({required this.tabNuber, Key? key}) : super(key: key);
 
   @override
   _SearchPageState createState() => _SearchPageState();
@@ -28,17 +29,8 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
   void initState() {
     super.initState();
     //Get.put(SearchController());
-    controller = TabController(length: 3, vsync: this);
-    controller.addListener(() {
-      //controller.animateTo(2);
-    });
-    // bizScrollController.addListener(() {
-    //   if (bizScrollController.offset >=
-    //       bizScrollController.position.maxScrollExtent - 100) {
-    //     Get.find<SearchController>()
-    //         .getBiz(Get.find<SearchController>().searchText);
-    //   }
-    // });
+    controller =
+        TabController(length: 3, vsync: this, initialIndex: widget.tabNuber);
     shopScrollController.addListener(() {
       if (shopScrollController.position.maxScrollExtent ==
           shopScrollController.position.pixels) {

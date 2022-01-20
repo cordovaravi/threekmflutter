@@ -120,7 +120,9 @@ class _NewsTabState extends State<NewsTab>
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => SearchPage()));
+                                builder: (context) => SearchPage(
+                                      tabNuber: 0,
+                                    )));
                       },
                       child: Container(
                         height: 32,
