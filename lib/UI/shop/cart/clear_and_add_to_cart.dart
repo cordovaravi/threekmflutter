@@ -3,10 +3,8 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:provider/src/provider.dart';
-import 'package:threekm/utils/screen_util.dart';
-import 'package:threekm/utils/threekm_textstyles.dart';
+
 import 'package:threekm/providers/shop/cart_provider.dart';
-import '../../shop/restaurants/restaurants_menu.dart';
 
 Future clearAndAddToCartModal(context, image, name, quantity, price, creatorId,
     id, variationId, weight, mode) async {

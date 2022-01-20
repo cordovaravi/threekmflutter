@@ -56,6 +56,7 @@ const String reset_password = "user/reset_password";
 const String Author_Profile = "newspost/authorprofilenew";
 const String Self_Profile = "newspost/selfprofile";
 const String add_About = "user/about";
+const String Update_User_Info = "user/update";
 
 // Follow
 const String follow_User = "follow";
@@ -87,3 +88,6 @@ const String allCategoryList = "category/tree";
 // Restaurants
 const String restaurants = "menu/home";
 const String restaurantMenu = "restaurent/menu";
+
+// Search Business
+const String Search_Business = "business/geolist";

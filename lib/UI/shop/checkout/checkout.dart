@@ -5,14 +5,13 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/src/provider.dart';
 import 'package:threekm/Models/shopModel/address_list_model.dart';
 import 'package:threekm/Models/shopModel/cart_hive_model.dart';
-import 'package:threekm/Models/shopModel/restaurants_menu_model.dart';
 import 'package:threekm/Models/shopModel/shipping_rate_model.dart';
 import 'package:threekm/providers/shop/address_list_provider.dart';
 import 'package:threekm/providers/shop/cart_provider.dart';
 import 'package:threekm/providers/shop/checkout/checkout_provider.dart';
 import 'package:threekm/utils/screen_util.dart';
 import 'package:threekm/utils/threekm_textstyles.dart';
-import 'package:threekm/widgets/shop/checkout/payment_confirming_screen.dart';
+import 'package:threekm/ui/shop/checkout/payment_confirming_screen.dart';
 
 class CheckOutScreen extends StatefulWidget {
   const CheckOutScreen({Key? key}) : super(key: key);

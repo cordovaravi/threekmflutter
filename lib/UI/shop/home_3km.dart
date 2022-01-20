@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -7,13 +6,11 @@ import 'package:hive/hive.dart';
 import 'package:threekm/providers/shop/shop_home_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:threekm/Models/shopModel/shop_home_model.dart';
-import 'package:threekm/utils/api_paths.dart';
 import 'package:threekm/utils/screen_util.dart';
 import 'package:threekm/utils/threekm_textstyles.dart';
 import '../shop/cart/cart_item_list_modal.dart';
 import '../shop/product/product_details.dart';
 import '../shop/product_listing.dart';
-import '../shop/restaurants/restaurant_details.dart';
 import '../shop/restaurants/restaurants_home_card.dart';
 import '../shop/restaurants/restaurants_home_page.dart';
 import '../shop/restaurants/restaurants_menu.dart';
@@ -185,10 +182,7 @@ class _ShopHomeState extends State<ShopHome> with TickerProviderStateMixin {
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
       child: Container(
         color: Color(0xFFF4F3F8),
-        padding: const EdgeInsets.only(
-          top: 60,
-          // left: 10,
-        ),
+        padding: EdgeInsets.zero,
         width: ThreeKmScreenUtil.screenWidthDp,
         height: ThreeKmScreenUtil.screenHeightDp,
         child: SingleChildScrollView(

@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:threekm/Custom_library/Polls/simple_polls.dart';
 import 'package:threekm/Models/home1_model.dart';
+import 'package:threekm/UI/Search/SearchPage.dart';
 import 'package:threekm/UI/main/News/NewsList.dart';
 import 'package:threekm/UI/main/News/PostView.dart';
 import 'package:threekm/UI/main/navigation.dart';
@@ -114,29 +115,38 @@ class _NewsTabState extends State<NewsTab>
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Container(
-                      height: 32,
-                      width: 250,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(21),
-                          border: Border.all(color: Color(0xffDFE5EE))),
-                      child: Row(
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.only(left: 15),
-                            child: Icon(
-                              Icons.search_rounded,
-                              color: Colors.grey,
+                    InkWell(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => SearchPage()));
+                      },
+                      child: Container(
+                        height: 32,
+                        width: 250,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(21),
+                            border: Border.all(color: Color(0xffDFE5EE))),
+                        child: Row(
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.only(left: 15),
+                              child: Icon(
+                                Icons.search_rounded,
+                                color: Colors.grey,
+                              ),
                             ),
-                          ),
-                          Padding(
-                              padding: EdgeInsets.only(left: 11),
-                              child: Text(
-                                "Search Hyperlocal News",
-                                style: ThreeKmTextConstants.tk12PXLatoBlackBold
-                                    .copyWith(color: Colors.grey),
-                              ))
-                        ],
+                            Padding(
+                                padding: EdgeInsets.only(left: 11),
+                                child: Text(
+                                  "Search Hyperlocal News",
+                                  style: ThreeKmTextConstants
+                                      .tk12PXLatoBlackBold
+                                      .copyWith(color: Colors.grey),
+                                ))
+                          ],
+                        ),
                       ),
                     ),
                     Padding(

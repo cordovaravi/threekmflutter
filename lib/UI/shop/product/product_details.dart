@@ -43,8 +43,13 @@ class _ProductDetailsState extends State<ProductDetails> {
   void initState() {
     print('${widget.id}======================');
     context.read<ProductDetailsProvider>().productDetails(mounted, widget.id);
-
     super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    ThreeKmScreenUtil().init(context);
+    super.didChangeDependencies();
   }
 
   int listLength(l) {

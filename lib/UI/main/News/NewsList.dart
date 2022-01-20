@@ -173,6 +173,8 @@ class _NewsPostCardState extends State<NewsPostCard>
     return Container(
       child: widget.newsListProvider.newsBycategory?.data?.result?.posts != null
           ? ListView.builder(
+              shrinkWrap: true,
+              physics: BouncingScrollPhysics(),
               controller: _scrollController,
               itemCount: //50,
                   widget.newsListProvider.newsBycategory!.data!.result!.posts!

@@ -3,7 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:threekm/Models/shopModel/cart_hive_model.dart';
-import 'package:threekm/widgets/shop/cart/clear_and_add_to_cart.dart';
+import 'package:threekm/ui/shop/cart/clear_and_add_to_cart.dart';
 
 class CartProvider extends ChangeNotifier {
   String? _state;
