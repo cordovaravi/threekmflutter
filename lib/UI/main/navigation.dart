@@ -11,11 +11,6 @@ import 'package:threekm/UI/main/draggableex.dart';
 import 'package:threekm/UI/shop/home_3km.dart';
 import 'package:threekm/providers/main/AthorProfile_Provider.dart';
 import 'package:threekm/utils/spacings.dart';
-<<<<<<< HEAD
-
-=======
-import 'package:threekm/ui/shop/home_3km.dart';
->>>>>>> origin/profile
 
 final drawerController = ZoomDrawerController();
 

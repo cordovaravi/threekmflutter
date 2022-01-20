@@ -83,7 +83,7 @@ void main() async {
   Hive
     ..initFlutter()
     ..registerAdapter(CartHiveModelAdapter())
-      ..registerAdapter(BusinesseswishListHiveModelAdapter());
+    ..registerAdapter(BusinesseswishListHiveModelAdapter());
   await Firebase.initializeApp();
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
     statusBarColor: Colors.transparent,
@@ -186,22 +186,19 @@ class MyApp extends StatelessWidget {
             create: (context) => LocationProvider()),
         ChangeNotifierProvider<CheckoutProvider>(
             create: (context) => CheckoutProvider()),
-<<<<<<< HEAD
         // business provider
-         ChangeNotifierProvider<BusinessesHomeProvider>(
+        ChangeNotifierProvider<BusinessesHomeProvider>(
             create: (context) => BusinessesHomeProvider()),
         ChangeNotifierProvider<BusinessDetailProvider>(
             create: (context) => BusinessDetailProvider()),
         ChangeNotifierProvider<BusinessesWishListProvider>(
-            create: (context) => BusinessesWishListProvider())
-=======
+            create: (context) => BusinessesWishListProvider()),
         ChangeNotifierProvider<ProfileInfoProvider>(
             create: (context) => ProfileInfoProvider()),
 
         /// Search Provider
         ChangeNotifierProvider<SearchBarProvider>(
             create: (context) => SearchBarProvider())
->>>>>>> origin/profile
       ],
       child: MaterialApp(
         // localizationsDelegates: [

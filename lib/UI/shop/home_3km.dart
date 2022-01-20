@@ -10,7 +10,6 @@ import 'package:provider/provider.dart';
 import 'package:threekm/Models/shopModel/shop_home_model.dart';
 import 'package:threekm/utils/screen_util.dart';
 import 'package:threekm/utils/threekm_textstyles.dart';
-import '../shop/cart/cart_item_list_modal.dart';
 import '../shop/product/product_details.dart';
 import '../shop/product_listing.dart';
 import '../shop/restaurants/restaurants_home_card.dart';
@@ -184,14 +183,7 @@ class _ShopHomeState extends State<ShopHome> with TickerProviderStateMixin {
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
       child: Container(
         color: Color(0xFFF4F3F8),
-<<<<<<< HEAD:lib/UI/shop/home_3km.dart
-        padding: const EdgeInsets.only(
-          top: 10,
-          // left: 10,
-        ),
-=======
         padding: EdgeInsets.zero,
->>>>>>> origin/profile:lib/widgets/shop/home_3km.dart
         width: ThreeKmScreenUtil.screenWidthDp,
         height: ThreeKmScreenUtil.screenHeightDp,
         child: SingleChildScrollView(
