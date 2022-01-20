@@ -4,15 +4,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/src/provider.dart';
+import 'package:threekm/UI/businesses/view_all_offering.dart';
+import 'package:threekm/UI/shop/product/product_details.dart';
+import 'package:threekm/UI/shop/product_card_home.dart';
 import 'package:threekm/providers/businesses/businesses_detail_provider.dart';
 import 'package:threekm/providers/businesses/businesses_wishlist_provider.dart';
 import 'package:threekm/utils/utils.dart';
-import 'package:threekm/widgets/businesses/all_image.dart';
-import 'package:threekm/widgets/businesses/view_all_offering.dart';
-import 'package:threekm/widgets/shop/product/product_details.dart';
-import 'package:threekm/widgets/shop/product_card_home.dart';
+
 
 import 'package:visibility_detector/visibility_detector.dart';
+
+import 'all_image.dart';
 
 class BusinessDetail extends StatefulWidget {
   const BusinessDetail({Key? key, required this.id}) : super(key: key);

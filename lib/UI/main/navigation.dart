@@ -5,12 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
 import 'package:provider/src/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:threekm/UI/businesses/businesses_home.dart';
 import 'package:threekm/UI/main/DrawerScreen.dart';
 import 'package:threekm/UI/main/draggableex.dart';
+import 'package:threekm/UI/shop/home_3km.dart';
 import 'package:threekm/providers/main/AthorProfile_Provider.dart';
 import 'package:threekm/utils/spacings.dart';
-import 'package:threekm/widgets/businesses/businesses_home.dart';
-import 'package:threekm/widgets/shop/home_3km.dart';
+
 
 final drawerController = ZoomDrawerController();
 

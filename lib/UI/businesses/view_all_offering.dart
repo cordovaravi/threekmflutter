@@ -3,10 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/src/provider.dart';
 import 'package:threekm/Models/shopModel/product_listing_model.dart';
+import 'package:threekm/UI/shop/product/product_details.dart';
 import 'package:threekm/providers/shop/product_listing_provider.dart';
 import 'package:threekm/utils/screen_util.dart';
 import 'package:threekm/utils/threekm_textstyles.dart';
-import 'package:threekm/widgets/shop/product/product_details.dart';
+
 
 class ViewAllOffering extends StatefulWidget {
   const ViewAllOffering({Key? key, required this.creatorId, required this.name})

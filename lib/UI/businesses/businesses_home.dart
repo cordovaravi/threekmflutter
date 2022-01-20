@@ -5,12 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:provider/src/provider.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:threekm/UI/businesses/businesses_detail.dart';
+import 'package:threekm/UI/shop/cart/cart_item_list_modal.dart';
 import 'package:threekm/providers/businesses/businesses_home_provider.dart';
 import 'package:threekm/utils/screen_util.dart';
 
 import 'package:threekm/utils/threekm_textstyles.dart';
-import 'package:threekm/widgets/businesses/businesses_detail.dart';
-import 'package:threekm/widgets/shop/cart/cart_item_list_modal.dart';
+
 import 'package:url_launcher/url_launcher.dart';
 
 class BusinessesHome extends StatefulWidget {
