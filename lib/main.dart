@@ -10,6 +10,8 @@ import 'package:path_provider/path_provider.dart' as pathProvider;
 import 'package:provider/provider.dart';
 import 'package:threekm/UI/walkthrough/splash_screen.dart';
 import 'package:threekm/providers/Location/locattion_Provider.dart';
+import 'package:threekm/providers/ProfileInfo/ProfileInfo_Provider.dart';
+import 'package:threekm/providers/Search/Search_Provider.dart';
 import 'package:threekm/providers/auth/Forgetpassword_provider.dart';
 import 'package:threekm/providers/auth/signIn_Provider.dart';
 import 'package:threekm/providers/auth/signUp_Provider.dart';
@@ -184,6 +186,7 @@ class MyApp extends StatelessWidget {
             create: (context) => LocationProvider()),
         ChangeNotifierProvider<CheckoutProvider>(
             create: (context) => CheckoutProvider()),
+<<<<<<< HEAD
         // business provider
          ChangeNotifierProvider<BusinessesHomeProvider>(
             create: (context) => BusinessesHomeProvider()),
@@ -191,6 +194,14 @@ class MyApp extends StatelessWidget {
             create: (context) => BusinessDetailProvider()),
         ChangeNotifierProvider<BusinessesWishListProvider>(
             create: (context) => BusinessesWishListProvider())
+=======
+        ChangeNotifierProvider<ProfileInfoProvider>(
+            create: (context) => ProfileInfoProvider()),
+
+        /// Search Provider
+        ChangeNotifierProvider<SearchBarProvider>(
+            create: (context) => SearchBarProvider())
+>>>>>>> origin/profile
       ],
       child: MaterialApp(
         // localizationsDelegates: [

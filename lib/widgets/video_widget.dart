@@ -18,7 +18,7 @@ class VideoWidget extends StatefulWidget {
 class _VideoWidgetState extends State<VideoWidget>
     with AutomaticKeepAliveClientMixin {
   VideoPlayerController? _videoPlayerController1;
-  VideoPlayerController? _videoPlayerController2;
+  //VideoPlayerController? _videoPlayerController2;
   ChewieController? _chewieController;
 
   @override
@@ -58,7 +58,7 @@ class _VideoWidgetState extends State<VideoWidget>
   @override
   void dispose() {
     _videoPlayerController1!.dispose();
-    _videoPlayerController2!.dispose();
+    //  _videoPlayerController2!.dispose();
     _chewieController?.dispose();
     super.dispose();
   }

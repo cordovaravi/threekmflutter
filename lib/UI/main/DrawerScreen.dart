@@ -4,8 +4,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:threekm/UI/main/Profile/MyProfilePost.dart';
+import 'package:threekm/UI/main/Profile/Profilepage.dart';
 import 'package:threekm/UI/main/navigation.dart';
+import 'package:threekm/UI/shop/cart/cart_item_list_modal.dart';
 import 'package:threekm/UI/walkthrough/splash_screen.dart';
+import 'package:threekm/providers/ProfileInfo/ProfileInfo_Provider.dart';
 import 'package:threekm/providers/main/AthorProfile_Provider.dart';
 import 'package:threekm/utils/threekm_textstyles.dart';
 import 'package:threekm/utils/util_methods.dart';
@@ -184,13 +187,11 @@ class _CustomDrawerState extends State<CustomDrawer> {
         child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        InkWell(
-          //onTap: () => Navigator.of(context).pushNamed(ProfilePage.path),
-          child: CustomDrawerHeader(
-            image: widget.iconUrl,
-            name: widget.name,
-          ),
+        CustomDrawerHeader(
+          image: widget.iconUrl,
+          name: widget.name,
         ),
+
         DrawerDivider(),
         GestureDetector(
           onTap: () {
@@ -227,9 +228,10 @@ class _CustomDrawerState extends State<CustomDrawer> {
           icon: Icons.shopping_cart_outlined,
           label: "Shopping Cart".toUpperCase(),
         ).onTap(() {
+          viewCart(context, "shop");
           // widget.animationController2!
           //     .reverse()
-          //     .then((value) => showCart(context));
+          //     .then((value) => viewCart(context, "shop"));
         }),
         SizedBox(
           height: 24,
@@ -321,48 +323,54 @@ class CustomDrawerHeader extends StatelessWidget {
   CustomDrawerHeader({required this.image, required this.name});
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.only(top: 67),
-      child: InkWell(
-        onTap: () {},
-        child: Row(
-          children: [
-            Container(
-              height: 60,
-              width: 60,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                image: image.isNotEmpty
-                    ? DecorationImage(image: CachedNetworkImageProvider(image))
-                    : DecorationImage(
-                        image: AssetImage("assets/avatar.png"),
-                      ),
+    return Consumer<ProfileInfoProvider>(builder: (context, controller, _) {
+      return Container(
+        margin: EdgeInsets.only(top: 67),
+        child: InkWell(
+          onTap: () {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => ProfilePage()));
+          },
+          child: Row(
+            children: [
+              Container(
+                height: 60,
+                width: 60,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  image: controller.Avatar != null
+                      ? DecorationImage(
+                          image: CachedNetworkImageProvider(controller.Avatar!))
+                      : DecorationImage(
+                          image: AssetImage("assets/avatar.png"),
+                        ),
+                ),
               ),
-            ),
-            Container(
-              margin: EdgeInsets.only(left: 12),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    name,
-                    style: ThreeKmTextConstants.tk16PXPoppinsWhiteBold
-                        .copyWith(fontWeight: FontWeight.normal),
-                  ),
-                  Text(
-                    "My Profile",
-                    style:
-                        ThreeKmTextConstants.tk12PXPoppinsWhiteRegular.copyWith(
-                      color: Color(0xFFD5D5D5),
+              Container(
+                margin: EdgeInsets.only(left: 12),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      name,
+                      style: ThreeKmTextConstants.tk16PXPoppinsWhiteBold
+                          .copyWith(fontWeight: FontWeight.normal),
                     ),
-                  ),
-                ],
+                    Text(
+                      "My Profile",
+                      style: ThreeKmTextConstants.tk12PXPoppinsWhiteRegular
+                          .copyWith(
+                        color: Color(0xFFD5D5D5),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
-      ),
-    );
+      );
+    });
   }
 }
 

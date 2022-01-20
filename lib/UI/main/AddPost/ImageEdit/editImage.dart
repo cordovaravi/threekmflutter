@@ -29,8 +29,8 @@ class _EditImageState extends State<EditImage> {
   final List<GlobalObjectKey<ExtendedImageEditorState>> imageKey =
       List.generate(
           50, (index) => GlobalObjectKey<ExtendedImageEditorState>(index));
-  final GlobalKey<ExtendedImageEditorState> editorKey =
-      GlobalKey<ExtendedImageEditorState>();
+  // final GlobalKey<ExtendedImageEditorState> editorKey =
+  //     GlobalKey<ExtendedImageEditorState>();
   final GlobalKey<PopupMenuButtonState<EditorCropLayerPainter>> popupMenuKey =
       GlobalKey<PopupMenuButtonState<EditorCropLayerPainter>>();
   int currentIndex = 0;

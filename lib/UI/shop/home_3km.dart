@@ -1,19 +1,18 @@
 import 'dart:convert';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
+import 'package:threekm/UI/Search/SearchPage.dart';
+import 'package:threekm/UI/main/navigation.dart';
 import 'package:threekm/providers/shop/shop_home_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:threekm/Models/shopModel/shop_home_model.dart';
-import 'package:threekm/utils/api_paths.dart';
 import 'package:threekm/utils/screen_util.dart';
 import 'package:threekm/utils/threekm_textstyles.dart';
 import '../shop/cart/cart_item_list_modal.dart';
 import '../shop/product/product_details.dart';
 import '../shop/product_listing.dart';
-import '../shop/restaurants/restaurant_details.dart';
 import '../shop/restaurants/restaurants_home_card.dart';
 import '../shop/restaurants/restaurants_home_page.dart';
 import '../shop/restaurants/restaurants_menu.dart';
@@ -185,10 +184,14 @@ class _ShopHomeState extends State<ShopHome> with TickerProviderStateMixin {
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
       child: Container(
         color: Color(0xFFF4F3F8),
+<<<<<<< HEAD:lib/UI/shop/home_3km.dart
         padding: const EdgeInsets.only(
           top: 10,
           // left: 10,
         ),
+=======
+        padding: EdgeInsets.zero,
+>>>>>>> origin/profile:lib/widgets/shop/home_3km.dart
         width: ThreeKmScreenUtil.screenWidthDp,
         height: ThreeKmScreenUtil.screenHeightDp,
         child: SingleChildScrollView(
@@ -197,56 +200,77 @@ class _ShopHomeState extends State<ShopHome> with TickerProviderStateMixin {
             children: [
               Container(
                 color: Colors.white,
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  // mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Container(
-                      // padding: const EdgeInsets.only(left: 20),
-                      width: ThreeKmScreenUtil.screenWidthDp / 1.5,
-                      child: TextFormField(
-                        keyboardType: TextInputType.text,
-                        // controller: _firstName,
-                        validator: (val) {},
-                        //maxLength: 16,
-                        autofocus: false,
-
-                        decoration: InputDecoration(
-                          hintText: 'Search for a store/item',
-                          hintStyle: ThreeKmTextConstants.tk14PXLatoGreyRegular,
-                          counterText: '',
-                          filled: true,
-                          prefixIcon: const Icon(Icons.search,
-                              color: Color(0xFF0F0F2D)),
-                          fillColor: Colors.grey[200],
-                          //isDense: true,
-                          contentPadding:
-                              const EdgeInsets.fromLTRB(10, 13, 10, 13),
-                          // enabledBorder: OutlineInputBorder(
-                          //     borderSide: BorderSide(color: Colors.grey[400])),
-                          // focusedBorder: OutlineInputBorder(
-                          //     borderSide: BorderSide(color: Colors.grey[400])),
-                          border: const OutlineInputBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(20)),
-                              borderSide: BorderSide.none),
+                child: Padding(
+                  padding: EdgeInsets.only(top: 18),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      InkWell(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => SearchPage(
+                                        tabNuber: 1,
+                                      )));
+                        },
+                        child: Container(
+                          height: 32,
+                          width: 250,
+                          decoration: BoxDecoration(
+                              //color: Colors.white,
+                              borderRadius: BorderRadius.circular(21),
+                              border: Border.all(color: Color(0xffDFE5EE))),
+                          child: Row(
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.only(left: 15),
+                                child: Icon(
+                                  Icons.search_rounded,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                              Padding(
+                                  padding: EdgeInsets.only(left: 11),
+                                  child: Text(
+                                    "Search Hyperlocal Products",
+                                    style: ThreeKmTextConstants
+                                        .tk12PXLatoBlackBold
+                                        .copyWith(color: Colors.grey),
+                                  ))
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                    const Image(
-                        image:
-                            AssetImage('assets/shopImg/icons8-male-user-4.png'),
-                        width: 40),
-                    InkWell(
-                      onTap: () {
-                        viewCart(context, 'shop');
-                      },
-                      child: const Image(
-                          image: AssetImage('assets/shopImg/Group 40724.png'),
-                          width: 40),
-                    )
-                  ],
+                      Padding(
+                        padding: EdgeInsets.only(left: 12),
+                        child: Container(
+                            height: 32,
+                            width: 32,
+                            decoration: BoxDecoration(
+                              image: DecorationImage(
+                                  image: AssetImage("assets/bell.png")),
+                              shape: BoxShape.circle,
+                              //color: Color(0xff7572ED)
+                            )),
+                      ),
+                      InkWell(
+                        onTap: () => drawerController.open!(),
+                        child: Padding(
+                          padding: EdgeInsets.only(left: 12),
+                          child: Container(
+                              height: 32,
+                              width: 32,
+                              decoration: BoxDecoration(
+                                image: DecorationImage(
+                                    image: AssetImage("assets/male-user.png")),
+                                shape: BoxShape.circle,
+                                //color: Color(0xffFF464B)
+                              )),
+                        ),
+                      )
+                    ],
+                  ),
                 ),
               ),
               CategoryListHome(
