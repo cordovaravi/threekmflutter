@@ -44,14 +44,21 @@ class NewsListProvider extends ChangeNotifier {
   NewsbyCategoryModel? _newsbyCategories;
   NewsbyCategoryModel? get newsBycategory => _newsbyCategories;
 
-  Future<Null> getNewsPost(
-      title, mounted, int takeCOunt, int skipCount, bool isNewCall) async {
+  Future<Null> getNewsPost(title, mounted, int takeCOunt, int skipCount,
+      bool isNewCall, List? isfromBaner) async {
     var tempList = _newsbyCategories?.data?.result?.posts;
     List postIds = [];
-    final posts = geoListIDS!.data!.result!.posts;
-    posts!.forEach((element) {
-      postIds.add(element.postId);
-    });
+    if (isfromBaner == null) {
+      final posts = geoListIDS!.data!.result!.posts;
+      posts!.forEach((element) {
+        postIds.add(element.postId);
+      });
+    } else {
+      isfromBaner.forEach((element) {
+        postIds.add(element);
+      });
+    }
+
     //debugPrint("${partition(postIds, 10).take(2)}");
 
     debugPrint("${postIds.skip(0).take(10)}");
@@ -130,8 +137,8 @@ class NewsListProvider extends ChangeNotifier {
 
   Future<void> onRefresh(requestJson, title, mounted, int takeCOunt,
       int skipCount, bool isNewCall) async {
-    featchPostIds(requestJson, mounted).whenComplete(
-        () => getNewsPost(title, mounted, takeCOunt, skipCount, isNewCall));
+    featchPostIds(requestJson, mounted).whenComplete(() =>
+        getNewsPost(title, mounted, takeCOunt, skipCount, isNewCall, null));
   }
 
   Future<Null> followUser(int autherId) async {
