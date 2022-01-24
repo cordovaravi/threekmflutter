@@ -1,24 +1,40 @@
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/src/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:threekm/Custom_library/GooleMapsWidget/src/place_picker.dart';
 import 'package:threekm/Custom_library/draggable_home.dart';
 import 'package:threekm/UI/main/AddPost/ImageEdit/editImage.dart';
 import 'package:threekm/UI/main/News/NewsTab.dart';
+import 'package:threekm/UI/main/navigation.dart';
+import 'package:threekm/commenwidgets/CustomSnakBar.dart';
+import 'package:threekm/providers/Location/locattion_Provider.dart';
 import 'package:threekm/providers/main/AddPost_Provider.dart';
+import 'package:threekm/utils/api_paths.dart';
 import 'package:threekm/utils/utils.dart';
+import 'package:google_maps_webservice/directions.dart';
 
 import 'News/NewsList.dart';
 
-class DraggablePage extends StatelessWidget {
+class DraggablePage extends StatefulWidget {
   final bool? isredirected;
   DraggablePage({this.isredirected});
+
+  @override
+  State<DraggablePage> createState() => _DraggablePageState();
+}
+
+class _DraggablePageState extends State<DraggablePage> {
   final ImagePicker _imagePicker = ImagePicker();
+  String? _selecetdAddress;
+  Geometry? _geometry;
   @override
   Widget build(BuildContext context) {
     return DraggableHome(
         //backgroundColor: Colors.white,
-        headerExpandedHeight: 0.00000000001,
-        body: [NewsTab(reload: isredirected)],
+        headerExpandedHeight: 0.0000000000001,
+        body: [NewsTab(reload: widget.isredirected)],
         fullyStretchable: true,
         expandedBody: Container(
           color: Color(0xff3E7EFF),
@@ -66,6 +82,9 @@ class DraggablePage extends StatelessWidget {
                       ),
                     ),
                     InkWell(
+                      onTap: () {
+                        drawerController.open!();
+                      },
                       child: Container(
                         margin:
                             EdgeInsets.only(bottom: 16, left: 16, right: 16),
@@ -149,28 +168,80 @@ class DraggablePage extends StatelessWidget {
                                   ThreeKmTextConstants.tk16PXPoppinsBlackMedium,
                             ),
                             SizedBox(
-                              height: 30,
+                              height: 15,
                             ),
                             Text(
-                              "Baner-Pashan \n Link Road",
+                              _selecetdAddress ?? "",
                               style:
                                   ThreeKmTextConstants.tk16PXPoppinsBlackMedium,
                               textAlign: TextAlign.center,
                             ),
                             SizedBox(
-                              height: 32,
+                              height: 15,
                             ),
-                            Container(
-                              width: 108,
-                              height: 36,
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(18),
-                                  color: Color(0xff3E7EFF)),
-                              child: Center(
-                                child: Text(
-                                  "Change",
-                                  style: ThreeKmTextConstants
-                                      .tk16PXPoppinsWhiteBold,
+                            InkWell(
+                              onTap: () {
+                                Future.delayed(Duration.zero, () {
+                                  context
+                                      .read<LocationProvider>()
+                                      .getLocation()
+                                      .whenComplete(() {
+                                    final _locationProvider = context
+                                        .read<LocationProvider>()
+                                        .getlocationData;
+                                    final kInitialPosition = LatLng(
+                                        _locationProvider!.latitude!,
+                                        _locationProvider.longitude!);
+                                    if (_locationProvider != null) {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => PlacePicker(
+                                              apiKey: GMap_Api_Key,
+                                              // initialMapType: MapType.satellite,
+                                              onPlacePicked: (result) async {
+                                                //print(result.formattedAddress);
+                                                setState(() {
+                                                  _selecetdAddress =
+                                                      result.formattedAddress;
+                                                  print(result.geometry!
+                                                      .toJson());
+                                                  _geometry = result.geometry;
+                                                });
+                                                SharedPreferences _prefs =
+                                                    await SharedPreferences
+                                                        .getInstance();
+                                                _prefs.setString("Geometry",
+                                                    _geometry.toString());
+                                                CustomSnackBar(
+                                                    context,
+                                                    Text(
+                                                        "Updating Hyperlocal contetnt in background"));
+                                                Navigator.of(context).pop();
+                                              },
+                                              initialPosition: kInitialPosition,
+                                              useCurrentLocation: true,
+                                              selectInitialPosition: true,
+                                              usePinPointingSearch: true,
+                                              usePlaceDetailSearch: true,
+                                            ),
+                                          ));
+                                    }
+                                  });
+                                });
+                              },
+                              child: Container(
+                                width: 108,
+                                height: 36,
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(18),
+                                    color: Color(0xff3E7EFF)),
+                                child: Center(
+                                  child: Text(
+                                    "Change",
+                                    style: ThreeKmTextConstants
+                                        .tk16PXPoppinsWhiteBold,
+                                  ),
                                 ),
                               ),
                             )
@@ -201,25 +272,6 @@ class DraggablePage extends StatelessWidget {
       ),
     );
   }
-
-  // Container headerWidget(BuildContext context) => Container(
-
-  //     child: DefaultTabController(
-  //         length: 3,
-  //         child: TabBar(
-  //           tabs: [
-  //             Tab(
-  //               text: "News",
-  //             ),
-  //             Tab(
-  //               text: "Shopping",
-  //             ),
-  //             Tab(
-  //               text: "Business",
-  //             )
-  //           ],
-  //         ))
-  //         );
 
   ListView listView() {
     return ListView.builder(
@@ -304,7 +356,22 @@ class DraggablePage extends StatelessWidget {
                         height: 10,
                       ),
                       InkWell(
-                        onTap: () {},
+                        onTap: () async {
+                          final pickedVideo = await _imagePicker.pickVideo(
+                              source: ImageSource.gallery);
+                          //final file = XFile(pickedVideo!.path);
+                          Navigator.pop(context);
+                          if (pickedVideo != null) {
+                            // context
+                            //     .read<AddPostProvider>()
+                            //     .addImages(File(pickedVideo.path));
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => EditImage(
+                                        images: [XFile(pickedVideo.path)])));
+                          }
+                        },
                         child: Container(
                           decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(20),

@@ -7,6 +7,7 @@ import 'package:threekm/utils/api_paths.dart';
 class QuizProvider extends ChangeNotifier {
   bool? _isCorectAns;
   bool? get isCorrectAns => _isCorectAns;
+
   Future<void> update(String isSelectedAns, String rightAns, int index) async {
     if (isSelectedAns == rightAns) {
       _isCorectAns = true;

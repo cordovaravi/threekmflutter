@@ -18,11 +18,16 @@ class ProfileInfoProvider extends ChangeNotifier {
   String? _Phonenumber;
   String? _avatar;
   String? _email;
+  String? _Gender;
 
   String? get UserName => this._userName;
   String? get Phonenumber => this._Phonenumber;
   String? get Avatar => this._avatar;
   String? get Email => this._email;
+  String? get Gender => this._Gender;
+
+  DateTime? _dob;
+  DateTime? get dateOfBirth => _dob;
 
   static Future<String?> _getName() async {
     SharedPreferences _pref = await SharedPreferences.getInstance();
@@ -41,9 +46,11 @@ class ProfileInfoProvider extends ChangeNotifier {
     return _pref.getString("avatar");
   }
 
-  static Future<String?> _getDob() async {
+  Future<DateTime?> _getDob() async {
     SharedPreferences _pref = await SharedPreferences.getInstance();
-    return _pref.getString("dob");
+    String? dob = await _pref.getString("dob");
+    log("dob is from function $dob");
+    return DateTime.parse(dob ?? "");
   }
 
   //String get email =>  _getEmail();
@@ -53,11 +60,20 @@ class ProfileInfoProvider extends ChangeNotifier {
     return _pref.getString("email");
   }
 
+  static Future<String?> _getGender() async {
+    SharedPreferences _pref = await SharedPreferences.getInstance();
+    return _pref.getString("gender");
+  }
+
   Future<Null> getProfileBasicData() async {
     _avatar = await _getAvatar();
     _userName = await _getName();
     _Phonenumber = await _getPhoneUmber();
     _email = await getEmail();
+    _dob = await _getDob();
+    _Gender = await _getGender();
+    log("dob is $_dob");
+
     notifyListeners();
   }
 
@@ -79,7 +95,7 @@ class ProfileInfoProvider extends ChangeNotifier {
       "firstname": fname ?? _fname,
       "lastname": lname ?? _lname,
       "avatar": avatar ?? await _getAvatar(),
-      "gender": Gender ?? "",
+      "gender": Gender ?? await _getGender(),
       "email": email ?? await getEmail(),
       "dob": dob != null ? "${dob.year}-${dob.month}-${dob.day}" : ""
     });
@@ -94,6 +110,7 @@ class ProfileInfoProvider extends ChangeNotifier {
         prefs.setString("avatar", data.data!.result!.user!.avatar ?? "");
         prefs.setString("gender", data.data!.result!.user!.gender ?? "");
         prefs.setString("email", data.data!.result!.user!.email ?? "");
+        prefs.setString("dob", data.data!.result!.user?.dob.toString() ?? "");
         getProfileBasicData();
       }
     }
@@ -150,8 +167,6 @@ class ProfileInfoProvider extends ChangeNotifier {
     updateProfileInfo(dob: dob);
   }
 
-  DateTime? _dob;
-  DateTime? get dateOfBirth => _dob;
   void setDob({required DateTime dob}) {
     _dob = dob;
     updateProfileInfo(dob: dob);

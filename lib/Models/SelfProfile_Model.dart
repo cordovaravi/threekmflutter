@@ -157,7 +157,9 @@ class Post {
             : List<String>.from(json["images"].map((x) => x)),
         videos: json["videos"] == null
             ? null
-            : List<Video>.from(json["videos"].map((x) => Video.fromJson(x))),
+            : json["videos"].runtimeType is List
+                ? List<Video>.from(json["videos"].map((x) => Video.fromJson(x)))
+                : null,
         type: json["type"] == null ? null : json["type"],
         tags: json["tags"] == null
             ? null

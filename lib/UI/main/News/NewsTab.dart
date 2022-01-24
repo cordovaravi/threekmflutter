@@ -11,19 +11,21 @@ import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:threekm/Custom_library/Polls/simple_polls.dart';
 import 'package:threekm/Models/home1_model.dart';
+import 'package:threekm/UI/Animation/AnimatedSizeRoute.dart';
 import 'package:threekm/UI/Search/SearchPage.dart';
 import 'package:threekm/UI/main/News/NewsList.dart';
 import 'package:threekm/UI/main/News/PostView.dart';
+import 'package:threekm/UI/main/Notification/NotificationPage.dart';
 import 'package:threekm/UI/main/navigation.dart';
 import 'package:threekm/commenwidgets/CustomSnakBar.dart';
 import 'package:threekm/networkservice/Api_Provider.dart';
 import 'package:threekm/providers/main/AddPost_Provider.dart';
-import 'package:threekm/providers/main/AthorProfile_Provider.dart';
 import 'package:threekm/providers/main/Quiz_Provider.dart';
 import 'package:threekm/providers/main/home1_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:threekm/providers/main/home2_provider.dart';
 import 'package:threekm/utils/threekm_textstyles.dart';
+import 'package:threekm/widgets/vimeoPlayer.dart';
 
 import 'Widgets/Adspopup.dart';
 
@@ -151,17 +153,23 @@ class _NewsTabState extends State<NewsTab>
                         ),
                       ),
                     ),
-                    Padding(
-                      padding: EdgeInsets.only(left: 12),
-                      child: Container(
-                          height: 32,
-                          width: 32,
-                          decoration: BoxDecoration(
-                            image: DecorationImage(
-                                image: AssetImage("assets/bell.png")),
-                            shape: BoxShape.circle,
-                            //color: Color(0xff7572ED)
-                          )),
+                    InkWell(
+                      onTap: () {
+                        Navigator.push(context,
+                            AnimatedSizeRoute(page: Notificationpage()));
+                      },
+                      child: Padding(
+                        padding: EdgeInsets.only(left: 12),
+                        child: Container(
+                            height: 32,
+                            width: 32,
+                            decoration: BoxDecoration(
+                              image: DecorationImage(
+                                  image: AssetImage("assets/bell.png")),
+                              shape: BoxShape.circle,
+                              //color: Color(0xff7572ED)
+                            )),
+                      ),
                     ),
                     InkWell(
                       onTap: () => drawerController.open!(),
@@ -258,22 +266,76 @@ class _NewsTabState extends State<NewsTab>
                                       itemCount: finalPost.banners!.length,
                                       itemBuilder: (BuildContext context,
                                               int bannerIndex, heroIndex) =>
-                                          GestureDetector(
+                                          InkWell(
+                                              onTap: () {
+                                                if (finalPost
+                                                        .banners![bannerIndex]
+                                                        .imageswcta!
+                                                        .first
+                                                        .post !=
+                                                    null) {
+                                                  Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              NewsListPage(
+                                                                title: finalPost
+                                                                    .banners![
+                                                                        bannerIndex]
+                                                                    .imageswcta!
+                                                                    .first
+                                                                    .header
+                                                                    .toString(),
+                                                                hasPostfromBanner: finalPost
+                                                                    .banners![
+                                                                        bannerIndex]
+                                                                    .imageswcta!
+                                                                    .first
+                                                                    .post,
+                                                              )));
+                                                } else if (finalPost
+                                                        .banners![bannerIndex]
+                                                        .imageswcta!
+                                                        .first
+                                                        .video !=
+                                                    null) {
+                                                  Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              VimeoPlayerPage(
+                                                                  VimeoUri: finalPost
+                                                                      .banners![
+                                                                          bannerIndex]
+                                                                      .imageswcta!
+                                                                      .first
+                                                                      .vimeoUrl
+                                                                      .toString())));
+                                                }
+                                              },
                                               child: Container(
-                                        //BouncingWidget(
-                                        // scaleFactor: 1.5,
-                                        // onPressed: () {
-                                        //   print("ontap");
-                                        // },
-                                        child: CachedNetworkImage(
-                                            fit: BoxFit.cover,
-                                            width: 1000,
-                                            imageUrl: finalPost
-                                                .banners![bannerIndex]
-                                                .images!
-                                                .first
-                                                .toString()),
-                                      )),
+                                                margin: EdgeInsets.only(
+                                                    top: 4, bottom: 4),
+                                                decoration: BoxDecoration(
+                                                    boxShadow: [
+                                                      BoxShadow(
+                                                          blurRadius: 10.0,
+                                                          color: Colors
+                                                              .grey.shade200)
+                                                    ],
+                                                    color: Colors.white,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            15)),
+                                                child: CachedNetworkImage(
+                                                    fit: BoxFit.contain,
+                                                    width: 1000,
+                                                    imageUrl: finalPost
+                                                        .banners![bannerIndex]
+                                                        .images!
+                                                        .first
+                                                        .toString()),
+                                              )),
                                       options: CarouselOptions(
                                           viewportFraction:
                                               finalPost.banners!.length > 1
@@ -868,11 +930,12 @@ class NewsContainer extends StatelessWidget {
                         final contentPost = finalPost.category!.posts;
                         return InkWell(
                           onTap: () {
+                            log("ontap Created date value ${contentPost![postIndex].postCreatedDate}");
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) => Postview(
-                                        image: contentPost![postIndex]
+                                        image: contentPost[postIndex]
                                             .image
                                             .toString(),
                                         postId: contentPost[postIndex]
@@ -915,11 +978,8 @@ class NewsContainer extends StatelessWidget {
                                           child: Stack(
                                             children: [
                                               contentPost[postIndex]
-                                                              .postCreatedDate !=
-                                                          null ||
-                                                      contentPost[postIndex]
-                                                          .postCreatedDate!
-                                                          .isNotEmpty
+                                                          .postCreatedDate !=
+                                                      ""
                                                   ? Positioned(
                                                       bottom: 0,
                                                       child: Container(
@@ -1046,6 +1106,7 @@ class Option extends StatelessWidget {
                 print(index);
                 print(this.option);
                 context.read<QuizProvider>().submitQuiz(quizId!, this.option);
+                context.read<HomefirstProvider>().submitQuiz(quizId: quizId!);
               }
             : null,
         child: Padding(

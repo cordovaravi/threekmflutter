@@ -24,10 +24,16 @@ import 'package:threekm/widgets/emotion_Button.dart';
 import 'package:threekm/widgets/video_widget.dart';
 
 import 'package:threekm/widgets/reactions_assets.dart' as reactionAssets;
+import 'package:vimeo_player_flutter/vimeo_player_flutter.dart';
 
 class NewsListPage extends StatefulWidget {
   final String title;
-  NewsListPage({required this.title, Key? key}) : super(key: key);
+  final List? hasPostfromBanner;
+  NewsListPage({
+    required this.title,
+    this.hasPostfromBanner,
+    Key? key,
+  }) : super(key: key);
 
   @override
   _NewsListPageState createState() => _NewsListPageState();
@@ -37,10 +43,42 @@ class _NewsListPageState extends State<NewsListPage> {
   String? initJson;
 
   pageInit() {
-    //context.read<NewsListProvider>().state != 'loaded'
-    if (true) {
-      initJson =
-          json.encode({"lat": '', "lng": '', "query": this.widget.title});
+    if (widget.hasPostfromBanner == null) {
+      if (widget.title == "Lifestyle/Travel") {
+        initJson = json.encode({
+          "lat": '',
+          "lng": '',
+          "tags": [
+            "Fashion",
+            "Jewelry",
+            "Homedecor",
+            "Travel",
+            "places",
+            "spirituality",
+            "tarot",
+            "mythology",
+            "meme",
+            "dance",
+            "music",
+            "singer",
+            "artist",
+            "arts",
+            "painting"
+          ],
+          "category": 4
+        });
+      } else if (widget.title == "Junta - UGC") {
+        initJson = json.encode({
+          "lat": 21.1458004,
+          "lng": 79.0881546,
+          "tags": ["humanstory", "featurestory", "people", "peopleofpune"],
+          "category": 7
+        });
+      } else {
+        initJson =
+            json.encode({"lat": '', "lng": '', "query": this.widget.title});
+      }
+
       Future.delayed(Duration.zero, () {
         context
             .read<NewsListProvider>()
@@ -48,9 +86,12 @@ class _NewsListPageState extends State<NewsListPage> {
             .whenComplete(() {
           context
               .read<NewsListProvider>()
-              .getNewsPost(widget.title, mounted, 10, 0, true);
+              .getNewsPost(widget.title, mounted, 10, 0, true, null);
         });
       });
+    } else {
+      context.read<NewsListProvider>().getNewsPost(
+          widget.title, mounted, 10, 0, true, widget.hasPostfromBanner!);
     }
   }
 
@@ -98,6 +139,8 @@ class _NewsListPageState extends State<NewsListPage> {
               } else if (newsProvider.state == "loaded") {
                 return newsProvider.newsBycategory != null
                     ? NewsPostCard(
+                        noScorll:
+                            widget.hasPostfromBanner != null ? true : false,
                         newsListProvider: newsProvider,
                         name: widget.title,
                       )
@@ -115,7 +158,12 @@ class _NewsListPageState extends State<NewsListPage> {
 class NewsPostCard extends StatefulWidget {
   final NewsListProvider newsListProvider;
   final String name;
-  NewsPostCard({required this.newsListProvider, required this.name, Key? key})
+  final bool noScorll;
+  NewsPostCard(
+      {required this.newsListProvider,
+      required this.name,
+      required this.noScorll,
+      Key? key})
       : super(key: key);
 
   @override
@@ -144,16 +192,17 @@ class _NewsPostCardState extends State<NewsPostCard>
   bool get wantKeepAlive => true;
   @override
   void initState() {
-    _scrollController.addListener(() {
-      if (_scrollController.position.maxScrollExtent ==
-          _scrollController.position.pixels) {
-        takeCount += 10;
-        skipCount += 10;
-        context
-            .read<NewsListProvider>()
-            .getNewsPost(widget.name, mounted, takeCount, skipCount, false);
-      }
-    });
+    if (widget.noScorll == false) {
+      _scrollController.addListener(() {
+        if (_scrollController.position.maxScrollExtent ==
+            _scrollController.position.pixels) {
+          takeCount += 10;
+          skipCount += 10;
+          context.read<NewsListProvider>().getNewsPost(
+              widget.name, mounted, takeCount, skipCount, false, null);
+        }
+      });
+    }
     super.initState();
   }
 
@@ -356,17 +405,26 @@ class _NewsPostCardState extends State<NewsPostCard>
                                         height: 254,
                                         width:
                                             MediaQuery.of(context).size.width,
-                                        child: VideoWidget(
-                                            thubnail: newsData.videos?.first
-                                                        .thumbnail !=
-                                                    null
-                                                ? newsData
-                                                    .videos!.first.thumbnail
-                                                    .toString()
-                                                : '',
-                                            url: newsData.videos!.first.src
-                                                .toString(),
-                                            play: false),
+                                        child: newsData
+                                                    .videos?.first.vimeoUrl !=
+                                                null
+                                            ? VimeoPlayer(
+                                                videoId: Uri.parse(newsData
+                                                        .videos!.first.vimeoUrl
+                                                        .toString())
+                                                    .pathSegments
+                                                    .last)
+                                            : VideoWidget(
+                                                thubnail: newsData.videos?.first
+                                                            .thumbnail !=
+                                                        null
+                                                    ? newsData
+                                                        .videos!.first.thumbnail
+                                                        .toString()
+                                                    : '',
+                                                url: newsData.videos!.first.src
+                                                    .toString(),
+                                                play: false),
                                       ),
                                     ]),
                                   Row(children: [

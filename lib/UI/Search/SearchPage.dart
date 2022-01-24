@@ -2,6 +2,10 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:threekm/Models/NewsSearch/NewsSearchModel.dart';
+import 'package:threekm/UI/Animation/AnimatedSizeRoute.dart';
+import 'package:threekm/UI/businesses/businesses_detail.dart';
+import 'package:threekm/UI/main/News/PostView.dart';
 import 'package:threekm/UI/shop/product/product_details.dart';
 import 'package:threekm/providers/Search/Search_Provider.dart';
 
@@ -75,10 +79,7 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
             child: TabBarView(
               controller: controller,
               children: [
-                //buildNews(),
-                Container(
-                  child: Text("news container"),
-                ),
+                buildNews(),
                 shopTab(),
                 buildBiz(),
               ],
@@ -219,6 +220,9 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
                 child: TextFormField(
                   controller: searchController,
                   onFieldSubmitted: (value) {
+                    context
+                        .read<SearchBarProvider>()
+                        .getNewsSearch(query: value);
                     context.read<SearchBarProvider>().getShopSearch(
                         query: value, pageNumber: 1, isNewCall: true);
                     context
@@ -296,266 +300,116 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
   Widget shopTab() {
     return Consumer<SearchBarProvider>(builder: (context, controller, _) {
       return controller.shopSearchData?.result?.products?.length != null
-          ? ListView.builder(
-              controller: shopScrollController,
-              shrinkWrap: true,
-              physics: BouncingScrollPhysics(),
-              itemCount: controller.shopSearchData!.result!.products!.length,
-              itemBuilder: (context, index) {
-                return InkWell(
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => ProductDetails(
-                                id: controller.shopSearchData!.result!
-                                    .products![index].catalogId!
-                                    .toInt())));
-                  },
-                  child: CategoryCardSearch(
-                      image: controller
-                          .shopSearchData!.result!.products![index].image
-                          .toString(),
-                      name: controller
-                          .shopSearchData!.result!.products![index].name
-                          .toString(),
-                      by: controller
-                          .shopSearchData!.result!.products![index].businessName
-                          .toString(),
-                      price: controller
-                          .shopSearchData!.result!.products![index].price
-                          .toString(),
-                      id: controller
-                          .shopSearchData!.result!.products![index].catalogId!
-                          .toInt()),
-                );
-              })
-          : CupertinoActivityIndicator();
+          ? controller.isShopLoading
+              ? CupertinoActivityIndicator()
+              : ListView.builder(
+                  controller: shopScrollController,
+                  shrinkWrap: true,
+                  physics: BouncingScrollPhysics(),
+                  itemCount:
+                      controller.shopSearchData!.result!.products!.length,
+                  itemBuilder: (context, index) {
+                    return InkWell(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ProductDetails(
+                                    id: controller.shopSearchData!.result!
+                                        .products![index].catalogId!
+                                        .toInt())));
+                      },
+                      child: CategoryCardSearch(
+                          image: controller
+                              .shopSearchData!.result!.products![index].image
+                              .toString(),
+                          name: controller
+                              .shopSearchData!.result!.products![index].name
+                              .toString(),
+                          by: controller.shopSearchData!.result!
+                              .products![index].businessName
+                              .toString(),
+                          price: controller
+                              .shopSearchData!.result!.products![index].price
+                              .toString(),
+                          id: controller.shopSearchData!.result!
+                              .products![index].catalogId!
+                              .toInt()),
+                    );
+                  })
+          : Container();
     });
-    // builder: (_controller) => _controller.shop.length > 0 &&
-    //     searchController.text.length > 0
-    // ? ListView.builder(
-    //     controller: shopScrollController,
-    //     shrinkWrap: true,
-    //     itemBuilder: (context, i) => InkWell(
-    //       onTap: () async {
-    //         // await Navigator.of(context).pushNamed(
-    //         //   ProductDetailsPage.path,
-    //         //   arguments: _controller.shop[i]['catalog_id'],
-    //         // );
-    //         // _controller.getAllWishlist();
-    //       },
-    //       child: CategoryCardSearch(
-    //           id: _controller.shop[i]['catalog_id'],
-    //           image: _controller.shop[i]['image'],
-    //           name: _controller.shop[i]['name'],
-    //           price: _controller.shop[i]['price'].toString(),
-    //           by: _controller.shop[i]['business_name']),
-    //     ),
-    //     itemCount: _controller.shop.length,
-    //   )
-    // : searchController.text.length > 0 && _controller.productLoading
-    //     ? Center(child: CupertinoActivityIndicator())
-    //     : SingleChildScrollView(
-    //         child: Column(
-    //           crossAxisAlignment: CrossAxisAlignment.start,
-    //           children: [
-    //             space(height: 61),
-    //             Text(
-    //               "Product Categories:",
-    //               style: generateStyles(
-    //                   type: StylesEnum.POPPINS,
-    //                   fontSize: 16,
-    //                   fontWeight: FontWeight.bold),
-    //             ).paddingX(18).padding(bottom: 24),
-    //             GetBuilder<ShopController>(
-    //               builder: (_controller) =>
-    //                   _controller.shopHome!['Result'] != null
-    //                       ? ListView.builder(
-    //                           scrollDirection: Axis.horizontal,
-    //                           padding: EdgeInsets.only(left: 19),
-    //                           itemCount: _controller
-    //                               .shopHome!['Result']['trending'].length,
-    //                           itemBuilder: (context, i) {
-    //                             var data = _controller.shopHome!['Result']
-    //                                 ['trending'][i];
-    //                             return Column(children: [
-    //                               Container(
-    //                                 decoration: BoxDecoration(
-    //                                   color:
-    //                                       ThreeKmTextConstants.lightBlue,
-    //                                   shape: BoxShape.circle,
-    //                                   image: DecorationImage(
-    //                                     image: CachedNetworkImageProvider(
-    //                                         data['image']),
-    //                                     fit: BoxFit.fill,
-    //                                   ),
-    //                                 ),
-    //                               ).size(
-    //                                 height: 80,
-    //                                 width: 80,
-    //                               ),
-    //                               space(
-    //                                 height: 8,
-    //                               ),
-    //                               Text(
-    //                                 data['name'],
-    //                                 style: ThreeKmTextConstants
-    //                                     .tk12PXPoppinsBlackSemiBold,
-    //                               )
-    //                             ]).padding(right: 24).onTap(() {
-    //                               Navigator.of(context).pushNamed(
-    //                                 ShopCategoryView.path,
-    //                                 arguments: data['name'].toString(),
-    //                               );
-    //                             });
-    //                           },
-    //                         ).size(
-    //                           width: double.infinity,
-    //                           height: 120,
-    //                         )
-    //                       : Container(),
-    //             ),
-    //             space(height: 32),
-    //             Divider(
-    //               color: Color(0xFFF4F3F8),
-    //               thickness: 24,
-    //             ),
-    //             Text(
-    //               "Top Selling products",
-    //               style: generateStyles(
-    //                 type: StylesEnum.POPPINS,
-    //                 fontWeight: FontWeight.bold,
-    //                 fontSize: 16,
-    //                 color: Color(0xFF0F0F2D),
-    //               ),
-    //             ).padding(
-    //               top: 32,
-    //               left: 24,
-    //               bottom: 20,
-    //             ),
-    //             GetBuilder<ShopController>(builder: (controller) {
-    //               if (controller.shopHome!['Result'] != null) {
-    //                 return Column(
-    //                   children: (controller.shopHome!['Result']['shops']
-    //                           as List)
-    //                       .asMap()
-    //                       .entries
-    //                       .toList()
-    //                       .sublist(0, 2)
-    //                       .map((e) {
-    //                     if (controller.shopHome!['Result']['shops'][e.key]
-    //                             ['adv_id'] !=
-    //                         null) {
-    //                       var e =
-    //                           controller.shopHome!['Result']['shops'][1];
-    //                       e['products'] = e['products'].sublist(0, 2);
-    //                       return ShopGrids(name: e['name'], map: e);
-    //                     } else {
-    //                       var e =
-    //                           controller.shopHome!['Result']['shops'][0];
-    //                       return ShopAdSlideDynamic(map: e);
-    //                     }
-    //                   }).toList(),
-    //                 );
-    //               } else {
-    //                 return Container();
-    //               }
-    //             }),
-    //           ],
-    //         ),
-    //       ),
-    //);
   }
 
   Widget buildBiz() {
     return Consumer<SearchBarProvider>(builder: (context, controller, _) {
       return controller.BusinessSearchData?.data?.result?.creators?.length !=
               null
-          ? ListView.builder(
-              shrinkWrap: true,
-              physics: BouncingScrollPhysics(),
-              itemCount:
-                  controller.BusinessSearchData!.data!.result!.creators!.length,
-              itemBuilder: (context, index) {
-                return BizCategoryCardSearch(
-                    image: controller.BusinessSearchData!.data!.result!
-                        .creators![index].image
-                        .toString(),
-                    name: controller.BusinessSearchData!.data!.result!
-                        .creators![index].businessName
-                        .toString(),
-                    tags:
-                        "${controller.BusinessSearchData!.data!.result!.creators![index].tags!.first.toString()},  ${controller.BusinessSearchData!.data!.result!.creators![index].tags!.last.toString()}",
-                    ownername:
-                        "${controller.BusinessSearchData!.data!.result!.creators![index].firstname} ${controller.BusinessSearchData!.data!.result!.creators![index].lastname}",
-                    id: controller.BusinessSearchData!.data!.result!
-                        .creators![index].creatorId!
-                        .toInt());
-              })
-          : CupertinoActivityIndicator();
+          ? controller.isbusinnessLoading
+              ? CupertinoActivityIndicator()
+              : ListView.builder(
+                  shrinkWrap: true,
+                  physics: BouncingScrollPhysics(),
+                  itemCount: controller
+                      .BusinessSearchData!.data!.result!.creators!.length,
+                  itemBuilder: (context, index) {
+                    return InkWell(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => BusinessDetail(
+                                    id: controller.BusinessSearchData!.data!
+                                        .result!.creators![index].creatorId)));
+                      },
+                      child: BizCategoryCardSearch(
+                          image: controller.BusinessSearchData!.data!.result!
+                              .creators![index].image
+                              .toString(),
+                          name: controller.BusinessSearchData!.data!.result!
+                              .creators![index].businessName
+                              .toString(),
+                          tags:
+                              "${controller.BusinessSearchData!.data!.result!.creators![index].tags!.first.toString()},  ${controller.BusinessSearchData!.data!.result!.creators![index].tags!.last.toString()}",
+                          ownername:
+                              "${controller.BusinessSearchData!.data!.result!.creators![index].firstname} ${controller.BusinessSearchData!.data!.result!.creators![index].lastname}",
+                          id: controller.BusinessSearchData!.data!.result!
+                              .creators![index].creatorId!
+                              .toInt()),
+                    );
+                  })
+          : Container();
     });
-    // _controller.shop.length > 0 && searchController.text.length > 0
-    //     ?
-    //           Container(
-    //               color: Colors.white,
-    //               child: ListView.builder(
-    //                 controller: bizScrollController,
-    //                 shrinkWrap: true,
-    //                 itemBuilder: (context, i) {
-    //                 //  String tag = _controller.biz[i]['tags'].toString();
-    //                   return InkWell(
-    //                     onTap: () async {
-    //                       // await Navigator.of(context).pushNamed(
-    //                       //   BusinessDetailsPage.path,
-    //                       //   arguments: _controller.biz[i]['creator_id'],
-    //                       // );
-    //                       _controller.getAllWishlist();
-    //                     },
-    //                     child: BizCategoryCardSearch(
-    //                       id: _controller.biz[i]['creator_id'],
-    //                       image: _controller.biz[i]['image'],
-    //                       name: _controller.biz[i]['business_name'],
-    //                       price: "Kothrod(1.4km)",
-    //                       tags: tag.substring(1, tag.length - 1),
-    //                     ),
-    //                   );
-    //                 },
-    //                 itemCount: _controller.biz.length,
-    //               ),
-    //             )
-    //           : searchController.text.length > 0 && _controller.bizLoading
-    //               ? Center(child: CupertinoActivityIndicator())
-    //               : SingleChildScrollView(
-    //                   child: Column(
-    //                     crossAxisAlignment: CrossAxisAlignment.start,
-    //                     children: [
-    //                       Text(
-    //                         "Business Categories:",
-    //                         style: generateStyles(
-    //                           type: StylesEnum.POPPINS,
-    //                           fontSize: 16,
-    //                           fontWeight: FontWeight.bold,
-    //                         ),
-    //                       ).margin(top: 61, left: 19),
-    //                       // BusinessCategorySlide()
-    //                       //     .size(height: 280)
-    //                       //     .margin(bottom: 32, top: 24),
-    //                       Divider(
-    //                         color: Color(0xFFF4F3F8),
-    //                         thickness: 8,
-    //                       ).margin(bottom: 24),
-    //                      // BusinessTrendingWidget(),
-    //                      // BusinessAdSlide().paddingY(16).color(
-    //                      //       Color(0xFFF4F3F8),
-    //                      //     )
-    //                     ],
-    //                   ),
-    //                 ),
-    // );
   }
 
-  // Widget buildNews() {
+  Widget buildNews() {
+    return Consumer<SearchBarProvider>(builder: (context, controller, _) {
+      return controller.newsSearchData?.data?.result?.posts != null
+          ? controller.isNewsLoading
+              ? CupertinoActivityIndicator()
+              : ListView.builder(
+                  physics: BouncingScrollPhysics(),
+                  shrinkWrap: true,
+                  itemCount:
+                      controller.newsSearchData!.data!.result!.posts!.length,
+                  itemBuilder: (context, index) {
+                    return InkWell(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => Postview(
+                                    postId: controller.newsSearchData!.data!
+                                        .result!.posts![index].postId
+                                        .toString())));
+                      },
+                      child: buildNewsItems(controller
+                          .newsSearchData!.data!.result!.posts![index]),
+                    );
+                  })
+          : Container();
+    });
+  }
   //   return GetBuilder<SearchController>(
   //     builder: (_controller) =>
   //         _controller.news.length > 0 && searchController.text.length > 0
@@ -690,161 +544,161 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
     );
   }
 
-  Widget buildNewsItems(List<dynamic> posts) {
-    return ListView.builder(
-      controller: newsScrollController,
-      itemBuilder: (context, i) {
-        return Text("data");
-        //PostResponse item = posts[i];
-        // return GestureDetector(
-        //   onTap: () {
-        //   //  showDetails(context, item.postId!);
-        //   },
-        //   child: Stack(
-        //     children: [
-        //       Container(
-        //         clipBehavior: Clip.antiAlias,
-        //         decoration: BoxDecoration(
-        //           color: Colors.white,
-        //           borderRadius: BorderRadius.circular(10),
-        //           boxShadow: [
-        //             BoxShadow(
-        //                 color: Color(0x1A0F0F2D),
-        //                 offset: Offset(0, 3),
-        //                 blurRadius: 4),
-        //           ],
-        //         ),
-        //         child: Row(
-        //           children: [
-        //             if (item.images!.length > 0) ...{
-        //               Container(s
-        //                 clipBehavior: Clip.antiAlias,
-        //                 decoration: BoxDecoration(
-        //                   color: Colors.white,
-        //                   borderRadius: BorderRadius.circular(10),
-        //                 ),
-        //                 child: CachedNetworkImage(
-        //                   imageUrl: item.images?[0] ?? "",
-        //                   fit: BoxFit.fill,
-        //                 ).size(height: 97, width: 146),
-        //               )
-        //             } else ...{
-        //               if (item.videos!.length > 0) ...{
-        //                 FutureBuilder<File?>(
-        //                   future: getImageFromPath(item.videos![0]['src']),
-        //                   builder: (context, snapshot) {
-        //                     if (snapshot.hasData) {
-        //                       return Container(
-        //                         width: 148,
-        //                         height: 98,
-        //                         decoration: BoxDecoration(
-        //                             color: Colors.orange.withOpacity(0.1),
-        //                             borderRadius: BorderRadius.circular(10),
-        //                             image: DecorationImage(
-        //                               image: FileImage(snapshot.data!),
-        //                               fit: BoxFit.fill,
-        //                             )),
-        //                       );
-        //                     }
-        //                     if (snapshot.hasError) {
-        //                       return Container(
-        //                         width: 148,
-        //                         height: 98,
-        //                         decoration: BoxDecoration(
-        //                           color: Colors.orange.withOpacity(0.1),
-        //                           borderRadius: BorderRadius.circular(10),
-        //                         ),
-        //                       );
-        //                     }
-        //                     return Container(
-        //                       width: 148,
-        //                       height: 98,
-        //                       decoration: BoxDecoration(
-        //                         color: Colors.orange.withOpacity(0.1),
-        //                         borderRadius: BorderRadius.circular(10),
-        //                       ),
-        //                     );
-        //                   },
-        //                 ),
-        //               } else ...{
-        //                 Container(
-        //                   width: 148,
-        //                   height: 98,
-        //                   decoration: BoxDecoration(
-        //                     color: Colors.orange.withOpacity(0.1),
-        //                     borderRadius: BorderRadius.circular(10),
-        //                   ),
-        //                 )
-        //               },
-        //             },
-        //             space(width: 12),
-        //             Expanded(
-        //               child: Column(
-        //                 children: [
-        //                   space(height: 12),
-        //                   Text(
-        //                     "${item.headline}",
-        //                     style: generateStyles(
-        //                       type: StylesEnum.POPPINS,
-        //                       fontSize: 13,
-        //                       fontWeight: FontWeight.w600,
-        //                       color: Color(0xFF0F0F2D),
-        //                     ),
-        //                     maxLines: 2,
-        //                     overflow: TextOverflow.ellipsis,
-        //                   ),
-        //                   space(height: 8),
-        //                   Text(
-        //                     item.story!.isNotEmpty
-        //                         ? removeHtml(item.story!)
-        //                         : "",
-        //                     style: generateStyles(
-        //                       type: StylesEnum.LATO,
-        //                       fontSize: 12,
-        //                       fontWeight: FontWeight.w600,
-        //                       color: Color(0xFF0F0F2D),
-        //                     ),
-        //                     maxLines: 2,
-        //                     overflow: TextOverflow.ellipsis,
-        //                   )
-        //                 ],
-        //               ),
-        //             ),
-        //             space(width: 15),
-        //           ],
-        //         ),
-        //       )
-        //           .size(height: 97, width: double.infinity)
-        //           .paddingX(18)
-        //           .padding(bottom: 24),
-        //       Positioned(
-        //         top: 0,
-        //         left: 18,
-        //         child: Container(
-        //           padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-        //           decoration: BoxDecoration(
-        //             color: Colors.black,
-        //             borderRadius: BorderRadius.only(
-        //               topLeft: Radius.circular(10),
-        //               bottomRight: Radius.circular(20),
-        //             ),
-        //           ),
-        //           child: Text(
-        //             "${item.createdDate}",
-        //             style: generateStyles(
-        //               type: StylesEnum.POPPINS,
-        //               fontSize: 12,
-        //               fontWeight: FontWeight.w500,
-        //               color: Colors.white,
-        //             ),
-        //           ),
-        //         ),
-        //       ),
-        //     ],
-        //   ),
-        // );
-      },
-      itemCount: posts.length,
+  Widget buildNewsItems(Post posts) {
+    return Stack(
+      children: [
+        Container(
+          clipBehavior: Clip.antiAlias,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(10),
+            boxShadow: [
+              BoxShadow(
+                  color: Color(0x1A0F0F2D),
+                  offset: Offset(0, 3),
+                  blurRadius: 4),
+            ],
+          ),
+          child: Row(
+            children: [
+              Container(
+                clipBehavior: Clip.antiAlias,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: posts.images!.length > 0
+                    ? CachedNetworkImage(
+                        imageUrl: posts.images!.first.toString(),
+                        fit: BoxFit.fill,
+                      ).size(height: 97, width: 146)
+                    : Container(
+                        color: Colors.grey.shade200,
+                      ).size(height: 97, width: 146),
+              ),
+              // if (item.images!.length > 0) ...{
+              //   Container(
+              //     clipBehavior: Clip.antiAlias,
+              //     decoration: BoxDecoration(
+              //       color: Colors.white,
+              //       borderRadius: BorderRadius.circular(10),
+              //     ),
+              //     child: CachedNetworkImage(
+              //       imageUrl: item.images?[0] ?? "",
+              //       fit: BoxFit.fill,
+              //     ).size(height: 97, width: 146),
+              //   )
+              // } else ...{
+              //   if (item.videos!.length > 0) ...{
+              //     FutureBuilder<File?>(
+              //       future: getImageFromPath(item.videos![0]['src']),
+              //       builder: (context, snapshot) {
+              //         if (snapshot.hasData) {
+              //           return Container(
+              //             width: 148,
+              //             height: 98,
+              //             decoration: BoxDecoration(
+              //                 color: Colors.orange.withOpacity(0.1),
+              //                 borderRadius: BorderRadius.circular(10),
+              //                 image: DecorationImage(
+              //                   image: FileImage(snapshot.data!),
+              //                   fit: BoxFit.fill,
+              //                 )),
+              //           );
+              //         }
+              //         if (snapshot.hasError) {
+              //           return Container(
+              //             width: 148,
+              //             height: 98,
+              //             decoration: BoxDecoration(
+              //               color: Colors.orange.withOpacity(0.1),
+              //               borderRadius: BorderRadius.circular(10),
+              //             ),
+              //           );
+              //         }
+              //         return Container(
+              //           width: 148,
+              //           height: 98,
+              //           decoration: BoxDecoration(
+              //             color: Colors.orange.withOpacity(0.1),
+              //             borderRadius: BorderRadius.circular(10),
+              //           ),
+              //         );
+              //       },
+              //     ),
+              //   } else ...{
+              //     Container(
+              //       width: 148,
+              //       height: 98,
+              //       decoration: BoxDecoration(
+              //         color: Colors.orange.withOpacity(0.1),
+              //         borderRadius: BorderRadius.circular(10),
+              //       ),
+              //     )
+              //   },
+              // },
+              space(width: 12),
+              Expanded(
+                child: Column(
+                  children: [
+                    space(height: 12),
+                    Text(
+                      "${posts.headline}",
+                      style: generateStyles(
+                        type: StylesEnum.POPPINS,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                        color: Color(0xFF0F0F2D),
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    space(height: 8),
+                    Text(
+                      posts.story != null ? removeHtml(posts.story!) : "",
+                      style: generateStyles(
+                        type: StylesEnum.LATO,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: Color(0xFF0F0F2D),
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    )
+                  ],
+                ),
+              ),
+              space(width: 15),
+            ],
+          ),
+        )
+            .size(height: 97, width: double.infinity)
+            .paddingX(18)
+            .padding(bottom: 24),
+        Positioned(
+          top: 0,
+          left: 18,
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+            decoration: BoxDecoration(
+              color: Colors.black,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(10),
+                bottomRight: Radius.circular(20),
+              ),
+            ),
+            child: Text(
+              "${posts.createdDate}",
+              style: generateStyles(
+                type: StylesEnum.POPPINS,
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
