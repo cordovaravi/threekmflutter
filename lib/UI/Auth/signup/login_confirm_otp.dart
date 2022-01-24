@@ -10,6 +10,7 @@ import 'package:threekm/utils/threekm_textstyles.dart';
 import 'package:threekm/utils/util_methods.dart';
 import 'package:threekm/widgets/custom_button.dart';
 
+import '../../Help_Supportpage.dart';
 import '../sign_in.dart';
 
 class LoginViaOtp extends StatefulWidget {
@@ -203,7 +204,8 @@ class _LoginViaOtpState extends State<LoginViaOtp> {
         ),
         space(height: 24),
         GestureDetector(
-          //onTap: () => Navigator.of(context).pushNamed(HelpAndSupport.path),
+          onTap: () => Navigator.push(context,
+              MaterialPageRoute(builder: (context) => HelpAndSupport())),
           child: Text(
             "Help and Support",
             style: ThreeKmTextConstants.tk12PXPoppinsWhiteRegular

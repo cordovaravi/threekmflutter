@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:threekm/UI/Auth/sign_in.dart';
+import 'package:threekm/UI/Help_Supportpage.dart';
 import 'package:threekm/providers/auth/signUp_Provider.dart';
 import 'package:threekm/providers/auth/social_auth/facebook_provider.dart';
 import 'package:threekm/providers/auth/social_auth/google_provider.dart';
@@ -383,7 +384,8 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         GestureDetector(
-          //onTap: () => Navigator.of(context).pushNamed(HelpAndSupport.path),
+          onTap: () => Navigator.push(context,
+              MaterialPageRoute(builder: (context) => HelpAndSupport())),
           child: Text(
             "Help and Support",
             style: ThreeKmTextConstants.tk12PXPoppinsWhiteRegular

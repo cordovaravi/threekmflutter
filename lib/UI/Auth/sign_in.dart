@@ -14,6 +14,8 @@ import 'package:threekm/utils/util_methods.dart';
 import 'package:threekm/widgets/custom_button.dart';
 import 'package:provider/provider.dart';
 
+import '../Help_Supportpage.dart';
+
 class SignInScreen extends StatefulWidget {
   final String? phoneNumber;
   SignInScreen({this.phoneNumber});
@@ -365,8 +367,10 @@ class _SignInScreenState extends State<SignInScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     GestureDetector(
-                      //onTap: () =>
-                      //    Navigator.of(context).pushNamed(HelpAndSupport.path),
+                      onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => HelpAndSupport())),
                       child: Text(
                         "Help and Support",
                         style: ThreeKmTextConstants.tk12PXPoppinsWhiteRegular
