@@ -2,14 +2,9 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-<<<<<<< HEAD
-import 'package:threekm/UI/businesses/businesses_detail.dart';
-=======
 import 'package:threekm/Models/NewsSearch/NewsSearchModel.dart';
-import 'package:threekm/UI/Animation/AnimatedSizeRoute.dart';
 import 'package:threekm/UI/businesses/businesses_detail.dart';
 import 'package:threekm/UI/main/News/PostView.dart';
->>>>>>> Search-branch
 import 'package:threekm/UI/shop/product/product_details.dart';
 import 'package:threekm/providers/Search/Search_Provider.dart';
 
@@ -349,41 +344,6 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
     return Consumer<SearchBarProvider>(builder: (context, controller, _) {
       return controller.BusinessSearchData?.data?.result?.creators?.length !=
               null
-<<<<<<< HEAD
-          ? ListView.builder(
-              shrinkWrap: true,
-              physics: BouncingScrollPhysics(),
-              itemCount:
-                  controller.BusinessSearchData!.data!.result!.creators!.length,
-              itemBuilder: (context, index) {
-                return InkWell(
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => BusinessDetail(
-                                id: controller.BusinessSearchData!.data!.result!
-                                    .creators![index].creatorId!
-                                    .toInt())));
-                  },
-                  child: BizCategoryCardSearch(
-                      image: controller.BusinessSearchData!.data!.result!
-                          .creators![index].image
-                          .toString(),
-                      name: controller.BusinessSearchData!.data!.result!
-                          .creators![index].businessName
-                          .toString(),
-                      tags:
-                          "${controller.BusinessSearchData!.data!.result!.creators![index].tags!.first.toString()},  ${controller.BusinessSearchData!.data!.result!.creators![index].tags!.last.toString()}",
-                      ownername:
-                          "${controller.BusinessSearchData!.data!.result!.creators![index].firstname} ${controller.BusinessSearchData!.data!.result!.creators![index].lastname}",
-                      id: controller.BusinessSearchData!.data!.result!
-                          .creators![index].creatorId!
-                          .toInt()),
-                );
-              })
-          : CupertinoActivityIndicator();
-=======
           ? controller.isbusinnessLoading
               ? CupertinoActivityIndicator()
               : ListView.builder(
@@ -418,7 +378,6 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
                     );
                   })
           : Container();
->>>>>>> Search-branch
     });
   }
 
