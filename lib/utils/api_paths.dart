@@ -36,7 +36,10 @@ const String register_send_otp = "creator/sendotp";
 const String register_verify_otp = "user/verifyotp";
 const String user_check = "user/check";
 const String register = "user/registerorlogin";
-const String social_register = "user/socialregister";
+//new register
+const String social_register = "user/register";
+//older
+//const String social_register = "user/socialregister";
 const String get_about = "user/about";
 const String forgetPasswordString = "user/forgot_password_otp";
 const String verifyForgetPassword = "user/forgot_password_verify";
@@ -90,8 +93,12 @@ const String restaurants = "menu/home";
 const String restaurantMenu = "restaurent/menu";
 const String restaurantMenuCheckout = "menu/checkout";
 
-// Search Business
+// Search
 const String Search_Business = "business/geolist";
 
 // order detail
 const String orderDetails = 'customer/orders/view';
+const String Search_News = "newspost/geolistelastic";
+
+// Notification
+const String Get_Notification = "notification/list";

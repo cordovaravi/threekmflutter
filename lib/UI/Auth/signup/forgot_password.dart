@@ -14,7 +14,7 @@ import 'package:threekm/widgets/custom_button.dart';
 import 'package:provider/provider.dart';
 
 class ForgotPassword extends StatefulWidget {
-  String? number;
+  final String? number;
   ForgotPassword({this.number, Key? key}) : super(key: key);
 
   @override

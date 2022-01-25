@@ -30,9 +30,8 @@ class _ProfilePageState extends State<ProfilePage> {
   final TextEditingController _emailController = TextEditingController();
   @override
   void initState() {
-    Future.delayed(Duration.zero, () {
-      context.read<ProfileInfoProvider>().getProfileBasicData();
-    });
+    Future.microtask(
+        () => context.read<ProfileInfoProvider>().getProfileBasicData());
     super.initState();
   }
 
@@ -88,28 +87,15 @@ class _ProfilePageState extends State<ProfilePage> {
                   buildProfileRow(
                     title: "Date of Birth",
                     showDivider: true,
-                    child: buildDateOfBirth(),
+                    child: buildDateOfBirth(
+                        widgetdateOfBirth: profileData.dateOfBirth),
                   ),
                   buildProfileRow(
                     title: "Gender",
                     showDivider: true,
-                    child: buildGender(context),
+                    child:
+                        buildGender(context, widgetGender: profileData.Gender),
                   ),
-                  // buildProfileRow(
-                  //   title: "Account Password",
-                  //   showDivider: false,
-                  //   child: Row(
-                  //     crossAxisAlignment: CrossAxisAlignment.end,
-                  //     children: [
-                  //       buildProfileButton(
-                  //         title: "Change Password",
-                  //         width: 127,
-                  //         onTap: () => showPasswordDialog(),
-                  //       ),
-                  //     ],
-                  //   ),
-                  // ),
-                  // space(height: 80)
                 ],
               );
             },
@@ -556,15 +542,8 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Widget buildDateOfBirth() {
+  Widget buildDateOfBirth({DateTime? widgetdateOfBirth}) {
     return Consumer<ProfileInfoProvider>(builder: (context, controller, _) {
-      // DateTime selectedDate = DateTime.now();
-      // String day = selectedDate.day.toString();
-
-      // String month = selectedDate.month.toString();
-
-      // String year = selectedDate.year.toString();
-
       Future<void> _selectDate(BuildContext context) async {
         final DateTime? picked = await showDatePicker(
             context: context,
@@ -580,7 +559,9 @@ class _ProfilePageState extends State<ProfilePage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           buildDateOfBirthFields(
-            text: controller.dateOfBirth?.day.toString() ?? "",
+            text: controller.dateOfBirth?.day.toString() ??
+                widgetdateOfBirth?.day.toString() ??
+                "",
             radius: BorderRadius.only(
               topLeft: Radius.circular(10),
               bottomLeft: Radius.circular(10),
@@ -588,10 +569,14 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
           space(width: 10),
           buildDateOfBirthFields(
-              text: controller.dateOfBirth?.month.toString() ?? ""),
+              text: controller.dateOfBirth?.month.toString() ??
+                  widgetdateOfBirth?.month.toString() ??
+                  ""),
           space(width: 10),
           buildDateOfBirthFields(
-            text: controller.dateOfBirth?.year.toString() ?? "",
+            text: controller.dateOfBirth?.year.toString() ??
+                widgetdateOfBirth?.year.toString() ??
+                "",
             radius: BorderRadius.only(
               topRight: Radius.circular(10),
               bottomRight: Radius.circular(10),
@@ -619,7 +604,7 @@ class _ProfilePageState extends State<ProfilePage> {
     });
   }
 
-  Widget buildGender(BuildContext context) {
+  Widget buildGender(BuildContext context, {String? widgetGender}) {
     return Consumer<ProfileInfoProvider>(builder: (context, controller, _) {
       return controller.gender == null
           ? GestureDetector(
@@ -652,11 +637,14 @@ class _ProfilePageState extends State<ProfilePage> {
             )
           : Row(
               children: [
-                if (controller.gender.toLowerCase() != "other") ...{
+                if (controller.gender.toLowerCase() != "other" ||
+                    widgetGender != "other") ...{
                   SvgPicture.asset(
-                    controller.gender.toLowerCase() == "male"
+                    controller.gender.toLowerCase() == "male" ||
+                            widgetGender == "male"
                         ? "assets/male.svg"
-                        : controller.gender.toLowerCase() == "female"
+                        : controller.gender.toLowerCase() == "female" ||
+                                widgetGender == "female"
                             ? "assets/female.svg"
                             : "assets/other.png",
                     height: 32,
@@ -670,13 +658,21 @@ class _ProfilePageState extends State<ProfilePage> {
                   )
                 },
                 space(width: 12),
-                Text(
-                  "${controller.gender}",
-                  style: GoogleFonts.poppins(
-                      color: Color(0xFF232629),
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600),
-                ),
+                widgetGender == null
+                    ? Text(
+                        "${controller.gender}",
+                        style: GoogleFonts.poppins(
+                            color: Color(0xFF232629),
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600),
+                      )
+                    : Text(
+                        "$widgetGender",
+                        style: GoogleFonts.poppins(
+                            color: Color(0xFF232629),
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600),
+                      ),
                 space(width: 71),
                 buildEditButton(onTap: showGenderDialog)
               ],

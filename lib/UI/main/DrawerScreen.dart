@@ -7,11 +7,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:threekm/UI/main/Profile/MyProfilePost.dart';
 import 'package:threekm/UI/main/Profile/Profilepage.dart';
 import 'package:threekm/UI/main/navigation.dart';
+import 'package:threekm/UI/shop/address/saved_address.dart';
 import 'package:threekm/UI/shop/cart/cart_item_list_modal.dart';
 import 'package:threekm/UI/shop/cart/wishlist.dart';
 import 'package:threekm/UI/walkthrough/splash_screen.dart';
 import 'package:threekm/providers/ProfileInfo/ProfileInfo_Provider.dart';
 import 'package:threekm/providers/main/AthorProfile_Provider.dart';
+import 'package:threekm/utils/screen_util.dart';
 import 'package:threekm/utils/threekm_textstyles.dart';
 import 'package:threekm/utils/util_methods.dart';
 import 'package:threekm/widgets/custom_button.dart';
@@ -36,6 +38,8 @@ class _DrawerScreenState extends State<DrawerScreen> {
       context.read<AutthorProfileProvider>().getSelfProfile();
     });
     getWishBoxData();
+    Future.microtask(
+        () => context.read<ProfileInfoProvider>().getProfileBasicData());
     super.initState();
   }
 
@@ -47,6 +51,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
   Widget build(BuildContext context) {
     //final authorPostProvider = context.watch<AutthorProfileProvider>();
     //final selfProfileProvider = context.watch<AutthorProfileProvider>();
+    final ProfileData = context.watch<ProfileInfoProvider>();
     return Scaffold(
       body:
           // RotatedBox(
@@ -64,11 +69,12 @@ class _DrawerScreenState extends State<DrawerScreen> {
                   Padding(
                     padding: EdgeInsets.only(left: 19),
                     child: CustomDrawer(
-                        iconUrl: widget.avatar,
+                        iconUrl: ProfileData.Avatar ?? widget.avatar,
                         // selfProfileProvider
                         //     .selfProfile!.data.result.author.image,
                         //"https://www.pngall.com/wp-content/uploads/12/Avatar-Profile-Vector-PNG-File.png",
-                        name: widget.userName //"Raviraj"
+                        name:
+                            ProfileData.UserName ?? widget.userName //"Raviraj"
                         ),
                   ),
                   Positioned(
@@ -202,8 +208,6 @@ class _CustomDrawerState extends State<CustomDrawer> {
         DrawerDivider(),
         GestureDetector(
           onTap: () {
-            // var _ = Get.put(MyPostController());
-            // Navigator.of(context).pushNamed(MyPost.path);
             Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -235,10 +239,8 @@ class _CustomDrawerState extends State<CustomDrawer> {
           icon: Icons.shopping_cart_outlined,
           label: "Shopping Cart".toUpperCase(),
         ).onTap(() {
-          viewCart(context, "shop");
-          // widget.animationController2!
-          //     .reverse()
-          //     .then((value) => viewCart(context, "shop"));
+          Future.microtask(() => ThreeKmScreenUtil().init(context))
+              .then((value) => viewCart(context, "shop"));
         }),
         SizedBox(
           height: 24,
@@ -262,17 +264,10 @@ class _CustomDrawerState extends State<CustomDrawer> {
           height: 24,
         ),
         InkWell(
-          onTap: () async {
-            // var accepted = await getLocationPermission();
-            // if (!accepted) {
-            //   // dynamic openAddressPage =
-            //   //     await Navigator.of(context).pushNamed(LocationBasePage.path);
-            //   if (openAddressPage != null && openAddressPage == true) {
-            //    // Navigator.of(context).pushNamed(LocationBasePage.path);
-            //   }
-            // } else {
-            //   //Navigator.of(context).pushNamed(LocationBasePage.path);
-            // }
+          onTap: () {
+            Future.microtask(() => ThreeKmScreenUtil().init(context)).then(
+                (value) => Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => SavedAddress())));
           },
           child: CustomDrawerItem(
             icon: Icons.place_outlined,

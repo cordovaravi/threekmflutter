@@ -11,6 +11,8 @@ import 'package:threekm/utils/threekm_textstyles.dart';
 import 'package:threekm/utils/util_methods.dart';
 import 'package:threekm/widgets/custom_button.dart';
 
+import '../../Help_Supportpage.dart';
+
 class SignUpConfirmOTP extends StatefulWidget {
   final String phoneNumber;
   SignUpConfirmOTP({required this.phoneNumber});
@@ -150,7 +152,8 @@ class _SignUpConfirmOTPState extends State<SignUpConfirmOTP> {
         ),
         space(height: 24),
         GestureDetector(
-          //onTap: () => Navigator.of(context).pushNamed(HelpAndSupport.path),
+          onTap: () => Navigator.push(context,
+              MaterialPageRoute(builder: (context) => HelpAndSupport())),
           child: Text(
             "Help and Support",
             style: ThreeKmTextConstants.tk12PXPoppinsWhiteRegular

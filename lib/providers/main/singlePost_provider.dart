@@ -13,9 +13,11 @@ class SinglePostProvider extends ChangeNotifier {
   Future<Null> getPostDetails(postId, mounted) async {
     _isLoading = true;
     notifyListeners();
+    String _token = await _apiProvider.getToken();
     if (mounted) {
       try {
-        var response = await _apiProvider.get(post_details + postId);
+        var response =
+            await _apiProvider.get(post_details + postId + "&token=$_token");
         print(response);
         if (response != null) {
           _deepLinkPost = DeepLinkPost.fromJson(response);
