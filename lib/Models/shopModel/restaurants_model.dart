@@ -195,14 +195,16 @@ class Address {
 class Restaurant {
   int? creatorId;
   List<String>? cuisines;
+  bool? status;
   String? sId;
   String? id;
 
-  Restaurant({this.creatorId, this.cuisines, this.sId, this.id});
+  Restaurant({this.creatorId, this.cuisines, this.status, this.sId, this.id});
 
   Restaurant.fromJson(Map<String, dynamic> json) {
     creatorId = json['creator_id'];
     cuisines = json['cuisines'].cast<String>();
+    status = json['status'];
     sId = json['_id'];
     id = json['id'];
   }
@@ -211,6 +213,7 @@ class Restaurant {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['creator_id'] = this.creatorId;
     data['cuisines'] = this.cuisines;
+    data['status'] = this.status;
     data['_id'] = this.sId;
     data['id'] = this.id;
     return data;

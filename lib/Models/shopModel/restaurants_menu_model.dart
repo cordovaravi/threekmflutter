@@ -1,3 +1,5 @@
+import 'package:threekm/Models/shopModel/restaurants_model.dart';
+
 class RestaurentMenuModel {
   RestaurentMenuModel({
     required this.StatusCode,
@@ -155,6 +157,7 @@ class Creator {
     required this.lastname,
     required this.address,
     required this.city,
+    this.restaurant,
     this.id,
   });
   late final int creatorId;
@@ -167,6 +170,7 @@ class Creator {
   late final String lastname;
   late final Address address;
   late final String city;
+  Restaurant? restaurant;
   late var id;
 
   Creator.fromJson(Map<String, dynamic> json) {
@@ -180,6 +184,9 @@ class Creator {
     lastname = json['lastname'];
     address = Address.fromJson(json['address']);
     city = json['city'];
+    restaurant = json['restaurant'] != null
+        ? new Restaurant.fromJson(json['restaurant'])
+        : null;
     id = json['id'] ?? "";
   }
 
@@ -195,6 +202,9 @@ class Creator {
     _data['lastname'] = lastname;
     _data['address'] = address.toJson();
     _data['city'] = city;
+    if (this.restaurant != null) {
+      _data['restaurant'] = this.restaurant!.toJson();
+    }
     _data['id'] = id;
     return _data;
   }

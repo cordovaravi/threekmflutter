@@ -2,11 +2,13 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:threekm/UI/main/Profile/MyProfilePost.dart';
 import 'package:threekm/UI/main/Profile/Profilepage.dart';
 import 'package:threekm/UI/main/navigation.dart';
 import 'package:threekm/UI/shop/cart/cart_item_list_modal.dart';
+import 'package:threekm/UI/shop/cart/wishlist.dart';
 import 'package:threekm/UI/walkthrough/splash_screen.dart';
 import 'package:threekm/providers/ProfileInfo/ProfileInfo_Provider.dart';
 import 'package:threekm/providers/main/AthorProfile_Provider.dart';
@@ -33,7 +35,12 @@ class _DrawerScreenState extends State<DrawerScreen> {
     Future.delayed(Duration.zero, () {
       context.read<AutthorProfileProvider>().getSelfProfile();
     });
+    getWishBoxData();
     super.initState();
+  }
+
+  getWishBoxData() async {
+    await Hive.openBox('shopWishListBox');
   }
 
   @override
@@ -237,7 +244,8 @@ class _CustomDrawerState extends State<CustomDrawer> {
           height: 24,
         ),
         InkWell(
-          // onTap: () => Navigator.of(context).pushNamed(WishListPage.path),
+          onTap: () => Navigator.push(
+              context, MaterialPageRoute(builder: (_) => WishList())),
           child: CustomDrawerItem(
             icon: CupertinoIcons.heart,
             label: "Wishlist".toUpperCase(),

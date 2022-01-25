@@ -7,7 +7,7 @@ import 'package:provider/src/provider.dart';
 import 'package:threekm/providers/shop/cart_provider.dart';
 
 Future clearAndAddToCartModal(context, image, name, quantity, price, creatorId,
-    id, variationId, weight, mode) async {
+    id, variationId, weight, creatorName, mode) async {
   return showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -33,9 +33,9 @@ Future clearAndAddToCartModal(context, image, name, quantity, price, creatorId,
                   Box _creatorIDBox = await Hive.openBox('creatorID');
                   _creatorIDBox.clear().then((value) => _creatorIDBox
                       .put('id', creatorId)
-                      .then((value) => cartBox
-                          .clear()
-                          .then((value) => cartProvider.addItemToCart(
+                      .then((value) => cartBox.clear().then((value) {
+                            _creatorIDBox.put('creatorName', creatorName);
+                            cartProvider.addItemToCart(
                                 context: context,
                                 creatorId: creatorId,
                                 image: image,
@@ -45,7 +45,8 @@ Future clearAndAddToCartModal(context, image, name, quantity, price, creatorId,
                                 id: id,
                                 variationId: 0,
                                 weight: weight,
-                              ))));
+                                creatorName: creatorName);
+                          })));
 
                   // await cartProvider.addToCart(
                   //     image, name, quantity, price, id, variationId, weight);
@@ -58,17 +59,19 @@ Future clearAndAddToCartModal(context, image, name, quantity, price, creatorId,
                   Box _restrocreatorID = await Hive.openBox('restrocreatorID');
                   _restrocreatorID.clear().then((value) => _restrocreatorID
                       .put('id', creatorId)
-                      .then((value) => restrocartBox.clear().then((value) =>
-                          cartProvider.addItemToRestroCart(
-                              context: context,
-                              creatorId: creatorId,
-                              image: image,
-                              name: name,
-                              price: price,
-                              quantity: 1,
-                              id: id,
-                              variationId: 0,
-                              weight: weight))));
+                      .then((value) => restrocartBox.clear().then((value) {
+                            _restrocreatorID.put('creatorName', creatorName);
+                            cartProvider.addItemToRestroCart(
+                                context: context,
+                                creatorId: creatorId,
+                                image: image,
+                                name: name,
+                                price: price,
+                                quantity: 1,
+                                id: id,
+                                variationId: 0,
+                                weight: weight);
+                          })));
 
                   // Navigator.pushReplacement(
                   //     context,

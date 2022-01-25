@@ -6,6 +6,7 @@ import 'package:provider/src/provider.dart';
 import 'package:threekm/Models/shopModel/address_list_model.dart';
 import 'package:threekm/Models/shopModel/cart_hive_model.dart';
 import 'package:threekm/Models/shopModel/shipping_rate_model.dart';
+import 'package:threekm/UI/shop/address/new_address.dart';
 import 'package:threekm/UI/shop/checkout/payment_confirming_screen.dart';
 import 'package:threekm/providers/shop/address_list_provider.dart';
 import 'package:threekm/providers/shop/cart_provider.dart';
@@ -208,7 +209,7 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
                                           'shop');
                                 }
                                 if (currentPage == 2) {
-                                  //_pageController.jumpToPage(2);
+                                  _pageController.jumpToPage(1);
                                   var box = Hive.box('cartBox').values.toList();
 
                                   Navigator.push(
@@ -228,8 +229,10 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
                                                             CheckoutProvider>()
                                                         .getShippingRateData
                                                         .deliveryRate,
+                                                mode: 'shop',
                                               )));
                                 }
+                                
                               },
                               children: [
                                 SingleChildScrollView(
@@ -238,6 +241,26 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                            left: 17, bottom: 10),
+                                        child: TextButton.icon(
+                                            onPressed: () {
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (_) =>
+                                                          NewAddress()));
+                                            },
+                                            icon: const Icon(Icons.add,
+                                                color: Color(0xFF3E7EFF)),
+                                            label: Text('Add New Address',
+                                                style: ThreeKmTextConstants
+                                                    .tk14PXPoppinsBlackSemiBold
+                                                    .copyWith(
+                                                  color: Color(0xFF3E7EFF),
+                                                ))),
+                                      ),
                                       if (deliveryAddressdata?.addressId != 0)
                                         Column(
                                           crossAxisAlignment:
@@ -435,6 +458,9 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
                                                   : Container();
                                             }),
                                       ),
+                                      const SizedBox(
+                                        height: 40,
+                                      )
                                     ],
                                   ),
                                 ),
@@ -759,6 +785,7 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
                                             .read<CheckoutProvider>()
                                             .getShippingRateData
                                             .deliveryRate,
+                                    mode: 'mode',
                                   )));
                     }
                   }

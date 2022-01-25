@@ -52,10 +52,22 @@ Future viewCart(BuildContext context, mode) async {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Text(
-                                      'Cart Summary',
-                                      style: ThreeKmTextConstants
-                                          .tk14PXPoppinsBlackMedium,
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          'Cart Summary',
+                                          style: ThreeKmTextConstants
+                                              .tk14PXPoppinsBlackMedium,
+                                        ),
+                                        Text(
+                                          mode == 'shop'
+                                              ? 'Items provided by ${_creatorIDBox.get('creatorName')}'
+                                              : '${_restroCreatorIDBox.get('restrocreatorID')}',
+                                          style: TextStyle(color: Colors.black),
+                                        )
+                                      ],
                                     ),
                                     Text(
                                       '\u{20B9}${context.read<CartProvider>().getBoxTotal(box)}',
@@ -72,7 +84,7 @@ Future viewCart(BuildContext context, mode) async {
                               ),
                               Container(
                                 // margin: const EdgeInsets.only(left: 20, right: 20),
-                                height: ThreeKmScreenUtil.screenHeightDp / 2.2,
+                                height: ThreeKmScreenUtil.screenHeightDp / 2.3,
                                 child: ListView.builder(
                                     physics: const BouncingScrollPhysics(),
                                     shrinkWrap: true,
@@ -119,6 +131,28 @@ Future viewCart(BuildContext context, mode) async {
                                                     height: 45,
                                                     color: Colors.grey[350],
                                                   ),
+                                                  loadingBuilder: (_, widget,
+                                                      loadingProgress) {
+                                                    if (loadingProgress ==
+                                                        null) {
+                                                      return widget;
+                                                    }
+                                                    return Center(
+                                                      child:
+                                                          CircularProgressIndicator(
+                                                        color:
+                                                            Color(0xFF979EA4),
+                                                        value: loadingProgress
+                                                                    .expectedTotalBytes !=
+                                                                null
+                                                            ? loadingProgress
+                                                                    .cumulativeBytesLoaded /
+                                                                loadingProgress
+                                                                    .expectedTotalBytes!
+                                                            : null,
+                                                      ),
+                                                    );
+                                                  },
                                                 ),
                                               ),
                                               Positioned(

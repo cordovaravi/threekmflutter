@@ -3,6 +3,14 @@ import 'package:hive/hive.dart';
 import 'package:threekm/Models/businessesModel/businesses_wishlist_model.dart';
 
 class BusinessesWishListProvider extends ChangeNotifier {
+  BusinessesWishListProvider() {
+    openBox();
+  }
+
+  openBox() async {
+    _businessWishBox = await Hive.openBox('businessWishListBox');
+  }
+
   String? _state;
   String? get state => _state;
 
@@ -13,7 +21,7 @@ class BusinessesWishListProvider extends ChangeNotifier {
     _state = 'loading';
 
     try {
-      _businessWishBox = await Hive.openBox('businessBox');
+      _businessWishBox = await Hive.openBox('businessWishListBox');
       var favourite = BusinesseswishListHiveModel()
         ..name = name
         ..address = address

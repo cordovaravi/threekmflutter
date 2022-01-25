@@ -140,17 +140,21 @@ class _HomeState extends State<Home> {
                             ),
                           ),
                         ),
-                        Padding(
-                          padding: EdgeInsets.only(left: 12),
-                          child: Container(
-                              height: 32,
-                              width: 32,
-                              decoration: BoxDecoration(
-                                image: DecorationImage(
-                                    image: AssetImage("assets/bell.png")),
-                                shape: BoxShape.circle,
-                                //color: Color(0xff7572ED)
-                              )),
+                        InkWell(
+                          onTap: () => viewCart(context, 'shop'),
+                          child: Padding(
+                            padding: EdgeInsets.only(left: 12),
+                            child: Container(
+                                height: 32,
+                                width: 32,
+                                decoration: BoxDecoration(
+                                  image: DecorationImage(
+                                      image: AssetImage(
+                                          "assets/shopImg/Group 40724.png")),
+                                  shape: BoxShape.circle,
+                                  //color: Color(0xff7572ED)
+                                )),
+                          ),
                         ),
                         InkWell(
                           onTap: () => drawerController.open!(),
@@ -415,4 +419,7 @@ class _HomeState extends State<Home> {
           ),
         ));
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

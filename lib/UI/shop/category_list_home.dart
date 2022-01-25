@@ -42,7 +42,7 @@ class CategoryListHome extends StatelessWidget {
                                   pageBuilder:
                                       (context, animaton, secondaryAnimation) {
                                     return ProductListing(
-                                      productData: '${category[i].name}',
+                                      query: '${category[i].name}',
                                     );
                                   },
                                   transitionDuration:

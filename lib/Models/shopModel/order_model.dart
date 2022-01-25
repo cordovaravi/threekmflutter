@@ -2,13 +2,22 @@ class OrderModel {
   OrderModel({
     this.StatusCode,
     this.result,
+    this.status,
+    this.error,
   });
   late final int? StatusCode;
   late final Result? result;
+  late final String? status;
+  late final String? error;
 
   OrderModel.fromJson(Map<String, dynamic> json) {
     StatusCode = json['StatusCode'];
-    result = Result.fromJson(json['Result']);
+    if (json['Result'] != null) {
+      result = Result.fromJson(json['Result']);
+    }
+    status = json['status'];
+
+    error = json['error'];
   }
 
   Map<String, dynamic> toJson() {

@@ -12,7 +12,7 @@ class WishListProvider extends ChangeNotifier {
   addToWishList({image, name, price, id, variationId}) async {
     _state = 'loading';
     try {
-      _wishBox = await Hive.openBox('cartBox');
+      _wishBox = await Hive.openBox('shopWishListBox');
       var wish = CartHiveModel()
         ..image = image
         ..name = name

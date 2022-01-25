@@ -49,7 +49,7 @@ class SubCategoryList extends StatelessWidget {
                     PageRouteBuilder(
                         pageBuilder: (context, animaton, secondaryAnimation) {
                           return ProductListing(
-                            productData: '${data?[i].name}',
+                            query: '${data?[i].name}',
                           );
                         },
                         transitionDuration: const Duration(milliseconds: 800),

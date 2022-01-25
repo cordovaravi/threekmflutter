@@ -178,7 +178,12 @@ class AlternateContacts {
   late final String whatsapp;
 
   AlternateContacts.fromJson(Map<String, dynamic> json) {
-    whatsapp = json['whatsapp'];
+    if (json['whatsapp_number'] != null) {
+      whatsapp = json['whatsapp_number'];
+    }
+    if (json['whatsapp'] != null) {
+      whatsapp = json['whatsapp'];
+    }
   }
 
   Map<String, dynamic> toJson() {

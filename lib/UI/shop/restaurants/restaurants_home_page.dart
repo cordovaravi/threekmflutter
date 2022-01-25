@@ -8,6 +8,10 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/src/provider.dart';
 
 import 'package:threekm/Models/shopModel/restaurants_model.dart';
+import 'package:threekm/UI/shop/restaurants/view_all_restaurant.dart';
+import 'package:threekm/commenwidgets/CustomSnakBar.dart';
+import 'package:threekm/main.dart';
+import 'package:threekm/providers/Location/locattion_Provider.dart';
 import 'package:threekm/providers/shop/cart_provider.dart';
 import 'package:threekm/utils/screen_util.dart';
 import 'package:threekm/utils/threekm_textstyles.dart';
@@ -70,9 +74,23 @@ class _RestaurantsHomeState extends State<RestaurantsHome> {
                       'Baner-Pashan Link Road',
                       style: ThreeKmTextConstants.tk12PXPoppinsBlackSemiBold,
                     ),
-                    Text(
-                      'Change Location',
-                      style: ThreeKmTextConstants.tk12PXPoppinsBlackSemiBold,
+                    InkWell(
+                      onTap: () {
+                        Future.delayed(Duration.zero, () {
+                          context
+                              .read<LocationProvider>()
+                              .getLocation()
+                              .whenComplete(() {
+                            final _locationProvider = context
+                                .read<LocationProvider>()
+                                .getlocationData;
+                          });
+                        });
+                      },
+                      child: Text(
+                        'Change Location',
+                        style: ThreeKmTextConstants.tk12PXPoppinsBlackSemiBold,
+                      ),
                     )
                   ],
                 ),
@@ -272,64 +290,65 @@ class _RestaurantsHomeState extends State<RestaurantsHome> {
               //     },
               //   ),
               // ),
-              Container(
-                padding: const EdgeInsets.all(20),
-                color: Colors.white,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Text(
-                        'Categories',
-                        style: TextStyle(
-                            color: Color(0xFF0F0F2D),
-                            fontSize: 19,
-                            fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    GridView.builder(
-                        physics: const NeverScrollableScrollPhysics(),
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 3,
-                          crossAxisSpacing: 10,
-                          mainAxisSpacing: 10,
-                        ),
-                        itemCount: widget.data?.trending?.length,
-                        shrinkWrap: true,
-                        itemBuilder: (_, i) {
-                          return Container(
-                            padding: EdgeInsets.only(top: 15, bottom: 10),
-                            decoration: BoxDecoration(
-                                border: Border.all(color: Color(0xFFE2E4E6)),
-                                borderRadius: BorderRadius.circular(15)),
-                            child: Column(
-                              children: [
-                                CachedNetworkImage(
-                                  alignment: Alignment.topCenter,
-                                  placeholder: (context, url) =>
-                                      Transform.scale(
-                                    scale: 0.5,
-                                    child: CircularProgressIndicator(
-                                      color: Colors.grey[400],
-                                    ),
-                                  ),
-                                  imageUrl:
-                                      '${widget.data?.trending?[i].image}',
-                                  height: ThreeKmScreenUtil.screenHeightDp / 15,
-                                  width: ThreeKmScreenUtil.screenWidthDp / 7,
-                                  fit: BoxFit.fill,
-                                ),
-                                Spacer(),
-                                Text('${widget.data?.trending?[i].name}')
-                              ],
-                            ),
-                          );
-                        }),
-                  ],
-                ),
-              ),
+              // category section
+              // Container(
+              //   padding: const EdgeInsets.all(20),
+              //   color: Colors.white,
+              //   child: Column(
+              //     crossAxisAlignment: CrossAxisAlignment.start,
+              //     children: [
+              //       const Padding(
+              //         padding: EdgeInsets.all(8.0),
+              //         child: Text(
+              //           'Categories',
+              //           style: TextStyle(
+              //               color: Color(0xFF0F0F2D),
+              //               fontSize: 19,
+              //               fontWeight: FontWeight.bold),
+              //         ),
+              //       ),
+              //       GridView.builder(
+              //           physics: const NeverScrollableScrollPhysics(),
+              //           gridDelegate:
+              //               const SliverGridDelegateWithFixedCrossAxisCount(
+              //             crossAxisCount: 3,
+              //             crossAxisSpacing: 10,
+              //             mainAxisSpacing: 10,
+              //           ),
+              //           itemCount: widget.data?.trending?.length,
+              //           shrinkWrap: true,
+              //           itemBuilder: (_, i) {
+              //             return Container(
+              //               padding: EdgeInsets.only(top: 15, bottom: 10),
+              //               decoration: BoxDecoration(
+              //                   border: Border.all(color: Color(0xFFE2E4E6)),
+              //                   borderRadius: BorderRadius.circular(15)),
+              //               child: Column(
+              //                 children: [
+              //                   CachedNetworkImage(
+              //                     alignment: Alignment.topCenter,
+              //                     placeholder: (context, url) =>
+              //                         Transform.scale(
+              //                       scale: 0.5,
+              //                       child: CircularProgressIndicator(
+              //                         color: Colors.grey[400],
+              //                       ),
+              //                     ),
+              //                     imageUrl:
+              //                         '${widget.data?.trending?[i].image}',
+              //                     height: ThreeKmScreenUtil.screenHeightDp / 15,
+              //                     width: ThreeKmScreenUtil.screenWidthDp / 7,
+              //                     fit: BoxFit.fill,
+              //                   ),
+              //                   Spacer(),
+              //                   Text('${widget.data?.trending?[i].name}')
+              //                 ],
+              //               ),
+              //             );
+              //           }),
+              //     ],
+              //   ),
+              // ),
               Container(
                 padding: const EdgeInsets.all(20),
                 child: Row(
@@ -343,17 +362,25 @@ class _RestaurantsHomeState extends State<RestaurantsHome> {
                           fontWeight: FontWeight.bold),
                     ),
                     // Spacer(),
-                    Row(
-                      children: const [
-                        Text(
-                          'View all',
-                          style: TextStyle(color: Color(0xFF43B978)),
-                        ),
-                        Icon(
-                          Icons.arrow_forward_rounded,
-                          color: Color(0xFF43B978),
-                        )
-                      ],
+                    InkWell(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (_) => AllRestaurantList()));
+                      },
+                      child: Row(
+                        children: const [
+                          Text(
+                            'View all',
+                            style: TextStyle(color: Color(0xFF43B978)),
+                          ),
+                          Icon(
+                            Icons.arrow_forward_rounded,
+                            color: Color(0xFF43B978),
+                          )
+                        ],
+                      ),
                     )
                   ],
                 ),
@@ -365,12 +392,20 @@ class _RestaurantsHomeState extends State<RestaurantsHome> {
                   itemBuilder: (_, i) {
                     return InkWell(
                       onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (_) => RestaurantMenu(
-                                      data: widget.data?.creators?[i],
-                                    )));
+                        if (widget.data?.creators?[i].restaurant?.status !=
+                            false) {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (_) => RestaurantMenu(
+                                        data: widget.data?.creators?[i],
+                                      )));
+                        } else {
+                          CustomSnackBar(
+                              navigatorKey.currentContext!,
+                              Text(
+                                  "Restaurant is Currentlly not accepting orders"));
+                        }
                       },
                       child: Container(
                         // padding: EdgeInsets.all(20),
@@ -389,23 +424,32 @@ class _RestaurantsHomeState extends State<RestaurantsHome> {
                                 fit: StackFit.loose,
                                 children: [
                                   ClipRRect(
-                                    borderRadius: const BorderRadius.only(
+                                    borderRadius: BorderRadius.only(
                                         topLeft: Radius.circular(20),
                                         topRight: Radius.circular(20)),
-                                    child: CachedNetworkImage(
-                                      alignment: Alignment.topCenter,
-                                      placeholder: (context, url) =>
-                                          Transform.scale(
-                                        scale: 0.5,
-                                        child: CircularProgressIndicator(
-                                          color: Colors.grey[400],
+                                    child: ColorFiltered(
+                                      colorFilter: ColorFilter.mode(
+                                          widget.data?.creators?[i].restaurant
+                                                      ?.status !=
+                                                  false
+                                              ? Colors.transparent
+                                              : Colors.grey,
+                                          BlendMode.color),
+                                      child: CachedNetworkImage(
+                                        alignment: Alignment.topCenter,
+                                        placeholder: (context, url) =>
+                                            Transform.scale(
+                                          scale: 0.5,
+                                          child: CircularProgressIndicator(
+                                            color: Colors.grey[400],
+                                          ),
                                         ),
+                                        imageUrl:
+                                            '${widget.data?.creators?[i].cover}',
+                                        //height: ThreeKmScreenUtil.screenHeightDp / 5,
+                                        width: ThreeKmScreenUtil.screenWidthDp,
+                                        fit: BoxFit.fill,
                                       ),
-                                      imageUrl:
-                                          '${widget.data?.creators?[i].cover}',
-                                      //height: ThreeKmScreenUtil.screenHeightDp / 5,
-                                      width: ThreeKmScreenUtil.screenWidthDp,
-                                      fit: BoxFit.fill,
                                     ),
                                   ),
                                   // Row(
@@ -458,21 +502,25 @@ class _RestaurantsHomeState extends State<RestaurantsHome> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Container(
-                                  width: ThreeKmScreenUtil.screenWidthDp / 1.3,
+                                  width: ThreeKmScreenUtil.screenWidthDp / 1.9,
                                   padding: EdgeInsets.all(8.0),
                                   child: Text(
                                     '${widget.data?.creators?[i].restaurant!.cuisines?.join(", ")}',
-                                    maxLines: 2,
+                                    maxLines: 1,
                                     style: const TextStyle(
                                         fontSize: 14,
                                         color: Color(0xFF7572ED),
                                         fontWeight: FontWeight.w600),
                                   ),
                                 ),
-                                const Padding(
-                                  padding: EdgeInsets.all(8.0),
-                                  child: Icon(Icons.arrow_forward_rounded),
-                                )
+                                if (widget.data?.creators?[i].address
+                                        ?.serviceArea !=
+                                    null)
+                                  Padding(
+                                    padding: EdgeInsets.all(8.0),
+                                    child: Text(
+                                        '${widget.data?.creators?[i].address?.serviceArea}'),
+                                  )
                               ],
                             )
                           ],
@@ -489,18 +537,6 @@ class _RestaurantsHomeState extends State<RestaurantsHome> {
           mainAxisAlignment: MainAxisAlignment.end,
           mainAxisSize: MainAxisSize.min,
           children: [
-            Container(
-                padding:
-                    EdgeInsets.only(top: 10, bottom: 10, left: 20, right: 20),
-                margin: EdgeInsets.only(bottom: 10),
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                    color: Color(0xFF0F0F2D)),
-                child: Text(
-                  'View Menu',
-                  style: ThreeKmTextConstants.tk14PXPoppinsBlackBold
-                      .copyWith(color: Colors.white),
-                )),
             ValueListenableBuilder(
                 valueListenable: Hive.box('restroCartBox').listenable(),
                 builder: (context, Box box, widget) {

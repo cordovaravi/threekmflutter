@@ -66,7 +66,7 @@ import '../../main.dart';
 //   }
 // }
 
-showFullImage(images) {
+showFullImage({images}) {
   WidgetsBinding.instance?.addPostFrameCallback((_) {
     showDialog(
         context: navigatorKey.currentContext!,

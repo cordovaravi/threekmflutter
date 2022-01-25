@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+
 import 'package:provider/src/provider.dart';
 import 'package:threekm/providers/shop/address_list_provider.dart';
 import 'package:threekm/utils/threekm_textstyles.dart';
-import 'package:threekm/Custom_library/GooleMapsWidget/src/place_picker.dart';
-import 'package:threekm/providers/Location/locattion_Provider.dart';
-import 'package:threekm/utils/api_paths.dart';
+
 import 'package:threekm/utils/screen_util.dart';
+
+import 'new_address.dart';
 
 class SavedAddress extends StatefulWidget {
   const SavedAddress({Key? key}) : super(key: key);
@@ -39,7 +39,7 @@ class _SavedAddressState extends State<SavedAddress> {
       ),
       body: data.addresses == null
           ? Container(
-              margin: EdgeInsets.only(top: 20),
+              margin: const EdgeInsets.only(top: 20),
               height: ThreeKmScreenUtil.screenHeightDp / 2,
               child: Column(
                 // mainAxisSize: MainAxisSize.min,
@@ -60,43 +60,44 @@ class _SavedAddressState extends State<SavedAddress> {
                   ),
                   ElevatedButton.icon(
                       onPressed: () async {
-                        Future.delayed(Duration.zero, () {
-                          context
-                              .read<LocationProvider>()
-                              .getLocation()
-                              .whenComplete(() {
-                            final _locationProvider = context
-                                .read<LocationProvider>()
-                                .getlocationData;
-                            final kInitialPosition = LatLng(
-                                _locationProvider!.latitude!,
-                                _locationProvider.longitude!);
-                            if (_locationProvider != null) {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => PlacePicker(
-                                      apiKey: GMap_Api_Key,
-                                      // initialMapType: MapType.satellite,
-                                      onPlacePicked: (result) {
-                                        //print(result.formattedAddress);
-                                        setState(() {
-                                          _selecetedAddress =
-                                              result.formattedAddress;
-                                          print(result.geometry!.toJson());
-                                        });
-                                        Navigator.of(context).pop();
-                                      },
-                                      initialPosition: kInitialPosition,
-                                      useCurrentLocation: true,
-                                      selectInitialPosition: true,
-                                      usePinPointingSearch: true,
-                                      usePlaceDetailSearch: true,
-                                    ),
-                                  ));
-                            }
-                          });
-                        });
+                        // Future.delayed(Duration.zero, () {
+                        //   context
+                        //       .read<LocationProvider>()
+                        //       .getLocation()
+                        //       .whenComplete(() {
+                        //     final _locationProvider = context
+                        //         .read<LocationProvider>()
+                        //         .getlocationData;
+                        //     final kInitialPosition = LatLng(
+                        //         _locationProvider!.latitude!,
+                        //         _locationProvider.longitude!);
+                        //     if (_locationProvider != null) {
+                        //       Navigator.push(
+                        //           context,
+                        //           MaterialPageRoute(
+                        //             builder: (context) => PlacePicker(
+                        //               apiKey: GMap_Api_Key,
+                        //               // initialMapType: MapType.satellite,
+                        //               onPlacePicked: (result) {
+                        //                 //print(result.formattedAddress);
+                        //                 setState(() {
+                        //                   _selecetedAddress =
+                        //                       result.formattedAddress;
+                        //                   print(result.geometry!.toJson());
+                        //                 });
+                        //                 Navigator.of(context).pop();
+                        //               },
+                        //               initialPosition: kInitialPosition,
+                        //               useCurrentLocation: true,
+                        //               selectInitialPosition: true,
+                        //               usePinPointingSearch: true,
+                        //               usePlaceDetailSearch: true,
+                        //             ),
+                        //           ));
+                        //     }
+                        //   });
+                        // });
+
                         FocusScope.of(context).unfocus();
                         // await Navigator.of(context)
                         //     .pushNamed(LocationBasePage.path);
@@ -137,42 +138,8 @@ class _SavedAddressState extends State<SavedAddress> {
                 children: [
                   InkWell(
                     onTap: () async {
-                      Future.delayed(Duration.zero, () {
-                        context
-                            .read<LocationProvider>()
-                            .getLocation()
-                            .whenComplete(() {
-                          final _locationProvider =
-                              context.read<LocationProvider>().getlocationData;
-                          final kInitialPosition = LatLng(
-                              _locationProvider!.latitude!,
-                              _locationProvider.longitude!);
-                          if (_locationProvider != null) {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => PlacePicker(
-                                    apiKey: GMap_Api_Key,
-                                    // initialMapType: MapType.satellite,
-                                    onPlacePicked: (result) {
-                                      //print(result.formattedAddress);
-                                      setState(() {
-                                        _selecetedAddress =
-                                            result.formattedAddress;
-                                        print(result.geometry!.toJson());
-                                      });
-                                      Navigator.of(context).pop();
-                                    },
-                                    initialPosition: kInitialPosition,
-                                    useCurrentLocation: true,
-                                    selectInitialPosition: true,
-                                    usePinPointingSearch: true,
-                                    usePlaceDetailSearch: true,
-                                  ),
-                                ));
-                          }
-                        });
-                      });
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (_) => NewAddress()));
                       FocusScope.of(context).unfocus();
                       // await Navigator.of(context)
                       //     .pushNamed(LocationBasePage.path);

@@ -11,9 +11,11 @@ import 'package:threekm/utils/screen_util.dart';
 import 'package:threekm/utils/threekm_textstyles.dart';
 import '../shop/product/product_details.dart';
 
+import 'cart/cart_item_list_modal.dart';
+
 class ProductListing extends StatefulWidget {
-  const ProductListing({Key? key, this.productData}) : super(key: key);
-  final productData;
+  const ProductListing({Key? key, this.query}) : super(key: key);
+  final query;
 
   @override
   State<ProductListing> createState() => _ProductListingState();
@@ -25,8 +27,9 @@ class _ProductListingState extends State<ProductListing> {
 
   @override
   void initState() {
-    context.read<ProductListingProvider>().getProductListing(
-        mounted: mounted, page: 1, query: widget.productData);
+    context
+        .read<ProductListingProvider>()
+        .getProductListing(mounted: mounted, page: 1, query: widget.query);
     super.initState();
   }
 
@@ -41,7 +44,7 @@ class _ProductListingState extends State<ProductListing> {
   @override
   Widget build(BuildContext context) {
     final data = context.watch<ProductListingProvider>().allproductList;
-    final productdata =
+    final productListingdata =
         context.watch<ProductListingProvider>().productListingData;
 
     return Scaffold(
@@ -52,7 +55,7 @@ class _ProductListingState extends State<ProductListing> {
           backgroundColor: Colors.white,
           iconTheme: const IconThemeData(color: Colors.black),
           title: Text(
-            '${widget.productData}',
+            '${widget.query}',
           ),
           titleTextStyle: const TextStyle(
               color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold),
@@ -62,7 +65,9 @@ class _ProductListingState extends State<ProductListing> {
                 decoration: BoxDecoration(
                     color: Colors.grey[200], shape: BoxShape.circle),
                 child: IconButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      viewCart(context, 'shop');
+                    },
                     icon: const Icon(
                       Icons.shopping_cart_rounded,
                       size: 30,
@@ -70,99 +75,106 @@ class _ProductListingState extends State<ProductListing> {
           ],
         ),
       ),
-      body: Column(
-        children: [
-          // Padding(
-          //   padding: const EdgeInsets.all(8.0),
-          //   child: Row(
-          //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          //     children: [
-          //       InkWell(
-          //         onTap: () {},
-          //         child: Container(
-          //             height: 50,
-          //             width: 120,
-          //             padding: EdgeInsets.all(6),
-          //             decoration: const BoxDecoration(
-          //                 color: Colors.white,
-          //                 // border: Border.all(),
-          //                 borderRadius: BorderRadius.all(Radius.circular(50)),
-          //                 boxShadow: [
-          //                   BoxShadow(
-          //                       blurRadius: 30, color: Color(0xFF3B4A7424))
-          //                 ]),
-          //             child: Row(
-          //               mainAxisAlignment: MainAxisAlignment.center,
-          //               children: const [
-          //                 Text(
-          //                   "FILTERS",
-          //                   style: TextStyle(fontSize: 17),
-          //                 ),
-          //                 Icon(Icons.arrow_drop_down_outlined),
-          //               ],
-          //             )),
-          //       ),
-          //       InkWell(
-          //         onTap: () {},
-          //         child: Container(
-          //             height: 50,
-          //             width: 100,
-          //             decoration: const BoxDecoration(
-          //                 color: Colors.white,
-          //                 // border: Border.all(),
-          //                 borderRadius: BorderRadius.all(Radius.circular(50)),
-          //                 boxShadow: [
-          //                   BoxShadow(
-          //                       blurRadius: 30, color: Color(0xFF3B4A7424))
-          //                 ]),
-          //             child: Row(
-          //               mainAxisAlignment: MainAxisAlignment.center,
-          //               children: const [
-          //                 Text(
-          //                   "SORT",
-          //                   style: TextStyle(fontSize: 17),
-          //                 ),
-          //                 Icon(Icons.arrow_drop_down_outlined),
-          //               ],
-          //             )),
-          //       ),
-          //       Text(
-          //         'CLEAR FILTERS',
-          //         style: TextStyle(color: Color(0xFFFF5858), fontSize: 16),
-          //       )
-          //     ],
-          //   ),
-          // ),
-          Flexible(
-            child: ListView.builder(
-                physics: BouncingScrollPhysics(),
-                itemCount: data.length,
-                shrinkWrap: true,
-                itemBuilder: (context, i) {
-                  if (i < data.length - 1) {
-                    return ItemBuilderWidget(
-                      data: data,
-                      i: i,
-                    );
-                  } else if (i == data.length - 1 &&
-                      i == productdata.result?.total) {
-                    return const Center(child: Text('End of list'));
-                  } else {
-                    context.read<ProductListingProvider>().getProductListing(
-                        mounted: mounted,
-                        page: context.read<ProductListingProvider>().prepageno +
-                            1,
-                        query: widget.productData);
-                    return const SizedBox(
-                      height: 80,
-                      child: Center(child: CircularProgressIndicator()),
-                    );
-                  }
-                  // return ItemBuilderWidget(data: data, i: i);
-                }),
-          ),
-        ],
-      ),
+      body: data.length != 0
+          ? Column(
+              children: [
+                // Padding(
+                //   padding: const EdgeInsets.all(8.0),
+                //   child: Row(
+                //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //     children: [
+                //       InkWell(
+                //         onTap: () {},
+                //         child: Container(
+                //             height: 50,
+                //             width: 120,
+                //             padding: EdgeInsets.all(6),
+                //             decoration: const BoxDecoration(
+                //                 color: Colors.white,
+                //                 // border: Border.all(),
+                //                 borderRadius: BorderRadius.all(Radius.circular(50)),
+                //                 boxShadow: [
+                //                   BoxShadow(
+                //                       blurRadius: 30, color: Color(0xFF3B4A7424))
+                //                 ]),
+                //             child: Row(
+                //               mainAxisAlignment: MainAxisAlignment.center,
+                //               children: const [
+                //                 Text(
+                //                   "FILTERS",
+                //                   style: TextStyle(fontSize: 17),
+                //                 ),
+                //                 Icon(Icons.arrow_drop_down_outlined),
+                //               ],
+                //             )),
+                //       ),
+                //       InkWell(
+                //         onTap: () {},
+                //         child: Container(
+                //             height: 50,
+                //             width: 100,
+                //             decoration: const BoxDecoration(
+                //                 color: Colors.white,
+                //                 // border: Border.all(),
+                //                 borderRadius: BorderRadius.all(Radius.circular(50)),
+                //                 boxShadow: [
+                //                   BoxShadow(
+                //                       blurRadius: 30, color: Color(0xFF3B4A7424))
+                //                 ]),
+                //             child: Row(
+                //               mainAxisAlignment: MainAxisAlignment.center,
+                //               children: const [
+                //                 Text(
+                //                   "SORT",
+                //                   style: TextStyle(fontSize: 17),
+                //                 ),
+                //                 Icon(Icons.arrow_drop_down_outlined),
+                //               ],
+                //             )),
+                //       ),
+                //       Text(
+                //         'CLEAR FILTERS',
+                //         style: TextStyle(color: Color(0xFFFF5858), fontSize: 16),
+                //       )
+                //     ],
+                //   ),
+                // ),
+                Flexible(
+                  child: ListView.builder(
+                      physics: BouncingScrollPhysics(),
+                      itemCount: data.length,
+                      shrinkWrap: true,
+                      itemBuilder: (context, i) {
+                        if (i < data.length - 1) {
+                          return ItemBuilderWidget(
+                            data: data,
+                            i: i,
+                          );
+                        } else if (i == productListingdata.result!.total - 1) {
+                          return const Center(child: Text('End of list'));
+                        } else {
+                          context
+                              .read<ProductListingProvider>()
+                              .getProductListing(
+                                  mounted: mounted,
+                                  page: context
+                                          .read<ProductListingProvider>()
+                                          .prepageno +
+                                      1,
+                                  query: widget.query);
+                          return const SizedBox(
+                            height: 80,
+                            child: Center(child: CircularProgressIndicator()),
+                          );
+                        }
+                        // return ItemBuilderWidget(data: data, i: i);
+                      }),
+                ),
+              ],
+            )
+          : const Center(
+              child: Text('No data Found'),
+            ),
     );
   }
 }

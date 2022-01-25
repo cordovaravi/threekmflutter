@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:threekm/Models/shopModel/restaurants_menu_model.dart';
 import 'package:threekm/utils/screen_util.dart';
 
-
-
 class RestaurantDetails extends StatefulWidget {
   const RestaurantDetails({Key? key, this.result, this.tags}) : super(key: key);
   final Result? result;
@@ -193,131 +191,122 @@ class _RestaurantDetailsState extends State<RestaurantDetails>
                           }),
                     ),
                     Container(
-                      padding: EdgeInsets.all(10),
-                      width: ThreeKmScreenUtil.screenWidthDp / 2,
-                      child: TabBar(
-                        unselectedLabelColor: Colors.grey,
-                        labelColor: Colors.black,
-                        indicatorColor: Colors.black,
-                        padding: EdgeInsets.zero,
-                        labelPadding: EdgeInsets.zero,
-                        tabs: const [
-                          Tab(
-                            child: Text(
-                              'About',
-                            ),
-                          ),
-                          Tab(
-                            text: 'Shop',
-                          ),
-                          Tab(
-                            text: 'Gallery',
-                          ),
-                        ],
-                        controller: _tabController,
-                        indicatorSize: TabBarIndicatorSize.tab,
-                      ),
-                    ),
+                        padding: EdgeInsets.all(10),
+                        width: ThreeKmScreenUtil.screenWidthDp / 2,
+                        child: Text('About')
+                        //  TabBar(
+                        //   unselectedLabelColor: Colors.grey,
+                        //   labelColor: Colors.black,
+                        //   indicatorColor: Colors.black,
+                        //   padding: EdgeInsets.zero,
+                        //   labelPadding: EdgeInsets.zero,
+                        //   tabs: const [
+                        //     Tab(
+                        //       child: Text(
+                        //         'About',
+                        //       ),
+                        //     ),
+                        //     // Tab(
+                        //     //   text: 'Shop',
+                        //     // ),
+                        //     // Tab(
+                        //     //   text: 'Gallery',
+                        //     // ),
+                        //   ],
+                        //   controller: _tabController,
+                        //   indicatorSize: TabBarIndicatorSize.tab,
+                        // ),
+                        ),
                     SizedBox(
                       height: ThreeKmScreenUtil.screenHeightDp / 2,
-                      child: TabBarView(
-                        children: [
-                          Container(
-                              padding: EdgeInsets.all(20),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                      child: Container(
+                          padding: EdgeInsets.all(20),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
                                 children: [
-                                  Row(
-                                    children: [
-                                      Container(
-                                          padding: EdgeInsets.all(10),
-                                          margin: EdgeInsets.all(10),
-                                          decoration: BoxDecoration(
-                                              color: Colors.deepPurple[400],
-                                              shape: BoxShape.circle),
-                                          child: const Icon(
-                                            Icons.accessibility_new_outlined,
-                                            color: Colors.white,
-                                          )),
-                                      Text(
-                                        '${widget.result?.creator.firstname} ${widget.result?.creator.lastname}',
-                                        style: const TextStyle(
-                                            fontSize: 18,
-                                            color: Color(0xFF555C64)),
-                                      ),
-                                    ],
-                                  ),
-                                  Row(
-                                    children: [
-                                      Container(
-                                          padding: EdgeInsets.all(10),
-                                          margin: EdgeInsets.all(10),
-                                          decoration: const BoxDecoration(
-                                              color: Color(0xFFFBA924),
-                                              shape: BoxShape.circle),
-                                          child: const Icon(
-                                            Icons.phone,
-                                            color: Colors.white,
-                                          )),
-                                      Text(
-                                        '${widget.result?.creator.phoneNo}',
-                                        style: const TextStyle(
-                                            fontSize: 18,
-                                            color: Color(0xFF555C64)),
-                                      ),
-                                    ],
-                                  ),
-                                  Row(
-                                    children: [
-                                      Container(
-                                          padding: EdgeInsets.all(10),
-                                          margin: EdgeInsets.all(10),
-                                          decoration: const BoxDecoration(
-                                              color: Color(0xFFFF5858),
-                                              shape: BoxShape.circle),
-                                          child: const Icon(
-                                            Icons.email_rounded,
-                                            color: Colors.white,
-                                          )),
-                                      Text(
-                                        '${widget.result?.creator.email}',
-                                        style: const TextStyle(
-                                            fontSize: 18,
-                                            color: Color(0xFF555C64)),
-                                      ),
-                                    ],
-                                  ),
-                                  Row(
-                                    children: [
-                                      Container(
-                                          padding: EdgeInsets.all(10),
-                                          margin: EdgeInsets.all(10),
-                                          decoration: const BoxDecoration(
-                                              color: Color(0xFF3E7EFF),
-                                              shape: BoxShape.circle),
-                                          child: const Icon(
-                                            Icons.location_on,
-                                            color: Colors.white,
-                                          )),
-                                      SizedBox(
-                                        width: ThreeKmScreenUtil.screenWidthDp /
-                                            1.37,
-                                        child: Text(
-                                          '${widget.result?.creator.address.area}',
-                                          style: const TextStyle(
-                                              fontSize: 18,
-                                              color: Color(0xFF555C64)),
-                                        ),
-                                      ),
-                                    ],
+                                  Container(
+                                      padding: EdgeInsets.all(10),
+                                      margin: EdgeInsets.all(10),
+                                      decoration: BoxDecoration(
+                                          color: Colors.deepPurple[400],
+                                          shape: BoxShape.circle),
+                                      child: const Icon(
+                                        Icons.accessibility_new_outlined,
+                                        color: Colors.white,
+                                      )),
+                                  Text(
+                                    '${widget.result?.creator.firstname} ${widget.result?.creator.lastname}',
+                                    style: const TextStyle(
+                                        fontSize: 18, color: Color(0xFF555C64)),
                                   ),
                                 ],
-                              )),
-                          Text('Person'),
-                          Text('Gallery')
-                        ],
-                        controller: _tabController,
-                      ),
+                              ),
+                              Row(
+                                children: [
+                                  Container(
+                                      padding: EdgeInsets.all(10),
+                                      margin: EdgeInsets.all(10),
+                                      decoration: const BoxDecoration(
+                                          color: Color(0xFFFBA924),
+                                          shape: BoxShape.circle),
+                                      child: const Icon(
+                                        Icons.phone,
+                                        color: Colors.white,
+                                      )),
+                                  Text(
+                                    '${widget.result?.creator.phoneNo}',
+                                    style: const TextStyle(
+                                        fontSize: 18, color: Color(0xFF555C64)),
+                                  ),
+                                ],
+                              ),
+                              Row(
+                                children: [
+                                  Container(
+                                      padding: EdgeInsets.all(10),
+                                      margin: EdgeInsets.all(10),
+                                      decoration: const BoxDecoration(
+                                          color: Color(0xFFFF5858),
+                                          shape: BoxShape.circle),
+                                      child: const Icon(
+                                        Icons.email_rounded,
+                                        color: Colors.white,
+                                      )),
+                                  Text(
+                                    '${widget.result?.creator.email}',
+                                    style: const TextStyle(
+                                        fontSize: 18, color: Color(0xFF555C64)),
+                                  ),
+                                ],
+                              ),
+                              Row(
+                                children: [
+                                  Container(
+                                      padding: EdgeInsets.all(10),
+                                      margin: EdgeInsets.all(10),
+                                      decoration: const BoxDecoration(
+                                          color: Color(0xFF3E7EFF),
+                                          shape: BoxShape.circle),
+                                      child: const Icon(
+                                        Icons.location_on,
+                                        color: Colors.white,
+                                      )),
+                                  SizedBox(
+                                    width:
+                                        ThreeKmScreenUtil.screenWidthDp / 1.37,
+                                    child: Text(
+                                      '${widget.result?.creator.address.area}',
+                                      style: const TextStyle(
+                                          fontSize: 18,
+                                          color: Color(0xFF555C64)),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          )),
                     ),
                   ],
                 ),

@@ -4,7 +4,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:threekm/UI/Search/SearchPage.dart';
+import 'package:threekm/UI/businesses/businesses_home.dart';
 import 'package:threekm/UI/main/navigation.dart';
+import 'package:threekm/UI/shop/cart/cart_item_list_modal.dart';
 import 'package:threekm/providers/shop/shop_home_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:threekm/Models/shopModel/shop_home_model.dart';
@@ -37,9 +39,8 @@ class _Home3KMState extends State<Home3KM> {
 
   @override
   void initState() {
-    var initJson = json.encode({"lat": '', "lng": '', "page": 1});
-    context.read<ShopHomeProvider>().getRestaurants(initJson, mounted);
     context.read<ShopHomeProvider>().getShopHome(mounted);
+    // context.read<ShopHomeProvider>().getRestaurants(initJson, mounted);
     super.initState();
   }
 
@@ -53,12 +54,13 @@ class _Home3KMState extends State<Home3KM> {
       }, child: Builder(builder: (context) {
         if (shopHomeProvider.state == 'loading') {
           return const Center(
-            child: CircularProgressIndicator(),
-          );
+              // child: CircularProgressIndicator(),
+              );
         } else if (shopHomeProvider.state == "error") {
+          context.read<ShopHomeProvider>().getShopHome(mounted);
           return const Center(
-            child: Text("error"),
-          );
+              //child: Text("error"),
+              );
         } else if (shopHomeProvider.state == "loaded") {
           return shopHomeProvider.shopHomeData != null
               ? ShopHome(
@@ -195,7 +197,7 @@ class _ShopHomeState extends State<ShopHome>
               Container(
                 color: Colors.white,
                 child: Padding(
-                  padding: EdgeInsets.only(top: 18),
+                  padding: EdgeInsets.only(top: 18, bottom: 18),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -236,17 +238,21 @@ class _ShopHomeState extends State<ShopHome>
                           ),
                         ),
                       ),
-                      Padding(
-                        padding: EdgeInsets.only(left: 12),
-                        child: Container(
-                            height: 32,
-                            width: 32,
-                            decoration: BoxDecoration(
-                              image: DecorationImage(
-                                  image: AssetImage("assets/bell.png")),
-                              shape: BoxShape.circle,
-                              //color: Color(0xff7572ED)
-                            )),
+                      InkWell(
+                        onTap: () => viewCart(context, 'shop'),
+                        child: Padding(
+                          padding: EdgeInsets.only(left: 12),
+                          child: Container(
+                              height: 32,
+                              width: 32,
+                              decoration: BoxDecoration(
+                                image: DecorationImage(
+                                    image: AssetImage(
+                                        "assets/shopImg/Group 40724.png")),
+                                shape: BoxShape.circle,
+                                //color: Color(0xff7572ED)
+                              )),
+                        ),
                       ),
                       InkWell(
                         onTap: () => drawerController.open!(),
@@ -296,19 +302,14 @@ class _ShopHomeState extends State<ShopHome>
                             child: ClipRRect(
                                 borderRadius: BorderRadius.circular(10),
                                 child: CachedNetworkImage(
-                                  imageUrl: shopAdvData![i].images!.first,
-                                  width:
-                                      ThreeKmScreenUtil.screenWidthDp / 1.1888,
-                                  // height: ThreeKmScreenUtil.screenHeightDp / 19,
-                                  fit: BoxFit.fill,
-                                  placeholder: (context, url) =>
-                                      Transform.scale(
-                                    scale: 0.5,
-                                    child: CircularProgressIndicator(
-                                      color: Colors.grey[400],
-                                    ),
-                                  ),
-                                )),
+                                    imageUrl: shopAdvData![i].images!.first,
+                                    width: ThreeKmScreenUtil.screenWidthDp /
+                                        1.1888,
+                                    // height: ThreeKmScreenUtil.screenHeightDp / 19,
+                                    fit: BoxFit.fill,
+                                    placeholder: (context, url) => Container(
+                                          color: Colors.grey[200],
+                                        ))),
                           ),
                         ),
                       );
@@ -570,7 +571,7 @@ class _ShopHomeState extends State<ShopHome>
                                               pageBuilder: (context, animaton,
                                                   secondaryAnimation) {
                                                 return ProductListing(
-                                                  productData:
+                                                  query:
                                                       '${shopsData?[i].name}',
                                                 );
                                               },
@@ -641,7 +642,7 @@ class _ShopHomeState extends State<ShopHome>
                                         pageBuilder: (context, animaton,
                                             secondaryAnimation) {
                                           return ProductListing(
-                                            productData: '${e.name}',
+                                            query: '${e.name}',
                                           );
                                         },
                                         transitionDuration:
@@ -675,7 +676,7 @@ class _ShopHomeState extends State<ShopHome>
                       Container(
                         //padding: const EdgeInsets.only(bottom: 10),
                         //margin: const EdgeInsets.only(bottom: 10),
-                        height: ThreeKmScreenUtil.screenHeightDp / 1.58,
+                        // height: ThreeKmScreenUtil.screenHeightDp / 1.58,
                         color: Color(0xFFFFFFFF),
                         // width: 300,
                         child: GridView.builder(
@@ -724,7 +725,8 @@ class _ShopHomeState extends State<ShopHome>
                                   // color: Colors.red,
                                   padding: const EdgeInsets.all(10),
                                   //width: ThreeKmScreenUtil.screenWidthDp / 1.5,
-                                  //height: ThreeKmScreenUtil.screenHeightDp / 2.7,
+                                  height:
+                                      ThreeKmScreenUtil.screenHeightDp / 2.7,
                                   child: BuildCard(
                                     cardImage: "${data?[index].image}",
                                     context: context,

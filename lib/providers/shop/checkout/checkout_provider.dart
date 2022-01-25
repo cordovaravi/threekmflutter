@@ -3,9 +3,12 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
+import 'package:threekm/Models/shopModel/order_details_model.dart'
+    as OrderDetailModel;
 
 import 'package:threekm/Models/shopModel/order_model.dart';
 import 'package:threekm/Models/shopModel/shipping_rate_model.dart';
+import 'package:threekm/UI/shop/checkout/checkout_success.dart';
 import 'package:threekm/commenwidgets/commenwidget.dart';
 import 'package:threekm/main.dart';
 import 'package:threekm/networkservice/Api_Provider.dart';
@@ -29,6 +32,9 @@ class CheckoutProvider extends ChangeNotifier {
   String? get message => _message;
   ShippingRateModel _rate = ShippingRateModel(status: 'false', deliveryRate: 0);
   ShippingRateModel get getShippingRateData => _rate;
+
+  OrderDetailModel.OrderDetailModel? _orderDetail;
+  OrderDetailModel.OrderDetailModel? get orderDetailData => _orderDetail;
 
 // mode is either shop or restro
   Future<void> getShippingRate(
@@ -81,8 +87,10 @@ class CheckoutProvider extends ChangeNotifier {
   OrderModel _OrderRes = OrderModel(StatusCode: 0, result: Result());
   OrderModel get getOrderResponseData => _OrderRes;
 
-  Future<void> createOrder(dropLocation, productList, shippingAmount) async {
+  Future<void> createOrder(
+      dropLocation, productList, shippingAmount, mode) async {
     log('create order process started ');
+    var creatorid = Hive.box('restrocreatorID');
     _state = 'loading';
     try {
       var requestJson = {
@@ -92,20 +100,27 @@ class CheckoutProvider extends ChangeNotifier {
         "customer_phone": 8087618710,
         "distance": "9 Km",
         "drop_location": dropLocation,
-        "shipping_amount": shippingAmount,
+        "shipping_amount": creatorid.get('id') == 6232 ? 0 : shippingAmount,
         "is_barter": false
       };
-      final response =
-          await _apiProvider.post(shopCheckout, json.encode(requestJson));
+      final response = await _apiProvider.post(
+          mode == 'shop' ? shopCheckout : restaurantMenuCheckout,
+          json.encode(requestJson));
       if (response != null) {
         _OrderRes = OrderModel.fromJson(response);
-        log('create order process done ${_OrderRes.result?.orderId} ');
-        openCheckout(
-            amount: shippingAmount,
-            orderID: _OrderRes.result?.orderId,
-            rzorderID: _OrderRes.result?.rzorderId);
-        _state = 'loaded';
-        notifyListeners();
+        if (_OrderRes.StatusCode != null) {
+          log('create order process done ${_OrderRes.result?.orderId} ');
+          openCheckout(
+              amount: shippingAmount,
+              orderID: _OrderRes.result?.orderId,
+              rzorderID: _OrderRes.result?.rzorderId);
+          _state = 'loaded';
+          notifyListeners();
+        } else {
+          navigatorKey.currentState?.pop();
+          navigatorKey.currentState?.pop();
+          showMessage(_OrderRes.error.toString());
+        }
         //return response;
       }
     } catch (e) {
@@ -118,9 +133,10 @@ class CheckoutProvider extends ChangeNotifier {
   /// razorpay_flutter handler
 
   void openCheckout({amount, orderID, rzorderID}) async {
+    var creatorid = Hive.box('restrocreatorID');
     var options = {
       'key': 'rzp_test_aHjwjcGgXECVhv',
-      'amount': amount * 100,
+      'amount': creatorid.get('id') == 6232 ? 1 * 100 : amount * 100,
       //'order_id': orderID,
       'rzorder_id': rzorderID,
       'name': 'Bulb And Key.',
@@ -142,13 +158,17 @@ class CheckoutProvider extends ChangeNotifier {
   }
 
   void _handlePaymentSuccess(PaymentSuccessResponse response) {
-    log('${response.paymentId}sssssssssssssssssssssssssssssssssssssssssssss');
+    log('${response.paymentId}  ${response.orderId}sssssssssssssssssssssssssssssssssssssssssssss');
+    navigatorKey.currentState?.pop();
+    navigatorKey.currentState?.pop();
+    CheckoutSuccess(navigatorKey.currentContext,'',1222);
     // Fluttertoast.showToast(
     //     msg: "SUCCESS: " + response.paymentId!, toastLength: Toast.LENGTH_SHORT);
   }
 
   void _handlePaymentError(PaymentFailureResponse response) {
     log('${response.code}, ${response.message}  eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee');
+    navigatorKey.currentState?.pop();
     navigatorKey.currentState?.pop();
     // Fluttertoast.showToast(
     //     msg: "ERROR: " + response.code.toString() + " - " + response.message!,
@@ -158,5 +178,21 @@ class CheckoutProvider extends ChangeNotifier {
   void _handleExternalWallet(ExternalWalletResponse response) {
     // Fluttertoast.showToast(
     //     msg: "EXTERNAL_WALLET: " + response.walletName!, toastLength: Toast.LENGTH_SHORT);
+  }
+
+// after order
+  getOrderDetail(projectId) async {
+    _state = 'loading';
+    try {
+      final response = await _apiProvider.get('${orderDetails}?id=$projectId');
+      if (response != null) {
+        _orderDetail = OrderDetailModel.OrderDetailModel.fromJson(response);
+        _state = 'loaded';
+        notifyListeners();
+      }
+    } catch (e) {
+      _state = 'error';
+      notifyListeners();
+    }
   }
 }

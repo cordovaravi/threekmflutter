@@ -8,7 +8,6 @@ import 'package:threekm/providers/shop/product_listing_provider.dart';
 import 'package:threekm/utils/screen_util.dart';
 import 'package:threekm/utils/threekm_textstyles.dart';
 
-
 class ViewAllOffering extends StatefulWidget {
   const ViewAllOffering({Key? key, required this.creatorId, required this.name})
       : super(key: key);
@@ -42,9 +41,10 @@ class _ViewAllOfferingState extends State<ViewAllOffering> {
   @override
   Widget build(BuildContext context) {
     final data = context.watch<ProductListingProvider>().allproductList;
-    final productdata =
+    final productListingdata =
         context.watch<ProductListingProvider>().productListingData;
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(60),
         child: AppBar(
@@ -144,8 +144,7 @@ class _ViewAllOfferingState extends State<ViewAllOffering> {
                       data: data,
                       i: i,
                     );
-                  } else if (i == data.length - 1 &&
-                      i == productdata.result?.total) {
+                  } else if (i == productListingdata.result!.total - 1) {
                     return const Center(child: Text('End of list'));
                   } else {
                     context.read<ProductListingProvider>().getProductListing(

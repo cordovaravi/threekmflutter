@@ -10,7 +10,7 @@ import 'package:threekm/UI/shop/product_card_home.dart';
 import 'package:threekm/providers/businesses/businesses_detail_provider.dart';
 import 'package:threekm/providers/businesses/businesses_wishlist_provider.dart';
 import 'package:threekm/utils/utils.dart';
-
+import 'package:url_launcher/url_launcher.dart';
 
 import 'package:visibility_detector/visibility_detector.dart';
 
@@ -50,6 +50,7 @@ class _BusinessDetailState extends State<BusinessDetail> {
 
     return Scaffold(
       extendBodyBehindAppBar: true,
+      backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -97,8 +98,7 @@ class _BusinessDetailState extends State<BusinessDetail> {
           ? Container(
               decoration: BoxDecoration(
                   //color: Colors.blue,
-                  // borderRadius: BorderRadius.circular(20)
-                  ),
+                  borderRadius: BorderRadius.circular(20)),
               // padding: EdgeInsets.only(top: 200),
               height: ThreeKmScreenUtil.screenHeightDp,
               child: SingleChildScrollView(
@@ -120,21 +120,25 @@ class _BusinessDetailState extends State<BusinessDetail> {
                             itemBuilder: (context, index) {
                               return InkWell(
                                 onTap: () {
-                                  log('imahe click');
-                                  showFullImage(
-                                    data.creator.coverImages.length != 0
-                                        ? data.creator.coverImages
-                                        : [data.creator.image],
-                                  );
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (_) => showFullImage(
+                                                images: data.creator.coverImages
+                                                            .length !=
+                                                        0
+                                                    ? data.creator.coverImages
+                                                    : [data.creator.image],
+                                              )));
                                 },
                                 child: Hero(
                                   tag: 'hero2',
                                   child: Image(
-                                    image: NetworkImage(data
-                                                .creator.coverImages.length !=
-                                            0
-                                        ? '${data.creator.coverImages[index]}'
-                                        : '${data.creator.image}'),
+                                    image: NetworkImage(
+                                      data.creator.coverImages.length != 0
+                                          ? '${data.creator.coverImages[index]}'
+                                          : data.creator.image,
+                                    ),
                                     fit: BoxFit.fill,
                                     // width: ThreeKmScreenUtil.screenWidthDp /
                                     //     1.1888,
@@ -169,12 +173,16 @@ class _BusinessDetailState extends State<BusinessDetail> {
                                   ),
                                 ),
                               );
-                            })),
+                            })
+                        // : Image(
+                        //     image: NetworkImage(data.creator.image),
+                        //     fit: BoxFit.fill,
+                        //   ),
+                        ),
                     Container(
                       decoration: BoxDecoration(
-                        color: Colors.white,
-                        // borderRadius: BorderRadius.circular(20)
-                      ),
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(20)),
                       // margin: EdgeInsets.only(
                       //     top: ThreeKmScreenUtil.screenHeightDp / 3.5),
                       child: Column(
@@ -279,6 +287,7 @@ class _BusinessDetailState extends State<BusinessDetail> {
                               }
                               debugPrint(
                                   'Widget ${info.key} is ${visiblePercentage}% visible');
+                              log('Widget ${info.key} is ${visiblePercentage}% visible');
                             },
                             child: Padding(
                               padding: const EdgeInsets.only(top: 15),
@@ -421,6 +430,8 @@ class _BusinessDetailState extends State<BusinessDetail> {
                                     top: 20,
                                   ),
                                   child: ListTile(
+                                    onTap: () async => await launch(
+                                        ('tel://${data.creator.phoneNo}')),
                                     dense: true,
                                     leading: Container(
                                       decoration: const BoxDecoration(
@@ -443,6 +454,11 @@ class _BusinessDetailState extends State<BusinessDetail> {
                                     top: 20,
                                   ),
                                   child: ListTile(
+                                    onTap: () async => await launch(data
+                                            .creator.whatsappNo
+                                            .startsWith('+91')
+                                        ? "https://wa.me/${data.creator.whatsappNo}?text=Hello"
+                                        : "https://wa.me/+91${data.creator.whatsappNo}?text=Hello"),
                                     dense: true,
                                     leading: const Image(
                                         image: AssetImage(
@@ -457,6 +473,8 @@ class _BusinessDetailState extends State<BusinessDetail> {
                                     top: 20,
                                   ),
                                   child: ListTile(
+                                    onTap: () async => await launch(
+                                        'mailto:${data.creator.email}?subject=Related To Business&body=Hello%20Sir'),
                                     dense: true,
                                     leading: Container(
                                       decoration: const BoxDecoration(
@@ -525,7 +543,7 @@ class _BusinessDetailState extends State<BusinessDetail> {
                                         ]),
                                       ),
                                       Container(
-                                        margin: EdgeInsets.only(bottom: 70),
+                                        margin: EdgeInsets.only(bottom: 50),
                                         height:
                                             ThreeKmScreenUtil.screenHeightDp /
                                                 1.58,
@@ -610,23 +628,64 @@ class _BusinessDetailState extends State<BusinessDetail> {
                                       Center(
                                         child: Container(
                                           padding: const EdgeInsets.only(
-                                              top: 10, bottom: 80),
+                                              top: 0, bottom: 80),
                                           child: ElevatedButton(
-                                              onPressed: () {
-                                                Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            ViewAllOffering(
-                                                              creatorId: data
-                                                                  .creator
-                                                                  .creatorId,
-                                                              name: data.creator
-                                                                  .businessName,
-                                                            )));
-                                              },
-                                              child: const Text(
-                                                  'View All Offerings')),
+                                            onPressed: () {
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          ViewAllOffering(
+                                                            creatorId: data
+                                                                .creator
+                                                                .creatorId,
+                                                            name: data.creator
+                                                                .businessName,
+                                                          )));
+                                            },
+                                            style: ButtonStyle(
+                                                shape: MaterialStateProperty.all(
+                                                    const StadiumBorder()),
+                                                backgroundColor: MaterialStateProperty.all(
+                                                    const Color(0xFF3E7EFF)),
+                                                foregroundColor:
+                                                    MaterialStateProperty.all(
+                                                        Colors.white),
+                                                elevation:
+                                                    MaterialStateProperty.all(
+                                                        5),
+                                                shadowColor:
+                                                    MaterialStateProperty.all(
+                                                        Color(0xFFFC5E6A33)),
+                                                padding:
+                                                    MaterialStateProperty.all(
+                                                        const EdgeInsets.only(
+                                                            left: 30,
+                                                            right: 30,
+                                                            top: 15,
+                                                            bottom: 15))),
+                                            child: Text(
+                                              'View All Offerings',
+                                              style: ThreeKmTextConstants
+                                                  .tk14PXPoppinsWhiteMedium,
+                                            ),
+                                          ),
+                                          // ElevatedButton(
+                                          //     onPressed: () {
+                                          //       Navigator.push(
+                                          //           context,
+                                          //           MaterialPageRoute(
+                                          //               builder: (context) =>
+                                          //                   ViewAllOffering(
+                                          //                     creatorId: data
+                                          //                         .creator
+                                          //                         .creatorId,
+                                          //                     name: data.creator
+                                          //                         .businessName,
+                                          //                   )));
+                                          //     },
+                                          //     child: const Text(
+                                          //         'View All Offerings')),
                                         ),
                                       )
                                     ],

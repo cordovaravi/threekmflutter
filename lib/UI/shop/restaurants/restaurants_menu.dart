@@ -16,6 +16,7 @@ import 'package:threekm/utils/utils.dart';
 import '../../shop/cart/cart_item_list_modal.dart';
 import '../../shop/restaurants/checkbox.dart';
 import '../../shop/restaurants/restaurant_details.dart';
+// import 'package:popover/popover.dart';
 
 final GlobalKey<_RestaurantMenuState> restaurantMenuKey = GlobalKey();
 
@@ -46,6 +47,7 @@ class _RestaurantMenuState extends State<RestaurantMenu> {
   @override
   Widget build(BuildContext context) {
     var data = context.watch<RestaurantMenuProvider>().menuDetails;
+    var state = context.watch<RestaurantMenuProvider>().state;
 
     return Scaffold(
         appBar: AppBar(
@@ -109,12 +111,8 @@ class _RestaurantMenuState extends State<RestaurantMenu> {
                                   topLeft: Radius.circular(20),
                                   bottomLeft: Radius.circular(20)),
                               image: DecorationImage(
-                                image: data.result?.creator.cover != null
-                                    ? CachedNetworkImageProvider(
-                                        '${data.result?.creator.cover}')
-                                    : const AssetImage(
-                                            'assets/shopImg/noImage.jpg')
-                                        as ImageProvider,
+                                image: CachedNetworkImageProvider(
+                                    '${data.result?.creator.cover}'),
                                 //NetworkImage("${data.result?.creator.cover}"),
                                 fit: BoxFit.cover,
                                 colorFilter: ColorFilter.mode(
@@ -143,177 +141,208 @@ class _RestaurantMenuState extends State<RestaurantMenu> {
                   ],
                 ),
               ),
-              Container(
-                margin: const EdgeInsets.all(10),
-                height: 170,
-                // width: 200,
-                child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    shrinkWrap: true,
-                    itemCount: 3,
-                    itemBuilder: (_, i) {
-                      return Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: DottedBorder(
-                            strokeWidth: 3,
-                            dashPattern: const [8, 4],
-                            color: Colors.primaries[
-                                Random().nextInt(Colors.primaries.length)],
-                            child: Container(
-                              padding: const EdgeInsets.all(10),
-                              width: 200,
-                              child: const Center(
-                                child: Text(
-                                  'Get 20% discount Code: HAPPYNOW',
-                                  style: TextStyle(fontSize: 18),
-                                ),
-                              ),
-                            )),
-                      );
-                    }),
-              ),
-              Container(
-                padding: EdgeInsets.all(10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    CustomCheckBox(
-                      size: 6,
-                      label: Text('VEG'),
-                      activeColor: Colors.green,
-                      onClick: (status) {
-                        setState(() {
-                          isVeg = status;
-                        });
-                      },
-                    ),
-                    CustomCheckBox(
-                      size: 6,
-                      label: Text('EGG'),
-                      activeColor: Colors.amber,
-                      onClick: (status) {
-                        isEgg = status;
-                      },
-                    ),
-                    Container(
-                      // padding: const EdgeInsets.only(left: 20),
-                      width: ThreeKmScreenUtil.screenWidthDp / 2.5,
-                      child: TextFormField(
-                        keyboardType: TextInputType.text,
-                        // controller: _firstName,
-                        validator: (val) {},
-                        //maxLength: 16,
-                        decoration: InputDecoration(
-                          hintText: 'Search',
-                          hintStyle: const TextStyle(color: Color(0xFF0F0F2D)),
-                          counterText: '',
-                          filled: true,
-                          prefixIcon: const Icon(Icons.search,
-                              color: Color(0xFF0F0F2D)),
-                          fillColor: Colors.grey[200],
-                          //isDense: true,
-                          contentPadding:
-                              const EdgeInsets.fromLTRB(10, 13, 10, 13),
+              // Container(
+              //   margin: const EdgeInsets.all(10),
+              //   height: 170,
+              //   // width: 200,
+              //   child: ListView.builder(
+              //       scrollDirection: Axis.horizontal,
+              //       shrinkWrap: true,
+              //       itemCount: 3,
+              //       itemBuilder: (_, i) {
+              //         return Padding(
+              //           padding: const EdgeInsets.all(8.0),
+              //           child: DottedBorder(
+              //               strokeWidth: 3,
+              //               dashPattern: const [8, 4],
+              //               color: Colors.primaries[
+              //                   Random().nextInt(Colors.primaries.length)],
+              //               child: Container(
+              //                 padding: const EdgeInsets.all(10),
+              //                 width: 200,
+              //                 child: const Center(
+              //                   child: Text(
+              //                     'Get 20% discount Code: HAPPYNOW',
+              //                     style: TextStyle(fontSize: 18),
+              //                   ),
+              //                 ),
+              //               )),
+              //         );
+              //       }),
+              // ),
+              // Container(
+              //   padding: EdgeInsets.all(10),
+              //   child: Row(
+              //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //     children: [
+              //       CustomCheckBox(
+              //         size: 6,
+              //         label: Text('VEG'),
+              //         activeColor: Colors.green,
+              //         onClick: (status) {
+              //           setState(() {
+              //             isVeg = status;
+              //           });
+              //         },
+              //       ),
+              //       CustomCheckBox(
+              //         size: 6,
+              //         label: Text('EGG'),
+              //         activeColor: Colors.amber,
+              //         onClick: (status) {
+              //           isEgg = status;
+              //         },
+              //       ),
+              //       Container(
+              //         // padding: const EdgeInsets.only(left: 20),
+              //         width: ThreeKmScreenUtil.screenWidthDp / 2.5,
+              //         child: TextFormField(
+              //           keyboardType: TextInputType.text,
+              //           // controller: _firstName,
+              //           validator: (val) {},
+              //           //maxLength: 16,
+              //           decoration: InputDecoration(
+              //             hintText: 'Search',
+              //             hintStyle: const TextStyle(color: Color(0xFF0F0F2D)),
+              //             counterText: '',
+              //             filled: true,
+              //             prefixIcon: const Icon(Icons.search,
+              //                 color: Color(0xFF0F0F2D)),
+              //             fillColor: Colors.grey[200],
+              //             //isDense: true,
+              //             contentPadding:
+              //                 const EdgeInsets.fromLTRB(10, 13, 10, 13),
 
-                          border: const OutlineInputBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(20)),
-                              borderSide: BorderSide.none),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Container(
-                color: Colors.white,
-                child: Column(children: [
-                  ...?data.result?.menu
-                      .map((e) => MenuTile(e: e, isVeg: isVeg, isEgg: isEgg))
-                      .toList(),
-                ]),
-              ),
+              //             border: const OutlineInputBorder(
+              //                 borderRadius:
+              //                     BorderRadius.all(Radius.circular(20)),
+              //                 borderSide: BorderSide.none),
+              //           ),
+              //         ),
+              //       ),
+              //     ],
+              //   ),
+              // ),
+              state == 'loaded'
+                  ? data.result!.creator.restaurant!.status != false
+                      ? Container(
+                          padding: EdgeInsets.only(top: 20, bottom: 140),
+                          color: Colors.white,
+                          child: Column(children: [
+                            ...?data.result?.menu
+                                .map((e) =>
+                                    MenuTile(e: e, isVeg: isVeg, isEgg: isEgg))
+                                .toList(),
+                          ]),
+                        )
+                      : Container(
+                          padding: EdgeInsets.all(40),
+                          child: Center(
+                            child: Text(
+                              'Restaurent is currently not Accepting Order',
+                              style: ThreeKmTextConstants
+                                  .tk16PXPoppinsBlackSemiBold,
+                            ),
+                          ),
+                        )
+                  : Container(),
             ],
           ),
         ),
         floatingActionButtonLocation:
             FloatingActionButtonLocation.miniCenterDocked,
-        floatingActionButton: ValueListenableBuilder(
-            valueListenable: Hive.box('restroCartBox').listenable(),
-            builder: (context, Box box, widget) {
-              return box.length > 0
-                  ? Container(
-                      width: double.infinity,
-                      height: 70,
-                      color: Color(0xFF0F0F2D),
-                      child: Padding(
-                        padding:
-                            const EdgeInsets.only(left: 20, top: 20, right: 20),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  '${Hive.box('restroCartBox').values.length} ITEM',
-                                  style: ThreeKmTextConstants
-                                      .tk12PXPoppinsWhiteRegular,
-                                ),
-                                Wrap(children: [
+        floatingActionButton: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+                padding:
+                    EdgeInsets.only(top: 10, bottom: 10, left: 20, right: 20),
+                margin: EdgeInsets.only(bottom: 10),
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    color: Color(0xFF0F0F2D)),
+                child: Text(
+                  'View Menu',
+                  style: ThreeKmTextConstants.tk14PXPoppinsBlackBold
+                      .copyWith(color: Colors.white),
+                )),
+            ValueListenableBuilder(
+                valueListenable: Hive.box('restroCartBox').listenable(),
+                builder: (context, Box box, widget) {
+                  return box.length > 0
+                      ? Container(
+                          width: double.infinity,
+                          height: 90,
+                          color: Color(0xFF0F0F2D),
+                          padding: const EdgeInsets.only(
+                              left: 20, top: 20, right: 20, bottom: 20),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
                                   Text(
-                                    '₹${context.read<CartProvider>().getBoxTotal(Hive.box('restroCartBox'))}',
+                                    '${Hive.box('restroCartBox').values.length} ITEM',
                                     style: ThreeKmTextConstants
-                                        .tk16PXPoppinsBlackMedium
-                                        .copyWith(color: Colors.white),
+                                        .tk12PXPoppinsWhiteRegular,
                                   ),
-                                  Text('  '),
-                                  Text(
-                                    '+ TAXES',
-                                    style: ThreeKmTextConstants
-                                        .tk12PXPoppinsBlackSemiBold
-                                        .copyWith(
-                                      color: Color(0xFF979EA4),
-                                    ),
-                                  )
-                                ])
-                              ],
-                            ),
-                            InkWell(
-                              onTap: () {
-                                viewCart(context, 'restro');
-                              },
-                              child: Container(
-                                padding: EdgeInsets.all(10),
-                                decoration: BoxDecoration(
-                                    color: Color(0xFF3E7EFF),
-                                    borderRadius: BorderRadius.circular(30)),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
+                                  Wrap(children: [
                                     Text(
-                                      'View Cart',
+                                      '₹${context.read<CartProvider>().getBoxTotal(Hive.box('restroCartBox'))}',
                                       style: ThreeKmTextConstants
                                           .tk16PXPoppinsBlackMedium
                                           .copyWith(color: Colors.white),
                                     ),
-                                    const Image(
-                                      image: AssetImage(
-                                          'assets/shopImg/leftArrow.png'),
-                                      width: 30,
-                                      height: 30,
+                                    Text('  '),
+                                    Text(
+                                      '+ TAXES',
+                                      style: ThreeKmTextConstants
+                                          .tk12PXPoppinsBlackSemiBold
+                                          .copyWith(
+                                        color: Color(0xFF979EA4),
+                                      ),
                                     )
-                                  ],
-                                ),
+                                  ])
+                                ],
                               ),
-                            )
-                          ],
-                        ),
-                      ),
-                    )
-                  : Container();
-            }));
+                              InkWell(
+                                onTap: () {
+                                  viewCart(context, 'restro');
+                                },
+                                child: Container(
+                                  padding: EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                      color: Color(0xFF3E7EFF),
+                                      borderRadius: BorderRadius.circular(30)),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        'View Cart',
+                                        style: ThreeKmTextConstants
+                                            .tk16PXPoppinsBlackMedium
+                                            .copyWith(color: Colors.white),
+                                      ),
+                                      const Image(
+                                        image: AssetImage(
+                                            'assets/shopImg/leftArrow.png'),
+                                        width: 30,
+                                        height: 30,
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                        )
+                      : Container();
+                }),
+          ],
+        ));
   }
 }
 
@@ -327,6 +356,7 @@ class MenuTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ExpansionTile(
+      initiallyExpanded: true,
       title: Text('${e.name}(${e.menus.length})'),
       children: [
         ListView.builder(
@@ -389,7 +419,8 @@ class MenuTile extends StatelessWidget {
                                 quantity: 1,
                                 id: menu.menuId,
                                 variationId: 0,
-                                weight: menu.weight);
+                                weight: menu.weight,
+                                creatorName: e.name);
                           },
                           child: Container(
                               padding: const EdgeInsets.all(15),

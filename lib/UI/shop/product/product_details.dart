@@ -5,10 +5,13 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/src/provider.dart';
 
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:threekm/UI/businesses/businesses_detail.dart';
 import 'package:threekm/providers/shop/cart_provider.dart';
 import 'package:threekm/providers/shop/product_details_provider.dart';
 import 'package:threekm/providers/shop/wish_list_provide.dart';
@@ -43,13 +46,8 @@ class _ProductDetailsState extends State<ProductDetails> {
   void initState() {
     print('${widget.id}======================');
     context.read<ProductDetailsProvider>().productDetails(mounted, widget.id);
+    openBox();
     super.initState();
-  }
-
-  @override
-  void didChangeDependencies() {
-    ThreeKmScreenUtil().init(context);
-    super.didChangeDependencies();
   }
 
   int listLength(l) {
@@ -62,6 +60,16 @@ class _ProductDetailsState extends State<ProductDetails> {
     return i;
   }
 
+  openBox() async {
+    Box? _cartBox = await Hive.openBox('cartBox');
+  }
+
+  isProductExist(box, id) {
+    var existingItem =
+        box.values.toList().firstWhere((dd) => dd.id == id, orElse: () => null);
+    return existingItem;
+  }
+
   @override
   Widget build(BuildContext context) {
     Color color = Theme.of(context).primaryColor;
@@ -71,6 +79,7 @@ class _ProductDetailsState extends State<ProductDetails> {
     var isWish = context
         .watch<WishListProvider>()
         .isinWishList(data.result?.product.catalogId);
+
     return RefreshIndicator(onRefresh: () {
       return context
           .read<ProductDetailsProvider>()
@@ -105,7 +114,12 @@ class _ProductDetailsState extends State<ProductDetails> {
                     size: 20,
                     color: Colors.white,
                   ),
-                  onPressed: () {}),
+                  onPressed: () {
+                    log("share button ");
+                    var url =
+                        'https://3km.in/sell/${product?.name}/${product?.catalogId}';
+                    Share.share('check out this Product ${Uri.parse(url)}');
+                  }),
             ),
             Container(
               margin: const EdgeInsets.only(left: 10, right: 5),
@@ -137,10 +151,13 @@ class _ProductDetailsState extends State<ProductDetails> {
                       onPageChanged: (val) {
                         print(val);
                       },
-                      itemCount: data.result?.product.images.length,
+                      itemCount: data.result?.product.images.length != 0
+                          ? data.result?.product.images.length
+                          : [data.result?.product.image].length,
                       itemBuilder: (context, index) {
-                        return statusData == 'loaded' &&
-                                data.result?.product.images[index] != null
+                        return statusData == 'loaded'
+                            //&&
+                            // data.result?.product.images[index] != null
                             ? Container(
                                 //color: Colors.black,
                                 child: InkWell(
@@ -149,15 +166,21 @@ class _ProductDetailsState extends State<ProductDetails> {
                                         context,
                                         MaterialPageRoute(
                                             builder: (_) => FullImage(
-                                                  imageurl:
-                                                      '${data.result?.product.images[index]}',
+                                                  imageurl: data.result?.product
+                                                              .images.length !=
+                                                          0
+                                                      ? '${data.result?.product.images[index]}'
+                                                      : '${data.result?.product.image}',
                                                 )));
                                   },
                                   child: Hero(
                                     tag: 'hero1',
                                     child: Image(
-                                      image: NetworkImage(
-                                          '${data.result?.product.images[index]}'),
+                                      image: NetworkImage(data.result?.product
+                                                  .images.length !=
+                                              0
+                                          ? '${data.result?.product.images[index]}'
+                                          : '${data.result?.product.image}'),
                                       fit: BoxFit.fill,
                                       // width: ThreeKmScreenUtil.screenWidthDp /
                                       //     1.1888,
@@ -177,7 +200,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                                         }
                                         return Center(
                                           child: CircularProgressIndicator(
-                                            color: Color(0xFF979EA4),
+                                            color: const Color(0xFF979EA4),
                                             value: loadingProgress
                                                         .expectedTotalBytes !=
                                                     null
@@ -381,147 +404,256 @@ class _ProductDetailsState extends State<ProductDetails> {
                                     },
                                     child: Padding(
                                       padding: const EdgeInsets.only(top: 15),
-                                      child: Container(
-                                        height: 60,
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            if (isvisible)
-                                              ElevatedButton.icon(
-                                                  onPressed: () {
-                                                    if (isWish == null) {
-                                                      context
-                                                          .read<
-                                                              WishListProvider>()
-                                                          .addToWishList(
-                                                              image: product
-                                                                  ?.image,
-                                                              name:
-                                                                  product?.name,
-                                                              price: price != 0
-                                                                  ? price
-                                                                  : product
-                                                                      ?.price,
-                                                              id: product
-                                                                  ?.catalogId,
-                                                              variationId:
-                                                                  variationid);
-                                                    } else {
-                                                      context
-                                                          .read<
-                                                              WishListProvider>()
-                                                          .removeWish(product
-                                                              ?.catalogId);
-                                                    }
-                                                  },
-                                                  style: ButtonStyle(
-                                                      shape: MaterialStateProperty.all(
-                                                          StadiumBorder()),
-                                                      backgroundColor:
-                                                          MaterialStateProperty.all(
-                                                              const Color(
-                                                                  0xFFF4F3F8)),
-                                                      foregroundColor:
-                                                          MaterialStateProperty.all(
-                                                              Colors.black),
-                                                      padding: MaterialStateProperty.all(
-                                                          EdgeInsets.only(
-                                                              left: isWish != null
-                                                                  ? 10
-                                                                  : 30,
-                                                              right: 30,
-                                                              top: isWish != null
-                                                                  ? 0
-                                                                  : 15,
-                                                              bottom:
-                                                                  isWish != null
+                                      child: ValueListenableBuilder(
+                                          valueListenable:
+                                              Hive.box('cartBox').listenable(),
+                                          builder: (BuildContext context,
+                                              Box<dynamic> box, Widget? child) {
+                                            return Container(
+                                                height: 60,
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    if (isvisible)
+                                                      ElevatedButton.icon(
+                                                          onPressed: () {
+                                                            if (isWish ==
+                                                                null) {
+                                                              context.read<WishListProvider>().addToWishList(
+                                                                  image: product
+                                                                      ?.image,
+                                                                  name: product
+                                                                      ?.name,
+                                                                  price: price !=
+                                                                          0
+                                                                      ? price
+                                                                      : product
+                                                                          ?.price,
+                                                                  id: product
+                                                                      ?.catalogId,
+                                                                  variationId:
+                                                                      variationid);
+                                                            } else {
+                                                              context
+                                                                  .read<
+                                                                      WishListProvider>()
+                                                                  .removeWish(
+                                                                      product
+                                                                          ?.catalogId);
+                                                            }
+                                                          },
+                                                          style: ButtonStyle(
+                                                              shape: MaterialStateProperty.all(
+                                                                  StadiumBorder()),
+                                                              backgroundColor:
+                                                                  MaterialStateProperty.all(
+                                                                      const Color(
+                                                                          0xFFF4F3F8)),
+                                                              foregroundColor: MaterialStateProperty.all(
+                                                                  Colors.black),
+                                                              padding: MaterialStateProperty.all(EdgeInsets.only(
+                                                                  left: isWish !=
+                                                                          null
+                                                                      ? 10
+                                                                      : 30,
+                                                                  right: 30,
+                                                                  top: isWish !=
+                                                                          null
+                                                                      ? 0
+                                                                      : 15,
+                                                                  bottom: isWish !=
+                                                                          null
                                                                       ? 0
                                                                       : 15))),
-                                                  icon: isWish != null
-                                                      ? Container(
-                                                          child: Lottie.asset(
-                                                            "assets/kadokado-heart.json",
-                                                            height: 50,
-                                                            fit: BoxFit.cover,
-                                                            alignment: Alignment
-                                                                .center,
-                                                            repeat: false,
-                                                          ),
-                                                        )
-                                                      : Image(
-                                                          image: AssetImage(
-                                                              'assets/shopImg/wishlist.png'),
-                                                          width: 25,
-                                                          height: 25,
-                                                        ),
-                                                  //Icon(Icons.favorite_outline_sharp),
-                                                  label: Text(
-                                                    isWish != null
-                                                        ? 'Remove'
-                                                        : 'Wishlist',
-                                                    style: ThreeKmTextConstants
-                                                        .tk14PXPoppinsBlackMedium,
-                                                  )),
-                                            if (isvisible)
-                                              ElevatedButton.icon(
-                                                  onPressed: () async {
-                                                    print(
-                                                        'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb');
-                                                    context
-                                                        .read<CartProvider>()
-                                                        .addItemToCart(
-                                                            context: context,
-                                                            creatorId: product
-                                                                ?.creatorId,
-                                                            image:
-                                                                product?.image,
-                                                            name: product?.name,
-                                                            price: price != 0
-                                                                ? price
-                                                                : product
-                                                                    ?.price,
-                                                            quantity: 1,
-                                                            id: product
-                                                                ?.catalogId,
-                                                            variationId:
-                                                                variationid,
-                                                            weight: weight != 0
-                                                                ? weight
-                                                                : product
-                                                                    ?.weight);
-                                                  },
-                                                  style: ButtonStyle(
-                                                      shape: MaterialStateProperty.all(
-                                                          const StadiumBorder()),
-                                                      backgroundColor:
-                                                          MaterialStateProperty.all(
-                                                              const Color(
-                                                                  0xFFFF5858)),
-                                                      foregroundColor:
-                                                          MaterialStateProperty.all(
-                                                              Colors.white),
-                                                      elevation:
-                                                          MaterialStateProperty.all(
-                                                              5),
-                                                      shadowColor: MaterialStateProperty.all(
-                                                          Color(0xFFFC5E6A33)),
-                                                      padding:
-                                                          MaterialStateProperty.all(
-                                                              const EdgeInsets.only(
-                                                                  left: 30,
-                                                                  right: 30,
-                                                                  top: 15,
-                                                                  bottom: 15))),
-                                                  icon: const Icon(Icons.shopping_cart_rounded),
-                                                  label: Text(
-                                                    'Add to Cart',
-                                                    style: ThreeKmTextConstants
-                                                        .tk14PXPoppinsWhiteMedium,
-                                                  )),
-                                          ],
-                                        ),
-                                      ),
+                                                          icon: isWish != null
+                                                              ? Container(
+                                                                  child: Lottie
+                                                                      .asset(
+                                                                    "assets/kadokado-heart.json",
+                                                                    height: 50,
+                                                                    fit: BoxFit
+                                                                        .cover,
+                                                                    alignment:
+                                                                        Alignment
+                                                                            .center,
+                                                                    repeat:
+                                                                        false,
+                                                                  ),
+                                                                )
+                                                              : const Image(
+                                                                  image: AssetImage(
+                                                                      'assets/shopImg/wishlist.png'),
+                                                                  width: 25,
+                                                                  height: 25,
+                                                                ),
+                                                          //Icon(Icons.favorite_outline_sharp),
+                                                          label: Text(
+                                                            isWish != null
+                                                                ? 'Remove'
+                                                                : 'Wishlist',
+                                                            style: ThreeKmTextConstants
+                                                                .tk14PXPoppinsBlackMedium,
+                                                          )),
+                                                    if (isvisible)
+                                                      isProductExist(box, widget.id) ==
+                                                              null
+                                                          ? ElevatedButton.icon(
+                                                              onPressed:
+                                                                  () async {
+                                                                print(
+                                                                    'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb');
+                                                                context.read<CartProvider>().addItemToCart(
+                                                                    context:
+                                                                        context,
+                                                                    creatorId:
+                                                                        product
+                                                                            ?.creatorId,
+                                                                    image: product
+                                                                        ?.image,
+                                                                    name: product
+                                                                        ?.name,
+                                                                    price: price !=
+                                                                            0
+                                                                        ? price
+                                                                        : product
+                                                                            ?.price,
+                                                                    quantity: 1,
+                                                                    id: product
+                                                                        ?.catalogId,
+                                                                    variationId:
+                                                                        variationid,
+                                                                    weight: weight !=
+                                                                            0
+                                                                        ? weight
+                                                                        : product
+                                                                            ?.weight,
+                                                                    creatorName: product
+                                                                        ?.creatorDetails
+                                                                        .businessName);
+                                                                // viewCart(context,
+                                                                //     'shop');
+                                                              },
+                                                              style: ButtonStyle(
+                                                                  shape: MaterialStateProperty.all(
+                                                                      const StadiumBorder()),
+                                                                  backgroundColor:
+                                                                      MaterialStateProperty.all(const Color(
+                                                                          0xFFFF5858)),
+                                                                  foregroundColor:
+                                                                      MaterialStateProperty.all(Colors
+                                                                          .white),
+                                                                  elevation:
+                                                                      MaterialStateProperty.all(
+                                                                          5),
+                                                                  shadowColor:
+                                                                      MaterialStateProperty.all(
+                                                                          Color(
+                                                                              0xFFFC5E6A33)),
+                                                                  padding: MaterialStateProperty.all(const EdgeInsets.only(
+                                                                      left: 30,
+                                                                      right: 30,
+                                                                      top: 15,
+                                                                      bottom: 15))),
+                                                              icon: const Icon(Icons.shopping_cart_rounded),
+                                                              label: Text(
+                                                                'Add to Cart',
+                                                                style: ThreeKmTextConstants
+                                                                    .tk14PXPoppinsWhiteMedium,
+                                                              ))
+                                                          : Container(
+                                                              decoration: BoxDecoration(
+                                                                  border: Border
+                                                                      .all(),
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              40)),
+                                                              child: Row(
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .spaceBetween,
+                                                                //mainAxisSize: MainAxisSize.min,
+                                                                children: [
+                                                                  InkWell(
+                                                                    onTap: () {
+                                                                      if (isProductExist(box, widget.id)
+                                                                              .quantity <
+                                                                          2) {
+                                                                        isProductExist(box,
+                                                                                widget.id)
+                                                                            .delete();
+                                                                      }
+                                                                      if (isProductExist(
+                                                                              box,
+                                                                              widget.id) !=
+                                                                          null) {
+                                                                        isProductExist(box, widget.id)
+                                                                            .quantity = isProductExist(box, widget.id)
+                                                                                .quantity -
+                                                                            1;
+
+                                                                        if (isProductExist(box,
+                                                                                widget.id)
+                                                                            .isInBox) {
+                                                                          isProductExist(box, widget.id)
+                                                                              .save();
+                                                                        }
+                                                                      }
+                                                                    },
+                                                                    child:
+                                                                        const Image(
+                                                                      image: AssetImage(
+                                                                          'assets/shopImg/del.png'),
+                                                                      width: 70,
+                                                                      height:
+                                                                          30,
+                                                                    ),
+                                                                  ),
+                                                                  Padding(
+                                                                    padding: const EdgeInsets
+                                                                            .only(
+                                                                        top: 10,
+                                                                        bottom:
+                                                                            10),
+                                                                    child: Text(
+                                                                      '${isProductExist(box, widget.id).quantity}',
+                                                                      style: ThreeKmTextConstants
+                                                                          .tk20PXPoppinsRedBold
+                                                                          .copyWith(
+                                                                              color: Colors.black),
+                                                                    ),
+                                                                  ),
+                                                                  InkWell(
+                                                                    onTap: () {
+                                                                      isProductExist(
+                                                                              box,
+                                                                              widget
+                                                                                  .id)
+                                                                          .quantity = isProductExist(box, widget.id)
+                                                                              .quantity +
+                                                                          1;
+                                                                      isProductExist(
+                                                                              box,
+                                                                              widget.id)
+                                                                          .save();
+                                                                    },
+                                                                    child:
+                                                                        const Image(
+                                                                      image: AssetImage(
+                                                                          'assets/shopImg/add.png'),
+                                                                      width: 70,
+                                                                      height:
+                                                                          30,
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                  ],
+                                                ));
+                                          }),
                                     ),
                                   ),
                                 ],
@@ -546,71 +678,84 @@ class _ProductDetailsState extends State<ProductDetails> {
                                     style: ThreeKmTextConstants
                                         .tk14PXPoppinsBlackSemiBold,
                                   ),
-                                  Container(
-                                    margin: const EdgeInsets.only(
-                                      top: 10,
-                                      bottom: 20,
-                                    ),
-                                    decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(20),
-                                        color: Colors.white,
-                                        boxShadow: const [
-                                          BoxShadow(
-                                              blurRadius: 30,
-                                              color: Color(0x3B4A7424))
-                                        ]),
-                                    child: Row(
-                                      children: [
-                                        Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: ClipRRect(
-                                            borderRadius:
-                                                BorderRadius.circular(30),
-                                            child: Image(
-                                              image: NetworkImage(
-                                                  '${data.result?.product.creatorDetails.logo}'),
-                                              height: ThreeKmScreenUtil
-                                                      .screenHeightDp /
-                                                  7,
-                                              width: ThreeKmScreenUtil
-                                                      .screenWidthDp /
-                                                  3.3,
-                                              fit: BoxFit.fill,
-                                            ),
-                                          ),
-                                        ),
-                                        Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          children: [
-                                            SizedBox(
-                                              width: ThreeKmScreenUtil
-                                                      .screenWidthDp /
-                                                  1.9,
-                                              child: Text(
-                                                '${product?.creatorDetails.businessName}',
-                                                overflow: TextOverflow.ellipsis,
-                                                style: ThreeKmTextConstants
-                                                    .tk16PXPoppinsBlackSemiBold,
+                                  InkWell(
+                                    onTap: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (_) => BusinessDetail(
+                                                    id: data.result?.product
+                                                        .creatorId,
+                                                  )));
+                                    },
+                                    child: Container(
+                                      margin: const EdgeInsets.only(
+                                        top: 10,
+                                        bottom: 20,
+                                      ),
+                                      decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                          color: Colors.white,
+                                          boxShadow: const [
+                                            BoxShadow(
+                                                blurRadius: 30,
+                                                color: Color(0x3B4A7424))
+                                          ]),
+                                      child: Row(
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(30),
+                                              child: Image(
+                                                image: NetworkImage(
+                                                    '${data.result?.product.creatorDetails.logo}'),
+                                                height: ThreeKmScreenUtil
+                                                        .screenHeightDp /
+                                                    7,
+                                                width: ThreeKmScreenUtil
+                                                        .screenWidthDp /
+                                                    3.3,
+                                                fit: BoxFit.fill,
                                               ),
                                             ),
-                                            Text(
-                                              'Food, Restaurant',
-                                              style: ThreeKmTextConstants
-                                                  .tk12PXLatoGreenMedium,
-                                            ),
+                                          ),
+                                          Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            children: [
+                                              SizedBox(
+                                                width: ThreeKmScreenUtil
+                                                        .screenWidthDp /
+                                                    1.9,
+                                                child: Text(
+                                                  '${product?.creatorDetails.businessName}',
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  style: ThreeKmTextConstants
+                                                      .tk16PXPoppinsBlackSemiBold,
+                                                ),
+                                              ),
+                                              Text(
+                                                '${data.result?.product.tags[0]}, ${data.result?.product.tags[1]}',
+                                                style: ThreeKmTextConstants
+                                                    .tk12PXLatoGreenMedium,
+                                              ),
 
-                                            // Text(
-                                            //   'Kothrod(1.2 km)',
-                                            //   style: ThreeKmTextConstants
-                                            //       .tk12PXLatoBlackBold
-                                            //       .copyWith(height: 3),
-                                            // ),
-                                          ],
-                                        )
-                                      ],
+                                              // Text(
+                                              //   'Kothrod(1.2 km)',
+                                              //   style: ThreeKmTextConstants
+                                              //       .tk12PXLatoBlackBold
+                                              //       .copyWith(height: 3),
+                                              // ),
+                                            ],
+                                          )
+                                        ],
+                                      ),
                                     ),
                                   )
                                 ],
@@ -948,56 +1093,142 @@ class _ProductDetailsState extends State<ProductDetails> {
                                 style: ThreeKmTextConstants
                                     .tk14PXPoppinsBlackMedium,
                               )),
-                          ElevatedButton.icon(
-                              onPressed: () async {
-                                print('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
-                                // context
-                                //     .read<CartProvider>()
-                                //     .addToCart(
-                                //         image: product?.image,
-                                //         name: product?.name,
-                                //         price: product?.price,
-                                //         quantity: 1,
-                                //         id: product?.catalogId,
-                                //         variationId: 0);
+                          ValueListenableBuilder(
+                            valueListenable: Hive.box('cartBox').listenable(),
+                            builder: (BuildContext context, Box<dynamic> box,
+                                Widget? child) {
+                              return isProductExist(box, widget.id) == null
+                                  ? ElevatedButton.icon(
+                                      onPressed: () async {
+                                        context
+                                            .read<CartProvider>()
+                                            .addItemToCart(
+                                                context: context,
+                                                creatorId: product?.creatorId,
+                                                image: product?.image,
+                                                name: product?.name,
+                                                price: price != 0
+                                                    ? price
+                                                    : product?.price,
+                                                quantity: 1,
+                                                id: product?.catalogId,
+                                                variationId: variationid,
+                                                weight: weight != 0
+                                                    ? weight
+                                                    : product?.weight,
+                                                creatorName: product
+                                                    ?.creatorDetails
+                                                    .businessName);
+                                        // viewCart(context,
+                                        //     'shop');
+                                      },
+                                      style: ButtonStyle(
+                                          shape: MaterialStateProperty.all(
+                                              const StadiumBorder()),
+                                          backgroundColor:
+                                              MaterialStateProperty.all(
+                                                  const Color(0xFFFF5858)),
+                                          foregroundColor:
+                                              MaterialStateProperty.all(
+                                                  Colors.white),
+                                          elevation:
+                                              MaterialStateProperty.all(5),
+                                          shadowColor:
+                                              MaterialStateProperty.all(
+                                                  Color(0xFFFC5E6A33)),
+                                          padding: MaterialStateProperty.all(
+                                              const EdgeInsets.only(
+                                                  left: 30,
+                                                  right: 30,
+                                                  top: 15,
+                                                  bottom: 15))),
+                                      icon: const Icon(
+                                          Icons.shopping_cart_rounded),
+                                      label: Text(
+                                        'Add to Cart',
+                                        style: ThreeKmTextConstants
+                                            .tk14PXPoppinsWhiteMedium,
+                                      ))
+                                  : Container(
+                                      decoration: BoxDecoration(
+                                          border: Border.all(),
+                                          borderRadius:
+                                              BorderRadius.circular(40)),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        //mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          InkWell(
+                                            onTap: () {
+                                              if (isProductExist(box, widget.id)
+                                                      .quantity <
+                                                  2) {
+                                                isProductExist(box, widget.id)
+                                                    .delete();
+                                              }
+                                              if (isProductExist(
+                                                      box, widget.id) !=
+                                                  null) {
+                                                isProductExist(box, widget.id)
+                                                    .quantity = isProductExist(
+                                                            box, widget.id)
+                                                        .quantity -
+                                                    1;
 
-                                context.read<CartProvider>().addItemToCart(
-                                      context: context,
-                                      creatorId: product?.creatorId,
-                                      image: product?.image,
-                                      name: product?.name,
-                                      price:
-                                          price != 0 ? price : product?.price,
-                                      quantity: 1,
-                                      id: product?.catalogId,
-                                      variationId: variationid,
-                                      weight: weight != 0
-                                          ? weight
-                                          : product?.weight,
+                                                if (isProductExist(
+                                                        box, widget.id)
+                                                    .isInBox) {
+                                                  isProductExist(box, widget.id)
+                                                      .save();
+                                                }
+                                              }
+                                            },
+                                            child: const Image(
+                                              image: AssetImage(
+                                                  'assets/shopImg/del.png'),
+                                              width: 70,
+                                              height: 30,
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                                top: 10, bottom: 10),
+                                            child: Text(
+                                              '${isProductExist(box, widget.id).quantity}',
+                                              style: ThreeKmTextConstants
+                                                  .tk20PXPoppinsRedBold
+                                                  .copyWith(
+                                                      color: Colors.black),
+                                            ),
+                                          ),
+                                          InkWell(
+                                            onTap: () {
+                                              isProductExist(box, widget.id)
+                                                      .quantity =
+                                                  isProductExist(box, widget.id)
+                                                          .quantity +
+                                                      1;
+                                              isProductExist(box, widget.id)
+                                                  .save();
+                                            },
+                                            child: const Image(
+                                              image: AssetImage(
+                                                  'assets/shopImg/add.png'),
+                                              width: 70,
+                                              height: 30,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                     );
-                              },
-                              style: ButtonStyle(
-                                  shape: MaterialStateProperty.all(
-                                      const StadiumBorder()),
-                                  backgroundColor: MaterialStateProperty.all(
-                                      const Color(0xFFFF5858)),
-                                  foregroundColor:
-                                      MaterialStateProperty.all(Colors.white),
-                                  elevation: MaterialStateProperty.all(5),
-                                  shadowColor: MaterialStateProperty.all(
-                                      const Color(0xFFFC5E6A33)),
-                                  padding: MaterialStateProperty.all(
-                                      const EdgeInsets.only(
-                                          left: 30,
-                                          right: 30,
-                                          top: 15,
-                                          bottom: 15))),
-                              icon: const Icon(Icons.shopping_cart_rounded),
-                              label: Text(
-                                'Add to Cart',
-                                style: ThreeKmTextConstants
-                                    .tk14PXPoppinsWhiteMedium,
-                              )),
+
+                              return const SizedBox(
+                                width: 0,
+                                height: 0,
+                              );
+                            },
+                          ),
                         ],
                       ),
                     )),

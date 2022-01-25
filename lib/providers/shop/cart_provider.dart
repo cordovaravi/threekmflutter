@@ -4,14 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:threekm/Models/shopModel/cart_hive_model.dart';
 import 'package:threekm/UI/shop/cart/clear_and_add_to_cart.dart';
-
 class CartProvider extends ChangeNotifier {
   String? _state;
   String? get state => _state;
 
   Box? _cartBox;
-  Box? _restroCartBox;
   Box? get cartBoxData => _cartBox;
+  Box? _restroCartBox;
   Box? get restroCartBoxData => _restroCartBox;
 
   addToCart(image, name, quantity, price, id, variationId, weight) async {
@@ -57,7 +56,7 @@ class CartProvider extends ChangeNotifier {
       id,
       variationId,
       weight,
-      creator}) async {
+      creatorName}) async {
     Box _creatorIDBox = await Hive.openBox('creatorID');
     _cartBox = await Hive.openBox('cartBox');
     if (_cartBox!.length < 0) {
@@ -65,6 +64,7 @@ class CartProvider extends ChangeNotifier {
     }
     if (_creatorIDBox.isEmpty) {
       _creatorIDBox.put('id', creatorId);
+      _creatorIDBox.put('creatorName', creatorName);
       addToCart(image, name, quantity, price, id, variationId, weight);
     } else {
       var Cid = _creatorIDBox.get('id');
@@ -72,7 +72,7 @@ class CartProvider extends ChangeNotifier {
         addToCart(image, name, quantity, price, id, variationId, weight);
       } else {
         clearAndAddToCartModal(context, image, name, quantity, price, creatorId,
-            id, variationId, weight, 'shop');
+            id, variationId, weight, creatorName, 'shop');
       }
     }
 
@@ -128,11 +128,13 @@ class CartProvider extends ChangeNotifier {
       id,
       variationId,
       weight,
+      creatorName,
       refresh}) async {
     Box _restrocreatorIDBox = await Hive.openBox('restrocreatorID');
 
     if (_restrocreatorIDBox.isEmpty) {
       _restrocreatorIDBox.put('id', creatorId);
+      _restrocreatorIDBox.put('creatorName', creatorName);
       addToRestaurantCart(
           image, name, quantity, price, id, variationId, weight);
     } else {
@@ -142,7 +144,7 @@ class CartProvider extends ChangeNotifier {
             image, name, quantity, price, id, variationId, weight);
       } else {
         clearAndAddToCartModal(context, image, name, quantity, price, creatorId,
-            id, variationId, weight, 'restro');
+            id, variationId, weight, creatorName, 'restro');
       }
     }
 

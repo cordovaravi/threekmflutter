@@ -71,11 +71,11 @@ class Addresses {
     state = json['state'];
     landmark = json['landmark'];
     country = json['country'];
-    phoneNo = json['phone_no'];
+    phoneNo = json['phone_no'] ?? 0;
     pincode = json['pincode'];
     latitude = json['latitude'];
     longitude = json['longitude'];
-    addressType = json['address_type'];
+    addressType = json['address_type'] ?? "home";
     id = null;
   }
 

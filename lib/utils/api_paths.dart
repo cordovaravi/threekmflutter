@@ -88,6 +88,10 @@ const String allCategoryList = "category/tree";
 // Restaurants
 const String restaurants = "menu/home";
 const String restaurantMenu = "restaurent/menu";
+const String restaurantMenuCheckout = "menu/checkout";
 
 // Search Business
 const String Search_Business = "business/geolist";
+
+// order detail
+const String orderDetails = 'customer/orders/view';
