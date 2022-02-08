@@ -128,7 +128,13 @@ class Product {
     name = json['name'];
     description = json['description'];
     sku = json['sku'];
-    tags = json['tags'].cast<String>();
+    // tags = json['tags'].cast<String>();
+    if (json['tags'] != null) {
+      tags = <String>[];
+      (json['tags'] as List).forEach((tag) {
+        tags.add(tag);
+      });
+    }
     leadTime = json['lead_time'];
     price = json['price'];
     weight = json['weight'];

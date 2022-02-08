@@ -43,6 +43,8 @@ class _ProductDetailsState extends State<ProductDetails> {
   int? price = 0;
   int? weight = 0;
   int? variationid = 0;
+  var variation;
+  int? variationIndex = 0;
 
   @override
   void initState() {
@@ -70,6 +72,23 @@ class _ProductDetailsState extends State<ProductDetails> {
     var existingItem =
         box.values.toList().firstWhere((dd) => dd.id == id, orElse: () => null);
     return existingItem;
+  }
+
+  @override
+  void didChangeDependencies() {
+    ThreeKmScreenUtil.getInstance();
+    ThreeKmScreenUtil.instance.init(context);
+    super.didChangeDependencies();
+  }
+
+  @override
+  void dispose() {
+    int? price = 0;
+    int? weight = 0;
+    int? variationid = 0;
+    int? variationIndex = 0;
+    // TODO: implement dispose
+    super.dispose();
   }
 
   @override
@@ -153,9 +172,12 @@ class _ProductDetailsState extends State<ProductDetails> {
                       onPageChanged: (val) {
                         print(val);
                       },
-                      itemCount: data.result?.product.images.length != 0
-                          ? data.result?.product.images.length
-                          : [data.result?.product.image].length,
+                      itemCount: variationid == 0
+                          ? data.result?.product.images.length != 0
+                              ? data.result?.product.images.length
+                              : [data.result?.product.image].length
+                          : data.result?.variations?[variationIndex!]
+                              .imagesLinks.length,
                       itemBuilder: (context, index) {
                         return statusData == 'loaded'
                             //&&
@@ -168,22 +190,30 @@ class _ProductDetailsState extends State<ProductDetails> {
                                         context,
                                         MaterialPageRoute(
                                             builder: (_) => FullImage(
-                                                  imageurl: data.result?.product
-                                                              .images.length !=
-                                                          0
-                                                      ? '${data.result?.product.images[index]}'
-                                                      : '${data.result?.product.image}',
+                                                  imageurl: variationid == 0
+                                                      ? data
+                                                                  .result
+                                                                  ?.product
+                                                                  .images
+                                                                  .length !=
+                                                              0
+                                                          ? '${data.result?.product.images[index]}'
+                                                          : '${data.result?.product.image}'
+                                                      : variation
+                                                          .imagesLinks[index],
                                                 )));
                                   },
                                   child: Hero(
                                     tag: 'hero1',
                                     child: Image(
-                                      image: NetworkImage(data.result?.product
-                                                  .images.length !=
-                                              0
-                                          ? '${data.result?.product.images[index]}'
-                                          : '${data.result?.product.image}'),
-                                      fit: BoxFit.fill,
+                                      image: NetworkImage(variationid == 0
+                                          ? data.result?.product.images
+                                                      .length !=
+                                                  0
+                                              ? '${data.result?.product.images[index]}'
+                                              : '${data.result?.product.image}'
+                                          : variation.imagesLinks[index]),
+                                      fit: BoxFit.contain,
                                       // width: ThreeKmScreenUtil.screenWidthDp /
                                       //     1.1888,
                                       // height: ThreeKmScreenUtil.screenHeightDp /
@@ -349,6 +379,8 @@ class _ProductDetailsState extends State<ProductDetails> {
                                                     weight = vdata?.weight;
                                                     variationid =
                                                         vdata?.variationId;
+                                                    variationIndex = i;
+                                                    variation = vdata;
                                                   });
                                                 },
                                                 child: Container(
@@ -506,38 +538,131 @@ class _ProductDetailsState extends State<ProductDetails> {
                                                     if (isvisible)
                                                       ElevatedButton.icon(
                                                           onPressed: () async {
-                                                            if (isProductExist(
-                                                                    box,
-                                                                    widget
-                                                                        .id) ==
-                                                                null) {
-                                                              context.read<CartProvider>().addItemToCart(
-                                                                  context:
-                                                                      context,
-                                                                  creatorId: product
-                                                                      ?.creatorId,
-                                                                  image: product
-                                                                      ?.image,
-                                                                  name: product
-                                                                      ?.name,
-                                                                  price: price !=
-                                                                          0
-                                                                      ? price
-                                                                      : product
-                                                                          ?.price,
-                                                                  quantity: 1,
-                                                                  id: product
-                                                                      ?.catalogId,
-                                                                  variationId:
-                                                                      variationid,
-                                                                  weight: weight !=
-                                                                          0
-                                                                      ? weight
-                                                                      : product
-                                                                          ?.weight,
-                                                                  creatorName: product
-                                                                      ?.creatorDetails
-                                                                      .businessName);
+                                                            if (product!
+                                                                    .hasVariations ==
+                                                                false) {
+                                                              if (isProductExist(
+                                                                      box,
+                                                                      widget
+                                                                          .id) ==
+                                                                  null) {
+                                                                context.read<CartProvider>().addItemToCart(
+                                                                    context:
+                                                                        context,
+                                                                    creatorId:
+                                                                        product
+                                                                            .creatorId,
+                                                                    image: product
+                                                                        .image,
+                                                                    name: product
+                                                                        .name,
+                                                                    price: price !=
+                                                                            0
+                                                                        ? price
+                                                                        : product
+                                                                            .price,
+                                                                    quantity: 1,
+                                                                    id: product
+                                                                        .catalogId,
+                                                                    variationId:
+                                                                        variationid,
+                                                                    weight: weight !=
+                                                                            0
+                                                                        ? weight
+                                                                        : product
+                                                                            .weight,
+                                                                    creatorName: product
+                                                                        .creatorDetails
+                                                                        .businessName);
+                                                              } else {
+                                                                ScaffoldMessenger.of(
+                                                                        context)
+                                                                    .showSnackBar(
+                                                                        SnackBar(
+                                                                  elevation: 0,
+                                                                  backgroundColor:
+                                                                      Colors
+                                                                          .transparent,
+                                                                  content:
+                                                                      Container(
+                                                                    margin: EdgeInsets
+                                                                        .all(
+                                                                            15),
+                                                                    padding:
+                                                                        EdgeInsets.all(
+                                                                            20),
+                                                                    color:
+                                                                        bgColor,
+                                                                    child: Text(
+                                                                        "This product is already added to your cart"),
+                                                                  ),
+                                                                ));
+                                                                //                    CustomSnackBar(
+                                                                // navigatorKey.currentContext!,
+                                                                // Text(
+                                                                //     "This product is already added to your cart"));
+                                                              }
+                                                            } else if (product
+                                                                    .hasVariations &&
+                                                                variationid !=
+                                                                    0) {
+                                                              if (isProductExist(
+                                                                      box,
+                                                                      widget
+                                                                          .id) ==
+                                                                  null) {
+                                                                context.read<CartProvider>().addItemToCart(
+                                                                    context:
+                                                                        context,
+                                                                    creatorId:
+                                                                        product
+                                                                            .creatorId,
+                                                                    image: product
+                                                                        .image,
+                                                                    name: product
+                                                                        .name,
+                                                                    price: price !=
+                                                                            0
+                                                                        ? price
+                                                                        : product
+                                                                            .price,
+                                                                    quantity: 1,
+                                                                    id: product
+                                                                        .catalogId,
+                                                                    variationId:
+                                                                        variationid,
+                                                                    weight: weight !=
+                                                                            0
+                                                                        ? weight
+                                                                        : product
+                                                                            .weight,
+                                                                    creatorName: product
+                                                                        .creatorDetails
+                                                                        .businessName);
+                                                              } else {
+                                                                ScaffoldMessenger.of(
+                                                                        context)
+                                                                    .showSnackBar(
+                                                                        SnackBar(
+                                                                  elevation: 0,
+                                                                  backgroundColor:
+                                                                      Colors
+                                                                          .transparent,
+                                                                  content:
+                                                                      Container(
+                                                                    margin: EdgeInsets
+                                                                        .all(
+                                                                            15),
+                                                                    padding:
+                                                                        EdgeInsets.all(
+                                                                            20),
+                                                                    color:
+                                                                        bgColor,
+                                                                    child: Text(
+                                                                        "This product is already added to your cart"),
+                                                                  ),
+                                                                ));
+                                                              }
                                                             } else {
                                                               ScaffoldMessenger
                                                                       .of(
@@ -561,13 +686,9 @@ class _ProductDetailsState extends State<ProductDetails> {
                                                                   color:
                                                                       bgColor,
                                                                   child: Text(
-                                                                      "This product is already added to your cart"),
+                                                                      "Please select variant"),
                                                                 ),
                                                               ));
-                                                              //                    CustomSnackBar(
-                                                              // navigatorKey.currentContext!,
-                                                              // Text(
-                                                              //     "This product is already added to your cart"));
                                                             }
 
                                                             // viewCart(context,
@@ -596,7 +717,13 @@ class _ProductDetailsState extends State<ProductDetails> {
                                                                       bottom: 15))),
                                                           icon: const Icon(Icons.shopping_cart_rounded),
                                                           label: Text(
-                                                            'Add to Cart',
+                                                            isProductExist(
+                                                                        box,
+                                                                        widget
+                                                                            .id) ==
+                                                                    null
+                                                                ? 'Add to Cart'
+                                                                : 'Added to cart',
                                                             style: ThreeKmTextConstants
                                                                 .tk14PXPoppinsWhiteMedium,
                                                           ))
@@ -689,11 +816,12 @@ class _ProductDetailsState extends State<ProductDetails> {
                                                       .tk16PXPoppinsBlackSemiBold,
                                                 ),
                                               ),
-                                              Text(
-                                                '${data.result?.product.tags[0]}, ${data.result?.product.tags[1]}',
-                                                style: ThreeKmTextConstants
-                                                    .tk12PXLatoGreenMedium,
-                                              ),
+                                              // Text(
+                                              //  // '${product?.creatorDetails}',
+                                              //   '${data.result?.product.tags[0]}, ${data.result?.product.tags[1]}',
+                                              //   style: ThreeKmTextConstants
+                                              //       .tk12PXLatoGreenMedium,
+                                              // ),
 
                                               // Text(
                                               //   'Kothrod(1.2 km)',
@@ -1051,32 +1179,66 @@ class _ProductDetailsState extends State<ProductDetails> {
                                 Widget? child) {
                               return ElevatedButton.icon(
                                   onPressed: () async {
-                                    if (isProductExist(box, widget.id) ==
-                                        null) {
-                                      context
-                                          .read<CartProvider>()
-                                          .addItemToCart(
-                                              context: context,
-                                              creatorId: product?.creatorId,
-                                              image: product?.image,
-                                              name: product?.name,
-                                              price: price != 0
-                                                  ? price
-                                                  : product?.price,
-                                              quantity: 1,
-                                              id: product?.catalogId,
-                                              variationId: variationid,
-                                              weight: weight != 0
-                                                  ? weight
-                                                  : product?.weight,
-                                              creatorName: product
-                                                  ?.creatorDetails
-                                                  .businessName);
+                                    if (product!.hasVariations == false) {
+                                      if (isProductExist(box, widget.id) ==
+                                          null) {
+                                        context
+                                            .read<CartProvider>()
+                                            .addItemToCart(
+                                                context: context,
+                                                creatorId: product.creatorId,
+                                                image: product.image,
+                                                name: product.name,
+                                                price: price != 0
+                                                    ? price
+                                                    : product.price,
+                                                quantity: 1,
+                                                id: product.catalogId,
+                                                variationId: variationid,
+                                                weight: weight != 0
+                                                    ? weight
+                                                    : product.weight,
+                                                creatorName: product
+                                                    .creatorDetails
+                                                    .businessName);
+                                      } else {
+                                        CustomSnackBar(
+                                            context,
+                                            Text(
+                                                "This product is already added to your cart"));
+                                      }
+                                    } else if (product.hasVariations &&
+                                        variationid != 0) {
+                                      if (isProductExist(box, widget.id) ==
+                                          null) {
+                                        context
+                                            .read<CartProvider>()
+                                            .addItemToCart(
+                                                context: context,
+                                                creatorId: product.creatorId,
+                                                image: product.image,
+                                                name: product.name,
+                                                price: price != 0
+                                                    ? price
+                                                    : product.price,
+                                                quantity: 1,
+                                                id: product.catalogId,
+                                                variationId: variationid,
+                                                weight: weight != 0
+                                                    ? weight
+                                                    : product.weight,
+                                                creatorName: product
+                                                    .creatorDetails
+                                                    .businessName);
+                                      } else {
+                                        CustomSnackBar(
+                                            context,
+                                            Text(
+                                                "This product is already added to your cart"));
+                                      }
                                     } else {
-                                      CustomSnackBar(
-                                          context,
-                                          Text(
-                                              "This product is already added to your cart"));
+                                      CustomSnackBar(context,
+                                          Text("Please select variant"));
                                     }
 
                                     // viewCart(context,
@@ -1102,7 +1264,9 @@ class _ProductDetailsState extends State<ProductDetails> {
                                               bottom: 15))),
                                   icon: const Icon(Icons.shopping_cart_rounded),
                                   label: Text(
-                                    'Add to Cart',
+                                    isProductExist(box, widget.id) == null
+                                        ? 'Add to Cart'
+                                        : 'Added to cart',
                                     style: ThreeKmTextConstants
                                         .tk14PXPoppinsWhiteMedium,
                                   ));
