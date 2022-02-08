@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/src/provider.dart';
+import 'package:threekm/UI/shop/cart/cart_item_list_modal.dart';
 import 'package:threekm/providers/shop/all_category_provider.dart';
 import 'package:threekm/Models/shopModel/all_category_model.dart';
 import '../shop/sub_categorylist.dart';
-
 
 class AllCategoryList extends StatefulWidget {
   const AllCategoryList({Key? key}) : super(key: key);
@@ -41,7 +41,9 @@ class _AllCategoryListState extends State<AllCategoryList> {
                 decoration: BoxDecoration(
                     color: Colors.grey[200], shape: BoxShape.circle),
                 child: IconButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      viewCart(context, 'shop');
+                    },
                     icon: const Icon(
                       Icons.shopping_cart_rounded,
                       size: 30,

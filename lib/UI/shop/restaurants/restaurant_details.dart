@@ -1,6 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:threekm/Models/shopModel/restaurants_menu_model.dart';
+import 'package:threekm/UI/shop/cart/cart_item_list_modal.dart';
+import 'package:threekm/commenwidgets/creatorLocation.dart';
 import 'package:threekm/utils/screen_util.dart';
 
 class RestaurantDetails extends StatefulWidget {
@@ -64,7 +67,9 @@ class _RestaurantDetailsState extends State<RestaurantDetails>
                   size: 20,
                   color: Colors.white,
                 ),
-                onPressed: () {}),
+                onPressed: () {
+                  viewCart(context, 'restro');
+                }),
           ),
         ],
       ),
@@ -281,29 +286,43 @@ class _RestaurantDetailsState extends State<RestaurantDetails>
                                   ),
                                 ],
                               ),
-                              Row(
-                                children: [
-                                  Container(
-                                      padding: EdgeInsets.all(10),
-                                      margin: EdgeInsets.all(10),
-                                      decoration: const BoxDecoration(
-                                          color: Color(0xFF3E7EFF),
-                                          shape: BoxShape.circle),
-                                      child: const Icon(
-                                        Icons.location_on,
-                                        color: Colors.white,
-                                      )),
-                                  SizedBox(
-                                    width:
-                                        ThreeKmScreenUtil.screenWidthDp / 1.37,
-                                    child: Text(
-                                      '${widget.result?.creator.address.area}',
-                                      style: const TextStyle(
-                                          fontSize: 18,
-                                          color: Color(0xFF555C64)),
+                              InkWell(
+                                onTap: () {
+                                  Navigator.push(context,
+                                      MaterialPageRoute(builder: (_) {
+                                    return CreatorLocation(
+                                      initialTarget: LatLng(
+                                          widget
+                                              .result!.creator.address.latitude,
+                                          widget.result!.creator.address
+                                              .longitude),
+                                    );
+                                  }));
+                                },
+                                child: Row(
+                                  children: [
+                                    Container(
+                                        padding: EdgeInsets.all(10),
+                                        margin: EdgeInsets.all(10),
+                                        decoration: const BoxDecoration(
+                                            color: Color(0xFF3E7EFF),
+                                            shape: BoxShape.circle),
+                                        child: const Icon(
+                                          Icons.location_on,
+                                          color: Colors.white,
+                                        )),
+                                    SizedBox(
+                                      width: ThreeKmScreenUtil.screenWidthDp /
+                                          1.37,
+                                      child: Text(
+                                        '${widget.result?.creator.address.area}',
+                                        style: const TextStyle(
+                                            fontSize: 18,
+                                            color: Color(0xFF555C64)),
+                                      ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
                             ],
                           )),

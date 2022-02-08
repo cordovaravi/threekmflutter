@@ -7,6 +7,7 @@ import 'package:threekm/UI/Search/SearchPage.dart';
 import 'package:threekm/UI/businesses/businesses_home.dart';
 import 'package:threekm/UI/main/navigation.dart';
 import 'package:threekm/UI/shop/cart/cart_item_list_modal.dart';
+import 'package:threekm/UI/shop/checkout/order_detail.dart';
 import 'package:threekm/providers/shop/shop_home_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:threekm/Models/shopModel/shop_home_model.dart';
@@ -20,6 +21,7 @@ import '../shop/restaurants/restaurants_menu.dart';
 import '../shop/restaurants/view_all_restaurant.dart';
 
 import 'category_list_home.dart';
+import 'checkout/checkout_success.dart';
 import 'product_card_home.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -335,10 +337,25 @@ class _ShopHomeState extends State<ShopHome>
                             child: Column(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                Text(
-                                  'Order Food from your',
-                                  style:
-                                      ThreeKmTextConstants.tk20PXPoppinsRedBold,
+                                InkWell(
+                                  onTap: () {
+                                    Navigator.of(context).push(
+                                      PageRouteBuilder(
+                                        opaque: false, // set to false
+                                        pageBuilder: (_, __, ___) =>
+                                            OrderDetails(),
+                                      ),
+                                    );
+                                    // Navigator.push(
+                                    //     context,
+                                    //     MaterialPageRoute(
+                                    //         builder: (_) => CheckOutSuccess()));
+                                  },
+                                  child: Text(
+                                    'Order Food from your',
+                                    style: ThreeKmTextConstants
+                                        .tk20PXPoppinsRedBold,
+                                  ),
                                 ),
                                 Text(
                                   'Favourite Restaurant!',
@@ -383,10 +400,7 @@ class _ShopHomeState extends State<ShopHome>
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (_) => RestaurantsHome(
-                                            data: widget.shopHomeProvider
-                                                .restaurantData?.result,
-                                          )));
+                                      builder: (_) => RestaurantsHome()));
                             },
                             child: Row(
                               children: [
@@ -405,47 +419,53 @@ class _ShopHomeState extends State<ShopHome>
                         ],
                       ),
                     ),
-                    Container(
-                      padding: const EdgeInsets.only(bottom: 10),
-                      margin: const EdgeInsets.only(bottom: 10),
-                      height: 330.0,
-                      child: ListView.builder(
-                        shrinkWrap: true,
-                        scrollDirection: Axis.horizontal,
-                        itemCount: 10,
-                        itemBuilder: (BuildContext ctxt, int index) {
-                          return Container(
-                            // color: Colors.red,
-                            padding: const EdgeInsets.all(10),
-                            width: ThreeKmScreenUtil.screenWidthDp / 1.7,
-                            child: InkWell(
-                              onTap: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (_) => RestaurantMenu(
-                                              data: restaurantData?[index],
-                                            )));
+                    restaurantData != null
+                        ? Container(
+                            padding: const EdgeInsets.only(bottom: 10),
+                            margin: const EdgeInsets.only(bottom: 10),
+                            height: 330.0,
+                            child: ListView.builder(
+                              shrinkWrap: true,
+                              scrollDirection: Axis.horizontal,
+                              itemCount: restaurantData.length,
+                              itemBuilder: (BuildContext ctxt, int index) {
+                                return Container(
+                                  // color: Colors.red,
+                                  padding: const EdgeInsets.all(10),
+                                  width: ThreeKmScreenUtil.screenWidthDp / 1.7,
+                                  child: InkWell(
+                                    onTap: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (_) => RestaurantMenu(
+                                                    data:
+                                                        restaurantData[index],
+                                                  )));
+                                    },
+                                    child: RestaurantHomeCard(
+                                      cardImage:
+                                          "${restaurantData[index].cover}",
+                                      context: context,
+                                      heading: Text(
+                                        '${restaurantData[index].businessName}',
+                                        style: ThreeKmTextConstants
+                                            .tk14PXLatoBlackBold,
+                                      ),
+                                      subHeading: Text(
+                                          '${restaurantData[index].restaurant!.cuisines?.join(", ")}',
+                                          maxLines: 2,
+                                          style: ThreeKmTextConstants
+                                              .tk12PXLatoBlackBold
+                                              .copyWith(
+                                                  color: Color(0xFF555C64))),
+                                    ),
+                                  ),
+                                );
                               },
-                              child: RestaurantHomeCard(
-                                cardImage: "${restaurantData?[index].cover}",
-                                context: context,
-                                heading: Text(
-                                  '${restaurantData?[index].businessName}',
-                                  style:
-                                      ThreeKmTextConstants.tk14PXLatoBlackBold,
-                                ),
-                                subHeading: Text(
-                                    '${restaurantData?[index].restaurant!.cuisines?.join(", ")}',
-                                    maxLines: 2,
-                                    style: ThreeKmTextConstants
-                                        .tk12PXLatoBlackBold),
-                              ),
                             ),
-                          );
-                        },
-                      ),
-                    ),
+                          )
+                        : Container(),
                     Padding(
                       padding: const EdgeInsets.only(
                         bottom: 30,
@@ -686,11 +706,12 @@ class _ShopHomeState extends State<ShopHome>
                             shrinkWrap: true,
                             gridDelegate:
                                 const SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: 2,
-                                    //crossAxisSpacing: ThreeKmSpacing.spacing_32,
-                                    // mainAxisExtent: 80,
-                                    //mainAxisSpacing: 0,
-                                    childAspectRatio: 0.69),
+                              crossAxisCount: 2,
+                              //crossAxisSpacing: ThreeKmSpacing.spacing_32,
+                              mainAxisExtent: 260,
+                              //mainAxisSpacing: 0,
+                              // childAspectRatio: 0.69
+                            ),
                             //scrollDirection: Axis.horizontal,
                             itemCount: e.products?.length,
                             itemBuilder: (BuildContext ctxt, int index) {
@@ -722,20 +743,19 @@ class _ShopHomeState extends State<ShopHome>
                                           }));
                                 },
                                 child: Container(
-                                  // color: Colors.red,
                                   padding: const EdgeInsets.all(10),
-                                  //width: ThreeKmScreenUtil.screenWidthDp / 1.5,
-                                  height:
-                                      ThreeKmScreenUtil.screenHeightDp / 2.7,
+                                  // height: 220,
+                                  // width: 160,
+                                  //     ThreeKmScreenUtil.screenHeightDp / 2.7,
                                   child: BuildCard(
                                     cardImage: "${data?[index].image}",
                                     context: context,
                                     heading: Text('${data?[index].name}',
-                                        maxLines: 2,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
                                         style: ThreeKmTextConstants
                                             .tk14PXPoppinsBlackBold),
-                                    subHeading: Text(
-                                        '\u{20B9} ${data?[index].price}',
+                                    subHeading: Text('₹ ${data?[index].price}',
                                         style: ThreeKmTextConstants
                                             .tk14PXLatoBlackBold
                                             .copyWith(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:threekm/Models/shopModel/address_list_model.dart';
 import 'package:threekm/commenwidgets/commenwidget.dart';
 import 'package:threekm/main.dart';
@@ -35,6 +36,7 @@ class AddressListProvider extends ChangeNotifier {
   }
 
   addNewAddress(mounted, requestJson) async {
+    var selectedAddress = await Hive.openBox('selectedAddress');
     if (mounted) {
       _state = 'loading';
       showLoading();
@@ -45,6 +47,7 @@ class AddressListProvider extends ChangeNotifier {
           if (response['status'] == 'success') {
             _state = 'loaded';
             getAddressList(mounted);
+            selectedAddress.put('address', response['choosen_address']);
             navigatorKey.currentState?.pop();
             notifyListeners();
           } else {

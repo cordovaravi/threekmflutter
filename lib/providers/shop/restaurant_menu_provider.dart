@@ -9,9 +9,9 @@ class RestaurantMenuProvider extends ChangeNotifier {
   String? _state;
   String? get state => _state;
 
-  RestaurentMenuModel _menuDetails = RestaurentMenuModel(StatusCode: 0);
+  RestaurantMenuModel _menuDetails = RestaurantMenuModel(StatusCode: 0);
 
-  RestaurentMenuModel get menuDetails => _menuDetails;
+  RestaurantMenuModel get menuDetails => _menuDetails;
 
   Future<void> menuDetailsData(mounted, id) async {
     if (mounted) {
@@ -22,7 +22,7 @@ class RestaurantMenuProvider extends ChangeNotifier {
         if (response != null) {
           hideLoading();
           // print(response);
-          _menuDetails = RestaurentMenuModel.fromJson(response);
+          _menuDetails = RestaurantMenuModel.fromJson(response);
           _state = 'loaded';
           notifyListeners();
         }

@@ -57,12 +57,14 @@ dependencies:
   firebase_core:
   firebase_auth:
   firebase_messaging: "^11.2.0"
+  firebase_database:
   #Location
   location: ^4.3.0
   google_maps_flutter: ^2.1.1
   geolocator:
   google_api_headers: ^1.1.1
   google_maps_webservice: ^0.0.20-nullsafety.2
+  geocoding:
   tuple: ^2.0.0
   uuid: ^3.0.5
   #social
@@ -83,6 +85,7 @@ dependencies:
   url_launcher:
   dotted_border:
   flutter_rating_bar:
+  timelines:
 
 dev_dependencies:
   flutter_test:

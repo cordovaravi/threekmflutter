@@ -32,6 +32,7 @@ class _RestaurantsCheckOutScreenState extends State<RestaurantsCheckOutScreen> {
 
   @override
   void initState() {
+    openBox();
     super.initState();
     context.read<AddressListProvider>().getAddressList(mounted);
   }
@@ -40,6 +41,10 @@ class _RestaurantsCheckOutScreenState extends State<RestaurantsCheckOutScreen> {
   void dispose() {
     _pageController.dispose();
     super.dispose();
+  }
+
+  openBox() async {
+    await Hive.openBox('restroCartBox');
   }
 
   deliveryAddress() async {
@@ -81,7 +86,7 @@ class _RestaurantsCheckOutScreenState extends State<RestaurantsCheckOutScreen> {
           foregroundColor: Colors.black,
           elevation: 0,
           title: Text(
-            'CHECKOUT',
+            'RESTAURANTS CHECKOUT',
             style: ThreeKmTextConstants.tk16PXPoppinsBlackSemiBold
                 .copyWith(letterSpacing: 2),
           ),
@@ -206,7 +211,12 @@ class _RestaurantsCheckOutScreenState extends State<RestaurantsCheckOutScreen> {
                                                   Hive.box('restroCartBox')),
                                           'restro');
                                 }
-                                if (currentPage == 2) {
+                                if (currentPage == 2 &&
+                                    context
+                                            .read<CheckoutProvider>()
+                                            .getShippingRateData
+                                            .deliveryRate! !=
+                                        0) {
                                   //_pageController.jumpToPage(2);
                                   var box =
                                       Hive.box('restroCartBox').values.toList();
@@ -219,15 +229,16 @@ class _RestaurantsCheckOutScreenState extends State<RestaurantsCheckOutScreen> {
                                                 dropLocation:
                                                     deliveryAddressdata,
                                                 productList: box,
-                                                shippingAmount: context
-                                                        .read<CartProvider>()
-                                                        .getBoxTotal(Hive.box(
-                                                            'restroCartBox')) +
+                                                shippingAmount:
+                                                    // context
+                                                    //         .read<CartProvider>()
+                                                    //         .getBoxTotal(Hive.box(
+                                                    //             'restroCartBox')) +
                                                     context
                                                         .read<
                                                             CheckoutProvider>()
                                                         .getShippingRateData
-                                                        .deliveryRate,
+                                                        .deliveryRate!,
                                                 mode: 'restro',
                                               )));
                                 }
@@ -291,7 +302,7 @@ class _RestaurantsCheckOutScreenState extends State<RestaurantsCheckOutScreen> {
                                                 padding: const EdgeInsets.only(
                                                     top: 10),
                                                 child: Text(
-                                                  '${deliveryAddressdata?.addressType}',
+                                                  '${deliveryAddressdata?.firstname} ${deliveryAddressdata?.lastname}',
                                                   style: ThreeKmTextConstants
                                                       .tk14PXPoppinsBlackSemiBold
                                                       .copyWith(fontSize: 18),
@@ -389,7 +400,7 @@ class _RestaurantsCheckOutScreenState extends State<RestaurantsCheckOutScreen> {
                                                             const EdgeInsets
                                                                 .only(top: 10),
                                                         child: Text(
-                                                          '${address.addressType}',
+                                                          '${address.firstname} ${address.lastname}',
                                                           style: ThreeKmTextConstants
                                                               .tk14PXPoppinsBlackSemiBold
                                                               .copyWith(
@@ -467,7 +478,25 @@ class _RestaurantsCheckOutScreenState extends State<RestaurantsCheckOutScreen> {
                                         Hive.box('restroCartBox').listenable(),
                                     builder: (context, Box box, widget) {
                                       //CartHiveModel cartItem = box.getAt(i);
-
+                                      var taxes = double.parse(((context
+                                                      .read<CheckoutProvider>()
+                                                      .getShippingRateData
+                                                      .taxPercent /
+                                                  100) *
+                                              context
+                                                  .read<CartProvider>()
+                                                  .getBoxTotal(box))
+                                          .toStringAsFixed(2));
+                                      var totalRate = context
+                                              .read<CartProvider>()
+                                              .getBoxTotal(box) +
+                                          context
+                                              .read<CheckoutProvider>()
+                                              .getShippingRateData
+                                              .deliveryRate
+                                              ?.toInt() +
+                                          taxes +
+                                          10;
                                       return Container(
                                         //color: Colors.red,
 
@@ -503,147 +532,161 @@ class _RestaurantsCheckOutScreenState extends State<RestaurantsCheckOutScreen> {
                                                         style: ThreeKmTextConstants
                                                             .tk14PXPoppinsBlackSemiBold,
                                                       ),
-                                                      subtitle: Text(
-                                                        '\u{20B9}${cartItem.price}',
-                                                        style: ThreeKmTextConstants
-                                                            .tk14PXPoppinsBlueMedium,
-                                                      ),
-                                                      leading: Stack(
-                                                        clipBehavior: Clip.none,
-                                                        children: [
-                                                          ClipRRect(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        20),
-                                                            child: Image(
-                                                              image: NetworkImage(
-                                                                  '${cartItem.image}'),
-                                                              width: 60,
-                                                              height: 45,
-                                                              errorBuilder:
-                                                                  (context,
-                                                                          error,
-                                                                          stackTrace) =>
-                                                                      Container(
-                                                                width: 60,
-                                                                height: 45,
-                                                                color: Colors
-                                                                    .grey[350],
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          Positioned(
-                                                            top: -10,
-                                                            left: -5,
-                                                            child: InkWell(
-                                                              onTap: () {
-                                                                cartItem
-                                                                    .delete();
-                                                              },
-                                                              child:
-                                                                  const Image(
-                                                                image: AssetImage(
-                                                                    'assets/shopImg/closeRed.png'),
-                                                                width: 24,
-                                                              ),
-                                                            ),
-                                                          )
-                                                        ],
-                                                      ),
+                                                      // subtitle: Text(
+                                                      //   '₹${cartItem.price}',
+                                                      //   style: ThreeKmTextConstants
+                                                      //       .tk14PXPoppinsBlueMedium,
+                                                      // ),
+                                                      // leading: Stack(
+                                                      //   clipBehavior: Clip.none,
+                                                      //   children: [
+                                                      //     ClipRRect(
+                                                      //       borderRadius:
+                                                      //           BorderRadius
+                                                      //               .circular(
+                                                      //                   20),
+                                                      //       child: Image(
+                                                      //         image: NetworkImage(
+                                                      //             '${cartItem.image}'),
+                                                      //         width: 60,
+                                                      //         height: 45,
+                                                      //         errorBuilder:
+                                                      //             (context,
+                                                      //                     error,
+                                                      //                     stackTrace) =>
+                                                      //                 Container(
+                                                      //           width: 60,
+                                                      //           height: 45,
+                                                      //           color: Colors
+                                                      //               .grey[350],
+                                                      //         ),
+                                                      //       ),
+                                                      //     ),
+                                                      //     Positioned(
+                                                      //       top: -10,
+                                                      //       left: -5,
+                                                      //       child: InkWell(
+                                                      //         onTap: () {
+                                                      //           cartItem
+                                                      //               .delete();
+                                                      //         },
+                                                      //         child:
+                                                      //             const Image(
+                                                      //           image: AssetImage(
+                                                      //               'assets/shopImg/closeRed.png'),
+                                                      //           width: 24,
+                                                      //         ),
+                                                      //       ),
+                                                      //     )
+                                                      //   ],
+                                                      // ),
                                                       trailing: Container(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .all(2),
-                                                        width: 77,
-                                                        height: 31,
-                                                        decoration: BoxDecoration(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        30),
-                                                            color: const Color(
-                                                                0xFFF4F3F8)),
+                                                        width: 130,
                                                         child: Row(
                                                           mainAxisAlignment:
                                                               MainAxisAlignment
                                                                   .spaceBetween,
-                                                          //mainAxisSize: MainAxisSize.min,
                                                           children: [
-                                                            InkWell(
-                                                              onTap: () {
-                                                                context.read<CheckoutProvider>().getShippingRate(
-                                                                    mounted,
-                                                                    context,
-                                                                    deliveryAddressdata
-                                                                        ?.latitude,
-                                                                    deliveryAddressdata
-                                                                        ?.longitude,
-                                                                    deliveryAddressdata
-                                                                        ?.pincode,
-                                                                    context
-                                                                        .read<
-                                                                            CartProvider>()
-                                                                        .getBoxWeightTotal(
-                                                                            Hive.box('restroCartBox')),
-                                                                    'restro');
-                                                                if (cartItem
-                                                                        .quantity <
-                                                                    2) {
-                                                                  return;
-                                                                }
-                                                                cartItem.quantity =
-                                                                    cartItem.quantity -
-                                                                        1;
-                                                                if (cartItem
-                                                                    .isInBox) {
-                                                                  cartItem
-                                                                      .save();
-                                                                }
-                                                              },
-                                                              child:
-                                                                  const Image(
-                                                                image: AssetImage(
-                                                                    'assets/shopImg/del.png'),
-                                                                width: 24,
-                                                                height: 24,
+                                                            Container(
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                      .all(2),
+                                                              width: 77,
+                                                              height: 31,
+                                                              decoration: BoxDecoration(
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              30),
+                                                                  color: const Color(
+                                                                      0xFFF4F3F8)),
+                                                              child: Row(
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .spaceBetween,
+                                                                //mainAxisSize: MainAxisSize.min,
+                                                                children: [
+                                                                  InkWell(
+                                                                    onTap: () {
+                                                                      context.read<CheckoutProvider>().getShippingRate(
+                                                                          mounted,
+                                                                          context,
+                                                                          deliveryAddressdata
+                                                                              ?.latitude,
+                                                                          deliveryAddressdata
+                                                                              ?.longitude,
+                                                                          deliveryAddressdata
+                                                                              ?.pincode,
+                                                                          context
+                                                                              .read<CartProvider>()
+                                                                              .getBoxWeightTotal(Hive.box('restroCartBox')),
+                                                                          'restro');
+                                                                      if (cartItem
+                                                                              .quantity <
+                                                                          2) {
+                                                                        return;
+                                                                      }
+                                                                      cartItem.quantity =
+                                                                          cartItem.quantity -
+                                                                              1;
+                                                                      if (cartItem
+                                                                          .isInBox) {
+                                                                        cartItem
+                                                                            .save();
+                                                                      }
+                                                                    },
+                                                                    child:
+                                                                        const Image(
+                                                                      image: AssetImage(
+                                                                          'assets/shopImg/del.png'),
+                                                                      width: 24,
+                                                                      height:
+                                                                          24,
+                                                                    ),
+                                                                  ),
+                                                                  Text(
+                                                                    '${cartItem.quantity}',
+                                                                    style: ThreeKmTextConstants
+                                                                        .tk14PXPoppinsBlackSemiBold,
+                                                                  ),
+                                                                  InkWell(
+                                                                    onTap: () {
+                                                                      context.read<CheckoutProvider>().getShippingRate(
+                                                                          mounted,
+                                                                          context,
+                                                                          deliveryAddressdata
+                                                                              ?.latitude,
+                                                                          deliveryAddressdata
+                                                                              ?.longitude,
+                                                                          deliveryAddressdata
+                                                                              ?.pincode,
+                                                                          context
+                                                                              .read<CartProvider>()
+                                                                              .getBoxWeightTotal(Hive.box('restroCartBox')),
+                                                                          'restro');
+                                                                      cartItem.quantity =
+                                                                          cartItem.quantity +
+                                                                              1;
+                                                                      cartItem
+                                                                          .save();
+                                                                    },
+                                                                    child:
+                                                                        const Image(
+                                                                      image: AssetImage(
+                                                                          'assets/shopImg/add.png'),
+                                                                      width: 24,
+                                                                      height:
+                                                                          24,
+                                                                    ),
+                                                                  ),
+                                                                ],
                                                               ),
                                                             ),
                                                             Text(
-                                                              '${cartItem.quantity}',
+                                                              '₹${cartItem.price! * cartItem.quantity}',
                                                               style: ThreeKmTextConstants
-                                                                  .tk14PXPoppinsBlackSemiBold,
-                                                            ),
-                                                            InkWell(
-                                                              onTap: () {
-                                                                context.read<CheckoutProvider>().getShippingRate(
-                                                                    mounted,
-                                                                    context,
-                                                                    deliveryAddressdata
-                                                                        ?.latitude,
-                                                                    deliveryAddressdata
-                                                                        ?.longitude,
-                                                                    deliveryAddressdata
-                                                                        ?.pincode,
-                                                                    context
-                                                                        .read<
-                                                                            CartProvider>()
-                                                                        .getBoxWeightTotal(
-                                                                            Hive.box('restroCartBox')),
-                                                                    'restro');
-                                                                cartItem.quantity =
-                                                                    cartItem.quantity +
-                                                                        1;
-                                                                cartItem.save();
-                                                              },
-                                                              child:
-                                                                  const Image(
-                                                                image: AssetImage(
-                                                                    'assets/shopImg/add.png'),
-                                                                width: 24,
-                                                                height: 24,
-                                                              ),
-                                                            ),
+                                                                  .tk14PXPoppinsBlueMedium,
+                                                            )
                                                           ],
                                                         ),
                                                       ),
@@ -661,7 +704,7 @@ class _RestaurantsCheckOutScreenState extends State<RestaurantsCheckOutScreen> {
                                                       .spaceBetween,
                                               children: [
                                                 Text(
-                                                  'Estimated shipping and handling:',
+                                                  'Subtotal',
                                                   style: ThreeKmTextConstants
                                                       .tk12PXPoppinsBlackSemiBold
                                                       .copyWith(
@@ -669,7 +712,91 @@ class _RestaurantsCheckOutScreenState extends State<RestaurantsCheckOutScreen> {
                                                               0xFF979EA4)),
                                                 ),
                                                 Text(
-                                                  '\u{20B9}${context.read<CheckoutProvider>().getShippingRateData.deliveryRate}',
+                                                  '₹${context.read<CartProvider>().getBoxTotal(box)}',
+                                                  style: ThreeKmTextConstants
+                                                      .tk14PXLatoGreyRegular
+                                                      .copyWith(
+                                                          fontWeight:
+                                                              FontWeight.bold),
+                                                ),
+                                              ],
+                                            ),
+                                            const Divider(
+                                              color: Color(0xFFF4F3F8),
+                                              thickness: 1,
+                                              height: 35,
+                                            ),
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Text(
+                                                  'Taxes',
+                                                  style: ThreeKmTextConstants
+                                                      .tk12PXPoppinsBlackSemiBold
+                                                      .copyWith(
+                                                          color: const Color(
+                                                              0xFF979EA4)),
+                                                ),
+                                                Text(
+                                                  '₹$taxes',
+                                                  style: ThreeKmTextConstants
+                                                      .tk14PXLatoGreyRegular
+                                                      .copyWith(
+                                                          fontWeight:
+                                                              FontWeight.bold),
+                                                ),
+                                              ],
+                                            ),
+                                            const Divider(
+                                              color: Color(0xFFF4F3F8),
+                                              thickness: 1,
+                                              height: 35,
+                                            ),
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Text(
+                                                  'Delivery Charges',
+                                                  style: ThreeKmTextConstants
+                                                      .tk12PXPoppinsBlackSemiBold
+                                                      .copyWith(
+                                                          color: const Color(
+                                                              0xFF979EA4)),
+                                                ),
+                                                Text(
+                                                  '₹${context.read<CheckoutProvider>().getShippingRateData.deliveryRate}',
+                                                  style: ThreeKmTextConstants
+                                                      .tk14PXLatoGreyRegular
+                                                      .copyWith(
+                                                          fontWeight:
+                                                              FontWeight.bold),
+                                                ),
+                                              ],
+                                            ),
+                                            const Divider(
+                                              color: Color(0xFFF4F3F8),
+                                              thickness: 1,
+                                              height: 35,
+                                            ),
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Text(
+                                                  'Platform Charges',
+                                                  style: ThreeKmTextConstants
+                                                      .tk12PXPoppinsBlackSemiBold
+                                                      .copyWith(
+                                                          color: const Color(
+                                                              0xFF979EA4)),
+                                                ),
+                                                Text(
+                                                  '₹10',
                                                   style: ThreeKmTextConstants
                                                       .tk14PXLatoGreyRegular
                                                       .copyWith(
@@ -700,7 +827,7 @@ class _RestaurantsCheckOutScreenState extends State<RestaurantsCheckOutScreen> {
                                                                 0xFF979EA4)),
                                                   ),
                                                   Text(
-                                                    '\u{20B9}${context.read<CartProvider>().getBoxTotal(box) + context.read<CheckoutProvider>().getShippingRateData.deliveryRate?.toInt()}',
+                                                    '₹${totalRate}',
                                                     style: ThreeKmTextConstants
                                                         .tk18PXLatoBlackMedium
                                                         .copyWith(
@@ -757,24 +884,31 @@ class _RestaurantsCheckOutScreenState extends State<RestaurantsCheckOutScreen> {
                 _pageController.jumpToPage(1);
               } else if (currentPage == 1) {
                 _pageController.jumpToPage(2);
-              } else if (currentPage == 2) {
+              } else if (currentPage == 2 &&
+                  context
+                          .read<CheckoutProvider>()
+                          .getShippingRateData
+                          .deliveryRate! !=
+                      0) {
                 _pageController.jumpToPage(3);
                 var box = Hive.box<List<CartHiveModel>>('restroCartBox')
                     .values
                     .toList();
+                var totalPrice =
+                    // context
+                    //         .read<CartProvider>()
+                    //         .getBoxTotal(Hive.box('restroCartBox')) +
+                    context
+                        .read<CheckoutProvider>()
+                        .getShippingRateData
+                        .deliveryRate!;
                 Navigator.push(
                     context,
                     MaterialPageRoute(
                         builder: (_) => PaymentConfirmingScreen(
                               dropLocation: deliveryAddressdata,
                               productList: box,
-                              shippingAmount: context
-                                      .read<CartProvider>()
-                                      .getBoxTotal(Hive.box('restroCartBox')) +
-                                  context
-                                      .read<CheckoutProvider>()
-                                      .getShippingRateData
-                                      .deliveryRate,
+                              shippingAmount: totalPrice,
                               mode: 'restro',
                             )));
               }

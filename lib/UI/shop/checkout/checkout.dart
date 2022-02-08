@@ -25,6 +25,7 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
   late Addresses? deliveryAddressdata;
   int selsectedId = 0;
   int currentPage = 0;
+  bool isReadyForPay = true;
   ShippingRateModel rate = ShippingRateModel();
 
   final PageController _pageController = PageController();
@@ -153,7 +154,8 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
                                 InkWell(
                                   onTap:
                                       context.read<CheckoutProvider>().state !=
-                                              'error'
+                                                  'error' &&
+                                              isReadyForPay
                                           ? () {
                                               _pageController.jumpToPage(2);
                                             }
@@ -208,7 +210,12 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
                                                   Hive.box('cartBox')),
                                           'shop');
                                 }
-                                if (currentPage == 2) {
+                                if (currentPage == 2 &&
+                                    context
+                                            .read<CheckoutProvider>()
+                                            .getShippingRateData
+                                            .deliveryRate! !=
+                                        0) {
                                   _pageController.jumpToPage(1);
                                   var box = Hive.box('cartBox').values.toList();
 
@@ -220,19 +227,19 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
                                                 dropLocation:
                                                     deliveryAddressdata,
                                                 productList: box,
-                                                shippingAmount: context
-                                                        .read<CartProvider>()
-                                                        .getBoxTotal(Hive.box(
-                                                            'cartBox')) +
+                                                shippingAmount:
+                                                    // context
+                                                    //         .read<CartProvider>()
+                                                    //         .getBoxTotal(Hive.box(
+                                                    //             'cartBox')) +
                                                     context
                                                         .read<
                                                             CheckoutProvider>()
                                                         .getShippingRateData
-                                                        .deliveryRate,
+                                                        .deliveryRate!,
                                                 mode: 'shop',
                                               )));
                                 }
-                                
                               },
                               children: [
                                 SingleChildScrollView(
@@ -293,7 +300,7 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
                                                 padding: const EdgeInsets.only(
                                                     top: 10),
                                                 child: Text(
-                                                  '${deliveryAddressdata?.addressType}',
+                                                  '${deliveryAddressdata?.firstname} ${deliveryAddressdata?.lastname}',
                                                   style: ThreeKmTextConstants
                                                       .tk14PXPoppinsBlackSemiBold
                                                       .copyWith(fontSize: 18),
@@ -465,263 +472,337 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
                                   ),
                                 ),
                                 Container(
-                                  child: SingleChildScrollView(
-                                    child: ValueListenableBuilder(
-                                        valueListenable:
-                                            Hive.box('cartBox').listenable(),
-                                        builder: (context, Box box, widget) {
-                                          //CartHiveModel cartItem = box.getAt(i);
-
-                                          return Container(
-                                            // color: Colors.red,
-                                            padding: const EdgeInsets.only(
-                                                top: 30, left: 20, right: 20),
-                                            height: ThreeKmScreenUtil
-                                                    .screenHeightDp /
-                                                1.5,
-                                            child: Column(children: [
-                                              ListView.builder(
-                                                  shrinkWrap: true,
-                                                  itemCount: box.length,
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                          top: 20),
-                                                  itemBuilder: (_, i) {
-                                                    CartHiveModel cartItem =
-                                                        box.getAt(i);
-                                                    return Padding(
-                                                      padding:
-                                                          const EdgeInsets.only(
-                                                              top: 15,
-                                                              bottom: 15),
-                                                      child: ListTile(
-                                                        dense: true,
-                                                        horizontalTitleGap: 2,
-                                                        contentPadding:
-                                                            EdgeInsets.zero,
-                                                        // minVerticalPadding: 80,
-                                                        title: Text(
-                                                          '${cartItem.name}',
-                                                          style: ThreeKmTextConstants
-                                                              .tk14PXPoppinsBlackSemiBold,
-                                                        ),
-                                                        subtitle: Text(
-                                                          '\u{20B9}${cartItem.price}',
-                                                          style: ThreeKmTextConstants
-                                                              .tk14PXPoppinsBlueMedium,
-                                                        ),
-                                                        leading: Stack(
-                                                          clipBehavior:
-                                                              Clip.none,
-                                                          children: [
-                                                            ClipRRect(
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          20),
-                                                              child: Image(
-                                                                image: NetworkImage(
-                                                                    '${cartItem.image}'),
-                                                                width: 60,
-                                                                height: 45,
-                                                                errorBuilder: (context,
-                                                                        error,
-                                                                        stackTrace) =>
-                                                                    Container(
-                                                                  width: 60,
-                                                                  height: 45,
-                                                                  color: Colors
-                                                                          .grey[
-                                                                      350],
-                                                                ),
-                                                              ),
-                                                            ),
-                                                            Positioned(
-                                                              top: -10,
-                                                              left: -5,
-                                                              child: InkWell(
-                                                                onTap: () {
-                                                                  cartItem
-                                                                      .delete();
-                                                                },
-                                                                child:
-                                                                    const Image(
-                                                                  image: AssetImage(
-                                                                      'assets/shopImg/closeRed.png'),
-                                                                  width: 24,
-                                                                ),
-                                                              ),
-                                                            )
-                                                          ],
-                                                        ),
-                                                        trailing: Container(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .all(2),
-                                                          width: 77,
-                                                          height: 31,
-                                                          decoration: BoxDecoration(
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          30),
-                                                              color: const Color(
-                                                                  0xFFF4F3F8)),
-                                                          child: Row(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .spaceBetween,
-                                                            //mainAxisSize: MainAxisSize.min,
-                                                            children: [
-                                                              InkWell(
-                                                                onTap: () {
-                                                                  context.read<CheckoutProvider>().getShippingRate(
-                                                                      mounted,
-                                                                      context,
-                                                                      deliveryAddressdata
-                                                                          ?.latitude,
-                                                                      deliveryAddressdata
-                                                                          ?.longitude,
-                                                                      deliveryAddressdata
-                                                                          ?.pincode,
-                                                                      context
-                                                                          .read<
-                                                                              CartProvider>()
-                                                                          .getBoxWeightTotal(
-                                                                              Hive.box('cartBox')),
-                                                                      'shop');
-                                                                  if (cartItem
-                                                                          .quantity <
-                                                                      2) {
-                                                                    return;
-                                                                  }
-                                                                  cartItem.quantity =
-                                                                      cartItem.quantity -
-                                                                          1;
-                                                                  if (cartItem
-                                                                      .isInBox) {
-                                                                    cartItem
-                                                                        .save();
-                                                                  }
-                                                                },
-                                                                child:
-                                                                    const Image(
-                                                                  image: AssetImage(
-                                                                      'assets/shopImg/del.png'),
-                                                                  width: 24,
-                                                                  height: 24,
-                                                                ),
-                                                              ),
-                                                              Text(
-                                                                '${cartItem.quantity}',
+                                  child: ValueListenableBuilder(
+                                      valueListenable:
+                                          Hive.box('cartBox').listenable(),
+                                      builder: (context, Box box, widget) {
+                                        //CartHiveModel cartItem = box.getAt(i);
+                                        if (box.length == 0) {
+                                          WidgetsBinding.instance!
+                                              .addPostFrameCallback((_) {
+                                            setState(() {
+                                              isReadyForPay = false;
+                                            });
+                                          });
+                                        }
+                                        return box.length != 0
+                                            ? Container(
+                                                // color: Colors.red,
+                                                padding: const EdgeInsets.only(
+                                                    top: 10,
+                                                    left: 20,
+                                                    right: 20),
+                                                height: ThreeKmScreenUtil
+                                                        .screenHeightDp /
+                                                    1.5,
+                                                child: SingleChildScrollView(
+                                                  clipBehavior: Clip.none,
+                                                  child: Column(children: [
+                                                    ListView.builder(
+                                                        physics:
+                                                            NeverScrollableScrollPhysics(),
+                                                        shrinkWrap: true,
+                                                        itemCount: box.length,
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .only(top: 0),
+                                                        itemBuilder: (_, i) {
+                                                          CartHiveModel
+                                                              cartItem =
+                                                              box.getAt(i);
+                                                          return Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                        .only(
+                                                                    top: 15,
+                                                                    bottom: 15),
+                                                            child: ListTile(
+                                                              dense: true,
+                                                              horizontalTitleGap:
+                                                                  2,
+                                                              contentPadding:
+                                                                  EdgeInsets
+                                                                      .zero,
+                                                              // minVerticalPadding: 80,
+                                                              title: Text(
+                                                                '${cartItem.name}',
                                                                 style: ThreeKmTextConstants
                                                                     .tk14PXPoppinsBlackSemiBold,
                                                               ),
-                                                              InkWell(
-                                                                onTap: () {
-                                                                  context.read<CheckoutProvider>().getShippingRate(
-                                                                      mounted,
-                                                                      context,
-                                                                      deliveryAddressdata
-                                                                          ?.latitude,
-                                                                      deliveryAddressdata
-                                                                          ?.longitude,
-                                                                      deliveryAddressdata
-                                                                          ?.pincode,
-                                                                      context
-                                                                          .read<
-                                                                              CartProvider>()
-                                                                          .getBoxWeightTotal(
-                                                                              Hive.box('cartBox')),
-                                                                      'shop');
-                                                                  cartItem.quantity =
-                                                                      cartItem.quantity +
-                                                                          1;
-                                                                  cartItem
-                                                                      .save();
-                                                                },
-                                                                child:
-                                                                    const Image(
-                                                                  image: AssetImage(
-                                                                      'assets/shopImg/add.png'),
-                                                                  width: 24,
-                                                                  height: 24,
+                                                              subtitle: Text(
+                                                                '₹${cartItem.price}',
+                                                                style: ThreeKmTextConstants
+                                                                    .tk14PXPoppinsBlueMedium,
+                                                              ),
+                                                              leading: Stack(
+                                                                clipBehavior:
+                                                                    Clip.none,
+                                                                children: [
+                                                                  ClipRRect(
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            20),
+                                                                    child:
+                                                                        Image(
+                                                                      image: NetworkImage(
+                                                                          '${cartItem.image}'),
+                                                                      width: 60,
+                                                                      height:
+                                                                          45,
+                                                                      errorBuilder: (context,
+                                                                              error,
+                                                                              stackTrace) =>
+                                                                          Container(
+                                                                        width:
+                                                                            60,
+                                                                        height:
+                                                                            45,
+                                                                        color: Colors
+                                                                            .grey[350],
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                  Positioned(
+                                                                    top: -10,
+                                                                    left: -5,
+                                                                    child:
+                                                                        InkWell(
+                                                                      onTap:
+                                                                          () {
+                                                                        cartItem
+                                                                            .delete();
+                                                                      },
+                                                                      child:
+                                                                          const Image(
+                                                                        image: AssetImage(
+                                                                            'assets/shopImg/closeRed.png'),
+                                                                        width:
+                                                                            24,
+                                                                      ),
+                                                                    ),
+                                                                  )
+                                                                ],
+                                                              ),
+                                                              trailing:
+                                                                  Container(
+                                                                padding:
+                                                                    const EdgeInsets
+                                                                        .all(2),
+                                                                width: 77,
+                                                                height: 31,
+                                                                decoration: BoxDecoration(
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            30),
+                                                                    color: const Color(
+                                                                        0xFFF4F3F8)),
+                                                                child: Row(
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .spaceBetween,
+                                                                  //mainAxisSize: MainAxisSize.min,
+                                                                  children: [
+                                                                    InkWell(
+                                                                      onTap:
+                                                                          () {
+                                                                        context.read<CheckoutProvider>().getShippingRate(
+                                                                            mounted,
+                                                                            context,
+                                                                            deliveryAddressdata?.latitude,
+                                                                            deliveryAddressdata?.longitude,
+                                                                            deliveryAddressdata?.pincode,
+                                                                            context.read<CartProvider>().getBoxWeightTotal(Hive.box('cartBox')),
+                                                                            'shop');
+                                                                        if (cartItem.quantity <
+                                                                            2) {
+                                                                          return;
+                                                                        }
+                                                                        cartItem
+                                                                            .quantity = cartItem
+                                                                                .quantity -
+                                                                            1;
+                                                                        if (cartItem
+                                                                            .isInBox) {
+                                                                          cartItem
+                                                                              .save();
+                                                                        }
+                                                                      },
+                                                                      child:
+                                                                          const Image(
+                                                                        image: AssetImage(
+                                                                            'assets/shopImg/del.png'),
+                                                                        width:
+                                                                            24,
+                                                                        height:
+                                                                            24,
+                                                                      ),
+                                                                    ),
+                                                                    Text(
+                                                                      '${cartItem.quantity}',
+                                                                      style: ThreeKmTextConstants
+                                                                          .tk14PXPoppinsBlackSemiBold,
+                                                                    ),
+                                                                    InkWell(
+                                                                      onTap:
+                                                                          () {
+                                                                        context.read<CheckoutProvider>().getShippingRate(
+                                                                            mounted,
+                                                                            context,
+                                                                            deliveryAddressdata?.latitude,
+                                                                            deliveryAddressdata?.longitude,
+                                                                            deliveryAddressdata?.pincode,
+                                                                            context.read<CartProvider>().getBoxWeightTotal(Hive.box('cartBox')),
+                                                                            'shop');
+                                                                        cartItem
+                                                                            .quantity = cartItem
+                                                                                .quantity +
+                                                                            1;
+                                                                        cartItem
+                                                                            .save();
+                                                                      },
+                                                                      child:
+                                                                          const Image(
+                                                                        image: AssetImage(
+                                                                            'assets/shopImg/add.png'),
+                                                                        width:
+                                                                            24,
+                                                                        height:
+                                                                            24,
+                                                                      ),
+                                                                    ),
+                                                                  ],
                                                                 ),
                                                               ),
-                                                            ],
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    );
-                                                  }),
-                                              const Divider(
-                                                color: Color(0xFFF4F3F8),
-                                                thickness: 1,
-                                                height: 35,
-                                              ),
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                children: [
-                                                  Text(
-                                                    'Estimated shipping and handling:',
-                                                    style: ThreeKmTextConstants
-                                                        .tk12PXPoppinsBlackSemiBold
-                                                        .copyWith(
-                                                            color: const Color(
-                                                                0xFF979EA4)),
-                                                  ),
-                                                  Text(
-                                                    '\u{20B9}${context.read<CheckoutProvider>().getShippingRateData.deliveryRate}',
-                                                    style: ThreeKmTextConstants
-                                                        .tk14PXLatoGreyRegular
-                                                        .copyWith(
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .bold),
-                                                  ),
-                                                ],
-                                              ),
-                                              const Divider(
-                                                color: Color(0xFFF4F3F8),
-                                                thickness: 1,
-                                                height: 35,
-                                              ),
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                children: [
-                                                  Text(
-                                                    'Cart Total',
-                                                    style: ThreeKmTextConstants
-                                                        .tk18PXPoppinsBlackMedium
-                                                        .copyWith(
-                                                            color: const Color(
-                                                                0xFF979EA4)),
-                                                  ),
-                                                  context
-                                                              .read<
-                                                                  CheckoutProvider>()
-                                                              .state !=
-                                                          'error'
-                                                      ? Text(
-                                                          '\u{20B9}${context.read<CartProvider>().getBoxTotal(box) + context.read<CheckoutProvider>().getShippingRateData.deliveryRate?.toInt()}',
+                                                            ),
+                                                          );
+                                                        }),
+                                                    Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
+                                                      children: [
+                                                        Text(
+                                                          'Subtotal',
                                                           style: ThreeKmTextConstants
-                                                              .tk18PXLatoBlackMedium
+                                                              .tk12PXPoppinsBlackSemiBold
+                                                              .copyWith(
+                                                                  color: const Color(
+                                                                      0xFF979EA4)),
+                                                        ),
+                                                        Text(
+                                                          '₹${context.read<CartProvider>().getBoxTotal(box)}',
+                                                          style: ThreeKmTextConstants
+                                                              .tk14PXLatoGreyRegular
                                                               .copyWith(
                                                                   fontWeight:
                                                                       FontWeight
                                                                           .bold),
-                                                        )
-                                                      : Text(''),
-                                                ],
-                                              ),
-                                            ]),
-                                          );
-                                        }),
-                                  ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    const Divider(
+                                                      color: Color(0xFFF4F3F8),
+                                                      thickness: 1,
+                                                      height: 35,
+                                                    ),
+                                                    Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
+                                                      children: [
+                                                        Text(
+                                                          'Delivery Charges',
+                                                          style: ThreeKmTextConstants
+                                                              .tk12PXPoppinsBlackSemiBold
+                                                              .copyWith(
+                                                                  color: const Color(
+                                                                      0xFF979EA4)),
+                                                        ),
+                                                        Text(
+                                                          '₹${context.read<CheckoutProvider>().getShippingRateData.deliveryRate}',
+                                                          style: ThreeKmTextConstants
+                                                              .tk14PXLatoGreyRegular
+                                                              .copyWith(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    const Divider(
+                                                      color: Color(0xFFF4F3F8),
+                                                      thickness: 1,
+                                                      height: 35,
+                                                    ),
+                                                    // Row(
+                                                    //   mainAxisAlignment:
+                                                    //       MainAxisAlignment
+                                                    //           .spaceBetween,
+                                                    //   children: [
+                                                    //     Text(
+                                                    //       'Platform charges',
+                                                    //       style: ThreeKmTextConstants
+                                                    //           .tk12PXPoppinsBlackSemiBold
+                                                    //           .copyWith(
+                                                    //               color: const Color(
+                                                    //                   0xFF979EA4)),
+                                                    //     ),
+                                                    //     Text(
+                                                    //       '₹10',
+                                                    //       style: ThreeKmTextConstants
+                                                    //           .tk14PXLatoGreyRegular
+                                                    //           .copyWith(
+                                                    //               fontWeight:
+                                                    //                   FontWeight
+                                                    //                       .bold),
+                                                    //     ),
+                                                    //   ],
+                                                    // ),
+                                                    // const Divider(
+                                                    //   color: Color(0xFFF4F3F8),
+                                                    //   thickness: 1,
+                                                    //   height: 35,
+                                                    // ),
+                                                    Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
+                                                      children: [
+                                                        Text(
+                                                          'Cart Total',
+                                                          style: ThreeKmTextConstants
+                                                              .tk18PXPoppinsBlackMedium
+                                                              .copyWith(
+                                                                  color: const Color(
+                                                                      0xFF979EA4)),
+                                                        ),
+                                                        context
+                                                                    .read<
+                                                                        CheckoutProvider>()
+                                                                    .state !=
+                                                                'error'
+                                                            ? Text(
+                                                                '₹${context.read<CartProvider>().getBoxTotal(box) + context.read<CheckoutProvider>().getShippingRateData.deliveryRate?.toInt()}',
+                                                                style: ThreeKmTextConstants
+                                                                    .tk18PXLatoBlackMedium
+                                                                    .copyWith(
+                                                                        fontWeight:
+                                                                            FontWeight.bold),
+                                                              )
+                                                            : Text(''),
+                                                      ],
+                                                    ),
+                                                    SizedBox(
+                                                      height: 35,
+                                                    )
+                                                  ]),
+                                                ),
+                                              )
+                                            : Center(
+                                                child: Text(
+                                                    'There are no items in your cart.'),
+                                              );
+                                      }),
                                 ),
                                 Container(
                                   child: Text('Payment Here '),
@@ -734,70 +815,78 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
                 ]))
             : Container(),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-        floatingActionButton: Container(
-          margin: EdgeInsets.only(bottom: 20),
-          height: 50,
-          child: ElevatedButton.icon(
-            style: ButtonStyle(
-                shape: MaterialStateProperty.all(StadiumBorder()),
-                backgroundColor:
-                    MaterialStateProperty.all(const Color(0xFF3E7EFF)),
-                foregroundColor: MaterialStateProperty.all(Colors.black),
-                padding: MaterialStateProperty.all(const EdgeInsets.only(
-                    left: 30, right: 30, top: 15, bottom: 15))),
-            icon: Container(
-              padding: const EdgeInsets.all(5),
-              decoration: const BoxDecoration(
-                  color: Color(0x80FFFFFF), shape: BoxShape.circle),
-              child: Container(
-                padding: const EdgeInsets.all(5),
-                decoration: const BoxDecoration(
-                    color: Color(0xFFFFFFFF), shape: BoxShape.circle),
-              ),
-            ),
-            label: Text(
-              currentPage == 0 ? 'Continue' : "Pay Now",
-              style: ThreeKmTextConstants.tk14PXPoppinsBlackBold
-                  .copyWith(color: Colors.white, letterSpacing: 0.56),
-            ),
-            onPressed: context.read<CheckoutProvider>().state != 'error'
-                ? () {
-                    if (currentPage == 0 &&
-                        deliveryAddressdata?.addressId != 0) {
-                      _pageController.jumpToPage(1);
-                    } else if (currentPage == 1) {
-                      _pageController.jumpToPage(2);
-                    } else if (currentPage == 2) {
-                      _pageController.jumpToPage(3);
-                      var box = Hive.box<List<CartHiveModel>>('cartBox')
-                          .values
-                          .toList();
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (_) => PaymentConfirmingScreen(
-                                    dropLocation: deliveryAddressdata,
-                                    productList: box,
-                                    shippingAmount: context
-                                            .read<CartProvider>()
-                                            .getBoxTotal(Hive.box('cartBox')) +
-                                        context
-                                            .read<CheckoutProvider>()
-                                            .getShippingRateData
-                                            .deliveryRate,
-                                    mode: 'mode',
-                                  )));
-                    }
-                  }
-                : () {
-                    var snackBar = SnackBar(
-                      content:
-                          Text('${context.read<CheckoutProvider>().message}'),
-                    );
-                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                  },
-          ),
-        ));
+        floatingActionButton: isReadyForPay
+            ? Container(
+                margin: EdgeInsets.only(bottom: 20),
+                height: 50,
+                child: ElevatedButton.icon(
+                  style: ButtonStyle(
+                      shape: MaterialStateProperty.all(StadiumBorder()),
+                      backgroundColor:
+                          MaterialStateProperty.all(const Color(0xFF3E7EFF)),
+                      foregroundColor: MaterialStateProperty.all(Colors.black),
+                      padding: MaterialStateProperty.all(const EdgeInsets.only(
+                          left: 30, right: 30, top: 15, bottom: 15))),
+                  icon: Container(
+                    padding: const EdgeInsets.all(5),
+                    decoration: const BoxDecoration(
+                        color: Color(0x80FFFFFF), shape: BoxShape.circle),
+                    child: Container(
+                      padding: const EdgeInsets.all(5),
+                      decoration: const BoxDecoration(
+                          color: Color(0xFFFFFFFF), shape: BoxShape.circle),
+                    ),
+                  ),
+                  label: Text(
+                    currentPage == 0 ? 'Continue' : "Pay Now",
+                    style: ThreeKmTextConstants.tk14PXPoppinsBlackBold
+                        .copyWith(color: Colors.white, letterSpacing: 0.56),
+                  ),
+                  onPressed: context.read<CheckoutProvider>().state != 'error'
+                      ? () {
+                          if (currentPage == 0 &&
+                              deliveryAddressdata?.addressId != 0) {
+                            _pageController.jumpToPage(1);
+                          } else if (currentPage == 1) {
+                            _pageController.jumpToPage(2);
+                          } else if (currentPage == 2 &&
+                              context
+                                      .read<CheckoutProvider>()
+                                      .getShippingRateData
+                                      .deliveryRate! !=
+                                  0) {
+                            _pageController.jumpToPage(3);
+                            var box = Hive.box<List<CartHiveModel>>('cartBox')
+                                .values
+                                .toList();
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (_) => PaymentConfirmingScreen(
+                                          dropLocation: deliveryAddressdata,
+                                          productList: box,
+                                          shippingAmount:
+                                              //  context
+                                              //         .read<CartProvider>()
+                                              //         .getBoxTotal(Hive.box('cartBox')) +
+                                              context
+                                                  .read<CheckoutProvider>()
+                                                  .getShippingRateData
+                                                  .deliveryRate!,
+                                          mode: 'shop',
+                                        )));
+                          }
+                        }
+                      : () {
+                          var snackBar = SnackBar(
+                            content: Text(
+                                '${context.read<CheckoutProvider>().message}'),
+                          );
+                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                        },
+                ),
+              )
+            : Container());
   }
 }
 

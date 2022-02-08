@@ -7,6 +7,7 @@ import 'package:provider/src/provider.dart';
 
 import 'package:threekm/providers/shop/product_listing_provider.dart';
 import 'package:threekm/Models/shopModel/product_listing_model.dart';
+import 'package:threekm/providers/shop/wish_list_provide.dart';
 import 'package:threekm/utils/screen_util.dart';
 import 'package:threekm/utils/threekm_textstyles.dart';
 import '../shop/product/product_details.dart';
@@ -44,6 +45,7 @@ class _ProductListingState extends State<ProductListing> {
   @override
   Widget build(BuildContext context) {
     final data = context.watch<ProductListingProvider>().allproductList;
+    final state = context.watch<ProductListingProvider>().state;
     final productListingdata =
         context.watch<ProductListingProvider>().productListingData;
 
@@ -75,7 +77,7 @@ class _ProductListingState extends State<ProductListing> {
           ],
         ),
       ),
-      body: data.length != 0
+      body: state == 'loaded'
           ? Column(
               children: [
                 // Padding(
@@ -139,42 +141,46 @@ class _ProductListingState extends State<ProductListing> {
                 //     ],
                 //   ),
                 // ),
-                Flexible(
-                  child: ListView.builder(
-                      physics: BouncingScrollPhysics(),
-                      itemCount: data.length,
-                      shrinkWrap: true,
-                      itemBuilder: (context, i) {
-                        if (i < data.length - 1) {
-                          return ItemBuilderWidget(
-                            data: data,
-                            i: i,
-                          );
-                        } else if (i == productListingdata.result!.total - 1) {
-                          return const Center(child: Text('End of list'));
-                        } else {
-                          context
-                              .read<ProductListingProvider>()
-                              .getProductListing(
-                                  mounted: mounted,
-                                  page: context
-                                          .read<ProductListingProvider>()
-                                          .prepageno +
-                                      1,
-                                  query: widget.query);
-                          return const SizedBox(
-                            height: 80,
-                            child: Center(child: CircularProgressIndicator()),
-                          );
-                        }
-                        // return ItemBuilderWidget(data: data, i: i);
-                      }),
-                ),
+                data.length != 0
+                    ? Flexible(
+                        child: ListView.builder(
+                            physics: BouncingScrollPhysics(),
+                            itemCount: data.length,
+                            shrinkWrap: true,
+                            itemBuilder: (context, i) {
+                              if (i < data.length - 1) {
+                                return ItemBuilderWidget(
+                                  data: data,
+                                  i: i,
+                                );
+                              } else if (i ==
+                                  productListingdata.result!.total - 1) {
+                                return const Center(child: Text('End of list'));
+                              } else {
+                                context
+                                    .read<ProductListingProvider>()
+                                    .getProductListing(
+                                        mounted: mounted,
+                                        page: context
+                                                .read<ProductListingProvider>()
+                                                .prepageno +
+                                            1,
+                                        query: widget.query);
+                                return const SizedBox(
+                                  height: 80,
+                                  child: Center(
+                                      child: CircularProgressIndicator()),
+                                );
+                              }
+                              // return ItemBuilderWidget(data: data, i: i);
+                            }),
+                      )
+                    : const Center(
+                        child: Text('No data Found'),
+                      ),
               ],
             )
-          : const Center(
-              child: Text('No data Found'),
-            ),
+          : const Center(),
     );
   }
 }
@@ -191,6 +197,12 @@ class ItemBuilderWidget extends StatefulWidget {
 }
 
 class _ItemBuilderWidgetState extends State<ItemBuilderWidget> {
+  isInWish(productId) {
+    var isWish = context.read<WishListProvider>().isinWishList(productId);
+
+    return isWish;
+  }
+
   bool isLiked = false;
   @override
   Widget build(BuildContext context) {
@@ -290,35 +302,55 @@ class _ItemBuilderWidgetState extends State<ItemBuilderWidget> {
                                         fontWeight: FontWeight.bold)),
                             InkWell(
                               onTap: () {
-                                setState(() {
-                                  isLiked = isLiked ? false : true;
-                                });
+                                if (isInWish(widget.data[widget.i].catalogId) ==
+                                    null) {
+                                  context
+                                      .read<WishListProvider>()
+                                      .addToWishList(
+                                          image: widget.data[widget.i].image,
+                                          name: widget.data[widget.i].name,
+                                          price: widget.data[widget.i].price,
+                                          id: widget.data[widget.i].catalogId,
+                                          variationId: 0,
+                                          creatorId:
+                                              widget.data[widget.i].creatorId,
+                                          creatorName: widget
+                                              .data[widget.i].businessName);
+                                  setState(() {});
+                                } else {
+                                  context.read<WishListProvider>().removeWish(
+                                      widget.data[widget.i].catalogId);
+                                  setState(() {});
+                                }
+
                                 print('heart clicked $isLiked');
                               },
-                              child: isLiked
-                                  ? Container(
-                                      child: Lottie.asset(
-                                        "assets/kadokado-heart.json",
-                                        height: 50,
-                                        fit: BoxFit.cover,
-                                        alignment: Alignment.center,
-                                        repeat: false,
-                                      ),
-                                    )
-                                  : const Padding(
-                                      padding: EdgeInsets.all(12.5),
-                                      child: Image(
-                                        image: AssetImage(
-                                            'assets/shopImg/wishlist.png'),
-                                        width: 25,
-                                        height: 25,
-                                      )
-                                      // Icon(
-                                      //   Icons.favorite_outline_sharp,
-                                      //   color: Colors.grey,
-                                      //   size: 25,
-                                      // ),
-                                      ),
+                              child:
+                                  isInWish(widget.data[widget.i].catalogId) !=
+                                          null
+                                      ? Container(
+                                          child: Lottie.asset(
+                                            "assets/kadokado-heart.json",
+                                            height: 50,
+                                            fit: BoxFit.cover,
+                                            alignment: Alignment.center,
+                                            repeat: false,
+                                          ),
+                                        )
+                                      : const Padding(
+                                          padding: EdgeInsets.all(12.5),
+                                          child: Image(
+                                            image: AssetImage(
+                                                'assets/shopImg/wishlist.png'),
+                                            width: 25,
+                                            height: 25,
+                                          )
+                                          // Icon(
+                                          //   Icons.favorite_outline_sharp,
+                                          //   color: Colors.grey,
+                                          //   size: 25,
+                                          // ),
+                                          ),
                             )
                           ],
                         ),

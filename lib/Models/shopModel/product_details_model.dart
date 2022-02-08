@@ -143,7 +143,7 @@ class Product {
       });
     }
     nationwideDelivery = json['nationwide_delivery'];
-    nationwideDeliveryCost = json['nationwide_delivery_cost'];
+    nationwideDeliveryCost = json['nationwide_delivery_cost'] ?? 0;
     hasVariations = json['has_variations'];
     manageStock = json['manage_stock'];
     isInStock = json['is_in_stock'];

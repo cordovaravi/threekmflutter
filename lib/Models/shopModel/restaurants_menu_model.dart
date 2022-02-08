@@ -1,14 +1,14 @@
 import 'package:threekm/Models/shopModel/restaurants_model.dart';
 
-class RestaurentMenuModel {
-  RestaurentMenuModel({
+class RestaurantMenuModel {
+  RestaurantMenuModel({
     required this.StatusCode,
     this.result,
   });
   late final int StatusCode;
   Result? result;
 
-  RestaurentMenuModel.fromJson(Map<String, dynamic> json) {
+  RestaurantMenuModel.fromJson(Map<String, dynamic> json) {
     StatusCode = json['StatusCode'];
     result = Result.fromJson(json['Result']);
   }

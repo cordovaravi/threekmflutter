@@ -10,6 +10,7 @@ import 'package:threekm/UI/main/navigation.dart';
 import 'package:threekm/UI/shop/address/saved_address.dart';
 import 'package:threekm/UI/shop/cart/cart_item_list_modal.dart';
 import 'package:threekm/UI/shop/cart/wishlist.dart';
+import 'package:threekm/UI/shop/checkout/past_order.dart';
 import 'package:threekm/UI/walkthrough/splash_screen.dart';
 import 'package:threekm/providers/ProfileInfo/ProfileInfo_Provider.dart';
 import 'package:threekm/providers/main/AthorProfile_Provider.dart';
@@ -45,6 +46,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
 
   getWishBoxData() async {
     await Hive.openBox('shopWishListBox');
+    await Hive.openBox('businessWishListBox');
   }
 
   @override
@@ -256,9 +258,13 @@ class _CustomDrawerState extends State<CustomDrawer> {
         SizedBox(
           height: 24,
         ),
-        CustomDrawerItem(
-          image: "assets/inventory.png",
-          label: "Past Orders".toUpperCase(),
+        InkWell(
+          onTap: () => Navigator.of(context)
+              .push(MaterialPageRoute(builder: (context) => PastOrder())),
+          child: CustomDrawerItem(
+            image: "assets/inventory.png",
+            label: "Past Orders".toUpperCase(),
+          ),
         ),
         SizedBox(
           height: 24,
