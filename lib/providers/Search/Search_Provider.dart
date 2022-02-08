@@ -22,7 +22,9 @@ class SearchBarProvider extends ChangeNotifier {
       required int pageNumber,
       required bool isNewCall}) async {
     var tempData = _shopSearch?.result?.products;
-    _isShopLoading = true;
+    if (isNewCall != false) {
+      _isShopLoading = true;
+    }
     notifyListeners();
     String requestJson = json.encode({
       "page": pageNumber,
@@ -37,7 +39,6 @@ class SearchBarProvider extends ChangeNotifier {
       if (tempData != null && isNewCall == false) {
         tempData.addAll(_shopSearch!.result!.products!);
         _shopSearch!.result!.products = tempData;
-        _isShopLoading = false;
       }
       _isShopLoading = false;
       notifyListeners();

@@ -11,10 +11,8 @@ class CustomSnackBar {
         backgroundColor: backgroundColor,
         content: content,
         behavior: SnackBarBehavior.floating);
-
     ScaffoldMessenger.of(context).hideCurrentSnackBar();
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
-    //hideLoading();
   }
 }
 

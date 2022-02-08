@@ -15,6 +15,8 @@ import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:threekm/Custom_library/src/reaction.dart';
 import 'package:threekm/Models/SelfProfile_Model.dart';
+import 'package:threekm/UI/Animation/AnimatedSizeRoute.dart';
+import 'package:threekm/UI/Help_Supportpage.dart';
 import 'package:threekm/UI/main/News/NewsList.dart';
 import 'package:threekm/UI/main/News/Widgets/comment_Loading.dart';
 import 'package:threekm/UI/main/News/Widgets/likes_Loading.dart';
@@ -139,7 +141,7 @@ class _MyProfilePostState extends State<MyProfilePost>
                         buildAvatar,
                         //space(height: 68),
                         Container(
-                          width: MediaQuery.of(context).size.width * 0.65,
+                          //width: MediaQuery.of(context).size.width * 0.65,
                           padding: EdgeInsets.symmetric(horizontal: 32),
                           child: Center(
                             child: Text(
@@ -148,9 +150,12 @@ class _MyProfilePostState extends State<MyProfilePost>
                               overflow: TextOverflow.ellipsis,
                               style: ThreeKmTextConstants
                                   .tk14PXPoppinsBlackSemiBold
-                                  .copyWith(fontSize: 24),
+                                  .copyWith(fontSize: 18),
                             ),
                           ),
+                        ),
+                        SizedBox(
+                          height: 5,
                         ),
                         Container(
                           //width: 298,
@@ -706,247 +711,309 @@ class _NewsCardState extends State<NewsCard> {
                 ],
                 borderRadius: BorderRadius.circular(10)),
             child: Container(
+                decoration: BoxDecoration(
+                    color: newsData!.posts![widget.index].status == "rejected"
+                        ? Color(0xff0F0F2D).withOpacity(0.75)
+                        : Colors.white,
+                    borderRadius: BorderRadius.circular(10)),
                 child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                          margin: EdgeInsets.only(right: 10),
-                          height: 50,
-                          width: 50,
-                          child: Container(
-                            height: 50,
-                            width: 50,
-                            decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                image: DecorationImage(
-                                    fit: BoxFit.cover,
-                                    image: CachedNetworkImageProvider(
-                                        newsData!.author!.image.toString())
-                                    //newsData.author!.image.toString())
-                                    )),
-                            child: newsData.author!.isVerified == true
-                                //newsData.isVerified == true
-                                ? Stack(
-                                    children: [
-                                      Positioned(
-                                          left: 0,
-                                          child: Image.asset(
-                                            'assets/verified.png',
-                                            height: 15,
-                                            width: 15,
-                                            fit: BoxFit.cover,
-                                          ))
-                                    ],
-                                  )
-                                : Container(),
-                          )),
-                      Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        //mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Container(
-                            width: MediaQuery.of(context).size.width * 0.35,
-                            child: Text(
-                              newsData.author!.name.toString(),
-                              style:
-                                  ThreeKmTextConstants.tk14PXPoppinsBlackBold,
-                              overflow: TextOverflow.ellipsis,
-                            ),
+                              margin: EdgeInsets.only(right: 10),
+                              height: 50,
+                              width: 50,
+                              child: Container(
+                                  height: 50,
+                                  width: 50,
+                                  decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      image: DecorationImage(
+                                          fit: BoxFit.cover,
+                                          image: CachedNetworkImageProvider(
+                                              newsData.author!.image.toString())
+                                          //newsData.author!.image.toString())
+                                          )),
+                                  child:
+                                      //newsData.isVerified == true
+                                      Stack(
+                                    alignment: AlignmentDirectional.center,
+                                    children: [
+                                      newsData.author!.isVerified == true
+                                          ? Positioned(
+                                              left: 0,
+                                              child: Image.asset(
+                                                'assets/verified.png',
+                                                height: 15,
+                                                width: 15,
+                                                fit: BoxFit.cover,
+                                              ))
+                                          : SizedBox.shrink(),
+                                      newsData.posts![widget.index].status ==
+                                              "rejected"
+                                          ? Container(
+                                              height: 50,
+                                              width: 50,
+                                              decoration: BoxDecoration(
+                                                shape: BoxShape.circle,
+                                                color: Color(0xff0F0F2D)
+                                                    .withOpacity(0.75),
+                                              ),
+                                            )
+                                          : SizedBox.shrink()
+                                    ],
+                                  )
+                                  //: Container(),
+                                  )),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            //mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Container(
+                                width: MediaQuery.of(context).size.width * 0.35,
+                                child: Text(
+                                  newsData.author!.name.toString(),
+                                  style: ThreeKmTextConstants
+                                      .tk14PXPoppinsBlackBold,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                              Text(newsData.posts![widget.index].createdDate
+                                      .toString()
+                                  //newsData.createdDate.toString()
+                                  )
+                            ],
                           ),
-                          Text(newsData.posts![widget.index].createdDate
-                                  .toString()
-                              //newsData.createdDate.toString()
-                              )
+                          SizedBox(
+                            width: 10,
+                          ),
+                          Spacer(),
+                          showPopMenu(
+                              newsData.posts![widget.index].postId.toString(),
+                              newsData)
                         ],
                       ),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      Spacer(),
-                      showPopMenu(
-                          newsData.posts![widget.index].postId.toString(),
-                          newsData)
-                    ],
-                  ),
-                ),
-                //pic
-                if (newsData.posts![widget.index].images != null &&
-                    newsData.posts![widget.index].images!.length > 0)
-                  CachedNetworkImage(
-                    height: 254,
-                    width: 338,
-                    fit: BoxFit.fill,
-                    imageUrl: '${newsData.posts![widget.index].images!.first}',
-                  )
-                else if (newsData.posts![widget.index].videos != null &&
-                    newsData.posts![widget.index].videos!.length > 0)
-                  Stack(children: [
-                    Container(
-                      height: 254,
-                      width: MediaQuery.of(context).size.width,
-                      child: VideoWidget(
-                          thubnail: newsData.posts![widget.index].videos?.first
-                                      .thumbnail !=
-                                  null
-                              ? newsData
-                                  .posts![widget.index].videos!.first.thumbnail
-                                  .toString()
-                              : '',
-                          url: newsData.posts![widget.index].videos!.first.src
-                              .toString(),
-                          play: false),
                     ),
-                  ]),
-                Row(children: [
-                  Padding(
-                      padding: EdgeInsets.only(top: 5, left: 5, bottom: 2),
-                      child: InkWell(
-                        onTap: () {
-                          _showLikedBottomModalSheet(
-                              newsData.posts![widget.index].postId!.toInt(),
-                              newsData.posts![widget.index].likes);
-                        },
-                        child: Row(
-                          children: [
-                            Text('👍❤️😩'),
-                            Container(
-                              height: 30,
-                              width: 30,
-                              decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: Color(0xffFC5E6A)),
-                              child: Center(
-                                  child: Text('+' +
-                                      newsData.posts![widget.index].likes
-                                          .toString())),
-                            )
-                          ],
+                    //pic
+                    if (newsData.posts![widget.index].images != null &&
+                        newsData.posts![widget.index].images!.length > 0)
+                      CachedNetworkImage(
+                        color:
+                            newsData.posts![widget.index].status == "rejected"
+                                ? Color(0xff0F0F2D).withOpacity(0.75)
+                                : null,
+                        height: 254,
+                        width: 338,
+                        fit: BoxFit.fill,
+                        imageUrl:
+                            '${newsData.posts![widget.index].images!.first}',
+                      )
+                    else if (newsData.posts![widget.index].videos != null &&
+                        newsData.posts![widget.index].videos!.length > 0)
+                      Stack(children: [
+                        Container(
+                          height: 254,
+                          width: MediaQuery.of(context).size.width,
+                          color: Color(0xff0F0F2D).withOpacity(0.75),
                         ),
-                      )),
-                  Spacer(),
-                  Padding(
-                      padding: EdgeInsets.only(top: 5, right: 5, bottom: 2),
-                      child: Text(
-                          newsData.posts![widget.index].views.toString() +
-                              ' Views'))
-                ]),
-                Text(
-                  newsData.posts![widget.index].submittedHeadline.toString(),
-                  style: ThreeKmTextConstants.tk14PXLatoBlackMedium,
-                  textAlign: TextAlign.center,
-                ),
-                SizedBox(
-                  height: 8,
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: HtmlWidget(
-                      newsData.posts![widget.index].story.toString()),
-                ),
+                      ]),
+                    Row(children: [
+                      newsData.posts![widget.index].status != "rejected"
+                          ? Padding(
+                              padding:
+                                  EdgeInsets.only(top: 5, left: 5, bottom: 2),
+                              child: InkWell(
+                                onTap: () {
+                                  _showLikedBottomModalSheet(
+                                      newsData.posts![widget.index].postId!
+                                          .toInt(),
+                                      newsData.posts![widget.index].likes);
+                                },
+                                child: Row(
+                                  children: [
+                                    Text('👍❤️😩'),
+                                    Container(
+                                      height: 30,
+                                      width: 30,
+                                      decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          color: Color(0xffFC5E6A)),
+                                      child: Center(
+                                          child: Text('+' +
+                                              newsData
+                                                  .posts![widget.index].likes
+                                                  .toString())),
+                                    )
+                                  ],
+                                ),
+                              ))
+                          : SizedBox.shrink(),
+                      Spacer(),
+                      Padding(
+                          padding: EdgeInsets.only(top: 5, right: 5, bottom: 2),
+                          child: Text(
+                              newsData.posts![widget.index].views.toString() +
+                                  ' Views'))
+                    ]),
+                    Text(
+                      newsData.posts![widget.index].submittedHeadline
+                          .toString(),
+                      style: ThreeKmTextConstants.tk14PXLatoBlackMedium,
+                      textAlign: TextAlign.center,
+                    ),
+                    SizedBox(
+                      height: 8,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: HtmlWidget(
+                          newsData.posts![widget.index].story.toString()),
+                    ),
 
-                SizedBox(
-                  height: 35,
-                ),
-              ],
-            )),
+                    SizedBox(
+                      height: 35,
+                    ),
+                  ],
+                )),
           )
         ]),
       ),
-      Positioned(
-          bottom: 0,
-          child: Container(
-            height: 60,
-            width: 230,
-            child: ButtonBar(children: [
-              Container(
+      newsData.posts![widget.index].status != "rejected"
+          ? Positioned(
+              bottom: 0,
+              child: Container(
                 height: 60,
-                width: 60,
-                child: AuthorEmotionButton(
-                    isLiked: newsData.posts![widget.index].isLiked!,
-                    initalReaction: newsData.posts![widget.index].isLiked!
-                        ? Reaction(
-                            icon: Image.asset("assets/thumbs_up_red.png"))
-                        : Reaction(icon: Image.asset("assets/thumbs-up.png")),
-                    selectedReaction: newsData.posts![widget.index].isLiked!
-                        ? Reaction(
-                            icon: Image.asset("assets/thumbs_up_red.png"))
-                        : Reaction(icon: Image.asset("assets/thumbs-up.png")),
-                    postId: newsData.posts![widget.index].postId!.toInt(),
-                    reactions: reactionAssets.reactions),
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black26,
-                        blurRadius: 8,
-                      )
-                    ]),
+                width: 230,
+                child: ButtonBar(children: [
+                  Container(
+                    height: 60,
+                    width: 60,
+                    child: AuthorEmotionButton(
+                        isLiked: newsData.posts![widget.index].isLiked!,
+                        initalReaction: newsData.posts![widget.index].isLiked!
+                            ? Reaction(
+                                icon: Image.asset("assets/thumbs_up_red.png"))
+                            : Reaction(
+                                icon: Image.asset("assets/thumbs-up.png")),
+                        selectedReaction: newsData.posts![widget.index].isLiked!
+                            ? Reaction(
+                                icon: Image.asset("assets/thumbs_up_red.png"))
+                            : Reaction(
+                                icon: Image.asset("assets/thumbs-up.png")),
+                        postId: newsData.posts![widget.index].postId!.toInt(),
+                        reactions: reactionAssets.reactions),
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black26,
+                            blurRadius: 8,
+                          )
+                        ]),
+                  ),
+                  Container(
+                    height: 60,
+                    width: 60,
+                    child: IconButton(
+                        onPressed: () {
+                          _showCommentsBottomModalSheet(context,
+                              newsData.posts![widget.index].postId!.toInt());
+                        },
+                        icon: Image.asset('assets/icons-topic.png',
+                            fit: BoxFit.cover)),
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black26,
+                            blurRadius: 8,
+                          )
+                        ]),
+                  ),
+                  Container(
+                    height: 60,
+                    width: 60,
+                    child: IconButton(
+                        onPressed: () async {
+                          // showLoading();
+                          String imgUrl =
+                              newsData.posts![widget.index].images != null &&
+                                      newsData.posts![widget.index].images!
+                                              .length >
+                                          0
+                                  ? newsData.posts![widget.index].images!.first
+                                      .toString()
+                                  : newsData.posts![widget.index].videos!.first
+                                      .thumbnail
+                                      .toString();
+                          handleShare(
+                              newsData.author!.name.toString(),
+                              newsData.author!.image.toString(),
+                              newsData.posts![widget.index].submittedHeadline
+                                  .toString(),
+                              imgUrl,
+                              newsData.posts![widget.index].createdDate
+                                  .toString(),
+                              newsData.posts![widget.index].postId.toString());
+                        },
+                        icon: Center(
+                          child: Image.asset('assets/icons-share.png',
+                              fit: BoxFit.contain),
+                        )),
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black26,
+                            blurRadius: 8,
+                          )
+                        ]),
+                  ),
+                ]),
+              ))
+          : SizedBox.shrink(),
+      newsData.posts![widget.index].status == "rejected"
+          ? Container(
+              width: 235,
+              height: 170,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Icon(
+                    Icons.assignment_late_outlined,
+                    color: Colors.redAccent,
+                  ),
+                  Text(
+                    "This Post was rejected by the admin",
+                    style: ThreeKmTextConstants.tk14PXPoppinsBlackSemiBold,
+                    textAlign: TextAlign.center,
+                  ),
+                  Padding(
+                    padding: EdgeInsets.zero,
+                    child: TextButton(
+                        onPressed: () {
+                          Navigator.push(context,
+                              AnimatedSizeRoute(page: HelpAndSupport()));
+                        },
+                        child: Text(
+                          "Get Help",
+                          style: ThreeKmTextConstants.tk14PXLatoBlueRegular,
+                        )),
+                  )
+                ],
               ),
-              Container(
-                height: 60,
-                width: 60,
-                child: IconButton(
-                    onPressed: () {
-                      _showCommentsBottomModalSheet(context,
-                          newsData.posts![widget.index].postId!.toInt());
-                    },
-                    icon: Image.asset('assets/icons-topic.png',
-                        fit: BoxFit.cover)),
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black26,
-                        blurRadius: 8,
-                      )
-                    ]),
-              ),
-              Container(
-                height: 60,
-                width: 60,
-                child: IconButton(
-                    onPressed: () async {
-                      // showLoading();
-                      String imgUrl = newsData.posts![widget.index].images !=
-                                  null &&
-                              newsData.posts![widget.index].images!.length > 0
-                          ? newsData.posts![widget.index].images!.first
-                              .toString()
-                          : newsData
-                              .posts![widget.index].videos!.first.thumbnail
-                              .toString();
-                      handleShare(
-                          newsData.author!.name.toString(),
-                          newsData.author!.image.toString(),
-                          newsData.posts![widget.index].submittedHeadline
-                              .toString(),
-                          imgUrl,
-                          newsData.posts![widget.index].createdDate.toString(),
-                          newsData.posts![widget.index].postId.toString());
-                    },
-                    icon: Center(
-                      child: Image.asset('assets/icons-share.png',
-                          fit: BoxFit.contain),
-                    )),
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black26,
-                        blurRadius: 8,
-                      )
-                    ]),
-              ),
-            ]),
-          )),
+              decoration: BoxDecoration(
+                  color: Colors.white, borderRadius: BorderRadius.circular(20)),
+            )
+          : SizedBox.shrink()
     ]);
   }
 
@@ -1249,7 +1316,7 @@ class _NewsCardState extends State<NewsCard> {
     );
   }
 
-  PopupMenuButton showPopMenu(String postID, newsData) {
+  PopupMenuButton showPopMenu(String postID, Result newsData) {
     return PopupMenuButton(
       icon: Icon(Icons.more_vert),
       itemBuilder: (BuildContext context) => <PopupMenuEntry>[

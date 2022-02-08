@@ -1,9 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:device_info/device_info.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:threekm/Custom_library/pincodefields.dart';
 import 'package:provider/provider.dart';
+import 'package:threekm/commenwidgets/CustomSnakBar.dart';
 import 'package:threekm/providers/auth/signIn_Provider.dart';
 import 'package:threekm/providers/auth/signUp_Provider.dart';
 import 'package:threekm/utils/threekm_textstyles.dart';
@@ -82,7 +84,7 @@ class _LoginViaOtpState extends State<LoginViaOtp> {
           },
         ),
         buildSpace(height: 32),
-        buildOTPTextField(phone),
+        Center(child: buildOTPTextField(phone)),
         Consumer<SignInProvider>(builder: (context, model, _) {
           return model.iswrongOTP
               ? Column(
@@ -125,32 +127,37 @@ class _LoginViaOtpState extends State<LoginViaOtp> {
         buildSpace(height: 40),
         //Text("Resend confirmation code" + getRemeningTime().toString())
         isVisibleResendOtp
-            ? InkWell(
-                onTap: () {
-                  if (true) {
-                    String requestJson = json.encode({"phone_no": phone});
-                    context
-                        .read<SignUpProvider>()
-                        .checkLogin(requestJson, phone, context, false)
-                        .whenComplete(() => setState(() {
-                              isVisibleResendOtp = !isVisibleResendOtp;
-                            }));
-                  }
+            ? InkWell(onTap: () {
+                if (true) {
+                  String requestJson = json.encode({"phone_no": phone});
+                  context
+                      .read<SignUpProvider>()
+                      .checkLogin(requestJson, phone, context, false)
+                      .whenComplete(() => setState(() {
+                            isVisibleResendOtp = !isVisibleResendOtp;
+                          }));
+                  CustomSnackBar(context, Text("Sending otp again!"));
+                }
+              }, child: Consumer<SignUpProvider>(
+                builder: (context, _controller, child) {
+                  return CustomButton(
+                    color: ThreeKmTextConstants.blue1,
+                    width: 152,
+                    height: 52,
+                    borderRadius: BorderRadius.circular(26),
+                    shadowRadius: BorderRadius.circular(26),
+                    shadowColor: Colors.transparent,
+                    elevation: 0,
+                    child: _controller.isLoding
+                        ? CupertinoActivityIndicator()
+                        : Text(
+                            "Resend Otp",
+                            style:
+                                ThreeKmTextConstants.tk14PXWorkSansWhiteMedium,
+                          ),
+                  );
                 },
-                child: CustomButton(
-                  color: ThreeKmTextConstants.blue1,
-                  width: 152,
-                  height: 52,
-                  borderRadius: BorderRadius.circular(26),
-                  shadowRadius: BorderRadius.circular(26),
-                  shadowColor: Colors.transparent,
-                  elevation: 0,
-                  child: Text(
-                    "Resend Otp",
-                    style: ThreeKmTextConstants.tk14PXWorkSansWhiteMedium,
-                  ),
-                ),
-              )
+              ))
             : TweenAnimationBuilder<Duration>(
                 duration: Duration(minutes: 1, seconds: 30),
                 tween: Tween(
@@ -158,6 +165,9 @@ class _LoginViaOtpState extends State<LoginViaOtp> {
                     end: Duration.zero),
                 onEnd: () {
                   print('Timer ended');
+                  setState(() {
+                    isVisibleResendOtp = true;
+                  });
                 },
                 builder: (BuildContext context, Duration value, Widget? child) {
                   final minutes = value.inMinutes;
@@ -183,7 +193,11 @@ class _LoginViaOtpState extends State<LoginViaOtp> {
         space(height: 14),
         GestureDetector(
           onTap: () => Navigator.push(
-              context, MaterialPageRoute(builder: (context) => SignInScreen())),
+              context,
+              MaterialPageRoute(
+                  builder: (context) => SignInScreen(
+                        phoneNumber: widget.phoneNumber,
+                      ))),
           child: Container(
             height: 48,
             width: 297,
@@ -218,7 +232,7 @@ class _LoginViaOtpState extends State<LoginViaOtp> {
 
   Widget buildOTPTextField(phone) {
     return Container(
-      width: MediaQuery.of(context).size.width * 0.65,
+      // width: MediaQuery.of(context).size.width * 0.65,
       child: PinCodeTextField(
         pinTextStyle: TextStyle(color: Colors.black),
         controller: textController,

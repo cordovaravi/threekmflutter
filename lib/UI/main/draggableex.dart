@@ -37,222 +37,219 @@ class _DraggablePageState extends State<DraggablePage> {
         body: [NewsTab(reload: widget.isredirected)],
         fullyStretchable: true,
         expandedBody: Container(
-          color: Color(0xff3E7EFF),
-          child: Padding(
-            padding: EdgeInsets.zero,
-            child: Row(
-              children: [
-                Column(
-                  children: [
-                    InkWell(
-                      onTap: () async {
-                        context.read<AddPostProvider>().deletImages();
-                        _showImageVideoBottomModalSheet(context);
-                      },
-                      child: Container(
-                        margin: EdgeInsets.all(16),
-                        height: 127,
-                        width: 161,
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(20)),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Container(
-                              height: 42,
-                              width: 42,
-                              decoration: BoxDecoration(
-                                  image: DecorationImage(
-                                      image: AssetImage("assets/Grouppost.png"),
-                                      fit: BoxFit.cover),
-                                  shape: BoxShape.circle,
-                                  color: Color(0xffFBA924)),
-                            ),
-                            SizedBox(
-                              height: 8,
-                            ),
-                            Text(
-                              "New Post",
-                              style:
-                                  ThreeKmTextConstants.tk16PXPoppinsBlackMedium,
-                            )
-                          ],
-                        ),
+          color: //Colors.amber,
+              Color(0xff3E7EFF),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Column(
+                children: [
+                  InkWell(
+                    onTap: () async {
+                      context.read<AddPostProvider>().deletImages();
+                      _showImageVideoBottomModalSheet(context);
+                    },
+                    child: Container(
+                      margin: EdgeInsets.only(top: 16, bottom: 16),
+                      height: 127,
+                      width: 161,
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(20)),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            height: 42,
+                            width: 42,
+                            decoration: BoxDecoration(
+                                image: DecorationImage(
+                                    image: AssetImage("assets/Grouppost.png"),
+                                    fit: BoxFit.cover),
+                                shape: BoxShape.circle,
+                                color: Color(0xffFBA924)),
+                          ),
+                          SizedBox(
+                            height: 8,
+                          ),
+                          Text(
+                            "New Post",
+                            style:
+                                ThreeKmTextConstants.tk16PXPoppinsBlackMedium,
+                          )
+                        ],
                       ),
                     ),
-                    InkWell(
-                      onTap: () {
-                        drawerController.open!();
-                      },
-                      child: Container(
-                        margin:
-                            EdgeInsets.only(bottom: 16, left: 16, right: 16),
-                        //height: MediaQuery.of(context).size.height * 0.1,
-                        height: 127,
-                        width: 161,
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(20)),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Container(
-                              height: 42,
-                              width: 42,
-                              decoration: BoxDecoration(
-                                  image: DecorationImage(
-                                    image:
-                                        AssetImage("assets/Group 41299@2x.png"),
-                                  ),
-                                  shape: BoxShape.circle,
-                                  color: Color(0xffFC5E6A),
-                                  boxShadow: [
-                                    BoxShadow(
-                                        color: Color(0xffFC5E6A33),
-                                        blurRadius: 0.8)
-                                  ]),
-                            ),
-                            SizedBox(
-                              height: 8,
-                            ),
-                            Text(
-                              "My Profile",
-                              style:
-                                  ThreeKmTextConstants.tk16PXPoppinsBlackMedium,
-                            )
-                          ],
-                        ),
+                  ),
+                  InkWell(
+                    onTap: () {
+                      drawerController.open!();
+                    },
+                    child: Container(
+                      margin: EdgeInsets.only(bottom: 16, left: 16, right: 16),
+                      //height: MediaQuery.of(context).size.height * 0.1,
+                      height: 127,
+                      width: 161,
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(20)),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            height: 42,
+                            width: 42,
+                            decoration: BoxDecoration(
+                                image: DecorationImage(
+                                  image:
+                                      AssetImage("assets/Group 41299@2x.png"),
+                                ),
+                                shape: BoxShape.circle,
+                                color: Color(0xffFC5E6A),
+                                boxShadow: [
+                                  BoxShadow(
+                                      color: Color(0xffFC5E6A33),
+                                      blurRadius: 0.8)
+                                ]),
+                          ),
+                          SizedBox(
+                            height: 8,
+                          ),
+                          Text(
+                            "My Profile",
+                            style:
+                                ThreeKmTextConstants.tk16PXPoppinsBlackMedium,
+                          )
+                        ],
                       ),
                     ),
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    InkWell(
-                      child: Container(
-                        margin: EdgeInsets.only(
-                            bottom: 16, left: 16, right: 16, top: 0),
-                        //height: MediaQuery.of(context).size.height * 0.2,
-                        height: 270,
-                        width: 161,
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(20)),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Container(
-                              height: 42,
-                              width: 42,
-                              decoration: BoxDecoration(
-                                  image: DecorationImage(
-                                    image:
-                                        AssetImage("assets/Grouplocation.png"),
-                                  ),
-                                  shape: BoxShape.circle,
-                                  color: Color(0xff43B978),
-                                  boxShadow: [
-                                    BoxShadow(
-                                        color: Color(0xff43B97833),
-                                        blurRadius: 0.8)
-                                  ]),
-                            ),
-                            SizedBox(
-                              height: 8,
-                            ),
-                            Text(
-                              "My Location",
-                              style:
-                                  ThreeKmTextConstants.tk16PXPoppinsBlackMedium,
-                            ),
-                            SizedBox(
-                              height: 15,
-                            ),
-                            Text(
-                              _selecetdAddress ?? "",
-                              style:
-                                  ThreeKmTextConstants.tk16PXPoppinsBlackMedium,
-                              textAlign: TextAlign.center,
-                            ),
-                            SizedBox(
-                              height: 15,
-                            ),
-                            InkWell(
-                              onTap: () {
-                                Future.delayed(Duration.zero, () {
-                                  context
+                  ),
+                ],
+              ),
+              Column(
+                children: [
+                  InkWell(
+                    child: Container(
+                      margin: EdgeInsets.only(top: 16),
+                      // margin: EdgeInsets.only(
+                      //     bottom: 16, left: 16, right: 16, top: 0),
+                      //height: MediaQuery.of(context).size.height * 0.2,
+                      height: 270,
+                      width: 161,
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(20)),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            height: 42,
+                            width: 42,
+                            decoration: BoxDecoration(
+                                image: DecorationImage(
+                                  image: AssetImage("assets/Grouplocation.png"),
+                                ),
+                                shape: BoxShape.circle,
+                                color: Color(0xff43B978),
+                                boxShadow: [
+                                  BoxShadow(
+                                      color: Color(0xff43B97833),
+                                      blurRadius: 0.8)
+                                ]),
+                          ),
+                          SizedBox(
+                            height: 8,
+                          ),
+                          Text(
+                            "My Location",
+                            style:
+                                ThreeKmTextConstants.tk16PXPoppinsBlackMedium,
+                          ),
+                          SizedBox(
+                            height: 15,
+                          ),
+                          Text(
+                            _selecetdAddress ?? "",
+                            style:
+                                ThreeKmTextConstants.tk16PXPoppinsBlackMedium,
+                            textAlign: TextAlign.center,
+                          ),
+                          SizedBox(
+                            height: 15,
+                          ),
+                          InkWell(
+                            onTap: () {
+                              Future.delayed(Duration.zero, () {
+                                context
+                                    .read<LocationProvider>()
+                                    .getLocation()
+                                    .whenComplete(() {
+                                  final _locationProvider = context
                                       .read<LocationProvider>()
-                                      .getLocation()
-                                      .whenComplete(() {
-                                    final _locationProvider = context
-                                        .read<LocationProvider>()
-                                        .getlocationData;
-                                    final kInitialPosition = LatLng(
-                                        _locationProvider!.latitude!,
-                                        _locationProvider.longitude!);
-                                    if (_locationProvider != null) {
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) => PlacePicker(
-                                              apiKey: GMap_Api_Key,
-                                              // initialMapType: MapType.satellite,
-                                              onPlacePicked: (result) async {
-                                                //print(result.formattedAddress);
-                                                setState(() {
-                                                  _selecetdAddress =
-                                                      result.formattedAddress;
-                                                  print(result.geometry!
-                                                      .toJson());
-                                                  _geometry = result.geometry;
-                                                });
-                                                SharedPreferences _prefs =
-                                                    await SharedPreferences
-                                                        .getInstance();
-                                                _prefs.setString("Geometry",
-                                                    _geometry.toString());
-                                                CustomSnackBar(
-                                                    context,
-                                                    Text(
-                                                        "Updating Hyperlocal contetnt in background"));
-                                                Navigator.of(context).pop();
-                                              },
-                                              initialPosition: kInitialPosition,
-                                              useCurrentLocation: true,
-                                              selectInitialPosition: true,
-                                              usePinPointingSearch: true,
-                                              usePlaceDetailSearch: true,
-                                            ),
-                                          ));
-                                    }
-                                  });
+                                      .getlocationData;
+                                  final kInitialPosition = LatLng(
+                                      _locationProvider!.latitude!,
+                                      _locationProvider.longitude!);
+                                  if (_locationProvider != null) {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => PlacePicker(
+                                            apiKey: GMap_Api_Key,
+                                            // initialMapType: MapType.satellite,
+                                            onPlacePicked: (result) async {
+                                              //print(result.formattedAddress);
+                                              setState(() {
+                                                _selecetdAddress =
+                                                    result.formattedAddress;
+                                                print(
+                                                    result.geometry!.toJson());
+                                                _geometry = result.geometry;
+                                              });
+                                              SharedPreferences _prefs =
+                                                  await SharedPreferences
+                                                      .getInstance();
+                                              _prefs.setString("Geometry",
+                                                  _geometry.toString());
+                                              CustomSnackBar(
+                                                  context,
+                                                  Text(
+                                                      "Updating Hyperlocal contetnt in background"));
+                                              Navigator.of(context).pop();
+                                            },
+                                            initialPosition: kInitialPosition,
+                                            useCurrentLocation: true,
+                                            selectInitialPosition: true,
+                                            usePinPointingSearch: true,
+                                            usePlaceDetailSearch: true,
+                                          ),
+                                        ));
+                                  }
                                 });
-                              },
-                              child: Container(
-                                width: 108,
-                                height: 36,
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(18),
-                                    color: Color(0xff3E7EFF)),
-                                child: Center(
-                                  child: Text(
-                                    "Change",
-                                    style: ThreeKmTextConstants
-                                        .tk16PXPoppinsWhiteBold,
-                                  ),
+                              });
+                            },
+                            child: Container(
+                              width: 108,
+                              height: 36,
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(18),
+                                  color: Color(0xff3E7EFF)),
+                              child: Center(
+                                child: Text(
+                                  "Change",
+                                  style: ThreeKmTextConstants
+                                      .tk16PXPoppinsWhiteBold,
                                 ),
                               ),
-                            )
-                          ],
-                        ),
+                            ),
+                          )
+                        ],
                       ),
-                    )
-                  ],
-                )
-              ],
-            ),
+                    ),
+                  )
+                ],
+              )
+            ],
           ),
         ));
   }

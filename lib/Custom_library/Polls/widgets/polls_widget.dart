@@ -90,8 +90,19 @@ class _SimplePollsWidgetState extends State<SimplePollsWidget> {
               /// Check for 0/0 is present to avoid exception.
               double percentage = widget.model.totalPolls == 0
                   ? 0
-                  : widget.model.options[index].pollsCount /
-                      widget.model.totalPolls;
+                  : widget.model.hasVoted
+                      ? widget.model.options[index].netWorkPersentage! /
+                          widget.model.totalPolls
+                      : widget.model.options[index].pollsCount /
+                          widget.model.totalPolls;
+              // if (widget.model.hasVoted) {
+              //   percentage = widget.model.options[index].netWorkPersentage ?? 0;
+              // } else {
+              //   percentage = widget.model.totalPolls == 0
+              //       ? 0
+              //       : widget.model.options[index].pollsCount /
+              //           widget.model.totalPolls;
+              // }
 
               /// Check if the person has voted or poll has expired, if conditions are met the results screen will show up.
               if ((widget.model.hasVoted)
@@ -102,6 +113,7 @@ class _SimplePollsWidgetState extends State<SimplePollsWidget> {
                   //         .isBefore(DateTime.now().toUtc())
                   ) {
                 return PollResultsWidget(
+                  isVoated: true,
                   percentage: percentage,
                   optionModel: widget.model.options[index],
                   optionsStyle: widget.optionsStyle,

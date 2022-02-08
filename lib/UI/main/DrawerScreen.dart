@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:threekm/UI/main/Profile/MyProfilePost.dart';
@@ -143,7 +144,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
         context: context,
         useRootNavigator: false,
         barrierDismissible: false,
-        builder: (context) {
+        builder: (BuildContext context) {
           return AlertDialog(
             backgroundColor: Colors.white,
             actionsPadding: EdgeInsets.all(8),
@@ -177,6 +178,13 @@ class _CustomDrawerState extends State<CustomDrawer> {
               CustomButton(
                 color: ThreeKmTextConstants.blue1,
                 onTap: () async {
+                  context.read<ProfileInfoProvider>().resetAll();
+                  SharedPreferences _prefs =
+                      await SharedPreferences.getInstance();
+                  await _prefs.remove("gender");
+                  await _prefs.remove("dob");
+                  await _prefs.clear();
+
                   await FirebaseAuth.instance.signOut();
                   Navigator.of(context).pop(true);
                 },
@@ -296,14 +304,23 @@ class _CustomDrawerState extends State<CustomDrawer> {
         SizedBox(
           height: 24,
         ),
+        CustomDrawerItem(
+          icon: Icons.policy,
+          label: "Privacy Policy".toUpperCase(),
+        ).onTap(() {
+          InAppBrowser.openWithSystemBrowser(
+              url: Uri.parse("https://bulbandkey.com/privacy-policy"));
+        }),
+        SizedBox(
+          height: 24,
+        ),
         InkWell(
           onTap: () async {
             bool log = await logout();
             print("$log");
             if (log) {
-              var prefs = await SharedPreferences.getInstance();
-              prefs.clear();
-              //widget.animationController2!.reverse();
+              SharedPreferences prefs = await SharedPreferences.getInstance();
+              await prefs.clear();
               Navigator.pushAndRemoveUntil(
                   context,
                   MaterialPageRoute(builder: (context) => SplashScreen()),

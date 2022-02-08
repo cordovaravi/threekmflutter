@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
@@ -8,11 +9,12 @@ import 'package:path_provider/path_provider.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:threekm/Custom_library/flutter_reaction_button.dart';
-import 'package:threekm/Custom_library/src/reaction.dart';
 import 'package:threekm/UI/main/News/NewsList.dart';
 import 'package:threekm/UI/main/News/Widgets/singlePost_Loading.dart';
+import 'package:threekm/UI/main/Profile/AuthorProfile.dart';
 import 'package:threekm/commenwidgets/CustomSnakBar.dart';
 import 'package:threekm/commenwidgets/commenwidget.dart';
+import 'package:threekm/providers/main/LikeList_Provider.dart';
 import 'package:threekm/providers/main/comment_Provider.dart';
 import 'package:threekm/providers/main/singlePost_provider.dart';
 import 'package:threekm/utils/threekm_textstyles.dart';
@@ -21,6 +23,7 @@ import 'package:threekm/widgets/video_widget.dart';
 import 'package:threekm/widgets/reactions_assets.dart' as reactionAsset;
 
 import 'Widgets/comment_Loading.dart';
+import 'Widgets/likes_Loading.dart';
 
 class Postview extends StatefulWidget {
   final String postId;
@@ -34,6 +37,7 @@ class Postview extends StatefulWidget {
 class _PostviewState extends State<Postview> {
   ScreenshotController screenshotController = ScreenshotController();
   TextEditingController _commentController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
@@ -116,23 +120,42 @@ class _PostviewState extends State<Postview> {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
-                                            Container(
-                                                margin:
-                                                    EdgeInsets.only(right: 10),
-                                                height: 50,
-                                                width: 50,
-                                                child: Container(
+                                            InkWell(
+                                              onTap: () {
+                                                Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            AuthorProfile(
+                                                                id: newsData!
+                                                                    .author!
+                                                                    .id!,
+                                                                avatar: newsData
+                                                                    .author!
+                                                                    .image!,
+                                                                userName: newsData
+                                                                    .author!
+                                                                    .name!)));
+                                              },
+                                              child: Container(
+                                                  margin: EdgeInsets.only(
+                                                      right: 10),
                                                   height: 50,
                                                   width: 50,
-                                                  decoration: BoxDecoration(
-                                                      shape: BoxShape.circle,
-                                                      image: DecorationImage(
-                                                          fit: BoxFit.cover,
-                                                          image: CachedNetworkImageProvider(
-                                                              newsData!
-                                                                  .author!.image
-                                                                  .toString()))),
-                                                )),
+                                                  child: Container(
+                                                    height: 50,
+                                                    width: 50,
+                                                    decoration: BoxDecoration(
+                                                        shape: BoxShape.circle,
+                                                        image: DecorationImage(
+                                                            fit: BoxFit.cover,
+                                                            image: CachedNetworkImageProvider(
+                                                                newsData!
+                                                                    .author!
+                                                                    .image
+                                                                    .toString()))),
+                                                  )),
+                                            ),
                                             Column(
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.start,
@@ -230,12 +253,19 @@ class _PostviewState extends State<Postview> {
                                       //     child: Text("no data"),
                                       //   ),
                                       Row(children: [
-                                        Padding(
-                                            padding: EdgeInsets.only(
-                                                top: 2, left: 5, bottom: 2),
-                                            child: Text(
-                                                newsData.likes.toString() +
-                                                    ' Likes')),
+                                        InkWell(
+                                          onTap: () {
+                                            _showLikedBottomModalSheet(
+                                                newsData.postId!.toInt(),
+                                                newsData.likes);
+                                          },
+                                          child: Padding(
+                                              padding: EdgeInsets.only(
+                                                  top: 2, left: 5, bottom: 2),
+                                              child: Text('👍❤️😩 ' +
+                                                  newsData.likes.toString() +
+                                                  ' Likes')),
+                                        ),
                                         Spacer(),
                                         Padding(
                                             padding: EdgeInsets.only(
@@ -264,6 +294,9 @@ class _PostviewState extends State<Postview> {
                                           newsData.story.toString(),
                                           textStyle: TextStyle(),
                                         ),
+                                      ),
+                                      SizedBox(
+                                        height: 50,
                                       )
                                     ],
                                   ),
@@ -410,6 +443,103 @@ class _PostviewState extends State<Postview> {
             ),
           )
         : SinglePostLoading();
+  }
+
+  _showLikedBottomModalSheet(int postId, totalLikes) {
+    context.read<LikeListProvider>().showLikes(context, postId);
+    showModalBottomSheet<void>(
+      backgroundColor: Colors.white,
+      context: context,
+      builder: (BuildContext context) {
+        final _likeProvider = context.watch<LikeListProvider>();
+        return Padding(
+            padding: EdgeInsets.zero,
+            child: StatefulBuilder(
+              builder: (context, _) {
+                return Container(
+                  color: Colors.white,
+                  height: 192,
+                  width: MediaQuery.of(context).size.width,
+                  child: _likeProvider.isLoading
+                      ? LikesLoding()
+                      : Column(
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                            Row(
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.only(
+                                      top: 24, left: 18, bottom: 34),
+                                  child: Text(
+                                      "$totalLikes People reacted to this"),
+                                ),
+                              ],
+                            ),
+                            Container(
+                              height: 90,
+                              width: double.infinity,
+                              child: ListView.builder(
+                                scrollDirection: Axis.horizontal,
+                                itemCount: _likeProvider
+                                    .likeList!.data!.result!.users!.length,
+                                shrinkWrap: true,
+                                itemBuilder: (context, index) {
+                                  return Container(
+                                      margin: EdgeInsets.only(
+                                        left: 21,
+                                      ),
+                                      height: 85,
+                                      width: 85,
+                                      decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          image: DecorationImage(
+                                              fit: BoxFit.cover,
+                                              image: NetworkImage(_likeProvider
+                                                  .likeList!
+                                                  .data!
+                                                  .result!
+                                                  .users![index]
+                                                  .avatar
+                                                  .toString()))),
+                                      child: Stack(
+                                        children: [
+                                          Positioned(
+                                              right: 0,
+                                              child: Image.asset(
+                                                'assets/fblike2x.png',
+                                                height: 15,
+                                                width: 15,
+                                                fit: BoxFit.cover,
+                                              )),
+                                          _likeProvider
+                                                      .likeList!
+                                                      .data!
+                                                      .result!
+                                                      .users![index]
+                                                      .isUnknown !=
+                                                  null
+                                              ? Center(
+                                                  child: Text(
+                                                      "+${_likeProvider.likeList!.data!.result!.anonymousCount}",
+                                                      style: TextStyle(
+                                                          fontSize: 17,
+                                                          color: Colors.white),
+                                                      textAlign:
+                                                          TextAlign.center),
+                                                )
+                                              : SizedBox.shrink()
+                                        ],
+                                      ));
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                );
+              },
+            ));
+      },
+    );
   }
 
   PopupMenuButton showPopMenu(String postID, newsData) {
@@ -613,17 +743,30 @@ class _PostviewState extends State<Postview> {
                               )
                             : SizedBox();
                       }),
-                      Container(
-                        height: 116,
-                        width: 338,
-                        decoration: BoxDecoration(
-                            color: Colors.grey.shade200,
-                            borderRadius: BorderRadius.circular(20)),
-                        child: TextFormField(
-                          controller: _commentController,
-                          maxLines: null,
-                          keyboardType: TextInputType.multiline,
-                          decoration: InputDecoration(border: InputBorder.none),
+                      Form(
+                        key: _formKey,
+                        child: Container(
+                          height: 60,
+                          width: 338,
+                          decoration: BoxDecoration(
+                              color: Colors.grey.shade200,
+                              borderRadius: BorderRadius.circular(20)),
+                          child: TextFormField(
+                            autovalidateMode:
+                                AutovalidateMode.onUserInteraction,
+                            validator: (String? value) {
+                              if (value == null) {
+                                return "  Comment cant be blank";
+                              } else if (value.isEmpty) {
+                                return "  Comment cant be blank";
+                              }
+                            },
+                            controller: _commentController,
+                            maxLines: null,
+                            keyboardType: TextInputType.multiline,
+                            decoration:
+                                InputDecoration(border: InputBorder.none),
+                          ),
                         ),
                       ),
                       SizedBox(
@@ -633,24 +776,36 @@ class _PostviewState extends State<Postview> {
                         alignment: Alignment.centerLeft,
                         child: InkWell(
                           onTap: () {
-                            context
-                                .read<CommentProvider>()
-                                .postCommentApi(postId, _commentController.text)
-                                .then((value) => _commentController.clear());
+                            if (_formKey.currentState!.validate()) {
+                              context
+                                  .read<CommentProvider>()
+                                  .postCommentApi(
+                                      postId, _commentController.text)
+                                  .then(
+                                      (value) => _commentController.text = "");
+                            } else {
+                              CustomSnackBar(
+                                  context, Text("Comment cant be blank"));
+                            }
                           },
                           child: Container(
+                            margin: EdgeInsets.only(left: 10),
                             height: 36,
                             width: 112,
                             decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(18),
                                 color: ThreeKmTextConstants.blue2),
-                            child: Center(
-                              child: Text(
-                                "Submit",
-                                style: ThreeKmTextConstants
-                                    .tk14PXPoppinsWhiteMedium,
-                              ),
-                            ),
+                            child: Center(child: Consumer<CommentProvider>(
+                              builder: (context, _controller, child) {
+                                return _controller.isLoading == false
+                                    ? Text(
+                                        "Submit",
+                                        style: ThreeKmTextConstants
+                                            .tk14PXPoppinsWhiteMedium,
+                                      )
+                                    : CupertinoActivityIndicator();
+                              },
+                            )),
                           ),
                         ),
                       )

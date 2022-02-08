@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +11,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:threekm/Custom_library/flutter_reaction_button.dart';
+import 'package:threekm/Models/home1_model.dart';
 import 'package:threekm/UI/main/News/Widgets/comment_Loading.dart';
 import 'package:threekm/UI/main/News/Widgets/likes_Loading.dart';
 import 'package:threekm/UI/main/Profile/AuthorProfile.dart';
@@ -174,6 +176,8 @@ class _NewsPostCardState extends State<NewsPostCard>
     with AutomaticKeepAliveClientMixin {
   ScreenshotController screenshotController = ScreenshotController();
   TextEditingController _commentController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+
   Future<File> getImageFileFromAssets(String path) async {
     final byteData = await rootBundle.load('assets/$path');
 
@@ -196,10 +200,12 @@ class _NewsPostCardState extends State<NewsPostCard>
       _scrollController.addListener(() {
         if (_scrollController.position.maxScrollExtent ==
             _scrollController.position.pixels) {
-          takeCount += 10;
-          skipCount += 10;
-          context.read<NewsListProvider>().getNewsPost(
-              widget.name, mounted, takeCount, skipCount, false, null);
+          if (context.read<NewsListProvider>().getttingMorePosts == false) {
+            takeCount += 10;
+            skipCount += 10;
+            context.read<NewsListProvider>().getNewsPost(
+                widget.name, mounted, takeCount, skipCount, false, null);
+          }
         }
       });
     }
@@ -838,7 +844,7 @@ class _NewsPostCardState extends State<NewsPostCard>
                                   newsData.images!.length > 0)
                                 CachedNetworkImage(
                                   height: 254,
-                                  width: 338,
+                                  width: MediaQuery.of(context).size.width,
                                   fit: BoxFit.fill,
                                   imageUrl: '${newsData.images!.first}',
                                 )
@@ -866,8 +872,16 @@ class _NewsPostCardState extends State<NewsPostCard>
                                         top: 2, left: 5, bottom: 2),
                                     child: Consumer<NewsListProvider>(
                                       builder: (context, newsProvider, _) {
-                                        return Text(newsData.likes.toString() +
-                                            ' Likes');
+                                        return InkWell(
+                                          onTap: () {
+                                            _showLikedBottomModalSheet(
+                                                newsData.postId!.toInt(),
+                                                newsData.likes);
+                                          },
+                                          child: Text("👍❤️😩 " +
+                                              newsData.likes.toString() +
+                                              ' Likes'),
+                                        );
                                       },
                                     )),
                                 Spacer(),
@@ -895,6 +909,9 @@ class _NewsPostCardState extends State<NewsPostCard>
                                   newsData.story.toString(),
                                   textStyle: TextStyle(),
                                 ),
+                              ),
+                              SizedBox(
+                                height: 50,
                               )
                             ],
                           ),
@@ -1258,17 +1275,30 @@ class _NewsPostCardState extends State<NewsPostCard>
                               )
                             : SizedBox();
                       }),
-                      Container(
-                        height: 116,
-                        width: 338,
-                        decoration: BoxDecoration(
-                            color: Colors.grey.shade200,
-                            borderRadius: BorderRadius.circular(20)),
-                        child: TextFormField(
-                          controller: _commentController,
-                          maxLines: null,
-                          keyboardType: TextInputType.multiline,
-                          decoration: InputDecoration(border: InputBorder.none),
+                      Form(
+                        key: _formKey,
+                        child: Container(
+                          height: 50,
+                          width: 338,
+                          decoration: BoxDecoration(
+                              color: Colors.grey.shade200,
+                              borderRadius: BorderRadius.circular(20)),
+                          child: TextFormField(
+                            autovalidateMode:
+                                AutovalidateMode.onUserInteraction,
+                            validator: (String? value) {
+                              if (value == null) {
+                                return "  Comment cant be blank";
+                              } else if (value.isEmpty) {
+                                return "  Comment cant be blank";
+                              }
+                            },
+                            controller: _commentController,
+                            maxLines: null,
+                            keyboardType: TextInputType.multiline,
+                            decoration:
+                                InputDecoration(border: InputBorder.none),
+                          ),
                         ),
                       ),
                       SizedBox(
@@ -1278,24 +1308,32 @@ class _NewsPostCardState extends State<NewsPostCard>
                         alignment: Alignment.centerLeft,
                         child: InkWell(
                           onTap: () {
-                            context
-                                .read<CommentProvider>()
-                                .postCommentApi(postId, _commentController.text)
-                                .then((value) => _commentController.clear());
+                            if (_formKey.currentState!.validate()) {
+                              context
+                                  .read<CommentProvider>()
+                                  .postCommentApi(
+                                      postId, _commentController.text)
+                                  .then((value) => _commentController.clear());
+                            }
                           },
                           child: Container(
+                            margin: EdgeInsets.only(left: 10),
                             height: 36,
                             width: 112,
                             decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(18),
                                 color: ThreeKmTextConstants.blue2),
-                            child: Center(
-                              child: Text(
-                                "Submit",
-                                style: ThreeKmTextConstants
-                                    .tk14PXPoppinsWhiteMedium,
-                              ),
-                            ),
+                            child: Center(child: Consumer<CommentProvider>(
+                              builder: (context, _controller, child) {
+                                return _controller.isLoading == false
+                                    ? Text(
+                                        "Submit",
+                                        style: ThreeKmTextConstants
+                                            .tk14PXPoppinsWhiteMedium,
+                                      )
+                                    : CupertinoActivityIndicator();
+                              },
+                            )),
                           ),
                         ),
                       )

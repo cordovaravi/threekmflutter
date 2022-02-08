@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:threekm/Models/home1_model.dart';
 import 'package:threekm/commenwidgets/commenwidget.dart';
@@ -26,6 +28,19 @@ class HomeSecondProvider extends ChangeNotifier {
       hideLoading();
       // TODO
     }
+  }
+
+  void submitQuiz({required int quizId}) {
+    _homeModel?.data?.result?.finalposts?.forEach((element) {
+      log("message of quiz ${element.quiz?.quizId} ${quizId} ");
+      // element.quiz?.isAnswered = true;
+      notifyListeners();
+      if (element.quiz?.quizId == quizId) {
+        element.quiz?.isAnswered = true;
+        log("this is quiz submited ${element.quiz!.isAnswered}");
+        notifyListeners();
+      }
+    });
   }
 
   Future<void> onRefresh(requestJson) async {

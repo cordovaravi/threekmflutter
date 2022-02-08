@@ -13,6 +13,7 @@ import 'package:threekm/providers/Location/locattion_Provider.dart';
 import 'package:threekm/providers/Notification/Notification_Provider.dart';
 import 'package:threekm/providers/ProfileInfo/ProfileInfo_Provider.dart';
 import 'package:threekm/providers/Search/Search_Provider.dart';
+import 'package:threekm/providers/Widgets/local_player.dart';
 import 'package:threekm/providers/auth/Forgetpassword_provider.dart';
 import 'package:threekm/providers/auth/signIn_Provider.dart';
 import 'package:threekm/providers/auth/signUp_Provider.dart';
@@ -163,6 +164,8 @@ class MyApp extends StatelessWidget {
             create: (context) => AddPostProvider()),
         ChangeNotifierProvider<AutthorProfileProvider>(
             create: (context) => AutthorProfileProvider()),
+        ChangeNotifierProvider<LocalPlayerProvider>(
+            create: (context) => LocalPlayerProvider()),
 
         ///shops providers
         ChangeNotifierProvider<ShopHomeProvider>(

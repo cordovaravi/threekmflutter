@@ -28,6 +28,7 @@ import 'package:threekm/utils/threekm_textstyles.dart';
 import 'package:threekm/widgets/vimeoPlayer.dart';
 
 import 'Widgets/Adspopup.dart';
+import 'package:flutter_svg/svg.dart';
 
 class NewsTab extends StatefulWidget {
   final String? deviceId;
@@ -41,7 +42,7 @@ class _NewsTabState extends State<NewsTab>
     with AutomaticKeepAliveClientMixin, TickerProviderStateMixin {
   late final AnimationController _controller;
   String? requestJson;
-
+  int? answerIndex;
   @override
   void initState() {
     super.initState();
@@ -74,6 +75,18 @@ class _NewsTabState extends State<NewsTab>
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    final addpostProvider = context.watch<AddPostProvider>();
+    if (addpostProvider.ispostUploaded != null &&
+        addpostProvider.ispostUploaded == true) {
+      ScaffoldMessenger.of(context).removeCurrentSnackBar();
+      Future.delayed(Duration(seconds: 1), () {
+        CustomSnackBar(context, Text("Post has been submmitted"));
+      }).then((value) => addpostProvider.removeSnack());
+    } else if (addpostProvider.isUploadError) {
+      Future.delayed(Duration(seconds: 1), () {
+        CustomSnackBar(context, Text("Upload Failed!"));
+      });
+    }
   }
 
   @override
@@ -88,17 +101,6 @@ class _NewsTabState extends State<NewsTab>
     log("main building");
     final newsFirstProvider = context.watch<HomefirstProvider>();
     final newsSecondProvider = context.watch<HomeSecondProvider>();
-    final addpostProvider = context.watch<AddPostProvider>();
-    if (addpostProvider.ispostUploaded != null &&
-        addpostProvider.ispostUploaded == true) {
-      Future.delayed(Duration(seconds: 1), () {
-        CustomSnackBar(context, Text("Post has been submmitted"));
-      }).then((value) => addpostProvider.removeSnack());
-    } else if (addpostProvider.isUploadError) {
-      Future.delayed(Duration(seconds: 1), () {
-        CustomSnackBar(context, Text("Upload Failed!"));
-      });
-    }
     return RefreshIndicator(
       onRefresh: () {
         return context
@@ -420,10 +422,26 @@ class _NewsTabState extends State<NewsTab>
                     );
                   } else if (finalScondPost.type == "quiz" &&
                       finalScondPost.quiz!.type == "quiz") {
-                    //return Container(child: Text("quiz"));
-                    return Consumer<QuizProvider>(
-                      builder: (context, quizProvider, _) {
-                        // print(quizProvider.shake);
+                    if (finalScondPost.quiz?.isAnswered == true) {
+                      final alreadyAnsIndex = finalScondPost.quiz!.options!
+                          .indexWhere((element) =>
+                              element.text == finalScondPost.quiz!.answer);
+                      log("ans index is $alreadyAnsIndex");
+                      final alredaySelectedIndex = finalScondPost.quiz!.options!
+                          .indexWhere((element) =>
+                              element.text ==
+                              finalScondPost.quiz!.selectedOption);
+                      log("selected index is$alredaySelectedIndex");
+                      if (mounted) {
+                        if (context.read<QuizProvider>().isAnswred == false) {
+                          Future.microtask(() => context
+                              .read<QuizProvider>()
+                              .checkAns(alredaySelectedIndex, alreadyAnsIndex));
+                        }
+                      }
+                    }
+                    return Consumer2<QuizProvider, HomeSecondProvider>(
+                      builder: (context, quizProvider, _controller, _) {
                         return Container(
                           margin: EdgeInsets.only(
                               top: 8, bottom: 8, left: 4, right: 4),
@@ -443,9 +461,6 @@ class _NewsTabState extends State<NewsTab>
                                 right: 30,
                                 left: 30,
                                 child: Container(
-                                    //padding: EdgeInsets.all(10),
-                                    //height: 300,
-                                    //width: 250,
                                     decoration: BoxDecoration(
                                         color: Colors.grey.shade600,
                                         borderRadius: BorderRadius.circular(20),
@@ -484,60 +499,161 @@ class _NewsTabState extends State<NewsTab>
                                                     .quiz!.options!.length,
                                                 itemBuilder:
                                                     (context, quizIndex) {
-                                                  // print(finalScondPost
-                                                  //     .quiz!.selectedOption);
                                                   return Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                            left: 4, right: 4),
-                                                    child: Option(
-                                                      selectedOptionIndex: finalScondPost
-                                                                  .quiz!
-                                                                  .selectedOption
-                                                                  .toString() ==
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              left: 4,
+                                                              right: 4),
+                                                      child: GestureDetector(
+                                                        onTap: () {
+                                                          if (finalScondPost
+                                                                      .quiz
+                                                                      ?.isAnswered ==
+                                                                  false ||
                                                               finalScondPost
-                                                                  .quiz!
-                                                                  .options![
-                                                                      quizIndex]
-                                                                  .text
-                                                          ? quizIndex
-                                                          : 100,
-                                                      // finalScondPost.quiz!
-                                                      //             .answer
-                                                      //             .toString() ==
-                                                      //         finalScondPost
-                                                      //             .quiz!
-                                                      //             .selectedOption
-                                                      //     ? quizIndex
-                                                      //     : 100,
-                                                      isAnswred: finalScondPost
-                                                          .quiz!.isAnswered!,
-                                                      quizId: finalScondPost
-                                                          .quiz!.quizId,
-                                                      text: finalScondPost
-                                                          .quiz!
-                                                          .options![quizIndex]
-                                                          .bullets
-                                                          .toString(),
-                                                      index: quizIndex,
-                                                      option: finalScondPost
-                                                          .quiz!
-                                                          .options![quizIndex]
-                                                          .text
-                                                          .toString(),
-                                                      correctAnsIndex: finalScondPost
-                                                                  .quiz!.answer
-                                                                  .toString() ==
-                                                              finalScondPost
-                                                                  .quiz!
-                                                                  .options![
-                                                                      quizIndex]
-                                                                  .text
-                                                          ? quizIndex
-                                                          : 100,
-                                                      //rightAnswer: finalScondPost.quiz!.answer.toString()
-                                                    ),
-                                                  );
+                                                                      .quiz
+                                                                      ?.isAnswered ==
+                                                                  null) {
+                                                            final ansIndex = finalScondPost
+                                                                .quiz!.options!
+                                                                .indexWhere((element) =>
+                                                                    element
+                                                                        .text ==
+                                                                    finalScondPost
+                                                                        .quiz!
+                                                                        .answer);
+                                                            log("ans index is $ansIndex");
+                                                            context
+                                                                .read<
+                                                                    QuizProvider>()
+                                                                .checkAns(
+                                                                    quizIndex,
+                                                                    ansIndex);
+                                                            context
+                                                                .read<
+                                                                    QuizProvider>()
+                                                                .submitQuiz(
+                                                                    finalScondPost
+                                                                        .quiz!
+                                                                        .quizId!
+                                                                        .toInt(),
+                                                                    finalScondPost
+                                                                        .quiz!
+                                                                        .options![
+                                                                            quizIndex]
+                                                                        .text
+                                                                        .toString());
+                                                            _controller.submitQuiz(
+                                                                quizId:
+                                                                    finalScondPost
+                                                                        .quiz!
+                                                                        .quizId!
+                                                                        .toInt());
+                                                          }
+                                                        },
+                                                        child: Container(
+                                                            height: 50,
+                                                            margin:
+                                                                EdgeInsets.all(
+                                                                    10),
+                                                            decoration:
+                                                                BoxDecoration(
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            15),
+                                                                    color: Colors
+                                                                        .white,
+                                                                    boxShadow: [
+                                                                      BoxShadow(
+                                                                          color: Colors
+                                                                              .black45,
+                                                                          blurRadius:
+                                                                              8.0)
+                                                                    ],
+                                                                    border: Border.all(
+                                                                        color: quizProvider.isAnswred
+                                                                            ? quizIndex == quizProvider.answredIndex
+                                                                                ? Colors.green
+                                                                                : quizIndex == quizProvider.selectedIndex
+                                                                                    ? Colors.red
+                                                                                    : Colors.white
+                                                                            : Colors.white,
+                                                                        width: 2)),
+                                                            padding: EdgeInsets.only(left: 15),
+                                                            child: Row(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .spaceBetween,
+                                                              children: [
+                                                                Text(
+                                                                  finalScondPost
+                                                                      .quiz!
+                                                                      .options![
+                                                                          quizIndex]
+                                                                      .text
+                                                                      .toString(),
+                                                                  style: ThreeKmTextConstants
+                                                                      .tk16PXLatoBlackRegular,
+                                                                ),
+                                                                if (quizProvider
+                                                                    .isAnswred)
+                                                                  quizIndex ==
+                                                                          quizProvider
+                                                                              .answredIndex
+                                                                      ? IconConatiner(
+                                                                          icon: Icons
+                                                                              .check_circle,
+                                                                          iconColor: Colors
+                                                                              .green)
+                                                                      : quizIndex ==
+                                                                              quizProvider
+                                                                                  .selectedIndex
+                                                                          ? IconConatiner(
+                                                                              icon: Icons.clear_rounded,
+                                                                              iconColor: Colors.redAccent)
+                                                                          : SizedBox.shrink()
+                                                              ],
+                                                            )),
+                                                      )
+                                                      //  Option(
+                                                      //   selectedOptionIndex: finalScondPost
+                                                      //               .quiz!
+                                                      //               .selectedOption
+                                                      //               .toString() ==
+                                                      //           finalScondPost
+                                                      //               .quiz!
+                                                      //               .options![
+                                                      //                   quizIndex]
+                                                      //               .text
+                                                      //       ? quizIndex
+                                                      //       : 100,
+                                                      //   isAnswred: finalScondPost
+                                                      //       .quiz!.isAnswered!,
+                                                      //   quizId: finalScondPost
+                                                      //       .quiz!.quizId,
+                                                      //   text: finalScondPost
+                                                      //       .quiz!
+                                                      //       .options![quizIndex]
+                                                      //       .bullets
+                                                      //       .toString(),
+                                                      //   index: quizIndex,
+                                                      //   option: finalScondPost
+                                                      //       .quiz!
+                                                      //       .options![quizIndex]
+                                                      //       .text
+                                                      //       .toString(),
+                                                      //   correctAnsIndex: finalScondPost
+                                                      //               .quiz!.answer
+                                                      //               .toString() ==
+                                                      //           finalScondPost
+                                                      //               .quiz!
+                                                      //               .options![
+                                                      //                   quizIndex]
+                                                      //               .text
+                                                      //       ? quizIndex
+                                                      //       : 100,
+                                                      // ),
+                                                      );
                                                 },
                                               ),
                                             )
@@ -575,54 +691,64 @@ class _NewsTabState extends State<NewsTab>
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Spacer(),
-                            SimplePollsWidget(
-                              margin: EdgeInsets.all(10),
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(17),
-                                  color: Colors.white),
-                              onSelection: (PollFrameModel model,
-                                  PollOptions selectedOptionModel) {
-                                context.read<QuizProvider>().submitPollAnswer(
-                                    answer: selectedOptionModel.label,
-                                    quizId: finalScondPost.quiz!.id!.toInt());
-                                print('Now total polls are : ' +
-                                    model.totalPolls.toString());
-                                print('Selected option has label : ' +
-                                    selectedOptionModel.label);
-                              },
-
-                              optionsBorderShape:
-                                  StadiumBorder(), //Its Default so its not necessary to write this line
-                              model: PollFrameModel(
-                                  title: Container(
-                                    alignment: Alignment.centerLeft,
-                                    child: Text(
-                                      finalScondPost.quiz!.question.toString(),
-                                      style: TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
+                            ClipRect(
+                              child: BackdropFilter(
+                                filter: ImageFilter.blur(
+                                    sigmaX: 10.0, sigmaY: 10.0),
+                                child: SimplePollsWidget(
+                                  margin: EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    color: Color(0xffFFFFFF).withOpacity(0.4),
                                   ),
-                                  totalPolls: 100,
-                                  endTime: DateTime.now()
-                                      .toUtc()
-                                      .add(Duration(days: 10)),
-                                  hasVoted: finalScondPost.quiz!.isAnswered!,
-                                  editablePoll: false,
-                                  options: finalScondPost.quiz!.options!
-                                      .map((option) {
-                                    print(option.dPercent.toString());
-                                    print(option.percent);
-                                    print(option.count);
-                                    return PollOptions(
-                                        label: option.text.toString(),
-                                        pollsCount: option.percent != 0 &&
-                                                option.percent != null
-                                            ? option.percent!.toInt()
-                                            : 0,
-                                        id: UniqueKey());
-                                  }).toList()),
+                                  onSelection: (PollFrameModel model,
+                                      PollOptions selectedOptionModel) {
+                                    context
+                                        .read<QuizProvider>()
+                                        .submitPollAnswer(
+                                            answer: selectedOptionModel.label,
+                                            quizId: finalScondPost.quiz!.id!
+                                                .toInt());
+                                    print('Now total polls are : ' +
+                                        model.totalPolls.toString());
+                                    print('Selected option has label : ' +
+                                        selectedOptionModel.label);
+                                  },
+
+                                  optionsBorderShape:
+                                      StadiumBorder(), //Its Default so its not necessary to write this line
+                                  model: PollFrameModel(
+                                      title: Container(
+                                        alignment: Alignment.center,
+                                        child: Text(
+                                            finalScondPost.quiz!.question
+                                                .toString(),
+                                            style: ThreeKmTextConstants
+                                                .tk14PXPoppinsBlackBold),
+                                      ),
+                                      totalPolls: 100,
+                                      endTime: DateTime.now()
+                                          .toUtc()
+                                          .add(Duration(days: 10)),
+                                      hasVoted:
+                                          finalScondPost.quiz!.isAnswered!,
+                                      editablePoll: false,
+                                      options: finalScondPost.quiz!.options!
+                                          .map((option) {
+                                        print(option.dPercent.toString());
+                                        print(option.percent);
+                                        print(option.count);
+                                        return PollOptions(
+                                            netWorkPersentage: option.percent,
+                                            label: option.text.toString(),
+                                            pollsCount: option.percent != 0 &&
+                                                    option.percent != null
+                                                ? option.percent!.toInt()
+                                                : 0,
+                                            id: UniqueKey());
+                                      }).toList()),
+                                ),
+                              ),
                             )
                           ],
                         ));
@@ -727,7 +853,7 @@ class _NewsTabState extends State<NewsTab>
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Text(
-                              "Business of the Day",
+                              "Highlight",
                               style:
                                   ThreeKmTextConstants.tk16PXPoppinsWhiteBold,
                             ),
@@ -751,31 +877,32 @@ class _NewsTabState extends State<NewsTab>
                                           image: CachedNetworkImageProvider(
                                               finalScondPost.business!.videos!
                                                   .first.thumbnail
-                                                  .toString())),
+                                                  .toString()),
+                                          fit: BoxFit.cover),
                                       borderRadius: BorderRadius.circular(50),
                                     ),
-                                    child: Stack(
-                                      children: [
-                                        Positioned(
-                                          bottom: 38,
-                                          left: 45,
-                                          top: 153,
-                                          right: 146,
-                                          child: Container(
-                                              child: Center(
-                                                child: Icon(Icons
-                                                    .arrow_forward_rounded),
-                                              ),
-                                              height: 24,
-                                              width: 24,
-                                              decoration: BoxDecoration(
-                                                  shape: BoxShape.circle,
-                                                  color: Colors.white)),
-                                        )
-                                      ],
-                                    ),
+                                    // child: Stack(
+                                    //   children: [
+                                    //     Positioned(
+                                    //       bottom: 38,
+                                    //       left: 45,
+                                    //       top: 153,
+                                    //       right: 146,
+                                    //       child: Container(
+                                    //           child: Center(
+                                    //             child: Icon(Icons
+                                    //                 .arrow_forward_rounded),
+                                    //           ),
+                                    //           height: 24,
+                                    //           width: 24,
+                                    //           decoration: BoxDecoration(
+                                    //               shape: BoxShape.circle,
+                                    //               color: Colors.white)),
+                                    //     )
+                                    //   ],
+                                    // ),
                                   ),
-                                  SizedBox(height: 20),
+                                  SizedBox(height: 10),
                                   Text(
                                     finalScondPost.business!.author!.name
                                         .toString(),
@@ -786,59 +913,27 @@ class _NewsTabState extends State<NewsTab>
                                     height: 15,
                                   ),
                                   Text(
-                                    finalScondPost.business?.tags!
-                                            .sublist(2)
-                                            .join(", ")
+                                    finalScondPost.business?.headline
                                             .toString() ??
                                         "",
                                     style:
                                         ThreeKmTextConstants.tk11PXLatoGreyBold,
-                                  )
+                                  ),
+                                  TextButton(
+                                      onPressed: () {
+                                        Navigator.push(
+                                            context,
+                                            AnimatedSizeRoute(
+                                                page: Postview(
+                                                    postId: finalScondPost
+                                                        .business!.postId
+                                                        .toString())));
+                                      },
+                                      child: Text("Read More"))
                                 ],
                               ),
                             )
                           ]),
-                      // child: Column(
-                      //   mainAxisSize: MainAxisSize.min,
-                      //   children: [
-                      //     Row(
-                      //       children: [
-                      //         Padding(
-                      //           padding: const EdgeInsets.only(left: 8),
-                      //           child: Container(
-                      //             height: 30,
-                      //             width: 30,
-                      //             decoration: BoxDecoration(
-                      //                 shape: BoxShape.circle,
-                      //                 image: DecorationImage(
-                      //                     image: CachedNetworkImageProvider(
-                      //                         finalScondPost
-                      //                             .business!.author!.image
-                      //                             .toString()))),
-                      //           ),
-                      //         ),
-                      //         Padding(
-                      //             padding: EdgeInsets.only(left: 8),
-                      //             child: Text(
-                      //               finalScondPost.business!.author!.name
-                      //                   .toString(),
-                      //               style: ThreeKmTextConstants
-                      //                   .tk14PXPoppinsBlackMedium,
-                      //             ))
-                      //       ],
-                      //     ),
-                      //     Padding(
-                      //       padding: EdgeInsets.all(8),
-                      //       child: HtmlWidget(finalScondPost
-                      //           .business!.submittedStory
-                      //           .toString()),
-                      //     ),
-                      //     CachedNetworkImage(
-                      //         imageUrl: finalScondPost
-                      //             .business!.videos!.first.thumbnail
-                      //             .toString())
-                      //   ],
-                      // ),
                     );
                   }
                   return Container();
@@ -854,6 +949,25 @@ class _NewsTabState extends State<NewsTab>
 
   @override
   bool get wantKeepAlive => true;
+}
+
+class IconConatiner extends StatelessWidget {
+  final IconData icon;
+  final Color iconColor;
+  IconConatiner({Key? key, required this.icon, required this.iconColor})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        margin: EdgeInsets.only(right: 18),
+        height: 24,
+        width: 24,
+        child: Icon(icon, color: iconColor),
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+        ));
+  }
 }
 
 /// Custom Container to show News card
@@ -919,7 +1033,6 @@ class NewsContainer extends StatelessWidget {
               height: 220,
               width: double.infinity,
               color: Colors.white,
-              //margin: EdgeInsets.only(bottom: 12),
               child: finalPost.category?.posts != null
                   ? ListView.builder(
                       cacheExtent: 9999,
@@ -962,7 +1075,15 @@ class NewsContainer extends StatelessWidget {
                                       Container(
                                           height: 100,
                                           width: 157,
+                                          margin: EdgeInsets.only(top: 2),
                                           decoration: BoxDecoration(
+                                              color: Colors.grey.shade200,
+                                              boxShadow: [
+                                                BoxShadow(
+                                                    // blurStyle: BlurStyle.outer,
+                                                    color: Colors.black26,
+                                                    blurRadius: 0.8)
+                                              ],
                                               borderRadius: BorderRadius.only(
                                                   topLeft: Radius.circular(10),
                                                   topRight:
@@ -1010,6 +1131,18 @@ class NewsContainer extends StatelessWidget {
                                                           )),
                                                     )
                                                   : SizedBox(),
+                                              contentPost[postIndex]
+                                                          .video
+                                                          .toString() !=
+                                                      ""
+                                                  ? Center(
+                                                      child: Container(
+                                                        child: SvgPicture.asset(
+                                                          "assets/playicon.svg",
+                                                        ),
+                                                      ),
+                                                    )
+                                                  : SizedBox.shrink()
                                             ],
                                           )),
                                       SizedBox(
@@ -1055,102 +1188,102 @@ class NewsListRoute extends CupertinoPageRoute {
   }
 }
 
-class Option extends StatelessWidget {
-  const Option(
-      {required this.text,
-      required this.index,
-      required this.option,
-      required this.quizId,
-      required this.isAnswred,
-      required this.selectedOptionIndex,
-      //required this.rightAnswer,
-      this.correctAnsIndex});
-  final String option;
-  final String text;
-  final int index;
-  final int? correctAnsIndex;
-  final int? quizId;
-  final bool isAnswred;
-  final int selectedOptionIndex;
-  @override
-  Widget build(BuildContext context) {
-    return Consumer<QuizProvider>(builder: (context, model, _) {
-      Color getTheRightColor() {
-        if (model.isAnswred) {
-          if (model.answredIndex == model.selectedIndex &&
-              index == correctAnsIndex) {
-            return Colors.green;
-          } else if (index == model.selectedIndex) {
-            return Colors.red;
-          }
-        }
-        return Colors.grey;
-      }
+// class Option extends StatelessWidget {
+//   const Option(
+//       {required this.text,
+//       required this.index,
+//       required this.option,
+//       required this.quizId,
+//       required this.isAnswred,
+//       required this.selectedOptionIndex,
+//       //required this.rightAnswer,
+//       this.correctAnsIndex});
+//   final String option;
+//   final String text;
+//   final int index;
+//   final int? correctAnsIndex;
+//   final int? quizId;
+//   final bool isAnswred;
+//   final int selectedOptionIndex;
+//   @override
+//   Widget build(BuildContext context) {
+//     return Consumer<QuizProvider>(builder: (context, model, _) {
+//       Color getTheRightColor() {
+//         if (model.isAnswred) {
+//           if (model.answredIndex == model.selectedIndex &&
+//               index == correctAnsIndex) {
+//             return Colors.green;
+//           } else if (index == model.selectedIndex) {
+//             return Colors.red;
+//           }
+//         }
+//         return Colors.grey;
+//       }
 
-      Color GetColorAlreadyAnwer(
-          {required int answerIndex,
-          required int index,
-          required int selectedIndex}) {
-        if (index == answerIndex && index == selectedIndex) {
-          return Colors.green;
-        } else if (index == selectedIndex) {
-          return Colors.red;
-        }
-        return Colors.grey;
-      }
+//       Color GetColorAlreadyAnwer(
+//           {required int answerIndex,
+//           required int index,
+//           required int selectedIndex}) {
+//         if (index == answerIndex && index == selectedIndex) {
+//           return Colors.green;
+//         } else if (index == selectedIndex) {
+//           return Colors.red;
+//         }
+//         return Colors.grey;
+//       }
 
-      return GestureDetector(
-        onTap: this.isAnswred == null || this.isAnswred == false
-            ? () {
-                context.read<QuizProvider>().checkAns(index, correctAnsIndex!);
-                print(index);
-                print(this.option);
-                context.read<QuizProvider>().submitQuiz(quizId!, this.option);
-                context.read<HomefirstProvider>().submitQuiz(quizId: quizId!);
-              }
-            : null,
-        child: Padding(
-          padding: const EdgeInsets.only(bottom: 8),
-          child: Container(
-            padding: EdgeInsets.all(3),
-            decoration: BoxDecoration(
-                border: Border.all(
-                    color: this.isAnswred == true
-                        ? GetColorAlreadyAnwer(
-                            selectedIndex: this.selectedOptionIndex,
-                            index: this.index,
-                            answerIndex: this.correctAnsIndex!)
-                        : getTheRightColor(),
-                    width: 1),
-                borderRadius: BorderRadius.circular(20),
-                color: Colors.white),
-            child: Row(children: [
-              Container(
-                height: 30,
-                width: 30,
-                decoration: BoxDecoration(
-                  border: Border.all(
-                      color: this.isAnswred == true
-                          ? GetColorAlreadyAnwer(
-                              selectedIndex: this.selectedOptionIndex,
-                              index: this.index,
-                              answerIndex: this.correctAnsIndex!)
-                          : getTheRightColor()),
-                  shape: BoxShape.circle,
-                ),
-                child: Center(
-                  child: Text(this.text),
-                ),
-              ),
-              Container(
-                  child: Padding(
-                padding: const EdgeInsets.only(left: 8),
-                child: Text(this.option),
-              ))
-            ]),
-          ),
-        ),
-      );
-    });
-  }
-}
+//       return GestureDetector(
+//         onTap: this.isAnswred == null || this.isAnswred == false
+//             ? () {
+//                 context.read<QuizProvider>().checkAns(index, correctAnsIndex!);
+//                 print(index);
+//                 print(this.option);
+//                 context.read<QuizProvider>().submitQuiz(quizId!, this.option);
+//                 context.read<HomefirstProvider>().submitQuiz(quizId: quizId!);
+//               }
+//             : null,
+//         child: Padding(
+//           padding: const EdgeInsets.only(bottom: 8),
+//           child: Container(
+//             padding: EdgeInsets.all(3),
+//             decoration: BoxDecoration(
+//                 border: Border.all(
+//                     color: this.isAnswred == true
+//                         ? GetColorAlreadyAnwer(
+//                             selectedIndex: this.selectedOptionIndex,
+//                             index: this.index,
+//                             answerIndex: this.correctAnsIndex!)
+//                         : getTheRightColor(),
+//                     width: 1),
+//                 borderRadius: BorderRadius.circular(20),
+//                 color: Colors.white),
+//             child: Row(children: [
+//               Container(
+//                 height: 30,
+//                 width: 30,
+//                 decoration: BoxDecoration(
+//                   border: Border.all(
+//                       color: this.isAnswred == true
+//                           ? GetColorAlreadyAnwer(
+//                               selectedIndex: this.selectedOptionIndex,
+//                               index: this.index,
+//                               answerIndex: this.correctAnsIndex!)
+//                           : getTheRightColor()),
+//                   shape: BoxShape.circle,
+//                 ),
+//                 child: Center(
+//                   child: Text(this.text),
+//                 ),
+//               ),
+//               Container(
+//                   child: Padding(
+//                 padding: const EdgeInsets.only(left: 8),
+//                 child: Text(this.option),
+//               ))
+//             ]),
+//           ),
+//         ),
+//       );
+//     });
+//   }
+// }

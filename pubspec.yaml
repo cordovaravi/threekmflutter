@@ -32,6 +32,7 @@ dependencies:
   flutter_feather_icons:
   carousel_slider: ^4.0.0
   cached_network_image: ^3.1.0
+  connectivity_plus: ^2.2.0
   #shifting_tabbar: ^1.0.2
   flutter_widget_from_html:
   #inview_notifier_list: ^2.0.0

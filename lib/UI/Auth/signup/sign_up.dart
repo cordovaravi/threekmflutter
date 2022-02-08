@@ -15,12 +15,9 @@ import 'package:threekm/utils/intl.dart';
 import 'package:threekm/utils/threekm_textstyles.dart';
 import 'package:threekm/utils/utils.dart';
 import 'package:threekm/widgets/custom_button.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class SignUp extends StatefulWidget {
-  // static const String path = "/signup";
-  // final String popRoute;
-  // SignUp({required this.popRoute});
-
   @override
   _SignUpState createState() => _SignUpState();
 }
@@ -121,7 +118,26 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [buildRotatingIcon, buildInputs, buildFooter],
+              children: [
+                Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Container(
+                        child: Image.asset(
+                      "assets/Path136679@3x.png",
+                      height: 150,
+                      width: 150,
+                    )),
+                    Container(
+                      child: SvgPicture.asset(
+                        "assets/logopic1.svg",
+                      ),
+                    )
+                  ],
+                ),
+                buildInputs,
+                buildFooter
+              ],
             ),
           ),
         ),

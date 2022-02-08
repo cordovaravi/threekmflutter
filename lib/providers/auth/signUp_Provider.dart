@@ -25,8 +25,6 @@ class SignUpProvider extends ChangeNotifier {
     final response = await _apiProvider.auth(user_check, requestJson);
     //print(response);
     if (response != null) {
-      _isLoading = false;
-      notifyListeners();
       if (response['status'] == 'success') {
         if (response['data']['result']['exist'] == false) {
           print("new user");
@@ -53,12 +51,13 @@ class SignUpProvider extends ChangeNotifier {
             CustomSnackBar(
                 context, Text("There is some error while sending OTP"));
           }
-          // CustomSnackBar(
-          //     context, Text("Looks like your alredy signed up\nPlease Login!"));
-
+          _isLoading = false;
+          notifyListeners();
         }
         // navigate otp scren
       } else {
+        _isLoading = false;
+        notifyListeners();
         Fluttertoast.showToast(msg: "Something went wrong");
       }
     }

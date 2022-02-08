@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:device_info/device_info.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
@@ -23,7 +22,7 @@ class TabBarNavigation extends StatefulWidget {
 }
 
 class _TabBarNavigationState extends State<TabBarNavigation>
-    with TickerProviderStateMixin {
+    with TickerProviderStateMixin, AutomaticKeepAliveClientMixin {
   AnimationController? _animationController1;
   AnimationController? _animationController2;
 
@@ -161,9 +160,14 @@ class _TabBarNavigationState extends State<TabBarNavigation>
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return WillPopScope(
       onWillPop: onWillPop,
       child: ZoomDrawer(
+        openCurve: Curves.easeIn,
+        closeCurve: Curves.easeInOut,
+        showShadow: true,
+        angle: 0.0,
         controller: drawerController,
         menuScreen: DrawerScreen(
           avatar: avatar,
@@ -461,6 +465,9 @@ class _TabBarNavigationState extends State<TabBarNavigation>
       ),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }
 
 class TabsWrapper extends StatefulWidget {

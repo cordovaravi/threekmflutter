@@ -28,19 +28,6 @@ class HomefirstProvider extends ChangeNotifier {
     }
   }
 
-  void submitQuiz({required int quizId}) {
-    _homeModel?.data?.result?.finalposts?.forEach((element) {
-      log("message of quiz ${element.quiz?.isAnswered} ${quizId} ");
-      // element.quiz?.isAnswered = true;
-      notifyListeners();
-      if (element.quiz?.quizId == quizId) {
-        element.quiz?.isAnswered = true;
-        log("this is quiz submited ${element.quiz!.isAnswered}");
-        notifyListeners();
-      }
-    });
-  }
-
   Future<void> onRefresh(requestJson) async {
     await getNewsfirst(requestJson).whenComplete(() => notifyListeners());
   }

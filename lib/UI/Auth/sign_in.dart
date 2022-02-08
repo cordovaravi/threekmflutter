@@ -326,7 +326,9 @@ class _SignInScreenState extends State<SignInScreen> {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (conext) => ForgotPassword()));
+                                    builder: (conext) => ForgotPassword(
+                                          number: widget.phoneNumber,
+                                        )));
                           },
                           child: Container(
                             height: 48,

@@ -219,6 +219,7 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
                 child: TextFormField(
                   controller: searchController,
                   onFieldSubmitted: (value) {
+                    pageNumber = 1;
                     context
                         .read<SearchBarProvider>()
                         .getNewsSearch(query: value);

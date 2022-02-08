@@ -53,7 +53,7 @@ class AddPostProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void removeImages(int Index) {
+  Future removeImages(int Index) async {
     _moreImages.removeAt(Index);
     notifyListeners();
   }
@@ -136,7 +136,7 @@ class AddPostProvider extends ChangeNotifier {
             String _token = await _apiProvider.getToken();
             print("this is token $_token");
             var request = await http.MultipartRequest(
-                'POST', Uri.parse(upload_Imagefile));
+                'POST', Uri.parse(upload_VideoFile));
             request.headers['Authorization'] = _token;
             request.fields['storage_url'] = "post";
             request.fields['record_id'] = "0";
@@ -150,8 +150,8 @@ class AddPostProvider extends ChangeNotifier {
               print("video uploaded");
               if (response["status"] == "success") {
                 log("this is video response${response.toString()}");
-                log(response["photo"]["photo"]);
-                _uploadImageUrls.add(response["photo"]["photo"]);
+                log(response["video"]["video"]);
+                _uploadImageUrls.add(response["video"]["video"]);
                 //log(_uploadImageUrls.toList().toString());
                 if (_moreImages.length == _uploadImageUrls.length) {
                   log("video progress is 100");

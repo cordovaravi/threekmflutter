@@ -46,11 +46,11 @@ class ProfileInfoProvider extends ChangeNotifier {
     return _pref.getString("avatar");
   }
 
-  Future<DateTime?> _getDob() async {
+  Future<String?> _getDob() async {
     SharedPreferences _pref = await SharedPreferences.getInstance();
     String? dob = await _pref.getString("dob");
     log("dob is from function $dob");
-    return DateTime.parse(dob ?? "");
+    return dob;
   }
 
   //String get email =>  _getEmail();
@@ -66,12 +66,15 @@ class ProfileInfoProvider extends ChangeNotifier {
   }
 
   Future<Null> getProfileBasicData() async {
+    String? dateOfBirth = await _getDob();
+    log("this is dob from getDob in basic data $dateOfBirth");
     _avatar = await _getAvatar();
     _userName = await _getName();
     _Phonenumber = await _getPhoneUmber();
     _email = await getEmail();
-    _dob = await _getDob();
-    _Gender = await _getGender();
+    _dob = dateOfBirth != null ? DateTime.parse(dateOfBirth) : null;
+
+    _Gender = await _getGender() ?? null;
     log("dob is $_dob");
 
     notifyListeners();
@@ -176,6 +179,18 @@ class ProfileInfoProvider extends ChangeNotifier {
   String gender = "";
   changeGender(String value) {
     gender = value;
+    notifyListeners();
+  }
+
+  void resetAll() {
+    _avatar = null;
+    _userName = null;
+    _Phonenumber = null;
+    _email = null;
+    _dob = null;
+
+    _Gender = null;
+
     notifyListeners();
   }
 

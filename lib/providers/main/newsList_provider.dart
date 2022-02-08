@@ -40,12 +40,16 @@ class NewsListProvider extends ChangeNotifier {
     }
   }
 
+  bool _gettingMorePost = false;
+  bool get getttingMorePosts => this._gettingMorePost;
   // getter for news
   NewsbyCategoryModel? _newsbyCategories;
   NewsbyCategoryModel? get newsBycategory => _newsbyCategories;
 
   Future<Null> getNewsPost(title, mounted, int takeCOunt, int skipCount,
       bool isNewCall, List? isfromBaner) async {
+    _gettingMorePost = true;
+    notifyListeners();
     var tempList = _newsbyCategories?.data?.result?.posts;
     List postIds = [];
     if (isfromBaner == null) {
@@ -83,15 +87,19 @@ class NewsListProvider extends ChangeNotifier {
           if (tempList != null && isNewCall == false) {
             tempList.addAll(_newsbyCategories!.data!.result!.posts!);
             _newsbyCategories!.data!.result!.posts = tempList;
+            notifyListeners();
           }
+          _gettingMorePost = false;
           notifyListeners();
         } else if (response["status"] == "failed") {
           _state = "error";
+          _gettingMorePost = false;
           notifyListeners();
           CustomSnackBar(navigatorKey.currentContext!, Text(response["error"]));
         }
       } on Exception catch (e) {
         _state = 'error';
+        _gettingMorePost = false;
         notifyListeners();
         _newsbyCategories = null;
       }

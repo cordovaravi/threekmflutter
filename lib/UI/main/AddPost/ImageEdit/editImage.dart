@@ -7,9 +7,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:provider/src/provider.dart';
 import 'package:threekm/UI/main/AddPost/AddNewPost.dart';
 import 'package:threekm/UI/main/News/NewsList.dart';
+import 'package:threekm/providers/Widgets/local_player.dart';
 import 'package:threekm/providers/main/AddPost_Provider.dart';
 import 'package:threekm/utils/utils.dart';
 import 'package:video_player/video_player.dart';
@@ -203,6 +205,14 @@ class _EditImageState extends State<EditImage> {
                                             .getMoreImages[imageselectedIndex]
                                             .path);
                                       });
+                                      context
+                                          .read<LocalPlayerProvider>()
+                                          .pathChanged(
+                                              path: imageList
+                                                  .getMoreImages[
+                                                      imageselectedIndex]
+                                                  .path);
+                                      print(ImageEditingFile?.path);
                                     },
                                     child: Container(
                                       height: 60,
@@ -281,59 +291,65 @@ class _EditImageState extends State<EditImage> {
                               );
                             },
                           )
-                        : Container(
-                            height: 300,
-                            width: MediaQuery.of(context).size.width,
-                            child: Chewie(
-                                controller: ChewieController(
-                                    videoPlayerController:
-                                        VideoPlayerController.file(
-                                            ImageEditingFile!)))),
-                  )
+                        : Consumer<LocalPlayerProvider>(
+                            builder: (context, controller, _) {
+                            return Container(
+                                height: 300,
+                                width: MediaQuery.of(context).size.width,
+                                child: LocalPlayer(
+                                  url: controller.videoPath!,
+                                ));
+                          }))
                 : Container(),
             Spacer(),
             imageList.getMoreImages.length > 0
-                // &&
-                //         imageList.getMoreImages[imageselectedIndex].runtimeType
-                //             is Image
-                ? ButtonBar(
-                    alignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                        TextButton.icon(
-                            onPressed: () {
-                              //editorKey.currentState!.flip();
-                              imageKey[imageselectedIndex].currentState!.flip();
-                            },
-                            icon: Icon(Icons.flip),
-                            label: Text("Flip")),
-                        // TextButton.icon(
-                        //     onPressed: () {
-                        //       editorKey.currentState!.rotate(right: false);
-                        //     },
-                        //     icon: Icon(FeatherIcons.rotateCcw),
-                        //     label: Text("Rotat")),
-                        TextButton.icon(
-                            onPressed: () {
-                              //editorKey.currentState!.rotate();
-                              imageKey[imageselectedIndex]
-                                  .currentState!
-                                  .rotate();
-                            },
-                            icon: Icon(Icons.rotate_right),
-                            label: Text("Rotat right")),
-                        TextButton.icon(
-                            onPressed: () {
-                              imageKey[imageselectedIndex]
-                                  .currentState!
-                                  .reset();
-                              // editorKey.currentState!.reset();
-                              // setState(() {
-                              //   ImageEditingFile = File(widget.images.path);
-                              // });
-                            },
-                            icon: Icon(Icons.restore),
-                            label: Text("Reset"))
-                      ])
+                ? imageList.getMoreImages[imageselectedIndex].path
+                            .contains(".png") ||
+                        imageList.getMoreImages[imageselectedIndex].path
+                            .contains(".jpg") ||
+                        imageList.getMoreImages[imageselectedIndex].path
+                            .contains(".jpeg")
+                    ? ButtonBar(
+                        alignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                            TextButton.icon(
+                                onPressed: () {
+                                  //editorKey.currentState!.flip();
+                                  imageKey[imageselectedIndex]
+                                      .currentState!
+                                      .flip();
+                                },
+                                icon: Icon(Icons.flip),
+                                label: Text("Flip")),
+                            // TextButton.icon(
+                            //     onPressed: () {
+                            //       editorKey.currentState!.rotate(right: false);
+                            //     },
+                            //     icon: Icon(FeatherIcons.rotateCcw),
+                            //     label: Text("Rotat")),
+                            TextButton.icon(
+                                onPressed: () {
+                                  //editorKey.currentState!.rotate();
+                                  imageKey[imageselectedIndex]
+                                      .currentState!
+                                      .rotate();
+                                },
+                                icon: Icon(Icons.rotate_right),
+                                label: Text("Rotat right")),
+                            TextButton.icon(
+                                onPressed: () {
+                                  imageKey[imageselectedIndex]
+                                      .currentState!
+                                      .reset();
+                                  // editorKey.currentState!.reset();
+                                  // setState(() {
+                                  //   ImageEditingFile = File(widget.images.path);
+                                  // });
+                                },
+                                icon: Icon(Icons.restore),
+                                label: Text("Reset"))
+                          ])
+                    : SizedBox.shrink()
                 : Container(),
             Spacer()
           ],
@@ -555,6 +571,9 @@ class _EditImageState extends State<EditImage> {
                                 .read<AddPostProvider>()
                                 .addImages(File(image.path));
                             Navigator.pop(context);
+                            context
+                                .read<LocalPlayerProvider>()
+                                .pathChanged(path: image.path);
                           }
                         },
                         child: Container(
@@ -616,6 +635,72 @@ class _EditImageState extends State<EditImage> {
           ),
         );
       },
+    );
+  }
+}
+
+class LocalPlayer extends StatefulWidget {
+  final String url;
+  LocalPlayer({required this.url, Key? key}) : super(key: key);
+
+  @override
+  _LocalPlayerState createState() => _LocalPlayerState();
+}
+
+class _LocalPlayerState extends State<LocalPlayer> {
+  late VideoPlayerController _controller;
+
+  @override
+  void initState() {
+    print("url from ${widget.url}");
+    _controller = VideoPlayerController.file(File(widget.url));
+    _controller.addListener(() {
+      setState(() {});
+    });
+    _controller.initialize().then((_) => setState(() {}));
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: GestureDetector(
+        onTap: () {
+          _controller.value.isPlaying
+              ? _controller.pause()
+              : _controller.play();
+        },
+        child: Stack(
+          alignment: Alignment.bottomCenter,
+          children: [
+            VideoPlayer(_controller),
+            AnimatedSwitcher(
+              duration: Duration(milliseconds: 50),
+              reverseDuration: Duration(milliseconds: 200),
+              child: _controller.value.isPlaying
+                  ? SizedBox.shrink()
+                  : Container(
+                      color: Colors.black26,
+                      child: Center(
+                        child: Icon(
+                          Icons.play_arrow,
+                          color: Colors.white,
+                          size: 100.0,
+                          semanticLabel: 'Play',
+                        ),
+                      ),
+                    ),
+            ),
+            VideoProgressIndicator(_controller, allowScrubbing: true),
+          ],
+        ),
+      ),
     );
   }
 }

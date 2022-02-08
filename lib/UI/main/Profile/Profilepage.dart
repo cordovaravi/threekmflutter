@@ -546,11 +546,14 @@ class _ProfilePageState extends State<ProfilePage> {
     return Consumer<ProfileInfoProvider>(builder: (context, controller, _) {
       Future<void> _selectDate(BuildContext context) async {
         final DateTime? picked = await showDatePicker(
+            initialEntryMode: DatePickerEntryMode.calendarOnly,
+            initialDatePickerMode: DatePickerMode.day,
             context: context,
             initialDate: DateTime.now(),
             firstDate: DateTime(1960, 8),
             lastDate: DateTime.now().add(Duration(minutes: 10)));
         if (picked != null) {
+          print("dob from context $picked");
           context.read<ProfileInfoProvider>().setDob(dob: picked);
         }
       }
