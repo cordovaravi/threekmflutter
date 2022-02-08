@@ -9,6 +9,7 @@ import 'package:threekm/Models/shopModel/order_details_model.dart'
 import 'package:threekm/Models/shopModel/order_model.dart';
 import 'package:threekm/Models/shopModel/shipping_rate_model.dart';
 import 'package:threekm/UI/shop/checkout/checkout_success.dart';
+import 'package:threekm/UI/shop/checkout/order_detail.dart';
 import 'package:threekm/commenwidgets/commenwidget.dart';
 import 'package:threekm/main.dart';
 import 'package:threekm/networkservice/Api_Provider.dart';
@@ -100,7 +101,8 @@ class CheckoutProvider extends ChangeNotifier {
         "customer_phone": 8087618710,
         "distance": "9 Km",
         "drop_location": dropLocation,
-        "shipping_amount": creatorid.get('id') == 6232 ? 0 : shippingAmount,
+        "shipping_amount": shippingAmount,
+        // "shipping_amount": creatorid.get('id') == 6232 ? 0 : shippingAmount,
         "is_barter": false
       };
       final response = await _apiProvider.post(
@@ -109,7 +111,10 @@ class CheckoutProvider extends ChangeNotifier {
       if (response != null) {
         _OrderRes = OrderModel.fromJson(response);
         if (_OrderRes.StatusCode != null) {
-          log('create order process done ${_OrderRes.result?.orderId} ');
+          log('create order process done ${_OrderRes.result?.projectId} ');
+          var orderBox = await Hive.openBox('orderinfo');
+          orderBox.put('orderId', _OrderRes.result?.projectId);
+          orderBox.put('mode', mode);
           openCheckout(
               amount: shippingAmount,
               orderID: _OrderRes.result?.orderId,
@@ -135,10 +140,12 @@ class CheckoutProvider extends ChangeNotifier {
   void openCheckout({amount, orderID, rzorderID}) async {
     var creatorid = Hive.box('restrocreatorID');
     var options = {
-      'key': 'rzp_test_aHjwjcGgXECVhv',
-      'amount': creatorid.get('id') == 6232 ? 1 * 100 : amount * 100,
-      //'order_id': orderID,
-      'rzorder_id': rzorderID,
+      'key': 'rzp_live_xcgamtZiTgvjWA',
+      //'amount': 444,
+      // 'amount': creatorid.get('id') == 6232 ? 1 * 100 : amount * 100,
+      'currency': 'INR',
+      'order_id': rzorderID,
+      'productorder_id': orderID,
       'name': 'Bulb And Key.',
       'description': 'Order Pay description',
       'retry': {'enabled': true, 'max_count': 1},
@@ -154,20 +161,38 @@ class CheckoutProvider extends ChangeNotifier {
       _razorpay.open(options);
     } catch (e) {
       debugPrint('Error: $e');
+      log(e.toString());
     }
   }
 
-  void _handlePaymentSuccess(PaymentSuccessResponse response) {
+  void _handlePaymentSuccess(PaymentSuccessResponse response) async {
     log('${response.paymentId}  ${response.orderId}sssssssssssssssssssssssssssssssssssssssssssss');
+    log(response.toString());
+    log('success payment ');
+    var orderbox = await Hive.box('orderinfo');
+    var orderId = await orderbox.get('orderId');
+    var mode = await orderbox.get('mode');
     navigatorKey.currentState?.pop();
     navigatorKey.currentState?.pop();
-    CheckoutSuccess(navigatorKey.currentContext,'',1222);
+    navigatorKey.currentState?.pop();
+    deleteRestroCartData(mode);
+    navigatorKey.currentState?.push(
+      PageRouteBuilder(
+          pageBuilder: (context, _, __) => OrderDetails(
+                orderId: orderId,
+                showOrderDetail: false,
+              ),
+          opaque: false),
+    );
+
     // Fluttertoast.showToast(
     //     msg: "SUCCESS: " + response.paymentId!, toastLength: Toast.LENGTH_SHORT);
   }
 
   void _handlePaymentError(PaymentFailureResponse response) {
     log('${response.code}, ${response.message}  eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee');
+    var orderbox = Hive.box('orderinfo');
+    orderbox.clear();
     navigatorKey.currentState?.pop();
     navigatorKey.currentState?.pop();
     // Fluttertoast.showToast(
@@ -183,16 +208,33 @@ class CheckoutProvider extends ChangeNotifier {
 // after order
   getOrderDetail(projectId) async {
     _state = 'loading';
+    showLoading();
     try {
       final response = await _apiProvider.get('${orderDetails}?id=$projectId');
       if (response != null) {
+        // log(response.toString());
         _orderDetail = OrderDetailModel.OrderDetailModel.fromJson(response);
         _state = 'loaded';
+        hideLoading();
         notifyListeners();
       }
     } catch (e) {
       _state = 'error';
       notifyListeners();
+    }
+  }
+
+  deleteRestroCartData(mode) async {
+    if (mode == 'shop') {
+      Box _creatorIDBox = await Hive.openBox('creatorID');
+      Box _cartBox = await Hive.openBox('cartBox');
+      _creatorIDBox.clear();
+      _cartBox.clear();
+    } else {
+      Box _restrocreatorIDBox = await Hive.openBox('restrocreatorID');
+      Box _restroCartBox = await Hive.openBox('restroCartBox');
+      _restrocreatorIDBox.clear();
+      _restroCartBox.clear();
     }
   }
 }

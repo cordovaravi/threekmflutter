@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -58,7 +59,7 @@ class _BusinessesHomeState extends State<BusinessesHome>
             );
           } else if (businessesHomeProvider.state == "error") {
             context.read<BusinessesHomeProvider>().getBusinesses(mounted);
-            return Center(child: Text("error"));
+            return Center(child: Text(""));
           } else if (businessesHomeProvider.state == "loaded") {
             return businessesHomeProvider.businessesHomedata != null
                 ? Home()
@@ -232,22 +233,30 @@ class _HomeState extends State<Home> {
                         var advData = data?.result?.advertisements?[i];
                         return Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: Material(
-                            borderRadius: BorderRadius.circular(10),
-                            elevation: 1,
-                            child: ClipRRect(
-                                borderRadius: BorderRadius.circular(10),
-                                child: CachedNetworkImage(
-                                    imageUrl: '${advData?.images.first}',
-                                    width: ThreeKmScreenUtil.screenWidthDp /
-                                        1.1888,
-                                    // height: ThreeKmScreenUtil.screenHeightDp / 19,
-                                    fit: BoxFit.fill,
-                                    placeholder: (context, url) =>
-                                        Shimmer.fromColors(
-                                            baseColor: Colors.grey[700]!,
-                                            highlightColor: Colors.grey[100]!,
-                                            child: Container()))),
+                          child: InkWell(
+                            onTap: () {
+                              log('${advData?.imagesWcta?[0].business}');
+                              log('${advData?.imagesWcta?[0].product}');
+                              log('${advData?.imagesWcta?[0].website}');
+                              log('${advData?.imagesWcta?[0].phone}');
+                            },
+                            child: Material(
+                              borderRadius: BorderRadius.circular(10),
+                              elevation: 1,
+                              child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(10),
+                                  child: CachedNetworkImage(
+                                      imageUrl: '${advData?.images.first}',
+                                      width: ThreeKmScreenUtil.screenWidthDp /
+                                          1.1888,
+                                      // height: ThreeKmScreenUtil.screenHeightDp / 19,
+                                      fit: BoxFit.fill,
+                                      placeholder: (context, url) =>
+                                          Shimmer.fromColors(
+                                              baseColor: Colors.grey[700]!,
+                                              highlightColor: Colors.grey[100]!,
+                                              child: Container()))),
+                            ),
                           ),
                         );
                       }),

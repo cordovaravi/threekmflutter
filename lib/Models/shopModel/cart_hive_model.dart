@@ -18,6 +18,10 @@ class CartHiveModel extends HiveObject {
   int? variationId;
   @HiveField(6)
   num? weight;
+  @HiveField(7)
+  int? creatorId;
+  @HiveField(8)
+  String? creatorName;
 
   CartHiveModel(
       {this.image,
@@ -26,7 +30,9 @@ class CartHiveModel extends HiveObject {
       this.quantity = 1,
       this.id,
       this.variationId,
-      this.weight});
+      this.weight,
+      this.creatorId,
+      this.creatorName});
 
   CartHiveModel.fromJson(Map<String, dynamic> json) {
     image = json['image'] ?? "";
@@ -36,6 +42,8 @@ class CartHiveModel extends HiveObject {
     id = json['id'];
     variationId = json['variationId'];
     weight = json['weight'];
+    creatorId = json['creatorId'];
+    creatorName = json['creatorName'];
   }
 
   Map<String, dynamic> toJson() {
@@ -47,6 +55,8 @@ class CartHiveModel extends HiveObject {
     _data['id'] = id;
     _data['variationId'] = variationId;
     _data['weight'] = weight;
+    _data['creatorId'] = creatorId;
+    _data['creatorName'] = creatorName;
     return _data;
   }
 }

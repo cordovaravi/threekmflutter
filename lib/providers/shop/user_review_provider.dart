@@ -28,14 +28,14 @@ class UserReviewProvider extends ChangeNotifier {
         for (int i = 0; i < images.length; i++) {
           MultipartFile mFile =
               //await MultipartFile.fromPath('images', images[i].path);
-            MultipartFile(
-              'images',
-              File(images[i].path).readAsBytes().asStream(),
-              File(images[i].path).lengthSync(),
-              filename: images[i].path.split("/").last);
+              MultipartFile(
+                  'images',
+                  File(images[i].path).readAsBytes().asStream(),
+                  File(images[i].path).lengthSync(),
+                  filename: images[i].path.split("/").last);
           request.files.add(mFile);
         }
-        request.headers['Authorization'] = '5ed25e0696d24658f93d8a9a';
+        request.headers['Authorization'] = _apiProvider.getToken();
         request.fields['module'] = 'catalog';
         request.fields['entity_id'] = entity_id.toString();
         request.fields['rating'] = rating.toString();

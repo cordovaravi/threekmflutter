@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter/cupertino.dart';
 import 'package:threekm/commenwidgets/commenwidget.dart';
@@ -50,10 +51,21 @@ class ShopHomeProvider extends ChangeNotifier {
 
   RestaurantsModel? _restaurantData;
   RestaurantsModel? get restaurantData => _restaurantData;
-  Future<Null> getRestaurants(mounted, page) async {
+  Future<Null> getRestaurants(mounted, page, {query, lat, lng}) async {
     final _location = await _locationProvider.getlocationData;
-    var requestJson = json.encode({"lat": _location?.latitude ?? '', "lng": _location?.longitude ?? '', "page": page});
-
+    var requestJson = json.encode(query != null
+        ? {
+            "lat": lat != null ? lat : _location?.latitude ?? '',
+            "lng": lng != null ? lng : _location?.longitude ?? '',
+            "page": page,
+            'query': query
+          }
+        : {
+            "lat": lat != null ? lat : _location?.latitude ?? '',
+            "lng": lng != null ? lng : _location?.longitude ?? '',
+            "page": page
+          });
+    log('${requestJson.toString()}++++++++++++++++++++++++++');
     if (mounted) {
       try {
         final response = await _apiProvider.post(restaurants, requestJson);
@@ -67,19 +79,22 @@ class ShopHomeProvider extends ChangeNotifier {
           _prepageno = page;
           notifyListeners();
         }
-      } on Exception 
-      catch (e) {
+      } on Exception catch (e) {
         _state = 'error';
         notifyListeners();
       }
     }
   }
 
-  clearrestaurentListState(mounted) {
+  clearrestaurantListState(mounted, {bool isPagechange = true}) {
     if (mounted) {
-      _allCreators = [];
-      _prepageno = 0;
-      // notifyListeners();
+      if (isPagechange) {
+        _allCreators = [];
+        _prepageno = 0;
+        // notifyListeners();
+      } else {
+        _allCreators = [];
+      }
     }
   }
 

@@ -18,7 +18,7 @@ class BusinessDetailProvider extends ChangeNotifier {
   Future<Null> getBusinessesDetail(mounted, id) async {
     if (mounted) {
       _state = 'loading';
-      Future.delayed(Duration.zero, () async {
+      Future.delayed(Duration.zero, () {
         showLoading();
       });
       try {

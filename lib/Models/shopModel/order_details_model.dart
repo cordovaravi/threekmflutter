@@ -5,8 +5,8 @@ class OrderDetailModel {
   });
   late final int StatusCode;
   late final Result result;
-  
-  OrderDetailModel.fromJson(Map<String, dynamic> json){
+
+  OrderDetailModel.fromJson(Map<String, dynamic> json) {
     StatusCode = json['StatusCode'];
     result = Result.fromJson(json['Result']);
   }
@@ -24,8 +24,8 @@ class Result {
     required this.order,
   });
   late final Order order;
-  
-  Result.fromJson(Map<String, dynamic> json){
+
+  Result.fromJson(Map<String, dynamic> json) {
     order = Order.fromJson(json['order']);
   }
 
@@ -81,10 +81,12 @@ class Order {
   late final String orderId;
   late final String type;
   late final List<Cart> cart;
-  
-  Order.fromJson(Map<String, dynamic> json){
+
+  Order.fromJson(Map<String, dynamic> json) {
     projectId = json['project_id'];
-    lineItems = List.from(json['line_items']).map((e)=>LineItems.fromJson(e)).toList();
+    lineItems = List.from(json['line_items'])
+        .map((e) => LineItems.fromJson(e))
+        .toList();
     soldby = json['soldby'];
     sellerDp = json['seller_dp'];
     centerStatus = json['center_status'];
@@ -95,21 +97,21 @@ class Order {
     month = json['month'];
     year = json['year'];
     deliveryLogs = List.castFrom<dynamic, dynamic>(json['delivery_logs']);
-    hasDelivery = json['has_delivery'];
+    hasDelivery = json['has_delivery'] ?? false;
     orderType = json['order_type'];
-    cuisines = json['cuisines'];
+    cuisines = json['cuisines'] ?? '';
     address = Address.fromJson(json['address']);
     customer = json['customer'];
     phone = json['phone'];
     orderId = json['order_id'];
     type = json['type'];
-    cart = List.from(json['cart']).map((e)=>Cart.fromJson(e)).toList();
+    cart = List.from(json['cart']).map((e) => Cart.fromJson(e)).toList();
   }
 
   Map<String, dynamic> toJson() {
     final _data = <String, dynamic>{};
     _data['project_id'] = projectId;
-    _data['line_items'] = lineItems.map((e)=>e.toJson()).toList();
+    _data['line_items'] = lineItems.map((e) => e.toJson()).toList();
     _data['soldby'] = soldby;
     _data['seller_dp'] = sellerDp;
     _data['center_status'] = centerStatus;
@@ -128,7 +130,7 @@ class Order {
     _data['phone'] = phone;
     _data['order_id'] = orderId;
     _data['type'] = type;
-    _data['cart'] = cart.map((e)=>e.toJson()).toList();
+    _data['cart'] = cart.map((e) => e.toJson()).toList();
     return _data;
   }
 }
@@ -150,8 +152,8 @@ class LineItems {
   late final int price;
   late final int quantity;
   late final int subtotal;
-  
-  LineItems.fromJson(Map<String, dynamic> json){
+
+  LineItems.fromJson(Map<String, dynamic> json) {
     name = json['name'];
     image = json['image'];
     soldby = json['soldby'];
@@ -191,12 +193,12 @@ class Delivery {
   late final String paidBy;
   late final String status;
   late final String color;
-  
-  Delivery.fromJson(Map<String, dynamic> json){
+
+  Delivery.fromJson(Map<String, dynamic> json) {
     time = json['time'];
     icon = json['icon'];
     vehicle = json['vehicle'];
-    cost = json['cost'];
+    cost = json['cost'] ?? 0;
     paidBy = json['paid_by'];
     status = json['status'];
     color = json['color'];
@@ -232,7 +234,7 @@ class Address {
     required this.latitude,
     required this.longitude,
     required this.addressType,
-     this.id,
+    this.id,
   });
   late final int addressId;
   late final String flatNo;
@@ -250,8 +252,8 @@ class Address {
   late final double longitude;
   late final String addressType;
   late final Null id;
-  
-  Address.fromJson(Map<String, dynamic> json){
+
+  Address.fromJson(Map<String, dynamic> json) {
     addressId = json['address_id'];
     flatNo = json['flat_no'];
     firstname = json['firstname'];
@@ -308,23 +310,23 @@ class Cart {
   late final int id;
   late final String name;
   late final int price;
-  late final double weight;
+  late var weight;
   late final int quantity;
   late final int subtotal;
-  late final int tax;
-  late final int total;
+  late var tax;
+  late var total;
   late final String image;
   late final String sku;
-  
-  Cart.fromJson(Map<String, dynamic> json){
+
+  Cart.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     name = json['name'];
     price = json['price'];
     weight = json['weight'];
     quantity = json['quantity'];
     subtotal = json['subtotal'];
-    tax = json['tax'];
-    total = json['total'];
+    tax = json['tax'] ?? 0.0;
+    total = json['total'] ?? 0;
     image = json['image'];
     sku = json['sku'];
   }

@@ -2,11 +2,15 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/src/provider.dart';
+import 'package:threekm/Custom_library/GooleMapsWidget/src/google_map_place_picker.dart';
 import 'package:threekm/UI/businesses/view_all_offering.dart';
+import 'package:threekm/UI/shop/cart/cart_item_list_modal.dart';
 import 'package:threekm/UI/shop/product/product_details.dart';
 import 'package:threekm/UI/shop/product_card_home.dart';
+import 'package:threekm/commenwidgets/creatorLocation.dart';
 import 'package:threekm/providers/businesses/businesses_detail_provider.dart';
 import 'package:threekm/providers/businesses/businesses_wishlist_provider.dart';
 import 'package:threekm/utils/utils.dart';
@@ -28,6 +32,7 @@ class _BusinessDetailState extends State<BusinessDetail> {
   bool isvisible = false;
   int _counter = 0;
   GlobalKey<State> key = GlobalKey();
+  GlobalKey appBarKey = GlobalKey();
   @override
   void initState() {
     super.initState();
@@ -49,6 +54,7 @@ class _BusinessDetailState extends State<BusinessDetail> {
     var statusData = context.watch<BusinessDetailProvider>().state;
 
     return Scaffold(
+      key: appBarKey,
       extendBodyBehindAppBar: true,
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -89,7 +95,7 @@ class _BusinessDetailState extends State<BusinessDetail> {
                   color: Colors.white,
                 ),
                 onPressed: () {
-                  //viewCart(context, 'shop');
+                  viewCart(context, 'shop');
                 }),
           ),
         ],
@@ -298,8 +304,7 @@ class _BusinessDetailState extends State<BusinessDetail> {
                                   child: Row(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.center,
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
+                                    mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       if (isvisible)
                                         ElevatedButton.icon(
@@ -374,37 +379,37 @@ class _BusinessDetailState extends State<BusinessDetail> {
                                               style: ThreeKmTextConstants
                                                   .tk14PXPoppinsBlackMedium,
                                             )),
-                                      if (isvisible)
-                                        ElevatedButton.icon(
-                                            onPressed: () async {},
-                                            style: ButtonStyle(
-                                                shape: MaterialStateProperty.all(
-                                                    const StadiumBorder()),
-                                                backgroundColor: MaterialStateProperty.all(
-                                                    const Color(0xFFFF5858)),
-                                                foregroundColor:
-                                                    MaterialStateProperty.all(
-                                                        Colors.white),
-                                                elevation:
-                                                    MaterialStateProperty.all(
-                                                        5),
-                                                shadowColor:
-                                                    MaterialStateProperty.all(
-                                                        Color(0xFFFC5E6A33)),
-                                                padding:
-                                                    MaterialStateProperty.all(
-                                                        const EdgeInsets.only(
-                                                            left: 30,
-                                                            right: 30,
-                                                            top: 15,
-                                                            bottom: 15))),
-                                            icon:
-                                                const Icon(Icons.shopping_cart_rounded),
-                                            label: Text(
-                                              'Shop',
-                                              style: ThreeKmTextConstants
-                                                  .tk14PXPoppinsWhiteMedium,
-                                            )),
+                                      // if (isvisible)
+                                      //   ElevatedButton.icon(
+                                      //       onPressed: () async {},
+                                      //       style: ButtonStyle(
+                                      //           shape: MaterialStateProperty.all(
+                                      //               const StadiumBorder()),
+                                      //           backgroundColor: MaterialStateProperty.all(
+                                      //               const Color(0xFFFF5858)),
+                                      //           foregroundColor:
+                                      //               MaterialStateProperty.all(
+                                      //                   Colors.white),
+                                      //           elevation:
+                                      //               MaterialStateProperty.all(
+                                      //                   5),
+                                      //           shadowColor:
+                                      //               MaterialStateProperty.all(
+                                      //                   Color(0xFFFC5E6A33)),
+                                      //           padding:
+                                      //               MaterialStateProperty.all(
+                                      //                   const EdgeInsets.only(
+                                      //                       left: 30,
+                                      //                       right: 30,
+                                      //                       top: 15,
+                                      //                       bottom: 15))),
+                                      //       icon:
+                                      //           const Icon(Icons.shopping_cart_rounded),
+                                      //       label: Text(
+                                      //         'Shop',
+                                      //         style: ThreeKmTextConstants
+                                      //             .tk14PXPoppinsWhiteMedium,
+                                      //       )),
                                     ],
                                   ),
                                 ),
@@ -497,6 +502,17 @@ class _BusinessDetailState extends State<BusinessDetail> {
                                     top: 20,
                                   ),
                                   child: ListTile(
+                                    onTap: () {
+                                      Navigator.push(context,
+                                          MaterialPageRoute(builder: (_) {
+                                        return CreatorLocation(
+                                          initialTarget: LatLng(
+                                              data.creator.addressObj.latitude,
+                                              data.creator.addressObj
+                                                  .longitude),
+                                        );
+                                      }));
+                                    },
                                     dense: true,
                                     leading: Container(
                                       decoration: const BoxDecoration(
@@ -556,8 +572,10 @@ class _BusinessDetailState extends State<BusinessDetail> {
                                             shrinkWrap: true,
                                             gridDelegate:
                                                 const SliverGridDelegateWithFixedCrossAxisCount(
-                                                    crossAxisCount: 2,
-                                                    childAspectRatio: 0.69),
+                                              crossAxisCount: 2,
+                                              mainAxisExtent: 260,
+                                              // childAspectRatio: 0.69
+                                            ),
                                             itemCount: data.products.length,
                                             itemBuilder:
                                                 (BuildContext ctxt, int index) {
@@ -610,7 +628,9 @@ class _BusinessDetailState extends State<BusinessDetail> {
                                                     context: context,
                                                     heading: Text(
                                                         '${productData.name}',
-                                                        maxLines: 2,
+                                                        maxLines: 1,
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
                                                         style: ThreeKmTextConstants
                                                             .tk14PXPoppinsBlackBold),
                                                     subHeading: Text(
@@ -710,7 +730,7 @@ class _BusinessDetailState extends State<BusinessDetail> {
                   child: SizedBox(
                     height: 60,
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         ElevatedButton.icon(
                             onPressed: () {
@@ -773,54 +793,54 @@ class _BusinessDetailState extends State<BusinessDetail> {
                               style:
                                   ThreeKmTextConstants.tk14PXPoppinsBlackMedium,
                             )),
-                        ElevatedButton.icon(
-                            onPressed: () async {
-                              print('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
-                              // context
-                              //     .read<CartProvider>()
-                              //     .addToCart(
-                              //         image: product?.image,
-                              //         name: product?.name,
-                              //         price: product?.price,
-                              //         quantity: 1,
-                              //         id: product?.catalogId,
-                              //         variationId: 0);
+                        // ElevatedButton.icon(
+                        //     onPressed: () async {
+                        //       print('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
+                        //       // context
+                        //       //     .read<CartProvider>()
+                        //       //     .addToCart(
+                        //       //         image: product?.image,
+                        //       //         name: product?.name,
+                        //       //         price: product?.price,
+                        //       //         quantity: 1,
+                        //       //         id: product?.catalogId,
+                        //       //         variationId: 0);
 
-                              // context.read<CartProvider>().addItemToCart(
-                              //       context: context,
-                              //       creatorId: product?.creatorId,
-                              //       image: product?.image,
-                              //       name: product?.name,
-                              //       price: price != 0 ? price : product?.price,
-                              //       quantity: 1,
-                              //       id: product?.catalogId,
-                              //       variationId: variationid,
-                              //       weight:
-                              //           weight != 0 ? weight : product?.weight,
-                              //     );
-                            },
-                            style: ButtonStyle(
-                                shape: MaterialStateProperty.all(
-                                    const StadiumBorder()),
-                                backgroundColor: MaterialStateProperty.all(
-                                    const Color(0xFFFF5858)),
-                                foregroundColor:
-                                    MaterialStateProperty.all(Colors.white),
-                                elevation: MaterialStateProperty.all(5),
-                                shadowColor: MaterialStateProperty.all(
-                                    const Color(0xFFFC5E6A33)),
-                                padding: MaterialStateProperty.all(
-                                    const EdgeInsets.only(
-                                        left: 30,
-                                        right: 30,
-                                        top: 15,
-                                        bottom: 15))),
-                            icon: const Icon(Icons.shopping_cart_rounded),
-                            label: Text(
-                              'Shop',
-                              style:
-                                  ThreeKmTextConstants.tk14PXPoppinsWhiteMedium,
-                            )),
+                        //       // context.read<CartProvider>().addItemToCart(
+                        //       //       context: context,
+                        //       //       creatorId: product?.creatorId,
+                        //       //       image: product?.image,
+                        //       //       name: product?.name,
+                        //       //       price: price != 0 ? price : product?.price,
+                        //       //       quantity: 1,
+                        //       //       id: product?.catalogId,
+                        //       //       variationId: variationid,
+                        //       //       weight:
+                        //       //           weight != 0 ? weight : product?.weight,
+                        //       //     );
+                        //     },
+                        //     style: ButtonStyle(
+                        //         shape: MaterialStateProperty.all(
+                        //             const StadiumBorder()),
+                        //         backgroundColor: MaterialStateProperty.all(
+                        //             const Color(0xFFFF5858)),
+                        //         foregroundColor:
+                        //             MaterialStateProperty.all(Colors.white),
+                        //         elevation: MaterialStateProperty.all(5),
+                        //         shadowColor: MaterialStateProperty.all(
+                        //             const Color(0xFFFC5E6A33)),
+                        //         padding: MaterialStateProperty.all(
+                        //             const EdgeInsets.only(
+                        //                 left: 30,
+                        //                 right: 30,
+                        //                 top: 15,
+                        //                 bottom: 15))),
+                        //     icon: const Icon(Icons.shopping_cart_rounded),
+                        //     label: Text(
+                        //       'Shop',
+                        //       style:
+                        //           ThreeKmTextConstants.tk14PXPoppinsWhiteMedium,
+                        //     )),
                       ],
                     ),
                   )),

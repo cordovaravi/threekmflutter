@@ -99,6 +99,8 @@ const String Search_Business = "business/geolist";
 
 // order detail
 const String orderDetails = 'customer/orders/view';
+const String shopPastOrder = 'customer/shop_orders/list';
+const String menuPastOrder = 'customer/menu_orders/list';
 const String Search_News = "newspost/geolistelastic";
 
 // Notification

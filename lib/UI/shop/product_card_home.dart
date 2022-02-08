@@ -34,26 +34,23 @@ class BuildCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Flexible(
-              flex: 1,
-              child: SizedBox(
-                height: 160.0,
-                width: double.infinity,
-                child: ClipRRect(
-                  borderRadius: const BorderRadius.all(Radius.circular(20)),
-                  child: CachedNetworkImage(
-                    alignment: Alignment.topCenter,
-                    placeholder: (context, url) => Transform.scale(
-                      scale: 0.5,
-                      child: CircularProgressIndicator(
-                        color: Colors.grey[400],
-                      ),
+            SizedBox(
+              height: 160.0,
+              width: double.infinity,
+              child: ClipRRect(
+                borderRadius: const BorderRadius.all(Radius.circular(20)),
+                child: CachedNetworkImage(
+                  alignment: Alignment.topCenter,
+                  placeholder: (context, url) => Transform.scale(
+                    scale: 0.5,
+                    child: CircularProgressIndicator(
+                      color: Colors.grey[400],
                     ),
-                    imageUrl: cardImage,
-                    // height: ThreeKmScreenUtil.screenHeightDp / 3,
-                    // width: ThreeKmScreenUtil.screenWidthDp,
-                    fit: BoxFit.fill,
                   ),
+                  imageUrl: cardImage,
+                  // height: ThreeKmScreenUtil.screenHeightDp / 3,
+                  // width: ThreeKmScreenUtil.screenWidthDp,
+                  fit: BoxFit.fill,
                 ),
               ),
             ),

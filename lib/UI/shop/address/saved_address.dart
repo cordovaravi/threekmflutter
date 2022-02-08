@@ -200,7 +200,7 @@ class _SavedAddressState extends State<SavedAddress> {
                               title: Padding(
                                 padding: const EdgeInsets.only(top: 10),
                                 child: Text(
-                                  '${address?.addressType}',
+                                  '${address?.firstname} ${address?.lastname}',
                                   style: ThreeKmTextConstants
                                       .tk14PXPoppinsBlackSemiBold
                                       .copyWith(fontSize: 18),
@@ -215,67 +215,67 @@ class _SavedAddressState extends State<SavedAddress> {
                                           .tk14PXPoppinsBlackSemiBold
                                           .copyWith(
                                               fontWeight: FontWeight.normal)),
-                                  SizedBox(
-                                    width: 200,
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        ElevatedButton.icon(
-                                          onPressed: () {},
-                                          icon: Icon(
-                                            Icons.edit,
-                                            size: 18,
-                                          ),
-                                          label: Text(
-                                            'EDIT',
-                                            style: ThreeKmTextConstants
-                                                .tk12PXPoppinsBlackSemiBold
-                                                .copyWith(
-                                                    color: Color(0xFF3E7EFF)),
-                                          ),
-                                          style: ButtonStyle(
-                                            elevation:
-                                                MaterialStateProperty.all(0),
-                                            shape: MaterialStateProperty.all(
-                                                StadiumBorder()),
-                                            backgroundColor:
-                                                MaterialStateProperty.all(
-                                                    const Color(0x1A3E7EFF)),
-                                            foregroundColor:
-                                                MaterialStateProperty.all(
-                                                    Color(0xFF3E7EFF)),
-                                          ),
-                                        ),
-                                        ElevatedButton.icon(
-                                          onPressed: () {},
-                                          icon: Icon(
-                                            Icons.delete,
-                                            size: 18,
-                                          ),
-                                          label: Text(
-                                            'Delete',
-                                            style: ThreeKmTextConstants
-                                                .tk12PXPoppinsBlackSemiBold
-                                                .copyWith(
-                                                    color: Color(0xFFFF5858)),
-                                          ),
-                                          style: ButtonStyle(
-                                            elevation:
-                                                MaterialStateProperty.all(0),
-                                            shape: MaterialStateProperty.all(
-                                                StadiumBorder()),
-                                            backgroundColor:
-                                                MaterialStateProperty.all(
-                                                    const Color(0x1AFF5858)),
-                                            foregroundColor:
-                                                MaterialStateProperty.all(
-                                                    Color(0xFFFF5858)),
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                  )
+                                  // SizedBox(
+                                  //   width: 200,
+                                  //   child: Row(
+                                  //     mainAxisAlignment:
+                                  //         MainAxisAlignment.spaceBetween,
+                                  //     children: [
+                                  //       ElevatedButton.icon(
+                                  //         onPressed: () {},
+                                  //         icon: Icon(
+                                  //           Icons.edit,
+                                  //           size: 18,
+                                  //         ),
+                                  //         label: Text(
+                                  //           'EDIT',
+                                  //           style: ThreeKmTextConstants
+                                  //               .tk12PXPoppinsBlackSemiBold
+                                  //               .copyWith(
+                                  //                   color: Color(0xFF3E7EFF)),
+                                  //         ),
+                                  //         style: ButtonStyle(
+                                  //           elevation:
+                                  //               MaterialStateProperty.all(0),
+                                  //           shape: MaterialStateProperty.all(
+                                  //               StadiumBorder()),
+                                  //           backgroundColor:
+                                  //               MaterialStateProperty.all(
+                                  //                   const Color(0x1A3E7EFF)),
+                                  //           foregroundColor:
+                                  //               MaterialStateProperty.all(
+                                  //                   Color(0xFF3E7EFF)),
+                                  //         ),
+                                  //       ),
+                                  //       ElevatedButton.icon(
+                                  //         onPressed: () {},
+                                  //         icon: Icon(
+                                  //           Icons.delete,
+                                  //           size: 18,
+                                  //         ),
+                                  //         label: Text(
+                                  //           'Delete',
+                                  //           style: ThreeKmTextConstants
+                                  //               .tk12PXPoppinsBlackSemiBold
+                                  //               .copyWith(
+                                  //                   color: Color(0xFFFF5858)),
+                                  //         ),
+                                  //         style: ButtonStyle(
+                                  //           elevation:
+                                  //               MaterialStateProperty.all(0),
+                                  //           shape: MaterialStateProperty.all(
+                                  //               StadiumBorder()),
+                                  //           backgroundColor:
+                                  //               MaterialStateProperty.all(
+                                  //                   const Color(0x1AFF5858)),
+                                  //           foregroundColor:
+                                  //               MaterialStateProperty.all(
+                                  //                   Color(0xFFFF5858)),
+                                  //         ),
+                                  //       )
+                                  //     ],
+                                  //   ),
+                                  // )
                                 ],
                               ),
                             );

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/src/provider.dart';
 import 'package:threekm/Models/shopModel/product_listing_model.dart';
+import 'package:threekm/UI/shop/cart/cart_item_list_modal.dart';
 import 'package:threekm/UI/shop/product/product_details.dart';
 import 'package:threekm/providers/shop/product_listing_provider.dart';
 import 'package:threekm/utils/screen_util.dart';
@@ -62,7 +63,9 @@ class _ViewAllOfferingState extends State<ViewAllOffering> {
                 decoration: BoxDecoration(
                     color: Colors.grey[200], shape: BoxShape.circle),
                 child: IconButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      viewCart(context, 'shop');
+                    },
                     icon: const Icon(
                       Icons.shopping_cart_rounded,
                       size: 30,
@@ -139,13 +142,16 @@ class _ViewAllOfferingState extends State<ViewAllOffering> {
                 itemCount: data.length,
                 shrinkWrap: true,
                 itemBuilder: (context, i) {
-                  if (i < data.length - 1) {
+                  if (i == productListingdata.result!.total - 1) {
                     return ItemBuilderWidget(
                       data: data,
                       i: i,
                     );
-                  } else if (i == productListingdata.result!.total - 1) {
-                    return const Center(child: Text('End of list'));
+                  } else if (i < data.length - 1) {
+                    return ItemBuilderWidget(
+                      data: data,
+                      i: i,
+                    );
                   } else {
                     context.read<ProductListingProvider>().getProductListing(
                         mounted: mounted,

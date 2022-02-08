@@ -128,7 +128,13 @@ class Product {
     name = json['name'];
     description = json['description'];
     sku = json['sku'];
-    tags = json['tags'].cast<String>();
+    // tags = json['tags'].cast<String>();
+    if (json['tags'] != null) {
+      tags = <String>[];
+      (json['tags'] as List).forEach((tag) {
+        tags.add(tag);
+      });
+    }
     leadTime = json['lead_time'];
     price = json['price'];
     weight = json['weight'];
@@ -143,7 +149,7 @@ class Product {
       });
     }
     nationwideDelivery = json['nationwide_delivery'];
-    nationwideDeliveryCost = json['nationwide_delivery_cost'];
+    nationwideDeliveryCost = json['nationwide_delivery_cost'] ?? 0;
     hasVariations = json['has_variations'];
     manageStock = json['manage_stock'];
     isInStock = json['is_in_stock'];

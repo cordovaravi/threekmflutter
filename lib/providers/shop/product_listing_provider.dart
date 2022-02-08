@@ -25,7 +25,7 @@ class ProductListingProvider extends ChangeNotifier {
   Future<Null> getProductListing({mounted, page, query, creatorId = 0}) async {
     if (mounted) {
       showLoading();
-
+      _state = 'loading';
       try {
         final response = await _apiProvider.post(
             productList,
@@ -44,8 +44,8 @@ class ProductListingProvider extends ChangeNotifier {
           _allproductList = page == _prepageno
               ? _allproductList
               : [..._allproductList, ..._productList.result!.products];
-          _state = 'loaded';
           _prepageno = page;
+          _state = 'loaded';
           notifyListeners();
         }
       } catch (e) {

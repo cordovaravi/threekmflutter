@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:threekm/Models/shopModel/cart_hive_model.dart';
 import 'package:threekm/UI/shop/cart/clear_and_add_to_cart.dart';
+
 class CartProvider extends ChangeNotifier {
   String? _state;
   String? get state => _state;
@@ -13,8 +14,11 @@ class CartProvider extends ChangeNotifier {
   Box? _restroCartBox;
   Box? get restroCartBoxData => _restroCartBox;
 
-  addToCart(image, name, quantity, price, id, variationId, weight) async {
+  addToCart(image, name, quantity, price, id, variationId, weight, creatorId,
+      creatorName) async {
     _state = 'loading';
+    Box _creatorIDBox = await Hive.openBox('creatorID');
+    _creatorIDBox.put('creatorName', creatorName);
     try {
       _cartBox = await Hive.openBox('cartBox');
       var cart = CartHiveModel()
@@ -24,7 +28,9 @@ class CartProvider extends ChangeNotifier {
         ..price = price ?? 0
         ..id = id
         ..variationId = variationId
-        ..weight = weight;
+        ..weight = weight
+        ..creatorId = creatorId
+        ..creatorName = creatorName;
 
       var existingItem = _cartBox?.values
           .toList()
@@ -65,11 +71,13 @@ class CartProvider extends ChangeNotifier {
     if (_creatorIDBox.isEmpty) {
       _creatorIDBox.put('id', creatorId);
       _creatorIDBox.put('creatorName', creatorName);
-      addToCart(image, name, quantity, price, id, variationId, weight);
+      addToCart(image, name, quantity, price, id, variationId, weight,
+          creatorId, creatorName);
     } else {
       var Cid = _creatorIDBox.get('id');
       if (creatorId == Cid) {
-        addToCart(image, name, quantity, price, id, variationId, weight);
+        addToCart(image, name, quantity, price, id, variationId, weight,
+            creatorId, creatorName);
       } else {
         clearAndAddToCartModal(context, image, name, quantity, price, creatorId,
             id, variationId, weight, creatorName, 'shop');
@@ -164,9 +172,11 @@ class CartProvider extends ChangeNotifier {
     var totalWeight = 0.0;
     for (var i = 0; i < data.length; i++) {
       CartHiveModel d = data.getAt(i);
-      totalWeight =
-          totalWeight.toDouble() + d.weight!.toDouble() * d.quantity.toDouble();
+      totalWeight = totalWeight.toDouble() +
+          (d.weight ?? 0).toDouble() * d.quantity.toDouble();
     }
     return totalWeight;
   }
+
+ 
 }

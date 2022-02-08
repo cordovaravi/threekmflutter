@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/src/provider.dart';
+import 'package:threekm/commenwidgets/CustomSnakBar.dart';
+import 'package:threekm/main.dart';
 import 'package:threekm/providers/shop/cart_provider.dart';
 import 'package:threekm/providers/shop/restaurant_menu_provider.dart';
 import 'package:threekm/Models/shopModel/restaurants_menu_model.dart';
@@ -77,8 +79,11 @@ class _RestaurantMenuState extends State<RestaurantMenu> {
                                 fontWeight: FontWeight.w900),
                           ),
                         ),
-                        SizedBox(
-                          width: 90,
+                        Container(
+                          constraints: BoxConstraints(
+                              minWidth: 40,
+                              maxWidth:
+                                  MediaQuery.of(context).size.width / 1.7),
                           child: Text(
                             '${widget.data?.restaurant!.cuisines?.join(", ")}',
                             style: const TextStyle(
@@ -224,27 +229,19 @@ class _RestaurantMenuState extends State<RestaurantMenu> {
               //   ),
               // ),
               state == 'loaded'
-                  ? data.result!.creator.restaurant!.status != false
-                      ? Container(
-                          padding: EdgeInsets.only(top: 20, bottom: 140),
-                          color: Colors.white,
-                          child: Column(children: [
-                            ...?data.result?.menu
-                                .map((e) =>
-                                    MenuTile(e: e, isVeg: isVeg, isEgg: isEgg))
-                                .toList(),
-                          ]),
-                        )
-                      : Container(
-                          padding: EdgeInsets.all(40),
-                          child: Center(
-                            child: Text(
-                              'Restaurent is currently not Accepting Order',
-                              style: ThreeKmTextConstants
-                                  .tk16PXPoppinsBlackSemiBold,
-                            ),
-                          ),
-                        )
+                  ? Container(
+                      padding: EdgeInsets.only(top: 20, bottom: 140),
+                      color: Colors.white,
+                      child: Column(children: [
+                        ...?data.result?.menu
+                            .map((e) => MenuTile(
+                                e: e,
+                                creatorName: data.result?.creator.businessName,
+                                status:
+                                    data.result!.creator.restaurant!.status))
+                            .toList(),
+                      ]),
+                    )
                   : Container(),
             ],
           ),
@@ -255,18 +252,18 @@ class _RestaurantMenuState extends State<RestaurantMenu> {
           mainAxisAlignment: MainAxisAlignment.end,
           mainAxisSize: MainAxisSize.min,
           children: [
-            Container(
-                padding:
-                    EdgeInsets.only(top: 10, bottom: 10, left: 20, right: 20),
-                margin: EdgeInsets.only(bottom: 10),
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                    color: Color(0xFF0F0F2D)),
-                child: Text(
-                  'View Menu',
-                  style: ThreeKmTextConstants.tk14PXPoppinsBlackBold
-                      .copyWith(color: Colors.white),
-                )),
+            // Container(
+            //     padding:
+            //         EdgeInsets.only(top: 10, bottom: 10, left: 20, right: 20),
+            //     margin: EdgeInsets.only(bottom: 10),
+            //     decoration: BoxDecoration(
+            //         borderRadius: BorderRadius.circular(20),
+            //         color: Color(0xFF0F0F2D)),
+            //     child: Text(
+            //       'View Menu',
+            //       style: ThreeKmTextConstants.tk14PXPoppinsBlackBold
+            //           .copyWith(color: Colors.white),
+            //     )),
             ValueListenableBuilder(
                 valueListenable: Hive.box('restroCartBox').listenable(),
                 builder: (context, Box box, widget) {
@@ -348,16 +345,29 @@ class _RestaurantMenuState extends State<RestaurantMenu> {
 
 class MenuTile extends StatelessWidget {
   const MenuTile(
-      {Key? key, required this.e, required this.isVeg, required this.isEgg})
+      {Key? key,
+      required this.e,
+      required this.creatorName,
+      required this.status})
       : super(key: key);
   final Menu e;
-  final bool isVeg;
-  final bool isEgg;
+  final String? creatorName;
+  final bool? status;
+
+  isProductExist(box, id) {
+    var existingItem =
+        box.values.toList().firstWhere((dd) => dd.id == id, orElse: () => null);
+    return existingItem;
+  }
+
   @override
   Widget build(BuildContext context) {
     return ExpansionTile(
       initiallyExpanded: true,
-      title: Text('${e.name}(${e.menus.length})'),
+      title: Text(
+        '${e.name}(${e.menus.length})',
+        style: ThreeKmTextConstants.tk16PXPoppinsBlackSemiBold,
+      ),
       children: [
         ListView.builder(
             physics: const NeverScrollableScrollPhysics(),
@@ -380,61 +390,149 @@ class MenuTile extends StatelessWidget {
                           margin: const EdgeInsets.only(bottom: 10),
                           padding: const EdgeInsets.all(3),
                           decoration: BoxDecoration(
-                              border:
-                                  Border.all(color: Colors.green, width: 2)),
+                              border: Border.all(
+                                  color: status != false
+                                      ? Colors.green
+                                      : Colors.grey,
+                                  width: 2)),
                           width: 20,
                           height: 20,
                           child: Container(
-                            decoration: const BoxDecoration(
-                                color: Colors.green, shape: BoxShape.circle),
+                            decoration: BoxDecoration(
+                                color: status != false
+                                    ? Colors.green
+                                    : Colors.grey,
+                                shape: BoxShape.circle),
                           ),
                         ),
-                        Text(menu.name),
                         Text(
-                          '\u{20B9}${menu.price}',
-                          style: TextStyle(height: 2),
+                          menu.name,
+                          style: ThreeKmTextConstants.tk14PXPoppinsBlackMedium,
+                        ),
+                        Text(
+                          '₹${menu.price}',
+                          style: ThreeKmTextConstants.tk14PXLatoBlackMedium
+                              .copyWith(height: 2),
                         ),
                       ],
                     ),
-                    Stack(
-                      children: [
-                        menu.image != ""
-                            ? Image(
-                                image: NetworkImage('${menu.image}'),
-                                width: ThreeKmScreenUtil.screenWidthDp / 6,
-                                height: ThreeKmScreenUtil.screenHeightDp / 6,
-                              )
-                            : const SizedBox(
-                                width: 0,
-                                height: 0,
-                              ),
-                        InkWell(
-                          onTap: () {
-                            context.read<CartProvider>().addItemToRestroCart(
-                                context: context,
-                                creatorId: menu.creatorId,
-                                image: menu.image,
-                                name: menu.name,
-                                price: menu.displayPrice,
-                                quantity: 1,
-                                id: menu.menuId,
-                                variationId: 0,
-                                weight: menu.weight,
-                                creatorName: e.name);
-                          },
-                          child: Container(
-                              padding: const EdgeInsets.all(15),
-                              decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  border: Border.all(color: Color(0xFFF4F3F8)),
-                                  borderRadius: BorderRadius.circular(10)),
-                              child: const Text(
-                                'ADD +',
-                                style: TextStyle(color: Colors.green),
-                              )),
-                        )
-                      ],
-                    )
+                    ValueListenableBuilder(
+                        valueListenable: Hive.box('restroCartBox').listenable(),
+                        builder: (context, Box<dynamic> box, Widget? child) {
+                          return isProductExist(box, menu.menuId) == null
+                              ? InkWell(
+                                  onTap: () {
+                                    if (status != false) {
+                                      context
+                                          .read<CartProvider>()
+                                          .addItemToRestroCart(
+                                              context: context,
+                                              creatorId: menu.creatorId,
+                                              image: menu.image,
+                                              name: menu.name,
+                                              price: menu.displayPrice,
+                                              quantity: 1,
+                                              id: menu.menuId,
+                                              variationId: 0,
+                                              weight: menu.weight,
+                                              creatorName: creatorName);
+                                    } else {
+                                      CustomSnackBar(
+                                          navigatorKey.currentContext!,
+                                          Text(
+                                              "Restaurant is currently not Accepting Order"));
+                                    }
+                                  },
+                                  child: Container(
+                                      padding: const EdgeInsets.all(15),
+                                      decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          border: Border.all(
+                                              color: Color(0xFFF4F3F8)),
+                                          borderRadius:
+                                              BorderRadius.circular(10)),
+                                      child: Text(
+                                        'ADD +',
+                                        style: ThreeKmTextConstants
+                                            .tk14PXLatoBlackBold
+                                            .copyWith(
+                                          color: status != false
+                                              ? Colors.green
+                                              : Colors.grey,
+                                        ),
+                                      )),
+                                )
+                              : Container(
+                                  decoration: BoxDecoration(
+                                      border: Border.all(color: Colors.green),
+                                      borderRadius: BorderRadius.circular(40)),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    //mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      InkWell(
+                                        onTap: () {
+                                          if (isProductExist(box, menu.menuId)
+                                                  .quantity <
+                                              2) {
+                                            isProductExist(box, menu.menuId)
+                                                .delete();
+                                          }
+                                          if (isProductExist(
+                                                  box, menu.menuId) !=
+                                              null) {
+                                            isProductExist(box, menu.menuId)
+                                                    .quantity =
+                                                isProductExist(box, menu.menuId)
+                                                        .quantity -
+                                                    1;
+
+                                            if (isProductExist(box, menu.menuId)
+                                                .isInBox) {
+                                              isProductExist(box, menu.menuId)
+                                                  .save();
+                                            }
+                                          }
+                                        },
+                                        child: const Image(
+                                          image: AssetImage(
+                                              'assets/shopImg/del.png'),
+                                          width: 50,
+                                          height: 20,
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                            top: 5, bottom: 5),
+                                        child: Text(
+                                          '${isProductExist(box, menu.menuId).quantity}',
+                                          style: ThreeKmTextConstants
+                                              .tk12PXPoppinsBlackSemiBold
+                                              .copyWith(color: Colors.black),
+                                        ),
+                                      ),
+                                      InkWell(
+                                        onTap: () {
+                                          isProductExist(box, menu.menuId)
+                                                  .quantity =
+                                              isProductExist(box, menu.menuId)
+                                                      .quantity +
+                                                  1;
+                                          isProductExist(box, menu.menuId)
+                                              .save();
+                                        },
+                                        child: const Image(
+                                          image: AssetImage(
+                                              'assets/shopImg/add.png'),
+                                          width: 50,
+                                          height: 20,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                        })
                   ],
                 ),
               );

@@ -28,6 +28,8 @@ import 'package:threekm/providers/main/home1_provider.dart';
 import 'package:threekm/providers/main/home2_provider.dart';
 import 'package:threekm/providers/main/newsList_provider.dart';
 import 'package:threekm/providers/main/singlePost_provider.dart';
+import 'package:threekm/providers/shop/checkout/order_realtime_detail_provider.dart';
+import 'package:threekm/providers/shop/checkout/past_order_provider.dart';
 import 'package:threekm/providers/shop/shop_home_provider.dart';
 import 'package:threekm/theme/setup.dart';
 import 'Models/businessesModel/businesses_wishlist_model.dart';
@@ -190,6 +192,11 @@ class MyApp extends StatelessWidget {
             create: (context) => LocationProvider()),
         ChangeNotifierProvider<CheckoutProvider>(
             create: (context) => CheckoutProvider()),
+        ChangeNotifierProvider<PastOrderProvider>(
+            create: (context) => PastOrderProvider()),
+        ChangeNotifierProvider<OrderRealtimeDetailProvider>(
+            create: (context) => OrderRealtimeDetailProvider()),
+
         // business provider
         ChangeNotifierProvider<BusinessesHomeProvider>(
             create: (context) => BusinessesHomeProvider()),
