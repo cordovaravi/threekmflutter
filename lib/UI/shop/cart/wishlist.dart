@@ -263,10 +263,20 @@ class _WishListState extends State<WishList> {
                                             children: [
                                               Text(
                                                 '${data.name}',
-                                                maxLines: 2,
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
                                                 style: ThreeKmTextConstants
                                                     .tk14PXPoppinsBlackBold,
                                               ),
+                                              if (data.variation_name != null)
+                                                Text(
+                                                  '${data.variation_name}',
+                                                  maxLines: 2,
+                                                  style: ThreeKmTextConstants
+                                                      .tk12PXPoppinsBlackSemiBold
+                                                      .copyWith(
+                                                          color: Colors.grey),
+                                                ),
                                               Padding(
                                                   padding:
                                                       const EdgeInsets.only(
@@ -323,7 +333,7 @@ class _WishListState extends State<WishList> {
                                                                   quantity: data
                                                                       .quantity,
                                                                   variationId: data
-                                                                      .variationId,
+                                                                      .variation_id,
                                                                   weight: data
                                                                       .weight);
                                                         },

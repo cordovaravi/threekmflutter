@@ -652,7 +652,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                     ),
                                                   ),
                                                 ),
-                                                Text('Confirming With Sellers:',
+                                                Text('Confirming With restaurant:',
                                                     style: ThreeKmTextConstants
                                                         .tk14PXPoppinsBlackSemiBold),
                                                 ListView.builder(
@@ -694,8 +694,8 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                             ),
                                                           ],
                                                         ),
-                                                        trailing:
-                                                            CircularProgressIndicator(),
+                                                        // trailing:
+                                                        //     CircularProgressIndicator(),
                                                       );
                                                     }),
                                                 Center(

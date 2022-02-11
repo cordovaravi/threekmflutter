@@ -337,25 +337,10 @@ class _ShopHomeState extends State<ShopHome>
                             child: Column(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                InkWell(
-                                  onTap: () {
-                                    Navigator.of(context).push(
-                                      PageRouteBuilder(
-                                        opaque: false, // set to false
-                                        pageBuilder: (_, __, ___) =>
-                                            OrderDetails(),
-                                      ),
-                                    );
-                                    // Navigator.push(
-                                    //     context,
-                                    //     MaterialPageRoute(
-                                    //         builder: (_) => CheckOutSuccess()));
-                                  },
-                                  child: Text(
-                                    'Order Food from your',
-                                    style: ThreeKmTextConstants
-                                        .tk20PXPoppinsRedBold,
-                                  ),
+                                Text(
+                                  'Order Food from your',
+                                  style:
+                                      ThreeKmTextConstants.tk20PXPoppinsRedBold,
                                 ),
                                 Text(
                                   'Favourite Restaurant!',
@@ -439,8 +424,7 @@ class _ShopHomeState extends State<ShopHome>
                                           context,
                                           MaterialPageRoute(
                                               builder: (_) => RestaurantMenu(
-                                                    data:
-                                                        restaurantData[index],
+                                                    data: restaurantData[index],
                                                   )));
                                     },
                                     child: RestaurantHomeCard(

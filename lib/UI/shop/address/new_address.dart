@@ -11,6 +11,7 @@ import 'package:threekm/Custom_library/GooleMapsWidget/src/place_picker.dart';
 import 'package:threekm/providers/Location/locattion_Provider.dart';
 import 'package:threekm/providers/shop/address_list_provider.dart';
 import 'package:threekm/utils/api_paths.dart';
+import 'package:threekm/utils/constants.dart';
 import 'package:threekm/utils/screen_util.dart';
 import 'package:threekm/utils/threekm_textstyles.dart';
 
@@ -48,7 +49,9 @@ class _NewAddressState extends State<NewAddress> {
     SharedPreferences _pref = await SharedPreferences.getInstance();
     firstNameText.text = await _pref.getString('userfname') ?? '';
     lastNameText.text = await _pref.getString('userlname') ?? '';
-    phoneNumberText.text = await _pref.getString('userphone') ?? '';
+    phoneNumberText.text = await _pref.getString('userphone') ??
+        _pref.getString(PHONE_NUMBER) ??
+        '';
   }
 
   @override

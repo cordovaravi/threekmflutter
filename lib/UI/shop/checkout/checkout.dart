@@ -398,7 +398,8 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
                                                             const EdgeInsets
                                                                 .only(top: 10),
                                                         child: Text(
-                                                          '${address.addressType}',
+                                                          '${address.firstname} ${address.lastname}',
+                                                          // '${address.addressType}',
                                                           style: ThreeKmTextConstants
                                                               .tk14PXPoppinsBlackSemiBold
                                                               .copyWith(
@@ -529,10 +530,22 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
                                                                 style: ThreeKmTextConstants
                                                                     .tk14PXPoppinsBlackSemiBold,
                                                               ),
-                                                              subtitle: Text(
-                                                                '₹${cartItem.price}',
-                                                                style: ThreeKmTextConstants
-                                                                    .tk14PXPoppinsBlueMedium,
+                                                              subtitle: Column(
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .start,
+                                                                children: [
+                                                                  if (cartItem
+                                                                          .variation_name !=
+                                                                      null)
+                                                                    Text(
+                                                                        '${cartItem.variation_name}'),
+                                                                  Text(
+                                                                    '₹${cartItem.price}',
+                                                                    style: ThreeKmTextConstants
+                                                                        .tk14PXPoppinsBlueMedium,
+                                                                  ),
+                                                                ],
                                                               ),
                                                               leading: Stack(
                                                                 clipBehavior:
@@ -800,7 +813,7 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
                                               )
                                             : Center(
                                                 child: Text(
-                                                    'There are no items in your cart.'),
+                                                    'There is no items in your cart.'),
                                               );
                                       }),
                                 ),

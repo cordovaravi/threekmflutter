@@ -124,12 +124,22 @@ Future viewCart(BuildContext context, mode) async {
                                                     style: ThreeKmTextConstants
                                                         .tk14PXPoppinsBlackSemiBold,
                                                   ),
-                                                  subtitle: Text(
-                                                    '₹${cartItem.price}',
-                                                    style: ThreeKmTextConstants
-                                                        .tk14PXPoppinsBlueMedium,
+                                                  subtitle: Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                    if(cartItem.variation_name != null )  Text(
+                                                          '${cartItem.variation_name}'),
+                                                      Text(
+                                                        '₹${cartItem.price}',
+                                                        style: ThreeKmTextConstants
+                                                            .tk14PXPoppinsBlueMedium,
+                                                      ),
+                                                    ],
                                                   ),
                                                   leading: Stack(
+                                                    fit: StackFit.loose,
                                                     clipBehavior: Clip.none,
                                                     children: [
                                                       ClipRRect(
@@ -287,9 +297,11 @@ Future viewCart(BuildContext context, mode) async {
                                                         .tk14PXPoppinsBlackSemiBold,
                                                   ),
                                                   // subtitle: Text(
-                                                  //   '₹${cartItem.price}',
+                                                  //   '₹${cartItem.variation_name ?? ''}',
                                                   //   style: ThreeKmTextConstants
-                                                  //       .tk14PXPoppinsBlueMedium,
+                                                  //       .tk14PXPoppinsBlueMedium
+                                                  //       .copyWith(
+                                                  //           color: Colors.grey),
                                                   // ),
                                                   // leading: Stack(
                                                   //   clipBehavior: Clip.none,

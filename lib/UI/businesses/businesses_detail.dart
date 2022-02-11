@@ -273,7 +273,7 @@ class _BusinessDetailState extends State<BusinessDetail> {
                                 left: 20, right: 20, top: 10),
                             child: HtmlWidget(
                               '${data.creator.about}',
-                              textStyle: TextStyle(color: Colors.black),
+                              textStyle: TextStyle(color: Colors.black,),
                             ),
                           ),
                           VisibilityDetector(
@@ -454,25 +454,26 @@ class _BusinessDetailState extends State<BusinessDetail> {
                                             .tk16PXPoppinsBlackMedium),
                                   ),
                                 ),
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                    top: 20,
+                                if (data.creator.whatsappNo != "")
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                      top: 20,
+                                    ),
+                                    child: ListTile(
+                                      onTap: () async => await launch(data
+                                              .creator.whatsappNo
+                                              .startsWith('+91')
+                                          ? "https://wa.me/${data.creator.whatsappNo}?text=Hello"
+                                          : "https://wa.me/+91${data.creator.whatsappNo}?text=Hello"),
+                                      dense: true,
+                                      leading: const Image(
+                                          image: AssetImage(
+                                              'assets/BusinessesImg/whatsapp.png')),
+                                      title: Text(data.creator.whatsappNo,
+                                          style: ThreeKmTextConstants
+                                              .tk16PXPoppinsBlackMedium),
+                                    ),
                                   ),
-                                  child: ListTile(
-                                    onTap: () async => await launch(data
-                                            .creator.whatsappNo
-                                            .startsWith('+91')
-                                        ? "https://wa.me/${data.creator.whatsappNo}?text=Hello"
-                                        : "https://wa.me/+91${data.creator.whatsappNo}?text=Hello"),
-                                    dense: true,
-                                    leading: const Image(
-                                        image: AssetImage(
-                                            'assets/BusinessesImg/whatsapp.png')),
-                                    title: Text(data.creator.whatsappNo,
-                                        style: ThreeKmTextConstants
-                                            .tk16PXPoppinsBlackMedium),
-                                  ),
-                                ),
                                 Padding(
                                   padding: const EdgeInsets.only(
                                     top: 20,
