@@ -4,10 +4,12 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path_provider/path_provider.dart' as pathProvider;
 import 'package:provider/provider.dart';
+import 'package:threekm/UI/Language/SelectLanguage.dart';
 import 'package:threekm/UI/walkthrough/splash_screen.dart';
 import 'package:threekm/providers/Location/locattion_Provider.dart';
 import 'package:threekm/providers/Notification/Notification_Provider.dart';
@@ -34,8 +36,10 @@ import 'package:threekm/providers/shop/shop_home_provider.dart';
 import 'package:threekm/theme/setup.dart';
 import 'Models/businessesModel/businesses_wishlist_model.dart';
 import 'Models/shopModel/cart_hive_model.dart';
+import 'localization/localize.dart';
 import 'providers/businesses/businesses_detail_provider.dart';
 import 'providers/businesses/businesses_wishlist_provider.dart';
+import 'providers/localization_Provider/appLanguage_provider.dart';
 import 'providers/main/AddPost_Provider.dart';
 import 'providers/shop/address_list_provider.dart';
 import 'providers/shop/all_category_provider.dart';
@@ -84,6 +88,12 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  AppLanguage appLanguage = AppLanguage();
+  await appLanguage.fetchLocale();
+  runApp(MyApp(
+    appLanguage: appLanguage,
+  ));
+
   Hive
     ..initFlutter()
     ..registerAdapter(CartHiveModelAdapter())
@@ -129,116 +139,136 @@ void main() async {
 
   Directory directory = await pathProvider.getApplicationDocumentsDirectory();
   Hive.init(directory.path);
-  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  final AppLanguage appLanguage;
+
+  MyApp({required this.appLanguage});
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-      providers: [
-        ChangeNotifierProvider<SignUpProvider>(
-            create: (context) => SignUpProvider()),
-        ChangeNotifierProvider<GoogleSignInprovider>(
-            create: (context) => GoogleSignInprovider()),
-        ChangeNotifierProvider<SignInProvider>(
-            create: (context) => SignInProvider()),
-        ChangeNotifierProvider<FaceAuthProvider>(
-            create: (context) => FaceAuthProvider()),
-        ChangeNotifierProvider<ForgetPasswordProvider>(
-            create: (context) => ForgetPasswordProvider()),
-        ChangeNotifierProvider<HomefirstProvider>(
-            create: (context) => HomefirstProvider()),
-        ChangeNotifierProvider<HomeSecondProvider>(
-            create: (context) => HomeSecondProvider()),
-        ChangeNotifierProvider<NewsListProvider>(
-            create: (context) => NewsListProvider()),
-        ChangeNotifierProvider(create: (context) => SinglePostProvider()),
-        ChangeNotifierProvider<CommentProvider>(
-            create: (context) => CommentProvider()),
-        ChangeNotifierProvider<LikeListProvider>(
-            create: (context) => LikeListProvider()),
-        ChangeNotifierProvider<QuizProvider>(
-            create: (context) => QuizProvider()),
-        ChangeNotifierProvider<LocationProvider>(
-            create: (context) => LocationProvider()),
-        ChangeNotifierProvider<AddPostProvider>(
-            create: (context) => AddPostProvider()),
-        ChangeNotifierProvider<AutthorProfileProvider>(
-            create: (context) => AutthorProfileProvider()),
-        ChangeNotifierProvider<LocalPlayerProvider>(
-            create: (context) => LocalPlayerProvider()),
+        providers: [
+          ChangeNotifierProvider<SignUpProvider>(
+              create: (context) => SignUpProvider()),
+          ChangeNotifierProvider<GoogleSignInprovider>(
+              create: (context) => GoogleSignInprovider()),
+          ChangeNotifierProvider<SignInProvider>(
+              create: (context) => SignInProvider()),
+          ChangeNotifierProvider<FaceAuthProvider>(
+              create: (context) => FaceAuthProvider()),
+          ChangeNotifierProvider<ForgetPasswordProvider>(
+              create: (context) => ForgetPasswordProvider()),
+          ChangeNotifierProvider<HomefirstProvider>(
+              create: (context) => HomefirstProvider()),
+          ChangeNotifierProvider<HomeSecondProvider>(
+              create: (context) => HomeSecondProvider()),
+          ChangeNotifierProvider<NewsListProvider>(
+              create: (context) => NewsListProvider()),
+          ChangeNotifierProvider(create: (context) => SinglePostProvider()),
+          ChangeNotifierProvider<CommentProvider>(
+              create: (context) => CommentProvider()),
+          ChangeNotifierProvider<LikeListProvider>(
+              create: (context) => LikeListProvider()),
+          ChangeNotifierProvider<QuizProvider>(
+              create: (context) => QuizProvider()),
+          ChangeNotifierProvider<LocationProvider>(
+              create: (context) => LocationProvider()),
+          ChangeNotifierProvider<AddPostProvider>(
+              create: (context) => AddPostProvider()),
+          ChangeNotifierProvider<AutthorProfileProvider>(
+              create: (context) => AutthorProfileProvider()),
+          ChangeNotifierProvider<LocalPlayerProvider>(
+              create: (context) => LocalPlayerProvider()),
 
-        ///shops providers
-        ChangeNotifierProvider<ShopHomeProvider>(
-            create: (context) => ShopHomeProvider()),
-        ChangeNotifierProvider<AllCategoryListProvider>(
-            create: (context) => AllCategoryListProvider()),
-        ChangeNotifierProvider<ProductListingProvider>(
-            create: (context) => ProductListingProvider()),
-        ChangeNotifierProvider<ProductDetailsProvider>(
-            create: (context) => ProductDetailsProvider()),
-        ChangeNotifierProvider<UserReviewProvider>(
-            create: (context) => UserReviewProvider()),
-        ChangeNotifierProvider<RestaurantMenuProvider>(
-            create: (context) => RestaurantMenuProvider()),
-        ChangeNotifierProvider<CartProvider>(
-            create: (context) => CartProvider()),
-        ChangeNotifierProvider<AddressListProvider>(
-            create: (context) => AddressListProvider()),
-        ChangeNotifierProvider<WishListProvider>(
-            create: (context) => WishListProvider()),
-        ChangeNotifierProvider<LocationProvider>(
-            create: (context) => LocationProvider()),
-        ChangeNotifierProvider<CheckoutProvider>(
-            create: (context) => CheckoutProvider()),
-        ChangeNotifierProvider<PastOrderProvider>(
-            create: (context) => PastOrderProvider()),
-        ChangeNotifierProvider<OrderRealtimeDetailProvider>(
-            create: (context) => OrderRealtimeDetailProvider()),
+          ///shops providers
+          ChangeNotifierProvider<ShopHomeProvider>(
+              create: (context) => ShopHomeProvider()),
+          ChangeNotifierProvider<AllCategoryListProvider>(
+              create: (context) => AllCategoryListProvider()),
+          ChangeNotifierProvider<ProductListingProvider>(
+              create: (context) => ProductListingProvider()),
+          ChangeNotifierProvider<ProductDetailsProvider>(
+              create: (context) => ProductDetailsProvider()),
+          ChangeNotifierProvider<UserReviewProvider>(
+              create: (context) => UserReviewProvider()),
+          ChangeNotifierProvider<RestaurantMenuProvider>(
+              create: (context) => RestaurantMenuProvider()),
+          ChangeNotifierProvider<CartProvider>(
+              create: (context) => CartProvider()),
+          ChangeNotifierProvider<AddressListProvider>(
+              create: (context) => AddressListProvider()),
+          ChangeNotifierProvider<WishListProvider>(
+              create: (context) => WishListProvider()),
+          ChangeNotifierProvider<LocationProvider>(
+              create: (context) => LocationProvider()),
+          ChangeNotifierProvider<CheckoutProvider>(
+              create: (context) => CheckoutProvider()),
+          ChangeNotifierProvider<PastOrderProvider>(
+              create: (context) => PastOrderProvider()),
+          ChangeNotifierProvider<OrderRealtimeDetailProvider>(
+              create: (context) => OrderRealtimeDetailProvider()),
 
-        // business provider
-        ChangeNotifierProvider<BusinessesHomeProvider>(
-            create: (context) => BusinessesHomeProvider()),
-        ChangeNotifierProvider<BusinessDetailProvider>(
-            create: (context) => BusinessDetailProvider()),
-        ChangeNotifierProvider<BusinessesWishListProvider>(
-            create: (context) => BusinessesWishListProvider()),
-        ChangeNotifierProvider<ProfileInfoProvider>(
-            create: (context) => ProfileInfoProvider()),
+          // business provider
+          ChangeNotifierProvider<BusinessesHomeProvider>(
+              create: (context) => BusinessesHomeProvider()),
+          ChangeNotifierProvider<BusinessDetailProvider>(
+              create: (context) => BusinessDetailProvider()),
+          ChangeNotifierProvider<BusinessesWishListProvider>(
+              create: (context) => BusinessesWishListProvider()),
+          ChangeNotifierProvider<ProfileInfoProvider>(
+              create: (context) => ProfileInfoProvider()),
 
-        /// Search Provider
-        ChangeNotifierProvider<SearchBarProvider>(
-            create: (context) => SearchBarProvider()),
+          /// Search Provider
+          ChangeNotifierProvider<SearchBarProvider>(
+              create: (context) => SearchBarProvider()),
 
-        ///Notification Provider
-        ChangeNotifierProvider<NotificationProvider>(
-            create: (context) => NotificationProvider())
-      ],
-      child: MaterialApp(
-        // localizationsDelegates: [
-        //   GlobalMaterialLocalizations.delegate,
-        //   GlobalWidgetsLocalizations.delegate,
-        //   GlobalCupertinoLocalizations.delegate,
-        // ],
-        // supportedLocales: [
-        //   const Locale('en', ''), // English, no country code
-        //   const Locale('mr', ''), // Marathi, no country code
-        //   const Locale('hi', ''), // Hindi, no country code
-        //   // ... other locales the app supports
-        // ],
-        title: '3km.in',
-        debugShowCheckedModeBanner: false,
-        theme: lightTheme,
-        restorationScopeId: 'app',
-        themeMode: ThemeMode.system,
-        darkTheme: darkTheme,
-        home: SplashScreen(),
-        navigatorKey: navigatorKey,
-        onGenerateRoute: (routeName) {
-          print('this is generated route $routeName');
-        },
-      ),
-    );
+          ///Notification Provider
+          ChangeNotifierProvider<NotificationProvider>(
+              create: (context) => NotificationProvider()),
+          //Applanguage
+          ChangeNotifierProvider<AppLanguage>(
+              create: (context) => AppLanguage())
+        ],
+        child: Consumer<AppLanguage>(
+          builder: (context, controller, _) {
+            return MaterialApp(
+              locale: controller.appLocal,
+              localizationsDelegates: [
+                AppLocalizations.delegate,
+                GlobalMaterialLocalizations.delegate,
+                GlobalWidgetsLocalizations.delegate,
+                GlobalCupertinoLocalizations.delegate,
+              ],
+              supportedLocales: [
+                const Locale('en', ''), // English, no country code
+                const Locale('mr', ''), // Marathi, no country code
+                const Locale('hi', ''), // Hindi, no country code
+              ],
+              title: '3km.in',
+              debugShowCheckedModeBanner: false,
+              theme: lightTheme,
+              restorationScopeId: 'app',
+              themeMode: ThemeMode.light,
+              // darkTheme: darkTheme,
+              home:
+                  // SelectLanguage(),
+                  SplashScreen(),
+              navigatorKey: navigatorKey,
+              onGenerateRoute: (routeName) {
+                print('this is generated route $routeName');
+              },
+              // localeResolutionCallback: (Locale userLocale, Iterable < Locale > supportedLocales) {
+              //   for (var locale in supportedLocales) {
+              //     if (locale.languageCode == userLocale.languageCode &&
+              //       locale.countryCode == userLocale.countryCode) {
+              //       return userLocale;
+              //     }
+              //   }
+              //   return supportedLocales.first;
+              // },
+            );
+          },
+        ));
   }
 }

@@ -183,9 +183,15 @@ class AddPostProvider extends ChangeNotifier {
           element.contains(".jpeg")) {
         tempImages.add(element);
       } else {
-        _videosUrl.add(element);
+        // SubmitVideo submitVideo = SubmitVideo( element);
+        // String objVideo = json.encode({submitVideo});
+        // print(objVideo);
+        // _videosUrl.add(objVideo);
+        SubmitVideo objvideoUrls = SubmitVideo(element);
+        _videosUrl.add(objvideoUrls);
       }
     });
+    log("this is Video urls list $_videosUrl");
     String requestJson = json.encode({
       "headline": "$headLine",
       "story": "$story",
@@ -231,6 +237,14 @@ class AddPostProvider extends ChangeNotifier {
     notifyListeners();
     // CustomSnackBar(context, Text("Post has been submmitted"));
   }
+}
+
+class SubmitVideo {
+  String src;
+  SubmitVideo(this.src);
+  Map toJson() => {
+        'src': src,
+      };
 }
 
 // class UploadedFileProvider extends ChangeNotifier {

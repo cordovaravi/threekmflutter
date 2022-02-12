@@ -46,6 +46,9 @@ class _EditImageState extends State<EditImage> {
     //imagesList = widget.images;
     Future.delayed(Duration.zero, () {
       context.read<AddPostProvider>().asignImages(widget.images);
+      context
+          .read<LocalPlayerProvider>()
+          .pathChanged(path: widget.images.first.path);
     });
     super.initState();
   }

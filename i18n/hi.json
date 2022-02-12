@@ -1,13 +1,12 @@
-{
-    "dashboard" : {
+{   "you_can_change_it_later":"आप इसे बाद में प्रोफ़ाइल में बदल सकते हैं",
+  
       "Task_title": "मेरा काम",
       "Orders":"आदेश",
       "Today": "आज",
       "Tomorrow": "आने वाला कल",
       "Month": "इस महीने",
       "Week": "इस सप्ताह"
-    },
-    "customer": {
+    ,
       "post_header": "एक पोस्ट बनाएँ",
       "post_desc": "चित्र, पाठ, हैशटैग, लिंक आदि का उपयोग करके एक पोस्ट बनाएं।",
       "postNow": "अभी पोस्ट करें",
@@ -40,8 +39,7 @@
       "products_search_res_text": "खोज परिणाम",
       "products_results_cancel": "रद्द करना",
       "products_results_save": "सहेजें"
-    },
-    "products": {
+    ,
       "products_main_header": "हाइपरलोकल उत्पाद",
       "products_main_desc": "आप यहां हाइपरलोकल उत्पाद खरीद सकते हैं।",
       "my_location_text": "मेरा स्थान",
@@ -71,8 +69,7 @@
       "top_picks_text": "टॉप आपके लिए चुनता है",
       "trending_cat_text": "रुझान श्रेणियाँ",
       "view_all_text": "सभी देखें"
-    },
-    "hyperlocal": {
+   ,
       "hyperlocal_main_header": "हाइपरलोकल बिजनेस",
       "hyperlocal_main_desc": "हाइपरलोकल व्यवसाय के साथ खोजें और संलग्न करें",
       "hyperlocal_main_placeholder": "कीवर्ड, व्यावसायिक नाम से खोजें",
@@ -101,8 +98,7 @@
       "tags_search_placeholder": "कीवर्ड, व्यावसायिक नाम से खोजें",
       "tags_top_tags": "शीर्ष टैग",
       "tags_other_tags": "अन्य रुझान टैग"
-    },
-    "profile": {
+    ,
       "profile_header_name": "प्रोफ़ाइल",
       "profile_header_desc": "आप यहां प्रोफाइल विकल्प देख सकते हैं।",
       "profile_options": "फोन, ईमेल, लिंग",
@@ -151,8 +147,7 @@
       "edit_other_text": "अन्य",
       "edit_cancel_button": "रद्द करना",
       "edit_save_button": "सहेजें"
-    },
-    "auth": {
+    ,
       "hi_text": "नमस्ते!",
       "you_need_text": "सभी हाइपरलोकल समाचार, उत्पादों और व्यवसायों तक पहुंचने के लिए साइन अप करें",
       "phone_number_text": "फ़ोन नंबर",
@@ -185,27 +180,23 @@
       "enter_valid_password_text": "6 से अधिक वर्णों के साथ एक मान्य पासवर्ड दर्ज करें।",
       "reenter_password_text": "पासवर्ड फिर से दर्ज करें",
       "enter_otp_text": "OTP दर्ज करें"
-    },
-    "n-detail": {
+    ,
       "post_details_header": "विवरण पोस्ट करें",
       "post_header_desc": "यह पृष्ठ से संबंधित सूचना है"
-    },
-    "p-addresses": {
+   ,
       "address_header": "पतों",
       "address_desc": "जब आप 3 किमी पर उत्पाद खरीदते हैं, तो वितरण के पते जोड़ें।",
       "edit": "संपादित करें",
       "delete": "हटाएं",
       "no_address": "कोई पता सहेजा नहीं गया"
-    },
-    "p-wallet": {
+   ,
       "wallet_header": "बटुआ",
       "wallet_desc": "बटुआ और लेनदेन का विवरण यहां",
       "available_balance": "उपलब्ध शेष राशि",
       "add_money": "वॉलेट में पैसे जोड़ें",
       "withdraw_money": "वॉलेट से पैसे निकाले",
       "past_transac": "पिछले लेन-देन"
-    },
-    "p-share": {
+   ,
       "share_header": "ऐप साझा करें",
       "share_desc": "शॉपिंग पॉइंट कमाने के लिए इस ऐप को शेयर करें",
       "share_text": "इस ऐप को साझा करें और खरीदारी के बिंदु प्राप्त करें जब वे अपनी पहली खरीदारी करें।",
@@ -215,8 +206,7 @@
       "last_name": "उपनाम",
       "phone_number": "फ़ोन नंबर",
       "share_now": "अब साझा करें"
-    },
-    "my-cart": {
+    ,
       "header": "मेरी गाड़ी",
       "desc": "यहां अपनी कार्ट में जोड़े गए सभी आइटम देखें",
       "no_items": "आपके कार्ट में कोई आइटम नहीं हैं।",
@@ -230,8 +220,7 @@
       "cart_total": "गाड़ी कुल",
       "next": "आगे",
       "checkout": "चेकआउट "
-    },
-    "business": {
+   ,
       "business_header": "स्थानीय व्यवसाय खोजें",
       "your_location_text": "आपकी स्थिति:",
       "top_cat_text": "शीर्ष श्रेणियां",
@@ -245,6 +234,6 @@
       "fashion_desc": "नवीनतम फैशन के साथ फैशनेबल हो जाओ",
       "home_header": "घर",
       "home_desc": "अपने दरवाजे पर घर की सेवाएं प्राप्त करें"
-    }
+    
 
 }

@@ -25,14 +25,15 @@ class DraggablePage extends StatefulWidget {
   State<DraggablePage> createState() => _DraggablePageState();
 }
 
-class _DraggablePageState extends State<DraggablePage> {
+class _DraggablePageState extends State<DraggablePage>
+    with AutomaticKeepAliveClientMixin {
   final ImagePicker _imagePicker = ImagePicker();
   String? _selecetdAddress;
   Geometry? _geometry;
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return DraggableHome(
-        //backgroundColor: Colors.white,
         headerExpandedHeight: 0.0000000000001,
         body: [NewsTab(reload: widget.isredirected)],
         fullyStretchable: true,
@@ -323,6 +324,7 @@ class _DraggablePageState extends State<DraggablePage> {
                             print(element.name);
                             print(element.path);
                           });
+
                           if (imageFileList != null) {
                             Navigator.push(
                                 context,
@@ -397,4 +399,7 @@ class _DraggablePageState extends State<DraggablePage> {
       },
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

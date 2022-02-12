@@ -11,7 +11,6 @@ import 'package:path_provider/path_provider.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:threekm/Custom_library/flutter_reaction_button.dart';
-import 'package:threekm/Models/home1_model.dart';
 import 'package:threekm/UI/main/News/Widgets/comment_Loading.dart';
 import 'package:threekm/UI/main/News/Widgets/likes_Loading.dart';
 import 'package:threekm/UI/main/Profile/AuthorProfile.dart';
@@ -75,6 +74,63 @@ class _NewsListPageState extends State<NewsListPage> {
           "lng": 79.0881546,
           "tags": ["humanstory", "featurestory", "people", "peopleofpune"],
           "category": 7
+        });
+      } else if (widget.title == "News & Politics") {
+        initJson = json.encode({
+          "lat": 21.1458004,
+          "lng": 79.0881546,
+          "tags": [
+            "news",
+            "corporators",
+            "election",
+            "BJP",
+            "NCP",
+            "CONGRESS",
+            "SHIVSENA",
+            "MNS",
+            "BJP Pune",
+            "BJP PCMC",
+            "NCP Pune",
+            "NCP PCMC",
+            "Pune Congress",
+            "PCMC Congress",
+            "Shivsena Pune",
+            "Shivsena PCMC",
+            "Pune MNS",
+            "PCMC MNS",
+            "Pune Corporator",
+            "PCMC Corporator",
+            "Pune Politics",
+            "PMC"
+          ],
+          "category": 1
+        });
+      } else if (widget.title.contains("Entertainment")) {
+        initJson = json.encode({
+          "lat": 21.1458004,
+          "lng": 79.0881546,
+          "tags": ["entertainment"]
+        });
+      } else if (widget.title.contains("Health")) {
+        initJson = json.encode({
+          "lat": 21.1458004,
+          "lng": 79.0881546,
+          "tags": [
+            "yoga",
+            "hiit",
+            "nutrition",
+            "health",
+            "nutrition",
+            "fitness",
+            "fitnessandworkout"
+          ]
+        });
+      } else if (widget.title == "People") {
+        initJson = json.encode({
+          "lat": 21.1458004,
+          "lng": 79.0881546,
+          "tags": ["humanstory", "featurestory", "people", "peopleofpune"],
+          "category": 6
         });
       } else {
         initJson =

@@ -1,13 +1,14 @@
 {
-    "dashboard" : {
+    "you_can_change_it_later":"You can change it later in profile",
+    
       "Task_title": "My Task",
       "Orders":"Orders",
       "Today": "Today",
       "Tomorrow": "Tomorrow",
       "Month": "This Month",
-      "Week": "This Week"
-    },
-    "customer": {
+      "Week": "This Week",
+ 
+  
       "post_header": "Create a Post",
       "post_desc": "Create a post using pictures, text, hashtags, links etc.",
       "postNow": "Post Now",
@@ -40,8 +41,7 @@
       "products_search_res_text": "Search Results",
       "products_results_cancel": "Cancel",
       "products_results_save": "Save"
-    },
-    "products": {
+    ,
       "products_main_header": "Hyperlocal Products",
       "products_main_desc": "You can buy hyperlocal products here.",
       "my_location_text": "My Location",
@@ -71,8 +71,7 @@
       "top_picks_text": "Top picks for you",
       "trending_cat_text": "Trending Categories",
       "view_all_text": "View All"
-    },
-    "hyperlocal": {
+    ,
       "hyperlocal_main_header": "Hyperlocal Businesses",
       "hyperlocal_main_desc": "Find and engage with hyperlocal business",
       "hyperlocal_main_placeholder": "Search by keyword, business name",
@@ -101,8 +100,7 @@
       "tags_search_placeholder": "Search by keyword, business name",
       "tags_top_tags": "Top Tags",
       "tags_other_tags": "Other Trending Tags"
-    },
-    "profile": {
+   ,
       "profile_header_name": "Profile",
       "profile_header_desc": "You can view profile options here.",
       "profile_options": "Phone, Email, Gender",
@@ -151,8 +149,7 @@
       "edit_other_text": "Other",
       "edit_cancel_button": "Cancel",
       "edit_save_button": "Save"
-    },
-    "auth": {
+    ,
       "hi_text": "Hi There!",
       "you_need_text": "Sign up to get access to all the hyperlocal news, products and businesses",
       "phone_number_text": "Phone Number",
@@ -185,27 +182,23 @@
       "enter_valid_password_text": "Enter a valid password with more than 6 characters.",
       "reenter_password_text": "Reenter Password",
       "enter_otp_text": "Enter OTP"
-    },
-    "n-detail": {
+   ,
       "post_details_header": "Post Details",
       "post_header_desc": "View Post Details and Like or Comment"
-    },
-    "p-addresses": {
+    ,
       "address_header": "Addresses",
       "address_desc": "Add addresses for delivery when you buy a product on 3km.",
       "edit": "Edit",
       "delete": "Delete",
       "no_address": "No addresses saved"
-    },
-    "p-wallet": {
+   ,
       "wallet_header": "Wallet",
       "wallet_desc": "Wallet and transactions details here",
       "available_balance": "Available balance",
       "add_money": "Add Money to Wallet",
       "withdraw_money": "Withdraw Money from Wallet",
       "past_transac": "Past Transactions"
-    },
-    "p-share": {
+   ,
       "share_header": "Share the App",
       "share_desc": "Share this app to earn shopping points",
       "share_text": "Share this app and get shopping points when they make their first purchase.",
@@ -215,8 +208,7 @@
       "last_name": "Last Name",
       "phone_number": "Phone Number",
       "share_now": "Share Now"
-    },
-    "my-cart": {
+    ,
       "header": "My Cart",
       "desc": "View all the items added to your cart here",
       "no_items": "There are no items in your cart.",
@@ -230,8 +222,7 @@
       "cart_total": "Cart total",
       "next": "Next",
       "checkout": "Checkout"
-    },
-    "business": {
+   ,
       "business_header": "Find local Businesses",
       "your_location_text": "Your location:",
       "top_cat_text": "Top Categories",
@@ -245,6 +236,6 @@
       "fashion_desc": "Get trendy with latest fashion",
       "home_header": "Home",
       "home_desc": "Get home services at your doorsteps"
-    }
+    
 
 }
