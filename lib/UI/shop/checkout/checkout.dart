@@ -8,6 +8,7 @@ import 'package:threekm/Models/shopModel/cart_hive_model.dart';
 import 'package:threekm/Models/shopModel/shipping_rate_model.dart';
 import 'package:threekm/UI/shop/address/new_address.dart';
 import 'package:threekm/UI/shop/checkout/payment_confirming_screen.dart';
+import 'package:threekm/commenwidgets/CustomSnakBar.dart';
 import 'package:threekm/providers/shop/address_list_provider.dart';
 import 'package:threekm/providers/shop/cart_provider.dart';
 import 'package:threekm/providers/shop/checkout/checkout_provider.dart';
@@ -888,6 +889,10 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
                                                   .deliveryRate!,
                                           mode: 'shop',
                                         )));
+                          }
+                          if (deliveryAddressdata?.addressId == 0) {
+                            CustomSnackBar(
+                                context, Text("Please select address"));
                           }
                         }
                       : () {

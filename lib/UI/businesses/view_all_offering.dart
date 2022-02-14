@@ -232,21 +232,41 @@ class _ItemBuilderWidgetState extends State<ItemBuilderWidget> {
                 Material(
                   borderRadius: BorderRadius.circular(20),
                   elevation: 0.5,
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(20),
-                    child: CachedNetworkImage(
-                      alignment: Alignment.topCenter,
-                      placeholder: (context, url) => Transform.scale(
-                        scale: 0.5,
-                        child: CircularProgressIndicator(
-                          color: Colors.grey[400],
+                  child: Stack(
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(20),
+                        child: CachedNetworkImage(
+                          alignment: Alignment.topCenter,
+                          placeholder: (context, url) => Transform.scale(
+                            scale: 0.5,
+                            child: CircularProgressIndicator(
+                              color: Colors.grey[400],
+                            ),
+                          ),
+                          imageUrl: '${widget.data[widget.i].image}',
+                          height: ThreeKmScreenUtil.screenHeightDp / 6,
+                          width: ThreeKmScreenUtil.screenWidthDp / 2.5,
+                          fit: BoxFit.fill,
                         ),
                       ),
-                      imageUrl: '${widget.data[widget.i].image}',
-                      height: ThreeKmScreenUtil.screenHeightDp / 6,
-                      width: ThreeKmScreenUtil.screenWidthDp / 2.5,
-                      fit: BoxFit.fill,
-                    ),
+                      if (double.parse((widget.data[widget.i].strikePrice! -
+                                  widget.data[widget.i].price!)
+                              .toStringAsFixed(2)) >
+                          0.00)
+                        Container(
+                          padding: EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                              color: Colors.green,
+                              borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(20))),
+                          child: Text(
+                            '₹${(widget.data[widget.i].strikePrice! - widget.data[widget.i].price!).toStringAsFixed(2)} Off',
+                            style:
+                                ThreeKmTextConstants.tk12PXPoppinsWhiteRegular,
+                          ),
+                        ),
+                    ],
                   ),
                 ),
                 Container(

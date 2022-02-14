@@ -33,6 +33,22 @@ class _BusinessDetailState extends State<BusinessDetail> {
   int _counter = 0;
   GlobalKey<State> key = GlobalKey();
   GlobalKey appBarKey = GlobalKey();
+  List<String> wordList = [];
+  bool isReadMore = true;
+  String getReadMoreWord(inputString) {
+    if (inputString != null) {
+      wordList = inputString.split(" ");
+      if (wordList.isNotEmpty) {
+        return wordList.length >= 30 && isReadMore
+            ? wordList.getRange(0, (wordList.length / 2.5).round()).join(' ')
+            : wordList.join(' ');
+      } else {
+        return ' ';
+      }
+    }
+    return '';
+  }
+
   @override
   void initState() {
     super.initState();
@@ -271,9 +287,23 @@ class _BusinessDetailState extends State<BusinessDetail> {
                           Padding(
                             padding: const EdgeInsets.only(
                                 left: 20, right: 20, top: 10),
-                            child: HtmlWidget(
-                              '${data.creator.about}',
-                              textStyle: TextStyle(color: Colors.black,),
+                            child: Wrap(
+                              children: [
+                                HtmlWidget(
+                                  '${getReadMoreWord(data.creator.about)}',
+                                  textStyle: TextStyle(
+                                    color: Colors.black,
+                                  ),
+                                ),
+                                if (wordList.length >= 30 && isReadMore)
+                                  TextButton(
+                                      onPressed: () {
+                                        setState(() {
+                                          isReadMore = false;
+                                        });
+                                      },
+                                      child: Text('Read More'))
+                              ],
                             ),
                           ),
                           VisibilityDetector(
@@ -561,9 +591,9 @@ class _BusinessDetailState extends State<BusinessDetail> {
                                       ),
                                       Container(
                                         margin: EdgeInsets.only(bottom: 50),
-                                        height:
-                                            ThreeKmScreenUtil.screenHeightDp /
-                                                1.58,
+                                        // height:
+                                        //     ThreeKmScreenUtil.screenHeightDp /
+                                        //         1.7,
                                         color: Color(0xFFFFFFFF),
                                         child: GridView.builder(
                                             padding: const EdgeInsets.only(
@@ -641,6 +671,12 @@ class _BusinessDetailState extends State<BusinessDetail> {
                                                             .copyWith(
                                                                 color: const Color(
                                                                     0xFFFC8338))),
+                                                    discountType: productData
+                                                        .discountType,
+                                                    discountValue: productData
+                                                        .discountValue,
+                                                    hasDiscount:
+                                                        productData.hasDiscount,
                                                   ),
                                                 ),
                                               );

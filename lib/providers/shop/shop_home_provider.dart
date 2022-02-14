@@ -2,7 +2,9 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/cupertino.dart';
+import 'package:provider/src/provider.dart';
 import 'package:threekm/commenwidgets/commenwidget.dart';
+import 'package:threekm/main.dart';
 
 import 'package:threekm/networkservice/Api_Provider.dart';
 import 'package:threekm/Models/shopModel/restaurants_model.dart';
@@ -46,13 +48,17 @@ class ShopHomeProvider extends ChangeNotifier {
         hideLoading();
         notifyListeners();
       }
+    } else {
+      log(' some error ');
     }
   }
 
   RestaurantsModel? _restaurantData;
   RestaurantsModel? get restaurantData => _restaurantData;
   Future<Null> getRestaurants(mounted, page, {query, lat, lng}) async {
-    final _location = await _locationProvider.getlocationData;
+    final _location =
+        navigatorKey.currentContext!.read<LocationProvider>().getlocationData;
+    // final _location = _locationProvider.getlocationData;
     var requestJson = json.encode(query != null
         ? {
             "lat": lat != null ? lat : _location?.latitude ?? '',

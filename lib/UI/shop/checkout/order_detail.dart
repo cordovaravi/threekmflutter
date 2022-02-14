@@ -306,7 +306,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                             padding: const EdgeInsets.only(
                                                 top: 20, left: 20, right: 20),
                                             child: Text(
-                                                'Order Served by ${data.soldby}'),
+                                                'Order provided by ${data.soldby}'),
                                           ),
 
                                           ListView.builder(
@@ -652,7 +652,8 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                     ),
                                                   ),
                                                 ),
-                                                Text('Confirming With restaurant:',
+                                                Text(
+                                                    'Confirming With restaurant:',
                                                     style: ThreeKmTextConstants
                                                         .tk14PXPoppinsBlackSemiBold),
                                                 ListView.builder(

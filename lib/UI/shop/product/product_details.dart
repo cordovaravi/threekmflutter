@@ -46,6 +46,22 @@ class _ProductDetailsState extends State<ProductDetails> {
   var variation;
   int? variationIndex = 0;
 
+  List<String> wordList = [];
+  bool isReadMore = true;
+  String getReadMoreWord(inputString) {
+    if (inputString != null) {
+      wordList = inputString.split(" ");
+      if (wordList.isNotEmpty) {
+        return wordList.length >= 30 && isReadMore
+            ? wordList.getRange(0, (wordList.length / 2.5).round()).join(' ')
+            : wordList.join(' ');
+      } else {
+        return ' ';
+      }
+    }
+    return '';
+  }
+
   @override
   void initState() {
     print('${widget.id}======================');
@@ -281,47 +297,57 @@ class _ProductDetailsState extends State<ProductDetails> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(
-                                    '${product?.name}',
-                                    style: ThreeKmTextConstants
-                                        .tk16PXPoppinsBlackSemiBold,
+                                  Row(
+                                    children: [
+                                      SizedBox(
+                                        width:
+                                            MediaQuery.of(context).size.width /
+                                                1.4,
+                                        child: Text(
+                                          '${product?.name}',
+                                          style: ThreeKmTextConstants
+                                              .tk16PXPoppinsBlackSemiBold,
+                                        ),
+                                      ),
+                                      Spacer(),
+                                      Container(
+                                          padding: EdgeInsets.all(8),
+                                          decoration: BoxDecoration(
+                                              color: Color(0xFF43B978),
+                                              borderRadius:
+                                                  BorderRadius.circular(20)),
+                                          child: Text('#${product?.catalogId}',
+                                              style: ThreeKmTextConstants
+                                                  .tk12PXPoppinsWhiteRegular))
+                                    ],
                                   ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        top: 10, bottom: 15),
-                                    child: Row(
-                                      children: [
-                                        // RatingBar.builder(
-                                        //   initialRating: 3,
-                                        //   minRating: 1,
-                                        //   direction: Axis.horizontal,
-                                        //   allowHalfRating: true,
-                                        //   itemCount: 5,
-                                        //   itemSize: 30,
-                                        //   itemBuilder: (context, _) =>
-                                        //       const Icon(
-                                        //     Icons.star_rate_rounded,
-                                        //     color: Colors.amber,
-                                        //   ),
-                                        //   onRatingUpdate: (rating) {
-                                        //     print(rating);
-                                        //   },
-                                        // ),
-                                        Text(""),
-                                        Spacer(),
-                                        Container(
-                                            padding: EdgeInsets.all(8),
-                                            decoration: BoxDecoration(
-                                                color: Color(0xFF43B978),
-                                                borderRadius:
-                                                    BorderRadius.circular(20)),
-                                            child: Text(
-                                                '#${product?.catalogId}',
-                                                style: ThreeKmTextConstants
-                                                    .tk12PXPoppinsWhiteRegular))
-                                      ],
-                                    ),
-                                  ),
+                                  // Padding(
+                                  //   padding: const EdgeInsets.only(
+                                  //       top: 10, bottom: 15),
+                                  //   child: Row(
+                                  //     children: [
+                                  //       // RatingBar.builder(
+                                  //       //   initialRating: 3,
+                                  //       //   minRating: 1,
+                                  //       //   direction: Axis.horizontal,
+                                  //       //   allowHalfRating: true,
+                                  //       //   itemCount: 5,
+                                  //       //   itemSize: 30,
+                                  //       //   itemBuilder: (context, _) =>
+                                  //       //       const Icon(
+                                  //       //     Icons.star_rate_rounded,
+                                  //       //     color: Colors.amber,
+                                  //       //   ),
+                                  //       //   onRatingUpdate: (rating) {
+                                  //       //     print(rating);
+                                  //       //   },
+                                  //       // ),
+                                  //       Text(""),
+                                  //       Spacer(),
+
+                                  //     ],
+                                  //   ),
+                                  // ),
                                   Row(
                                     children: [
                                       Text(
@@ -335,7 +361,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                                           padding:
                                               const EdgeInsets.only(left: 10),
                                           child: Text(
-                                            '${product.discountValue}${product.discountType == 'percentage' ? '%' : ''} Off',
+                                            '${product.discountType == 'percentage' ? "" : "₹"}${product.discountValue}${product.discountType == 'percentage' ? '%' : ''} Off',
                                             style: ThreeKmTextConstants
                                                 .tk14PXPoppinsGreenSemiBold,
                                           ),
@@ -345,9 +371,22 @@ class _ProductDetailsState extends State<ProductDetails> {
                                   Padding(
                                     padding: const EdgeInsets.only(
                                         top: 10, bottom: 20),
-                                    child: HtmlWidget(
-                                      '${product.description}',
-                                      textStyle: TextStyle(color: Colors.black),
+                                    child: Wrap(
+                                      children: [
+                                        HtmlWidget(
+                                          '${getReadMoreWord(product.description)}',
+                                          textStyle:
+                                              TextStyle(color: Colors.black),
+                                        ),
+                                        if (wordList.length >= 30 && isReadMore)
+                                          TextButton(
+                                              onPressed: () {
+                                                setState(() {
+                                                  isReadMore = false;
+                                                });
+                                              },
+                                              child: Text('Read More'))
+                                      ],
                                     ),
                                   ),
                                   SizedBox(
@@ -357,29 +396,39 @@ class _ProductDetailsState extends State<ProductDetails> {
                                         scrollDirection: Axis.horizontal,
                                         itemCount: product.tags.length,
                                         itemBuilder: (context, i) {
-                                          return Container(
-                                            //height: 35,
-
-                                            margin: const EdgeInsets.only(
-                                                top: 7, bottom: 7, right: 7),
-                                            decoration: BoxDecoration(
-                                                border: Border.all(
-                                                    color: Color(0xFF555C64)),
-                                                borderRadius:
-                                                    BorderRadius.circular(20)),
-                                            child: Padding(
-                                              padding:
-                                                  const EdgeInsets.all(8.0),
-                                              child: Text(
-                                                '  ${product.tags[i]}  ',
-                                                style: ThreeKmTextConstants
-                                                    .tk12PXLatoGreenMedium
-                                                    .copyWith(
-                                                        color:
-                                                            Color(0xFF555C64)),
-                                              ),
+                                          return Padding(
+                                            padding: EdgeInsets.only(right: 10),
+                                            child: ChoiceChip(
+                                              label: Text('${product.tags[i]}'),
+                                              selected: true,
+                                              selectedColor: Colors.grey[200],
+                                              labelStyle: TextStyle(
+                                                  color: Colors.black87),
                                             ),
                                           );
+                                          //  Container(
+                                          //   //height: 35,
+
+                                          //   margin: const EdgeInsets.only(
+                                          //       top: 7, bottom: 7, right: 7),
+                                          //   decoration: BoxDecoration(
+                                          //       border: Border.all(
+                                          //           color: Color(0xFF555C64)),
+                                          //       borderRadius:
+                                          //           BorderRadius.circular(20)),
+                                          //   child: Padding(
+                                          //     padding:
+                                          //         const EdgeInsets.all(8.0),
+                                          //     child: Text(
+                                          //       '  ${product.tags[i]}  ',
+                                          //       style: ThreeKmTextConstants
+                                          //           .tk12PXLatoGreenMedium
+                                          //           .copyWith(
+                                          //               color:
+                                          //                   Color(0xFF555C64)),
+                                          //     ),
+                                          //   ),
+                                          // );
                                         }),
                                   ),
                                   if (data.result!.variations!.length > 0)
@@ -402,53 +451,75 @@ class _ProductDetailsState extends State<ProductDetails> {
                                             itemBuilder: (_, i) {
                                               var vdata =
                                                   data.result!.variations?[i];
-                                              return InkWell(
-                                                onTap: () {
+                                              return ChoiceChip(
+                                                label: Text(
+                                                    '${vdata!.options['variation_name']}'),
+                                                selected: vdata.variationId ==
+                                                        variationid
+                                                    ? true
+                                                    : false,
+                                                onSelected: (p) {
                                                   setState(() {
-                                                    price = vdata?.price;
-                                                    weight = vdata?.weight;
+                                                    price = vdata.price;
+                                                    weight = vdata.weight;
                                                     variationid =
-                                                        vdata?.variationId;
+                                                        vdata.variationId;
                                                     variationIndex = i;
                                                     variation = vdata;
                                                   });
                                                 },
-                                                child: Container(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                          right: 20, left: 20),
-                                                  margin: const EdgeInsets.only(
-                                                      right: 20),
-                                                  decoration: BoxDecoration(
-                                                      color: Color(
-                                                          vdata?.variationId ==
-                                                                  variationid
-                                                              ? 0xFF43B97834
-                                                              : 0xFFFFFF),
-                                                      border: Border.all(
-                                                          color: Color(
-                                                              vdata?.variationId ==
-                                                                      variationid
-                                                                  ? 0xFF43B978
-                                                                  : 0xFF979EA4)),
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              20)),
-                                                  child: Center(
-                                                    child: Text(
-                                                      '${vdata!.options['variation_name']}',
-                                                      style: ThreeKmTextConstants
-                                                          .tk14PXPoppinsBlackMedium
-                                                          .copyWith(
-                                                              color: Color(vdata
-                                                                          .variationId ==
-                                                                      variationid
-                                                                  ? 0xFF43B978
-                                                                  : 0xFF000000)),
-                                                    ),
-                                                  ),
-                                                ),
+                                                selectedColor: Colors.grey[200],
+                                                labelStyle: TextStyle(
+                                                    color: Colors.black87),
                                               );
+
+                                              // InkWell(
+                                              //   onTap: () {
+                                              //     setState(() {
+                                              //       price = vdata?.price;
+                                              //       weight = vdata?.weight;
+                                              //       variationid =
+                                              //           vdata?.variationId;
+                                              //       variationIndex = i;
+                                              //       variation = vdata;
+                                              //     });
+                                              //   },
+                                              //   child: Container(
+                                              //     padding:
+                                              //         const EdgeInsets.only(
+                                              //             right: 20, left: 20),
+                                              //     margin: const EdgeInsets.only(
+                                              //         right: 20),
+                                              //     decoration: BoxDecoration(
+                                              //         color: Color(
+                                              //             vdata?.variationId ==
+                                              //                     variationid
+                                              //                 ? 0xFF43B97834
+                                              //                 : 0xFFFFFF),
+                                              //         border: Border.all(
+                                              //             color: Color(
+                                              //                 vdata?.variationId ==
+                                              //                         variationid
+                                              //                     ? 0xFF43B978
+                                              //                     : 0xFF979EA4)),
+                                              //         borderRadius:
+                                              //             BorderRadius.circular(
+                                              //                 20)),
+                                              //     child: Center(
+                                              //       child: Text(
+                                              //         '${vdata!.options['variation_name']}',
+                                              //         style: ThreeKmTextConstants
+                                              //             .tk14PXPoppinsBlackMedium
+                                              //             .copyWith(
+                                              //                 color: Color(vdata
+                                              //                             .variationId ==
+                                              //                         variationid
+                                              //                     ? 0xFF43B978
+                                              //                     : 0xFF000000)),
+                                              //       ),
+                                              //     ),
+                                              //   ),
+                                              // );
                                             })),
                                   VisibilityDetector(
                                     key: key,
@@ -492,8 +563,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                                                                       .image,
                                                                   name: product
                                                                       .name,
-                                                                  price: price !=
-                                                                          0
+                                                                  price: price != 0
                                                                       ? price
                                                                       : product
                                                                           .price,
@@ -502,10 +572,11 @@ class _ProductDetailsState extends State<ProductDetails> {
                                                                   variationId:
                                                                       variationid,
                                                                   variation_name:
-                                                                      variationid != 0
-                                                          ? variation.options[
-                                                              'variation_name']
-                                                          : null,
+                                                                      variationid !=
+                                                                              0
+                                                                          ? variation.options[
+                                                                              'variation_name']
+                                                                          : null,
                                                                   creatorId: product
                                                                       .creatorId,
                                                                   creatorName: product
@@ -718,29 +789,9 @@ class _ProductDetailsState extends State<ProductDetails> {
                                                                           .creatorDetails
                                                                           .businessName);
                                                                 } else {
-                                                                  ScaffoldMessenger.of(
-                                                                          context)
-                                                                      .showSnackBar(
-                                                                          SnackBar(
-                                                                    elevation:
-                                                                        0,
-                                                                    backgroundColor:
-                                                                        Colors
-                                                                            .transparent,
-                                                                    content:
-                                                                        Container(
-                                                                      margin: EdgeInsets
-                                                                          .all(
-                                                                              15),
-                                                                      padding:
-                                                                          EdgeInsets.all(
-                                                                              20),
-                                                                      color:
-                                                                          bgColor,
-                                                                      child: Text(
-                                                                          "This product is already added to your cart"),
-                                                                    ),
-                                                                  ));
+                                                                  viewCart(
+                                                                      context,
+                                                                      'shop');
                                                                 }
                                                               } else {
                                                                 ScaffoldMessenger.of(
@@ -1247,9 +1298,9 @@ class _ProductDetailsState extends State<ProductDetails> {
                                           id: product?.catalogId,
                                           variationId: variationid,
                                           variation_name: variationid != 0
-                                                          ? variation.options[
-                                                              'variation_name']
-                                                          : null,
+                                              ? variation
+                                                  .options['variation_name']
+                                              : null,
                                           creatorId: product?.creatorId,
                                           creatorName: product
                                               ?.creatorDetails.businessName);

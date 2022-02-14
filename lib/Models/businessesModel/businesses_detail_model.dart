@@ -228,8 +228,8 @@ class AddressObj {
     state = json['state'];
     country = json['country'];
     pincode = json['pincode'];
-    latitude = json['latitude'];
-    longitude = json['longitude'];
+    latitude = json['latitude'] ?? 0.0;
+    longitude = json['longitude'] ?? 0.0;
     serviceArea = json['service_area'] ?? "";
   }
 

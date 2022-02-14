@@ -7,6 +7,7 @@ import 'package:threekm/Models/shopModel/address_list_model.dart';
 import 'package:threekm/Models/shopModel/cart_hive_model.dart';
 import 'package:threekm/Models/shopModel/shipping_rate_model.dart';
 import 'package:threekm/UI/shop/address/new_address.dart';
+import 'package:threekm/commenwidgets/CustomSnakBar.dart';
 import 'package:threekm/providers/shop/address_list_provider.dart';
 import 'package:threekm/providers/shop/cart_provider.dart';
 import 'package:threekm/providers/shop/checkout/checkout_provider.dart';
@@ -159,8 +160,9 @@ class _RestaurantsCheckOutScreenState extends State<RestaurantsCheckOutScreen> {
                                 ),
                                 InkWell(
                                   onTap: () {
-                                  restrobox.length == 0
-            ? null :  _pageController.jumpToPage(2);
+                                    restrobox.length == 0
+                                        ? null
+                                        : _pageController.jumpToPage(2);
                                   },
                                   child: Column(
                                     children: const [
@@ -500,9 +502,12 @@ class _RestaurantsCheckOutScreenState extends State<RestaurantsCheckOutScreen> {
                                           taxes +
                                           10;
                                       return box.length == 0
-                                          ? Container(child:  Center(
-                  child: Text('Please add Some Item in Cart'),
-                ),)
+                                          ? Container(
+                                              child: Center(
+                                                child: Text(
+                                                    'Please add Some Item in Cart'),
+                                              ),
+                                            )
                                           : Container(
                                               //color: Colors.red,
 
@@ -851,9 +856,7 @@ class _RestaurantsCheckOutScreenState extends State<RestaurantsCheckOutScreen> {
                         ],
                       ))
                 ]))
-            : Container(
-                
-              ),
+            : Container(),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         floatingActionButton: restrobox.length == 0
             ? Container(height: 50)
@@ -916,6 +919,9 @@ class _RestaurantsCheckOutScreenState extends State<RestaurantsCheckOutScreen> {
                                     shippingAmount: totalPrice,
                                     mode: 'restro',
                                   )));
+                    }
+                    if (deliveryAddressdata?.addressId == 0) {
+                      CustomSnackBar(context, Text("Please select address"));
                     }
                   },
                 ),

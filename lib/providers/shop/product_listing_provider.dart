@@ -1,10 +1,13 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:provider/src/provider.dart';
 import 'package:threekm/commenwidgets/commenwidget.dart';
+import 'package:threekm/main.dart';
 import 'package:threekm/networkservice/Api_Provider.dart';
 import 'package:threekm/Models/shopModel/all_category_model.dart';
 import 'package:threekm/Models/shopModel/product_listing_model.dart';
+import 'package:threekm/providers/Location/locattion_Provider.dart';
 import 'package:threekm/utils/api_paths.dart';
 
 class ProductListingProvider extends ChangeNotifier {
@@ -24,6 +27,8 @@ class ProductListingProvider extends ChangeNotifier {
 
   Future<Null> getProductListing({mounted, page, query, creatorId = 0}) async {
     if (mounted) {
+      final _location =
+        navigatorKey.currentContext!.read<LocationProvider>().getlocationData;
       showLoading();
       _state = 'loading';
       try {
@@ -33,8 +38,8 @@ class ProductListingProvider extends ChangeNotifier {
                 ? jsonEncode({
                     "page": page,
                     "query": query,
-                    "lat": 18.5061068,
-                    "lng": 73.7598362,
+                    "lat": _location?.latitude ?? 18.5061068,
+                    "lng": _location?.longitude ?? 73.7598362,
                   })
                 : jsonEncode({"page": page, "creator_id": creatorId}));
         if (response != null) {
