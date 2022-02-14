@@ -8,6 +8,7 @@ import 'package:threekm/UI/businesses/businesses_home.dart';
 import 'package:threekm/UI/main/navigation.dart';
 import 'package:threekm/UI/shop/cart/cart_item_list_modal.dart';
 import 'package:threekm/UI/shop/checkout/order_detail.dart';
+import 'package:threekm/providers/Location/locattion_Provider.dart';
 import 'package:threekm/providers/shop/shop_home_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:threekm/Models/shopModel/shop_home_model.dart';
@@ -41,7 +42,11 @@ class _Home3KMState extends State<Home3KM> {
 
   @override
   void initState() {
-    context.read<ShopHomeProvider>().getShopHome(mounted);
+    Future.microtask(() {
+      context.read<ShopHomeProvider>().getShopHome(mounted);
+      context.read<LocationProvider>().getLocation();
+    });
+    //context.read<ShopHomeProvider>().getShopHome(mounted);
     // context.read<ShopHomeProvider>().getRestaurants(initJson, mounted);
     super.initState();
   }
@@ -49,9 +54,11 @@ class _Home3KMState extends State<Home3KM> {
   @override
   Widget build(BuildContext context) {
     final shopHomeProvider = context.watch<ShopHomeProvider>();
+    final _location =
+        context.read<LocationProvider>().getlocationData;
     return Scaffold(
       body: RefreshIndicator(onRefresh: () {
-        var initJson = json.encode({"lat": '', "lng": '', "page": 1});
+        var initJson = json.encode({"lat": _location?.latitude ?? '', "lng": _location?.longitude ?? '', "page": 1});
         return context.read<ShopHomeProvider>().onRefresh(initJson, mounted);
       }, child: Builder(builder: (context) {
         if (shopHomeProvider.state == 'loading') {
@@ -337,25 +344,10 @@ class _ShopHomeState extends State<ShopHome>
                             child: Column(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                InkWell(
-                                  onTap: () {
-                                    Navigator.of(context).push(
-                                      PageRouteBuilder(
-                                        opaque: false, // set to false
-                                        pageBuilder: (_, __, ___) =>
-                                            OrderDetails(),
-                                      ),
-                                    );
-                                    // Navigator.push(
-                                    //     context,
-                                    //     MaterialPageRoute(
-                                    //         builder: (_) => CheckOutSuccess()));
-                                  },
-                                  child: Text(
-                                    'Order Food from your',
-                                    style: ThreeKmTextConstants
-                                        .tk20PXPoppinsRedBold,
-                                  ),
+                                Text(
+                                  'Order Food from your',
+                                  style:
+                                      ThreeKmTextConstants.tk20PXPoppinsRedBold,
                                 ),
                                 Text(
                                   'Favourite Restaurant!',
@@ -439,8 +431,7 @@ class _ShopHomeState extends State<ShopHome>
                                           context,
                                           MaterialPageRoute(
                                               builder: (_) => RestaurantMenu(
-                                                    data:
-                                                        restaurantData[index],
+                                                    data: restaurantData[index],
                                                   )));
                                     },
                                     child: RestaurantHomeCard(

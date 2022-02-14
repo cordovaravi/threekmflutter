@@ -7,7 +7,7 @@ class OrderDetailModel {
   late final Result result;
 
   OrderDetailModel.fromJson(Map<String, dynamic> json) {
-    StatusCode = json['StatusCode'];
+    StatusCode = json['StatusCode'] ?? 0;
     result = Result.fromJson(json['Result']);
   }
 

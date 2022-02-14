@@ -10,6 +10,7 @@ import 'package:threekm/UI/Search/SearchPage.dart';
 import 'package:threekm/UI/businesses/businesses_detail.dart';
 import 'package:threekm/UI/main/navigation.dart';
 import 'package:threekm/UI/shop/cart/cart_item_list_modal.dart';
+import 'package:threekm/providers/Location/locattion_Provider.dart';
 import 'package:threekm/providers/businesses/businesses_home_provider.dart';
 import 'package:threekm/utils/screen_util.dart';
 
@@ -44,10 +45,12 @@ class _BusinessesHomeState extends State<BusinessesHome>
     super.build(context);
     // context.read<BusinessesHomeProvider>().getBusinesses(mounted);
     final businessesHomeProvider = context.watch<BusinessesHomeProvider>();
+    final _location =
+        context.read<LocationProvider>().getlocationData;
     return Scaffold(
       body: RefreshIndicator(
         onRefresh: () {
-          var initJson = json.encode({"lat": '', "lng": '', "page": 1});
+          var initJson = json.encode({"lat": _location?.latitude ?? '', "lng": _location?.longitude ?? '', "page": 1});
           return context
               .read<BusinessesHomeProvider>()
               .onRefresh(initJson, mounted);

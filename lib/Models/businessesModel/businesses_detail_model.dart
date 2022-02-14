@@ -141,7 +141,7 @@ class Creator {
     reviews = List.castFrom<dynamic, dynamic>(json['reviews']);
     coverImages = List.castFrom<dynamic, String>(json['cover_images']);
     addressObj = AddressObj.fromJson(json['address_obj']);
-    whatsappNo = json['whatsapp_no'];
+    whatsappNo = json['whatsapp_no'] ?? '';
   }
 
   Map<String, dynamic> toJson() {
@@ -228,8 +228,8 @@ class AddressObj {
     state = json['state'];
     country = json['country'];
     pincode = json['pincode'];
-    latitude = json['latitude'];
-    longitude = json['longitude'];
+    latitude = json['latitude'] ?? 0.0;
+    longitude = json['longitude'] ?? 0.0;
     serviceArea = json['service_area'] ?? "";
   }
 

@@ -14,7 +14,7 @@ class CartProvider extends ChangeNotifier {
   Box? _restroCartBox;
   Box? get restroCartBoxData => _restroCartBox;
 
-  addToCart(image, name, quantity, price, id, variationId, weight, creatorId,
+  addToCart(image, name, quantity, price, id, variationId, variation_name, weight, creatorId,
       creatorName) async {
     _state = 'loading';
     Box _creatorIDBox = await Hive.openBox('creatorID');
@@ -27,21 +27,34 @@ class CartProvider extends ChangeNotifier {
         ..quantity = quantity ?? 1
         ..price = price ?? 0
         ..id = id
-        ..variationId = variationId
+        ..variation_id = variationId
+        ..variation_name = variation_name
         ..weight = weight
         ..creatorId = creatorId
         ..creatorName = creatorName;
 
-      var existingItem = _cartBox?.values
-          .toList()
-          .firstWhere((dd) => dd.id == id, orElse: () => null);
-
-      if (existingItem == null) {
-        _cartBox?.add(cart);
-        print('>>>>>>>>>>>>>>>>>>>>>>');
-        cart.save();
+      if (variationId != null && variationId != 0) {
+        var existingItem = _cartBox?.values.toList().firstWhere(
+            (dd) => dd.variation_id == variationId,
+            orElse: () => null);
+        if (existingItem == null) {
+          _cartBox?.add(cart);
+          print('>>>>>>>>>>>>>>>>>>>>>>');
+          cart.save();
+        } else {
+          print('not added');
+        }
       } else {
-        print('not added');
+        var existingItem = _cartBox?.values
+            .toList()
+            .firstWhere((dd) => dd.id == id, orElse: () => null);
+        if (existingItem == null) {
+          _cartBox?.add(cart);
+          print('>>>>>>>>>>>>>>>>>>>>>>');
+          cart.save();
+        } else {
+          print('not added');
+        }
       }
 
       _state = 'loaded';
@@ -61,6 +74,7 @@ class CartProvider extends ChangeNotifier {
       price,
       id,
       variationId,
+      variation_name,
       weight,
       creatorName}) async {
     Box _creatorIDBox = await Hive.openBox('creatorID');
@@ -71,12 +85,12 @@ class CartProvider extends ChangeNotifier {
     if (_creatorIDBox.isEmpty) {
       _creatorIDBox.put('id', creatorId);
       _creatorIDBox.put('creatorName', creatorName);
-      addToCart(image, name, quantity, price, id, variationId, weight,
+      addToCart(image, name, quantity, price, id, variationId,variation_name, weight,
           creatorId, creatorName);
     } else {
       var Cid = _creatorIDBox.get('id');
       if (creatorId == Cid) {
-        addToCart(image, name, quantity, price, id, variationId, weight,
+        addToCart(image, name, quantity, price, id, variationId,variation_name, weight,
             creatorId, creatorName);
       } else {
         clearAndAddToCartModal(context, image, name, quantity, price, creatorId,
@@ -99,7 +113,7 @@ class CartProvider extends ChangeNotifier {
         ..quantity = quantity ?? 1
         ..price = price ?? 0
         ..id = id
-        ..variationId = variationId
+        ..variation_id = variationId
         ..weight = weight;
 
       var existingItem = _restroCartBox?.values
@@ -160,7 +174,7 @@ class CartProvider extends ChangeNotifier {
   }
 
   getBoxTotal(Box data) {
-    int totalPrice = 0;
+    num totalPrice = 0;
     for (var i = 0; i < data.length; i++) {
       CartHiveModel d = data.getAt(i);
       totalPrice = totalPrice + d.price! * d.quantity;
@@ -177,6 +191,4 @@ class CartProvider extends ChangeNotifier {
     }
     return totalWeight;
   }
-
- 
 }
