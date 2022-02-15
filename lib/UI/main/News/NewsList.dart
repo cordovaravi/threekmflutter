@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -454,28 +455,67 @@ class _NewsPostCardState extends State<NewsPostCard>
                                   //pic
                                   if (newsData.images != null &&
                                       newsData.images!.length > 0)
-                                    CachedNetworkImage(
-                                      height: 254,
-                                      width: 338,
-                                      fit: BoxFit.fill,
-                                      imageUrl: '${newsData.images!.first}',
-                                    )
-                                  else if (newsData.videos != null &&
+                                    newsData.images!.length == 1
+                                        ? CachedNetworkImage(
+                                            height: 254,
+                                            width: MediaQuery.of(context)
+                                                .size
+                                                .width,
+                                            fit: BoxFit.fitWidth,
+                                            imageUrl:
+                                                '${newsData.images!.first}',
+                                          )
+                                        : CarouselSlider.builder(
+                                            itemCount: newsData.images!.length,
+                                            itemBuilder: (context, index, _) {
+                                              return Container(
+                                                  // decoration: BoxDecoration(
+
+                                                  //     color: Colors.white,
+                                                  //     boxShadow: [
+                                                  //       BoxShadow(
+                                                  //           color:
+                                                  //               Colors.black45,
+                                                  //           blurRadius: 8.0)
+                                                  //     ]),
+                                                  child: CachedNetworkImage(
+                                                height: 254,
+                                                width: MediaQuery.of(context)
+                                                    .size
+                                                    .width,
+                                                fit: BoxFit.fitWidth,
+                                                imageUrl:
+                                                    '${newsData.images![index]}',
+                                              ));
+                                            },
+                                            options: CarouselOptions(
+                                              autoPlay: true,
+                                              viewportFraction: 0.99,
+                                            )),
+                                  if (newsData.videos != null &&
                                       newsData.videos!.length > 0)
                                     Stack(children: [
                                       Container(
-                                        height: 254,
+                                        //height: 254,
                                         width:
                                             MediaQuery.of(context).size.width,
                                         child: newsData
                                                     .videos?.first.vimeoUrl !=
                                                 null
-                                            ? VimeoPlayer(
-                                                videoId: Uri.parse(newsData
-                                                        .videos!.first.vimeoUrl
-                                                        .toString())
-                                                    .pathSegments
-                                                    .last)
+                                            ? Container(
+                                                height: 254,
+                                                width: MediaQuery.of(context)
+                                                    .size
+                                                    .width,
+                                                child: VimeoPlayer(
+                                                    videoId: Uri.parse(newsData
+                                                            .videos!
+                                                            .first
+                                                            .vimeoUrl
+                                                            .toString())
+                                                        .pathSegments
+                                                        .last),
+                                              )
                                             : VideoWidget(
                                                 thubnail: newsData.videos?.first
                                                             .thumbnail !=
@@ -898,17 +938,23 @@ class _NewsPostCardState extends State<NewsPostCard>
                               ),
                               if (newsData.images != null &&
                                   newsData.images!.length > 0)
-                                CachedNetworkImage(
-                                  height: 254,
-                                  width: MediaQuery.of(context).size.width,
-                                  fit: BoxFit.fill,
-                                  imageUrl: '${newsData.images!.first}',
-                                )
+                                CarouselSlider.builder(
+                                    itemCount: newsData.images!.length,
+                                    itemBuilder: (context, index, _) {
+                                      return CachedNetworkImage(
+                                        height: 254,
+                                        width:
+                                            MediaQuery.of(context).size.width,
+                                        fit: BoxFit.fitWidth,
+                                        imageUrl: '${newsData.images![index]}',
+                                      );
+                                    },
+                                    options: CarouselOptions())
                               else if (newsData.videos != null &&
                                   newsData.videos!.length > 0)
                                 Stack(children: [
                                   Container(
-                                    height: 254,
+                                    //height: 254,
                                     width: MediaQuery.of(context).size.width,
                                     child: VideoWidget(
                                         thubnail: newsData
