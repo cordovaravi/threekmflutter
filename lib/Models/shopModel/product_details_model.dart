@@ -89,6 +89,8 @@ class Product {
   late String status;
   late CreatorDetails creatorDetails;
   late var id;
+  late final int strikePrice;
+  late final int ogAmount;
   late String businessName;
 
   Product(
@@ -120,6 +122,8 @@ class Product {
       required this.status,
       required this.creatorDetails,
       required this.id,
+      required this.strikePrice,
+      required this.ogAmount,
       required this.businessName});
 
   Product.fromJson(Map<String, dynamic> json) {
@@ -165,6 +169,8 @@ class Product {
     status = json['status'];
     creatorDetails = CreatorDetails.fromJson(json['creator_details']);
     id = json['id'];
+    strikePrice = json['strike_price'];
+    ogAmount = json['og_amount'] ?? 0;
     businessName = json['business_name'];
   }
 
@@ -200,6 +206,8 @@ class Product {
       data['creator_details'] = creatorDetails.toJson();
     }
     data['id'] = id;
+    data['strike_price'] = strikePrice;
+    data['og_amount'] = ogAmount;
     data['business_name'] = businessName;
     return data;
   }
@@ -321,6 +329,7 @@ class Variations {
     required this.isActive,
     required this.options,
     this.id,
+    required this.ogAmount,
   });
   late final int variationId;
   late final int price;
@@ -331,6 +340,7 @@ class Variations {
   late final bool isActive;
   late final Map<String, dynamic> options;
   late final Null id;
+  late final int ogAmount;
 
   Variations.fromJson(Map<String, dynamic> json) {
     variationId = json['variation_id'];
@@ -342,6 +352,7 @@ class Variations {
     isActive = json['is_active'];
     options = json['options'];
     id = null;
+    ogAmount = json['og_amount'] ?? 0;
   }
 
   Map<String, dynamic> toJson() {
@@ -355,6 +366,7 @@ class Variations {
     _data['is_active'] = isActive;
     _data['options'] = options;
     _data['id'] = id;
+    _data['og_amount'] = ogAmount;
     return _data;
   }
 }

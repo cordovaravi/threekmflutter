@@ -8,6 +8,7 @@ import 'package:threekm/UI/businesses/businesses_home.dart';
 import 'package:threekm/UI/main/navigation.dart';
 import 'package:threekm/UI/shop/cart/cart_item_list_modal.dart';
 import 'package:threekm/UI/shop/checkout/order_detail.dart';
+import 'package:threekm/localization/localize.dart';
 import 'package:threekm/providers/Location/locattion_Provider.dart';
 import 'package:threekm/providers/shop/shop_home_provider.dart';
 import 'package:provider/provider.dart';
@@ -54,11 +55,14 @@ class _Home3KMState extends State<Home3KM> {
   @override
   Widget build(BuildContext context) {
     final shopHomeProvider = context.watch<ShopHomeProvider>();
-    final _location =
-        context.read<LocationProvider>().getlocationData;
+    final _location = context.read<LocationProvider>().getlocationData;
     return Scaffold(
       body: RefreshIndicator(onRefresh: () {
-        var initJson = json.encode({"lat": _location?.latitude ?? '', "lng": _location?.longitude ?? '', "page": 1});
+        var initJson = json.encode({
+          "lat": _location?.latitude ?? '',
+          "lng": _location?.longitude ?? '',
+          "page": 1
+        });
         return context.read<ShopHomeProvider>().onRefresh(initJson, mounted);
       }, child: Builder(builder: (context) {
         if (shopHomeProvider.state == 'loading') {
@@ -137,7 +141,11 @@ class _ShopHomeState extends State<ShopHome>
                       child: ElevatedButton.icon(
                           onPressed: () {},
                           icon: Icon(Icons.account_circle),
-                          label: Text('View Profile')),
+                          label: Text(
+                            AppLocalizations.of(context)!
+                                    .translate('view_profile') ??
+                                "",
+                          )),
                     ),
                     Container(
                       width: double.infinity,
@@ -162,7 +170,10 @@ class _ShopHomeState extends State<ShopHome>
                     ),
                     TextButton(
                         onPressed: () => Navigator.pop(context),
-                        child: Text('Close'))
+                        child: Text(
+                          AppLocalizations.of(context)!.translate('close') ??
+                              "",
+                        ))
                   ],
                 ),
               ),
@@ -238,7 +249,10 @@ class _ShopHomeState extends State<ShopHome>
                               Padding(
                                   padding: EdgeInsets.only(left: 11),
                                   child: Text(
-                                    "Search Hyperlocal Products",
+                                    AppLocalizations.of(context)!.translate(
+                                            'search_hyperlocal_product') ??
+                                        "Search Hyperlocal Products",
+                                    //"Search Hyperlocal Products",
                                     style: ThreeKmTextConstants
                                         .tk12PXLatoBlackBold
                                         .copyWith(color: Colors.grey),
@@ -345,12 +359,14 @@ class _ShopHomeState extends State<ShopHome>
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 Text(
-                                  'Order Food from your',
+                                  AppLocalizations.of(context)!
+                                          .translate('order_food_from_your') ?? 'Order Food from your',
                                   style:
                                       ThreeKmTextConstants.tk20PXPoppinsRedBold,
                                 ),
                                 Text(
-                                  'Favourite Restaurant!',
+                                  AppLocalizations.of(context)!
+                                          .translate('favorite_restaurant!') ?? 'Favorite Restaurant!',
                                   style:
                                       ThreeKmTextConstants.tk20PXPoppinsRedBold,
                                 ),
@@ -383,7 +399,9 @@ class _ShopHomeState extends State<ShopHome>
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            'Nearby Restaurants',
+                             AppLocalizations.of(context)!
+                                          .translate('nearby_restaurants') ??
+                                      'Nearby Restaurants',
                             style:
                                 ThreeKmTextConstants.tk16PXPoppinsBlackSemiBold,
                           ),
@@ -397,7 +415,10 @@ class _ShopHomeState extends State<ShopHome>
                             child: Row(
                               children: [
                                 Text(
-                                  'View All ',
+                                  AppLocalizations.of(context)!
+                                          .translate('view_all_text') ??
+                                      "",
+                                  // 'View All ',
                                   style: ThreeKmTextConstants
                                       .tk14PXPoppinsRedSemiBold,
                                 ),
@@ -463,8 +484,10 @@ class _ShopHomeState extends State<ShopHome>
                         top: 20,
                       ),
                       child: ElevatedButton(
-                          child: const Text(
-                            "View all Restaurants",
+                          child: Text(
+                            AppLocalizations.of(context)!
+                                    .translate('view_all_restaurants') ??
+                                "",
                             style: TextStyle(
                               fontSize: 20,
                             ),
@@ -671,7 +694,10 @@ class _ShopHomeState extends State<ShopHome>
                               },
                               child: Row(
                                 children: [
-                                  Text('View All ',
+                                  Text(
+                                      AppLocalizations.of(context)!
+                                              .translate('view_all_text') ??
+                                          "",
                                       style: ThreeKmTextConstants
                                           .tk14PXPoppinsRedSemiBold),
                                   const Icon(

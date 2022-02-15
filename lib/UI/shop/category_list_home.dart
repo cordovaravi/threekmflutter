@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:threekm/Models/shopModel/shop_home_model.dart';
+import 'package:threekm/localization/localize.dart';
 import 'package:threekm/utils/screen_util.dart';
 import 'package:threekm/utils/spacing_util.dart';
 import 'package:threekm/utils/threekm_textstyles.dart';
@@ -19,20 +20,21 @@ class CategoryListHome extends StatelessWidget {
       child: Column(
         children: [
           Container(
-            width: ThreeKmScreenUtil.screenWidthDp,
-            height: ThreeKmScreenUtil.screenHeightDp / 2.9,
+            width: MediaQuery.of(context).size.width,
+            height: ThreeKmScreenUtil.screenHeightDp / 3,
             child: GridView.builder(
                 shrinkWrap: true,
                 scrollDirection: Axis.horizontal,
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
-                    crossAxisSpacing: ThreeKmSpacing.spacing_32,
+                    //crossAxisSpacing: 32,
                     // mainAxisExtent: 80,
                     //mainAxisSpacing: 0,
                     childAspectRatio: 1.1),
                 itemCount: category.length,
                 itemBuilder: (context, i) {
                   return Column(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       InkWell(
                         onTap: () {
@@ -96,7 +98,9 @@ class CategoryListHome extends StatelessWidget {
               padding: const EdgeInsets.only(bottom: 20),
               child: ElevatedButton(
                   child: Text(
-                    "View all Categories",
+                    AppLocalizations.of(context)!
+                            .translate('view_all_categories') ??
+                        "View all Categories",
                     style: ThreeKmTextConstants.tk14PXPoppinsRedSemiBold,
                   ),
                   onPressed: () {

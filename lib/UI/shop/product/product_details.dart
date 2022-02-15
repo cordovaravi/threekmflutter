@@ -350,18 +350,26 @@ class _ProductDetailsState extends State<ProductDetails> {
                                   // ),
                                   Row(
                                     children: [
+                                      if (product!.hasDiscount)
+                                        Text('₹${product.strikePrice}',
+                                            style: ThreeKmTextConstants
+                                                .tk14PXPoppinsBlackSemiBold
+                                                .copyWith(
+                                                    decoration: TextDecoration
+                                                        .lineThrough,
+                                                    color: Colors.red[300])),
                                       Text(
-                                        '₹${price != 0 ? price : product?.price}',
+                                        ' ₹${price != 0 ? price : product.price}',
                                         style: ThreeKmTextConstants
                                             .tk12PXPoppinsBlackSemiBold
                                             .copyWith(fontSize: 24),
                                       ),
-                                      if (product!.hasDiscount)
+                                      if (product.hasDiscount)
                                         Padding(
                                           padding:
                                               const EdgeInsets.only(left: 10),
                                           child: Text(
-                                            '${product.discountType == 'percentage' ? "" : "₹"}${product.discountValue}${product.discountType == 'percentage' ? '%' : ''} Off',
+                                            '${product.discountType == 'percent' ? "" : "₹"}${product.discountValue}${product.discountType == 'percent' ? '%' : ''} Off',
                                             style: ThreeKmTextConstants
                                                 .tk14PXPoppinsGreenSemiBold,
                                           ),

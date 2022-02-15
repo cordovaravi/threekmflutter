@@ -22,7 +22,7 @@ class BusinessesWishListProvider extends ChangeNotifier {
 
     try {
       _businessWishBox = await Hive.openBox('businessWishListBox');
-      var favourite = BusinesseswishListHiveModel()
+      var favorite = BusinesseswishListHiveModel()
         ..name = name
         ..address = address
         ..logo = logo
@@ -35,8 +35,8 @@ class BusinessesWishListProvider extends ChangeNotifier {
       var existingItem = isinWishList(creatorId);
 
       if (existingItem == null) {
-        _businessWishBox?.add(favourite);
-        favourite.save();
+        _businessWishBox?.add(favorite);
+        favorite.save();
         notifyListeners();
       }
     } catch (e) {

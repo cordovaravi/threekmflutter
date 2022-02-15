@@ -314,12 +314,26 @@ class _ItemBuilderWidgetState extends State<ItemBuilderWidget> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text('₹${widget.data[widget.i].price}',
-                                style: ThreeKmTextConstants
-                                    .tk18PXPoppinsBlackMedium
-                                    .copyWith(
-                                        color: Color(0xFF3E7EFF),
-                                        fontWeight: FontWeight.bold)),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                    '₹${widget.data[widget.i].strikePrice ?? ''}',
+                                    style: ThreeKmTextConstants
+                                        .tk14PXPoppinsBlackMedium
+                                        .copyWith(
+                                            decoration:
+                                                TextDecoration.lineThrough,
+                                            color: Colors.red[300],
+                                            fontWeight: FontWeight.bold)),
+                                Text('₹${widget.data[widget.i].price}',
+                                    style: ThreeKmTextConstants
+                                        .tk18PXPoppinsBlackMedium
+                                        .copyWith(
+                                            color: Color(0xFF3E7EFF),
+                                            fontWeight: FontWeight.bold)),
+                              ],
+                            ),
                             InkWell(
                               onTap: () {
                                 if (isInWish(widget.data[widget.i].catalogId) ==
