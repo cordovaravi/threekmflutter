@@ -237,5 +237,20 @@
   "favorite_restaurant!":"Favorite Restaurant!",
   "nearby_restaurants":"Nearby Restaurants",
   "view_all_categories":"View all Categories",
-  "wishlist":"Wishlist"
+  "wishlist":"Wishlist",
+  "read_more":"Read More",
+  "write_a_review":"Write a Review",
+  "purchased":"PURCHASED",
+  "loading":"Loading ..... ",
+  "added_to_cart":"Added to cart",
+  "out_of_stock":"Out of stock",
+  "variants":"Variants",
+  "please_select_variant":"Please select variant",
+  "product_is_out_of_stock":"Product is out of stock",
+  "this_product_is_already_added_to_your_cart":"This product is already added to your cart",
+  "remove":"Remove",
+  "sold_by":"Sold By",
+  "view_all_reviews":"View All Reviews",
+  "view_less_reviews":"View Less Reviews"
+  
 }

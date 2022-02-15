@@ -233,5 +233,19 @@
   "favorite_restaurant!": "पसंदीदा भोजनालय!",
   "nearby_restaurants": "आस-पास के रेस्टोरेंट",
   "view_all_categories": "सभी श्रेणियाँ देखें",
-  "wishlist": "इच्छा-सूची"
+  "wishlist": "इच्छा-सूची",
+  "read_more": "अधिक पढ़ें",
+  "write_a_review": "एक समीक्षा लिखे",
+  "purchased": "खरीदी",
+  "loading": "लोड हो रहा है ..... ",
+  "added_to_cart": "कार्ट में जोड़ा गया",
+  "out_of_stock": "स्टॉक ख़त्म",
+  "variants": "वेरिएंट",
+  "please_select_variant": "कृपया प्रकार चुनें",
+  "product_is_out_of_stock": "उत्पाद स्टॉक में नहीं है",
+  "this_product_is_already_added_to_your_cart": "यह उत्पाद आपके कार्ट में पहले ही जोड़ा जा चुका है",
+  "remove": "हटाना",
+  "sold_by": "द्वारा बेचा",
+  "view_all_reviews": "सभी समीक्षाएं देखें",
+  "view_less_reviews": "कम समीक्षाएं देखें"
 }

@@ -233,5 +233,20 @@
   "favorite_restaurant!": "आवडते रेस्टॉरंट!",
   "nearby_restaurants": "जवळपासची रेस्टॉरंट्स",
   "view_all_categories": "सर्व श्रेणी पहा",
-  "wishlist": "इच्छा यादी"
+  "wishlist": "इच्छा यादी",
+
+  "read_more": "पुढे वाचा",
+  "write_a_review": "पुनरावलोकन लिहा",
+  "purchased": "विकत घेतले",
+  "loading": "लोड करत आहे ..... ",
+  "added_to_cart": "कार्टमध्ये जोडले",
+  "out_of_stock": "स्टॉक संपला",
+  "variants":"रूपे",
+  "please_select_variant":"कृपया प्रकार निवडा",
+  "product_is_out_of_stock":"उत्पादन स्टॉक संपले आहे",
+  "this_product_is_already_added_to_your_cart":"हे उत्पादन तुमच्या कार्टमध्ये आधीच जोडलेले आहे",
+  "remove":"काढा",
+  "sold_by":"द्वारे विकले गेले",
+  "view_all_reviews":"सर्व पुनरावलोकने पहा",
+  "view_less_reviews":"कमी पुनरावलोकने पहा"
 }
