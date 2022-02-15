@@ -120,8 +120,10 @@ class _RestaurantsHomeState extends State<RestaurantsHome> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      SizedBox(
-                        width: 250,
+                      Container(
+                        constraints: BoxConstraints(
+                            minWidth: 40,
+                            maxWidth: MediaQuery.of(context).size.width / 2),
                         child: Text(
                           _selecetedAddress ?? '',
                           style:

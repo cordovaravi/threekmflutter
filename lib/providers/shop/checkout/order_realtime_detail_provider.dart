@@ -5,7 +5,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:intl/intl.dart';
-import 'package:threekm/Models/shopModel/order_details_model.dart';
+
 import 'package:threekm/Models/shopModel/order_realtime_detail_model.dart';
 import 'package:threekm/main.dart';
 

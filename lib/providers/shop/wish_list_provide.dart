@@ -1,8 +1,18 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:threekm/Models/shopModel/cart_hive_model.dart';
 
 class WishListProvider extends ChangeNotifier {
+  WishListProvider() {
+    openbox();
+  }
+  openbox() async {
+    log('restro wishlist box open');
+    _wishBox = await Hive.openBox('shopWishListBox');
+  }
+
   String? _state;
   String? get state => _state;
 
@@ -10,7 +20,7 @@ class WishListProvider extends ChangeNotifier {
   Box? get wishBoxData => _wishBox;
 
   addToWishList(
-      {image, name, price, id, variationId, creatorId, creatorName}) async {
+      {image, name, price, id, variationId,variation_name, creatorId, creatorName}) async {
     _state = 'loading';
     try {
       _wishBox = await Hive.openBox('shopWishListBox');
@@ -19,7 +29,8 @@ class WishListProvider extends ChangeNotifier {
         ..name = name
         ..price = price
         ..id = id
-        ..variationId = variationId
+        ..variation_id = variationId
+        ..variation_name = variation_name
         ..creatorId = creatorId
         ..creatorName = creatorName;
 
@@ -46,10 +57,15 @@ class WishListProvider extends ChangeNotifier {
   }
 
   removeWish(id) {
-    _wishBox?.values.toList().firstWhere((dd) {
-      dd.delete();
-      notifyListeners();
-      return true;
-    }, orElse: () => null);
+    CartHiveModel delItem = isinWishList(id);
+    try {
+      if (delItem != null) {
+        // delItem.delete();
+        _wishBox?.delete(delItem.key);
+        notifyListeners();
+      }
+    } catch (e) {
+      log(e.toString());
+    }
   }
 }
