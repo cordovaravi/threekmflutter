@@ -46,4 +46,16 @@ class HomeSecondProvider extends ChangeNotifier {
   Future<void> onRefresh(requestJson) async {
     await getNewsSecond(requestJson).whenComplete(() => notifyListeners());
   }
+
+  void pollSubmitted({required int pollId, required String answer}) {
+    _homeModel?.data?.result?.finalposts?.forEach((element) {
+      // element.quiz?.isAnswered = true;
+      notifyListeners();
+      if (element.quiz?.quizId == pollId) {
+        element.quiz?.isAnswered = true;
+        element.quiz?.answer = answer;
+        notifyListeners();
+      }
+    });
+  }
 }

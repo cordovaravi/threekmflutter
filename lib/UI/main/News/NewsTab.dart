@@ -709,12 +709,17 @@ class _NewsTabState extends State<NewsTab>
                                             answer: selectedOptionModel.label,
                                             quizId: finalScondPost.quiz!.id!
                                                 .toInt());
-                                    print('Now total polls are : ' +
-                                        model.totalPolls.toString());
-                                    print('Selected option has label : ' +
-                                        selectedOptionModel.label);
+                                    context
+                                        .read<HomeSecondProvider>()
+                                        .pollSubmitted(
+                                            pollId: finalScondPost.quiz!.id!
+                                                .toInt(),
+                                            answer: selectedOptionModel.label);
+                                    // print('Now total polls are : ' +
+                                    //     model.totalPolls.toString());
+                                    // print('Selected option has label : ' +
+                                    //     selectedOptionModel.label);
                                   },
-
                                   optionsBorderShape:
                                       StadiumBorder(), //Its Default so its not necessary to write this line
                                   model: PollFrameModel(

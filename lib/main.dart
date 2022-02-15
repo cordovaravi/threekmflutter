@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -7,9 +8,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:in_app_update/in_app_update.dart';
 import 'package:path_provider/path_provider.dart' as pathProvider;
 import 'package:provider/provider.dart';
-import 'package:threekm/UI/Language/SelectLanguage.dart';
 import 'package:threekm/UI/walkthrough/splash_screen.dart';
 import 'package:threekm/providers/Location/locattion_Provider.dart';
 import 'package:threekm/providers/Notification/Notification_Provider.dart';
@@ -88,6 +89,7 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
   AppLanguage appLanguage = AppLanguage();
   await appLanguage.fetchLocale();
   runApp(MyApp(
@@ -248,10 +250,10 @@ class MyApp extends StatelessWidget {
               title: '3km.in',
               debugShowCheckedModeBanner: false,
               theme: lightTheme,
-              restorationScopeId: 'app',
+              //restorationScopeId: 'app',
               themeMode: ThemeMode.light,
               // darkTheme: darkTheme,
-              home:
+              home: //BeforeRunning(),
                   // SelectLanguage(),
                   SplashScreen(),
               navigatorKey: navigatorKey,

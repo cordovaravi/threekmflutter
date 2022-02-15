@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:better_player/better_player.dart';
@@ -33,18 +35,65 @@ class _VideoWidgetState extends State<VideoWidget> {
         }
       },
     ), betterPlayerDataSource: betterPlayerDataSource);
+    _betterPlayerController!.addEventsListener((BetterPlayerEvent event) {
+      if (event.betterPlayerEventType == BetterPlayerEventType.initialized) {
+        log("this is video height ${_betterPlayerController!.videoPlayerController!.value.size!.height}");
+        log("and aspect Ratio is ${_betterPlayerController!.videoPlayerController!.value.aspectRatio}");
+        //setState(() {});
+        setState(() {
+          _betterPlayerController!.setOverriddenAspectRatio(
+              _betterPlayerController!
+                  .videoPlayerController!.value.aspectRatio);
+          _betterPlayerController!.setOverriddenFit(BoxFit.contain);
+        });
+      }
+    });
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    log("building video context");
     return Container(
-        child: AspectRatio(
-      aspectRatio: 16 / 9,
-      child: BetterPlayer(
-        controller: _betterPlayerController!,
-      ),
-    ));
+        child:
+            _betterPlayerController?.videoPlayerController?.value.initialized ==
+                    true
+                ? BetterPlayer(controller: _betterPlayerController!)
+                : Container(
+                    color: Colors.black,
+                    child: Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                    height: 254,
+                    width: MediaQuery.of(context).size.width,
+                  ));
+    // AspectRatio(
+    //   aspectRatio: _betterPlayerController
+    //               ?.videoPlayerController?.value.aspectRatio !=
+    //           null
+    //       ? _betterPlayerController!.videoPlayerController!.value.aspectRatio
+    //       : 16 / 9,
+    //   //  height:
+    //   //     _betterPlayerController?.videoPlayerController?.value.size?.height ??
+    //   //         300,
+    //   // width:
+    //   //     _betterPlayerController?.videoPlayerController?.value.size?.width ??
+    //   //         300,
+    //   child: BetterPlayer(
+    //     controller: _betterPlayerController!,
+    //   ),
+    // );
+    // Container(
+    //   height: _betterPlayerController
+    //               ?.videoPlayerController?.value.size?.height !=
+    //           null
+    //       ? _betterPlayerController!.videoPlayerController!.value.size!.height
+    //       : 300,
+    //   width: MediaQuery.of(context).size.width,
+    //   child: BetterPlayer(
+    //     controller: _betterPlayerController!,
+    //   ),
+    // );
   }
 }
 

@@ -108,55 +108,55 @@ class _EditImageState extends State<EditImage> {
           style: ThreeKmTextConstants.tk16PXPoppinsWhiteBold,
         ),
         actions: [
-          imageList.getMoreImages.length > 0
-              ? TextButton(
-                  onPressed: () async {
-                    editingIndex++;
-                    Uint8List? fileData;
-                    if (imageKey[imageselectedIndex]
-                            .currentState
-                            ?.rawImageData !=
-                        null) {
-                      fileData = await cropImageDataWithNativeLibrary(
-                          state: imageKey[imageselectedIndex].currentState!);
-                      final tempDir = await getTemporaryDirectory();
-                      File file =
-                          await File('${tempDir.path}/${editingIndex}image.png')
-                              .create();
-                      file.writeAsBytesSync(fileData!);
-                      print(file.path);
-                      //imagesList.removeAt(imageselectedIndex);
-                      //imageList.removeImages(XFile(file.path));
-                      context
-                          .read<AddPostProvider>()
-                          .removeImages(imageselectedIndex);
-                      setState(() {
-                        ImageEditingFile = file;
-                        //imagesList.insert(imageselectedIndex, XFile(file.path));
-                        context
-                            .read<AddPostProvider>()
-                            .insertImage(imageselectedIndex, file);
-                      });
-                      //await imageFile.writeAsBytesSync(bytes)
-                    } else {
-                      log("image UnitList is null");
-                    }
-                    //imageKey[currentIndex].currentState.image
-                    // File imageFile = File.fromRawPath(
-                    //     imageKey[currentIndex].currentState!.rawImageData);
-                    // setState(() {
-                    //   final XFile xImage = XFile(imageFile.path);
-                    //   print(xImage.path);
-                    //   //widget.images.add();
-                    // });
-                  },
-                  child: Container(
-                    child: Text(
-                      "Save",
-                      style: ThreeKmTextConstants.tk14PXPoppinsWhiteMedium,
-                    ),
-                  ))
-              : Container(),
+          // imageList.getMoreImages.length > 0
+          //     ? TextButton(
+          //         onPressed: () async {
+          //           editingIndex++;
+          //           Uint8List? fileData;
+          //           if (imageKey[imageselectedIndex]
+          //                   .currentState
+          //                   ?.rawImageData !=
+          //               null) {
+          //             fileData = await cropImageDataWithNativeLibrary(
+          //                 state: imageKey[imageselectedIndex].currentState!);
+          //             final tempDir = await getTemporaryDirectory();
+          //             File file =
+          //                 await File('${tempDir.path}/${editingIndex}image.png')
+          //                     .create();
+          //             file.writeAsBytesSync(fileData!);
+          //             print(file.path);
+          //             //imagesList.removeAt(imageselectedIndex);
+          //             //imageList.removeImages(XFile(file.path));
+          //             context
+          //                 .read<AddPostProvider>()
+          //                 .removeImages(imageselectedIndex);
+          //             setState(() {
+          //               ImageEditingFile = file;
+          //               //imagesList.insert(imageselectedIndex, XFile(file.path));
+          //               context
+          //                   .read<AddPostProvider>()
+          //                   .insertImage(imageselectedIndex, file);
+          //             });
+          //             //await imageFile.writeAsBytesSync(bytes)
+          //           } else {
+          //             log("image UnitList is null");
+          //           }
+          //           //imageKey[currentIndex].currentState.image
+          //           // File imageFile = File.fromRawPath(
+          //           //     imageKey[currentIndex].currentState!.rawImageData);
+          //           // setState(() {
+          //           //   final XFile xImage = XFile(imageFile.path);
+          //           //   print(xImage.path);
+          //           //   //widget.images.add();
+          //           // });
+          //         },
+          //         child: Container(
+          //           child: Text(
+          //             "Save",
+          //             style: ThreeKmTextConstants.tk14PXPoppinsWhiteMedium,
+          //           ),
+          //         ))
+          //     : Container(),
           imageList.getMoreImages.length > 0
               ? IconButton(
                   onPressed: () {
@@ -338,7 +338,7 @@ class _EditImageState extends State<EditImage> {
                                       .rotate();
                                 },
                                 icon: Icon(Icons.rotate_right),
-                                label: Text("Rotat right")),
+                                label: Text("Rotat")),
                             TextButton.icon(
                                 onPressed: () {
                                   imageKey[imageselectedIndex]
@@ -350,7 +350,59 @@ class _EditImageState extends State<EditImage> {
                                   // });
                                 },
                                 icon: Icon(Icons.restore),
-                                label: Text("Reset"))
+                                label: Text("Reset")),
+                            TextButton(
+                                onPressed: () async {
+                                  editingIndex++;
+                                  Uint8List? fileData;
+                                  if (imageKey[imageselectedIndex]
+                                          .currentState
+                                          ?.rawImageData !=
+                                      null) {
+                                    fileData =
+                                        await cropImageDataWithNativeLibrary(
+                                            state: imageKey[imageselectedIndex]
+                                                .currentState!);
+                                    final tempDir =
+                                        await getTemporaryDirectory();
+                                    File file = await File(
+                                            '${tempDir.path}/${editingIndex}image.png')
+                                        .create();
+                                    file.writeAsBytesSync(fileData!);
+                                    print(file.path);
+                                    //imagesList.removeAt(imageselectedIndex);
+                                    //imageList.removeImages(XFile(file.path));
+                                    context
+                                        .read<AddPostProvider>()
+                                        .removeImages(imageselectedIndex);
+                                    setState(() {
+                                      ImageEditingFile = file;
+                                      //imagesList.insert(imageselectedIndex, XFile(file.path));
+                                      context
+                                          .read<AddPostProvider>()
+                                          .insertImage(
+                                              imageselectedIndex, file);
+                                    });
+                                    //await imageFile.writeAsBytesSync(bytes)
+                                  } else {
+                                    log("image UnitList is null");
+                                  }
+                                  //imageKey[currentIndex].currentState.image
+                                  // File imageFile = File.fromRawPath(
+                                  //     imageKey[currentIndex].currentState!.rawImageData);
+                                  // setState(() {
+                                  //   final XFile xImage = XFile(imageFile.path);
+                                  //   print(xImage.path);
+                                  //   //widget.images.add();
+                                  // });
+                                },
+                                child: Container(
+                                  child: Text(
+                                    "Save Edits",
+                                    style: ThreeKmTextConstants
+                                        .tk14PXPoppinsWhiteMedium,
+                                  ),
+                                )),
                           ])
                     : SizedBox.shrink()
                 : Container(),

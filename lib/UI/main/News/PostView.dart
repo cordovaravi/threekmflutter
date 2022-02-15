@@ -201,14 +201,15 @@ class _PostviewState extends State<Postview> {
                                           newsData.images!.length > 0) ...{
                                         CachedNetworkImage(
                                           height: 254,
-                                          width: 338,
-                                          fit: BoxFit.cover,
+                                          width:
+                                              MediaQuery.of(context).size.width,
+                                          fit: BoxFit.fitWidth,
                                           imageUrl: '${newsData.images!.first}',
                                         )
                                       } else if (newsData.videos!.isNotEmpty ||
                                           newsData.videos!.length > 0) ...{
                                         Container(
-                                          height: 254,
+                                          // height: 254,
                                           width:
                                               MediaQuery.of(context).size.width,
                                           child: VideoWidget(
