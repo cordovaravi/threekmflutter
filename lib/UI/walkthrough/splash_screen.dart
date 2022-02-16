@@ -1,9 +1,6 @@
 import 'dart:async';
-import 'dart:developer';
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:in_app_update/in_app_update.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:threekm/UI/main/News/PostView.dart';
 import 'package:threekm/UI/main/navigation.dart';
@@ -22,32 +19,20 @@ class _SplashScreenState extends State<SplashScreen> {
   //ScreenshotController screenshotController = ScreenshotController();
   @override
   void initState() {
-    if (Platform.isAndroid) {
-      Future.delayed(Duration.zero, () {
-        InAppUpdate.checkForUpdate().then((info) async {
-          if (info.updateAvailability == UpdateAvailability.updateAvailable) {
-            await InAppUpdate.performImmediateUpdate()
-                .catchError((e) => log(e.toString()));
-          }
-        }).catchError((e) {
-          log(e.toString());
-        });
-      });
-    }
-    super.initState();
     Future.delayed(Duration(seconds: 2), () {
       handleDeepLink().whenComplete(() => handleNavigation());
     });
+    super.initState();
   }
 
-  void showSnack(String text) {
-    ScaffoldMessenger.of(context).removeCurrentSnackBar();
-    if (_scaffoldKey.currentContext != null) {
-      ScaffoldMessenger.of(_scaffoldKey.currentContext!).showSnackBar(SnackBar(
-        content: Text(text),
-      ));
-    }
-  }
+  // void showSnack(String text) {
+  //   ScaffoldMessenger.of(context).removeCurrentSnackBar();
+  //   if (_scaffoldKey.currentContext != null) {
+  //     ScaffoldMessenger.of(_scaffoldKey.currentContext!).showSnackBar(SnackBar(
+  //       content: Text(text),
+  //     ));
+  //   }
+  // }
 
   @override
   void dispose() {

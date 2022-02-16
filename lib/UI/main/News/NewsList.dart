@@ -469,15 +469,6 @@ class _NewsPostCardState extends State<NewsPostCard>
                                             itemCount: newsData.images!.length,
                                             itemBuilder: (context, index, _) {
                                               return Container(
-                                                  // decoration: BoxDecoration(
-
-                                                  //     color: Colors.white,
-                                                  //     boxShadow: [
-                                                  //       BoxShadow(
-                                                  //           color:
-                                                  //               Colors.black45,
-                                                  //           blurRadius: 8.0)
-                                                  //     ]),
                                                   child: CachedNetworkImage(
                                                 height: 254,
                                                 width: MediaQuery.of(context)
@@ -529,6 +520,24 @@ class _NewsPostCardState extends State<NewsPostCard>
                                                 play: false),
                                       ),
                                     ]),
+                                  // newsData.images!.length > 1
+                                  //     ? Row(
+                                  //         children: [
+                                  //           ListView.builder(
+                                  //               itemCount:
+                                  //                   newsData.images!.length,
+                                  //               itemBuilder: (context, index) {
+                                  //                 return Container(
+                                  //                   height: 2,
+                                  //                   width: 2,
+                                  //                   decoration: BoxDecoration(
+                                  //                     color: Colors.black
+                                  //                   ),
+                                  //                 );
+                                  //               })
+                                  //         ],
+                                  //       )
+                                  //     : SizedBox.shrink(),
                                   Row(children: [
                                     Padding(
                                         padding: EdgeInsets.only(
@@ -938,18 +947,30 @@ class _NewsPostCardState extends State<NewsPostCard>
                               ),
                               if (newsData.images != null &&
                                   newsData.images!.length > 0)
-                                CarouselSlider.builder(
-                                    itemCount: newsData.images!.length,
-                                    itemBuilder: (context, index, _) {
-                                      return CachedNetworkImage(
+                                newsData.images!.length > 1
+                                    ? CarouselSlider.builder(
+                                        itemCount: newsData.images!.length,
+                                        itemBuilder: (context, index, _) {
+                                          return CachedNetworkImage(
+                                            height: 254,
+                                            width: MediaQuery.of(context)
+                                                .size
+                                                .width,
+                                            fit: BoxFit.fitWidth,
+                                            imageUrl:
+                                                '${newsData.images![index]}',
+                                          );
+                                        },
+                                        options: CarouselOptions(
+                                            viewportFraction: 0.99,
+                                            autoPlay: true))
+                                    : CachedNetworkImage(
                                         height: 254,
                                         width:
                                             MediaQuery.of(context).size.width,
                                         fit: BoxFit.fitWidth,
-                                        imageUrl: '${newsData.images![index]}',
-                                      );
-                                    },
-                                    options: CarouselOptions())
+                                        imageUrl: '${newsData.images!.first}',
+                                      )
                               else if (newsData.videos != null &&
                                   newsData.videos!.length > 0)
                                 Stack(children: [

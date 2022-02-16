@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 import 'dart:io';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -37,6 +38,7 @@ import 'package:threekm/providers/shop/shop_home_provider.dart';
 import 'package:threekm/theme/setup.dart';
 import 'Models/businessesModel/businesses_wishlist_model.dart';
 import 'Models/shopModel/cart_hive_model.dart';
+import 'UI/main/News/PostView.dart';
 import 'localization/localize.dart';
 import 'providers/businesses/businesses_detail_provider.dart';
 import 'providers/businesses/businesses_wishlist_provider.dart';
@@ -96,6 +98,20 @@ void main() async {
     appLanguage: appLanguage,
   ));
 
+  if (kReleaseMode) {
+    if (Platform.isAndroid) {
+      Future.delayed(Duration.zero, () {
+        InAppUpdate.checkForUpdate().then((info) async {
+          if (info.updateAvailability == UpdateAvailability.updateAvailable) {
+            await InAppUpdate.performImmediateUpdate()
+                .catchError((e) => log(e.toString()));
+          }
+        }).catchError((e) {
+          log(e.toString());
+        });
+      });
+    }
+  }
   Hive
     ..initFlutter()
     ..registerAdapter(CartHiveModelAdapter())
@@ -257,9 +273,23 @@ class MyApp extends StatelessWidget {
                   // SelectLanguage(),
                   SplashScreen(),
               navigatorKey: navigatorKey,
-              onGenerateRoute: (routeName) {
+              onGenerateRoute: (RouteSettings routeName) {
                 print('this is generated route $routeName');
+                // if (routeName != null) {
+                //   if (routeName.name!.contains("/post-detail")) {
+                //     Future.delayed(Duration(seconds: 2), () {
+                //       Navigator.push(context,
+                //           MaterialPageRoute(builder: (BuildContext context) {
+                //         return Postview(
+                //             postId: routeName.name!
+                //                 .substring(16, routeName.name!.length)
+                //                 .replaceAll('&lang=en', ''));
+                //       }));
+                //     });
+                //   }
+                // }
               },
+              //initialRoute: SplashScreen(),
               // localeResolutionCallback: (Locale userLocale, Iterable < Locale > supportedLocales) {
               //   for (var locale in supportedLocales) {
               //     if (locale.languageCode == userLocale.languageCode &&

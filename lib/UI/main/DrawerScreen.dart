@@ -325,6 +325,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
             bool log = await logout();
             print("$log");
             if (log) {
+              FirebaseAuth.instance.signOut();
               SharedPreferences prefs = await SharedPreferences.getInstance();
               await prefs.clear();
               Navigator.pushAndRemoveUntil(

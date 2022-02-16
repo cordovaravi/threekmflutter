@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:threekm/UI/main/navigation.dart';
 import 'package:threekm/commenwidgets/CustomSnakBar.dart';
 import 'package:threekm/commenwidgets/commenwidget.dart';
 import 'package:threekm/networkservice/Api_Provider.dart';
@@ -52,6 +53,8 @@ class GoogleSignInprovider extends ChangeNotifier {
           _prefs.setString(
               "userlname", response.user!.displayName!.split(" ").last);
           _prefs.setString("user_email", response.user!.email.toString());
+          _prefs.setString("avatar", response.user!.photoURL ?? "");
+          log("dob from auth ${response.additionalUserInfo?.profile.toString()}");
         });
 
         String requestJson = json.encode({
@@ -74,8 +77,35 @@ class GoogleSignInprovider extends ChangeNotifier {
         if (registerResponse != null) {
           hideLoading();
           if (registerResponse['status'] == 'success') {
-            log(registerResponse);
-            CustomSnackBar(context, Text("User Registered successfully"));
+            log("this is register response of google auth  $registerResponse");
+            // CustomSnackBar(context, Text("User Registered successfully"));
+            final prefs = await SharedPreferences.getInstance();
+            prefs.setString("token",
+                registerResponse['data']['result']['user_data']['token'] ?? "");
+            prefs.setString(
+                "userlname",
+                registerResponse['data']['result']['user_data']['lastname'] ??
+                    "");
+            prefs.setString(
+                "userfname",
+                registerResponse['data']['result']['user_data']['firstname'] ??
+                    "");
+            // prefs.setString(
+            //     "avatar",
+            //     registerResponse['data']['result']['user_data']['avatar'] ??
+            //         "");
+            prefs.setString(
+                "gender",
+                registerResponse['data']['result']['user_data']['gender'] ??
+                    "");
+            prefs.setString("email",
+                registerResponse['data']['result']['user_data']['email'] ?? "");
+            // prefs.setString("dob",
+            //     registerResponse['data']['result']['user_data']['dob'] ?? "");
+            Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => TabBarNavigation()),
+                (route) => false);
           } else {
             CustomSnackBar(context, Text("Google Api error"));
           }
