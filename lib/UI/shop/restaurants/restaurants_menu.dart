@@ -7,6 +7,7 @@ import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/src/provider.dart';
 import 'package:threekm/commenwidgets/CustomSnakBar.dart';
+import 'package:threekm/localization/localize.dart';
 import 'package:threekm/main.dart';
 import 'package:threekm/providers/shop/cart_provider.dart';
 import 'package:threekm/providers/shop/restaurant_menu_provider.dart';
@@ -128,7 +129,9 @@ class _RestaurantMenuState extends State<RestaurantMenu> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'About Restaurant',
+                                AppLocalizations.of(context)!
+                                        .translate('About_Restaurant') ??
+                                    'About Restaurant',
                                 style: ThreeKmTextConstants
                                     .tk14PXPoppinsBlackSemiBold
                                     .copyWith(color: Colors.white),

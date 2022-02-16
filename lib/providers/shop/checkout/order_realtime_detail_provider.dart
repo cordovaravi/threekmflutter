@@ -41,6 +41,7 @@ class OrderRealtimeDetailProvider extends ChangeNotifier {
           return OrderRealtimeDetailModel.fromJson(
               jsonDecode(jsonEncode(event.snapshot.value)));
         } else {
+          
           navigatorKey.currentState?.pop();
           return null;
         }

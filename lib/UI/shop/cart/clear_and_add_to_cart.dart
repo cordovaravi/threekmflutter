@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:provider/src/provider.dart';
+import 'package:threekm/localization/localize.dart';
 
 import 'package:threekm/providers/shop/cart_provider.dart';
 
@@ -12,8 +13,9 @@ Future clearAndAddToCartModal(context, image, name, quantity, price, creatorId,
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title:
-              Text('Replace cart item?'), // To display the title it is optional
+          title: Text(
+              AppLocalizations.of(context)!.translate('Replace_cart_item') ??
+                  'Replace cart item?'), // To display the title it is optional
           content: Text(
               'Your cart contains dishes from other sources. Do you want to discard the selection and add current dishes?'), // Message which will be pop up on the screen
           // Action widget which will provide the user to acknowledge the choice
@@ -23,7 +25,8 @@ Future clearAndAddToCartModal(context, image, name, quantity, price, creatorId,
 
               onPressed:
                   () {}, // function used to perform after pressing the button
-              child: Text('NO'),
+              child:
+                  Text(AppLocalizations.of(context)!.translate('NO') ?? 'NO'),
             ),
             TextButton(
               onPressed: () async {
@@ -83,7 +86,8 @@ Future clearAndAddToCartModal(context, image, name, quantity, price, creatorId,
                   log('${restrocartBox.length}////////');
                 }
               },
-              child: Text('YES'),
+              child:
+                  Text(AppLocalizations.of(context)!.translate('Yes') ?? 'YES'),
             ),
           ],
         );

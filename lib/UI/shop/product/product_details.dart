@@ -13,6 +13,7 @@ import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:threekm/UI/businesses/businesses_detail.dart';
 import 'package:threekm/commenwidgets/CustomSnakBar.dart';
+import 'package:threekm/localization/localize.dart';
 import 'package:threekm/main.dart';
 import 'package:threekm/providers/shop/cart_provider.dart';
 import 'package:threekm/providers/shop/product_details_provider.dart';
@@ -350,18 +351,26 @@ class _ProductDetailsState extends State<ProductDetails> {
                                   // ),
                                   Row(
                                     children: [
+                                      if (product!.hasDiscount)
+                                        Text('₹${product.strikePrice}',
+                                            style: ThreeKmTextConstants
+                                                .tk14PXPoppinsBlackSemiBold
+                                                .copyWith(
+                                                    decoration: TextDecoration
+                                                        .lineThrough,
+                                                    color: Colors.red[300])),
                                       Text(
-                                        '₹${price != 0 ? price : product?.price}',
+                                        ' ₹${price != 0 ? price : product.price}',
                                         style: ThreeKmTextConstants
                                             .tk12PXPoppinsBlackSemiBold
                                             .copyWith(fontSize: 24),
                                       ),
-                                      if (product!.hasDiscount)
+                                      if (product.hasDiscount)
                                         Padding(
                                           padding:
                                               const EdgeInsets.only(left: 10),
                                           child: Text(
-                                            '${product.discountType == 'percentage' ? "" : "₹"}${product.discountValue}${product.discountType == 'percentage' ? '%' : ''} Off',
+                                            '${product.discountType == 'percent' || product.discountType == 'percentage' ? "" : "₹"}${product.discountValue}${product.discountType == 'percent' || product.discountType == 'percentage' ? '%' : ''} Off',
                                             style: ThreeKmTextConstants
                                                 .tk14PXPoppinsGreenSemiBold,
                                           ),
@@ -385,7 +394,10 @@ class _ProductDetailsState extends State<ProductDetails> {
                                                   isReadMore = false;
                                                 });
                                               },
-                                              child: Text('Read More'))
+                                              child: Text(AppLocalizations.of(
+                                                          context)!
+                                                      .translate('read_more') ??
+                                                  'Read More'))
                                       ],
                                     ),
                                   ),
@@ -399,11 +411,17 @@ class _ProductDetailsState extends State<ProductDetails> {
                                           return Padding(
                                             padding: EdgeInsets.only(right: 10),
                                             child: ChoiceChip(
-                                              label: Text('${product.tags[i]}'),
+                                              label: Text(
+                                                '${product.tags[i]}',
+                                                style: ThreeKmTextConstants
+                                                    .tk12PXLatoGreenMedium
+                                                    .copyWith(
+                                                        color: Colors.black),
+                                              ),
                                               selected: true,
                                               selectedColor: Colors.grey[200],
                                               labelStyle: TextStyle(
-                                                  color: Colors.black87),
+                                                  color: Colors.black),
                                             ),
                                           );
                                           //  Container(
@@ -433,14 +451,16 @@ class _ProductDetailsState extends State<ProductDetails> {
                                   ),
                                   if (data.result!.variations!.length > 0)
                                     Text(
-                                      'Variants',
+                                      AppLocalizations.of(context)!
+                                              .translate('variants') ??
+                                          'Variants',
                                       style: ThreeKmTextConstants
                                           .tk14PXPoppinsBlackBold
                                           .copyWith(height: 3),
                                     ),
                                   if (data.result!.variations!.length > 0)
                                     Container(
-                                        height: 50,
+                                        height: 60,
                                         padding: EdgeInsets.only(
                                             top: 10, bottom: 10),
                                         child: ListView.builder(
@@ -451,26 +471,35 @@ class _ProductDetailsState extends State<ProductDetails> {
                                             itemBuilder: (_, i) {
                                               var vdata =
                                                   data.result!.variations?[i];
-                                              return ChoiceChip(
-                                                label: Text(
-                                                    '${vdata!.options['variation_name']}'),
-                                                selected: vdata.variationId ==
-                                                        variationid
-                                                    ? true
-                                                    : false,
-                                                onSelected: (p) {
-                                                  setState(() {
-                                                    price = vdata.price;
-                                                    weight = vdata.weight;
-                                                    variationid =
-                                                        vdata.variationId;
-                                                    variationIndex = i;
-                                                    variation = vdata;
-                                                  });
-                                                },
-                                                selectedColor: Colors.grey[200],
-                                                labelStyle: TextStyle(
-                                                    color: Colors.black87),
+                                              return Padding(
+                                                padding: const EdgeInsets.only(
+                                                    right: 10),
+                                                child: ChoiceChip(
+                                                  label: Text(
+                                                      '${vdata!.options['variation_name']}'),
+                                                  selected: vdata.variationId ==
+                                                          variationid
+                                                      ? true
+                                                      : false,
+                                                  onSelected: (p) {
+                                                    setState(() {
+                                                      price = vdata.price;
+                                                      weight = vdata.weight;
+                                                      variationid =
+                                                          vdata.variationId;
+                                                      variationIndex = i;
+                                                      variation = vdata;
+                                                    });
+                                                  },
+                                                  selectedColor:
+                                                      Colors.green[300],
+                                                  labelStyle: TextStyle(
+                                                      color:
+                                                          vdata.variationId ==
+                                                                  variationid
+                                                              ? Colors.white
+                                                              : Colors.black87),
+                                                ),
                                               );
 
                                               // InkWell(
@@ -638,8 +667,16 @@ class _ProductDetailsState extends State<ProductDetails> {
                                                           //Icon(Icons.favorite_outline_sharp),
                                                           label: Text(
                                                             isWish != null
-                                                                ? 'Remove'
-                                                                : 'Wishlist',
+                                                                ? AppLocalizations.of(
+                                                                            context)!
+                                                                        .translate(
+                                                                            'remove') ??
+                                                                    'Remove'
+                                                                : AppLocalizations.of(
+                                                                            context)!
+                                                                        .translate(
+                                                                            'wishlist') ??
+                                                                    'Wishlist',
                                                             style: ThreeKmTextConstants
                                                                 .tk14PXPoppinsBlackMedium,
                                                           )),
@@ -710,7 +747,8 @@ class _ProductDetailsState extends State<ProductDetails> {
                                                                       color:
                                                                           bgColor,
                                                                       child: Text(
-                                                                          "This product is already added to your cart"),
+                                                                          AppLocalizations.of(context)!.translate('this_product_is_already_added_to_your_cart') ??
+                                                                              "This product is already added to your cart"),
                                                                     ),
                                                                   ));
                                                                   //                    CustomSnackBar(
@@ -738,7 +776,8 @@ class _ProductDetailsState extends State<ProductDetails> {
                                                                     color:
                                                                         bgColor,
                                                                     child: Text(
-                                                                        "Product is out of stock"),
+                                                                        AppLocalizations.of(context)!.translate('product_is_out_of_stock') ??
+                                                                            "Product is out of stock"),
                                                                   ),
                                                                 ));
                                                               }
@@ -813,7 +852,8 @@ class _ProductDetailsState extends State<ProductDetails> {
                                                                     color:
                                                                         bgColor,
                                                                     child: Text(
-                                                                        "Product is out of stock"),
+                                                                        AppLocalizations.of(context)!.translate('product_is_out_of_stock') ??
+                                                                            "Product is out of stock"),
                                                                   ),
                                                                 ));
                                                               }
@@ -839,7 +879,10 @@ class _ProductDetailsState extends State<ProductDetails> {
                                                                               20),
                                                                   color:
                                                                       bgColor,
-                                                                  child: Text(
+                                                                  child: Text(AppLocalizations.of(
+                                                                              context)!
+                                                                          .translate(
+                                                                              'please_select_variant') ??
                                                                       "Please select variant"),
                                                                 ),
                                                               ));
@@ -881,18 +924,25 @@ class _ProductDetailsState extends State<ProductDetails> {
                                                                             variationId:
                                                                                 variationid) ==
                                                                         null
-                                                                    ? 'Add to Cart'
-                                                                    : 'Added to cart'
+                                                                    ? AppLocalizations.of(context)!.translate(
+                                                                            'detail_add_cart') ??
+                                                                        'Add to Cart'
+                                                                    : AppLocalizations.of(context)!.translate(
+                                                                            'added_to_cart') ??
+                                                                        'Added to cart'
                                                                 : variation ==
                                                                             null &&
                                                                         product
                                                                             .isInStock
-                                                                    ? isProductExist(box,
-                                                                                widget.id) ==
+                                                                    ? isProductExist(box, widget.id) ==
                                                                             null
-                                                                        ? 'Add to Cart'
-                                                                        : 'Added to cart'
-                                                                    : 'Out of stock',
+                                                                        ? AppLocalizations.of(context)!.translate('detail_add_cart') ??
+                                                                            'Add to Cart'
+                                                                        : AppLocalizations.of(context)!.translate('added_to_cart') ??
+                                                                            'Added to cart'
+                                                                    : AppLocalizations.of(context)!
+                                                                            .translate('out_of_stock') ??
+                                                                        'Out of stock',
                                                             style: ThreeKmTextConstants
                                                                 .tk14PXPoppinsWhiteMedium,
                                                           ))
@@ -919,7 +969,9 @@ class _ProductDetailsState extends State<ProductDetails> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    'Sold By',
+                                    AppLocalizations.of(context)!
+                                            .translate('sold_by') ??
+                                        'Sold By',
                                     style: ThreeKmTextConstants
                                         .tk14PXPoppinsBlackSemiBold,
                                   ),
@@ -1080,7 +1132,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                                                     bottom: 15))),
                                         icon: const Icon(
                                             Icons.star_border_rounded),
-                                        label: Text('Write a Review', style: ThreeKmTextConstants.tk14PXPoppinsWhiteMedium.copyWith(letterSpacing: 1.12))),
+                                        label: Text(AppLocalizations.of(context)!.translate('write_a_review') ?? 'Write a Review', style: ThreeKmTextConstants.tk14PXPoppinsWhiteMedium.copyWith(letterSpacing: 1.12))),
                                   ),
                                   const Divider(
                                     color: Color(0xFFF4F6F9),
@@ -1138,7 +1190,12 @@ class _ProductDetailsState extends State<ProductDetails> {
                                                       borderRadius:
                                                           BorderRadius.circular(
                                                               20)),
-                                                  child: const Text('PURCHASED',
+                                                  child: Text(
+                                                      AppLocalizations.of(
+                                                                  context)!
+                                                              .translate(
+                                                                  'purchased') ??
+                                                          'PURCHASED',
                                                       style: TextStyle(
                                                           fontSize: 11,
                                                           fontWeight:
@@ -1249,8 +1306,16 @@ class _ProductDetailsState extends State<ProductDetails> {
                                                               bottom: 15))),
                                               child: Text(
                                                 !readReview
-                                                    ? 'View All Reviews'
-                                                    : 'View Less Reviews',
+                                                    ? AppLocalizations.of(
+                                                                context)!
+                                                            .translate(
+                                                                'view_all_reviews') ??
+                                                        'View All Reviews'
+                                                    : AppLocalizations.of(
+                                                                context)!
+                                                            .translate(
+                                                                'view_less_reviews') ??
+                                                        'View Less Reviews',
                                                 style: const TextStyle(
                                                     fontSize: 18,
                                                     letterSpacing: 3),
@@ -1264,7 +1329,9 @@ class _ProductDetailsState extends State<ProductDetails> {
                         ),
                       )
                     : Container(
-                        child: const Text('Loading ..... '),
+                        child: Text(AppLocalizations.of(context)!
+                                .translate('loading') ??
+                            'Loading ..... '),
                       )
               ],
             ),
@@ -1343,7 +1410,13 @@ class _ProductDetailsState extends State<ProductDetails> {
                                     ),
                               // Icon(Icons.favorite_outline_sharp),
                               label: Text(
-                                isWish != null ? 'Remove' : 'Wishlist',
+                                isWish != null
+                                    ? AppLocalizations.of(context)!
+                                            .translate('remove') ??
+                                        'Remove'
+                                    : AppLocalizations.of(context)!
+                                            .translate('wishlist') ??
+                                        'Wishlist',
                                 style: ThreeKmTextConstants
                                     .tk14PXPoppinsBlackMedium,
                               )),

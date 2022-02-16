@@ -3,6 +3,7 @@ import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/src/provider.dart';
 import 'package:threekm/Models/shopModel/cart_hive_model.dart';
+import 'package:threekm/localization/localize.dart';
 import 'package:threekm/providers/shop/cart_provider.dart';
 import 'package:threekm/utils/screen_util.dart';
 import 'package:threekm/utils/threekm_textstyles.dart';
@@ -63,17 +64,34 @@ Future viewCart(BuildContext context, mode) async {
                                               CrossAxisAlignment.start,
                                           children: [
                                             Text(
-                                              'Cart Summary',
+                                              AppLocalizations.of(context)!
+                                                      .translate(
+                                                          'Cart_Summary') ??
+                                                  'Cart Summary',
                                               style: ThreeKmTextConstants
                                                   .tk14PXPoppinsBlackMedium,
                                             ),
                                             SizedBox(
                                               width: 250,
-                                              child: Text(
-                                                'Items Provided by $creatorName',
-                                                overflow: TextOverflow.ellipsis,
-                                                style: TextStyle(
-                                                    color: Colors.black),
+                                              child: Wrap(
+                                                children: [
+                                                  Text(
+                                                   AppLocalizations.of(context)!
+                                                      .translate(
+                                                          'Items_provided_by') ??  'Items Provided by ',
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    style: TextStyle(
+                                                        color: Colors.black),
+                                                  ),
+                                                  Text(
+                                                    ' $creatorName',
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    style: TextStyle(
+                                                        color: Colors.black),
+                                                  ),
+                                                ],
                                               ),
                                             )
                                           ],
@@ -129,8 +147,11 @@ Future viewCart(BuildContext context, mode) async {
                                                         CrossAxisAlignment
                                                             .start,
                                                     children: [
-                                                    if(cartItem.variation_name != null )  Text(
-                                                          '${cartItem.variation_name}'),
+                                                      if (cartItem
+                                                              .variation_name !=
+                                                          null)
+                                                        Text(
+                                                            '${cartItem.variation_name}'),
                                                       Text(
                                                         '₹${cartItem.price}',
                                                         style: ThreeKmTextConstants
@@ -490,7 +511,9 @@ Future viewCart(BuildContext context, mode) async {
                                         icon: const Icon(
                                             Icons.shopping_cart_rounded),
                                         label: Text(
-                                          'Proceed to Checkout',
+                                         AppLocalizations.of(context)!
+                                                      .translate(
+                                                          'Proceed_to_Checkout') ??  'Proceed to Checkout',
                                           style: ThreeKmTextConstants
                                               .tk14PXPoppinsWhiteMedium,
                                         )),

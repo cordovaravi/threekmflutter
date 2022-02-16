@@ -15,6 +15,7 @@ import 'package:threekm/Custom_library/GooleMapsWidget/src/place_picker.dart';
 import 'package:threekm/Models/shopModel/restaurants_model.dart';
 import 'package:threekm/UI/shop/restaurants/view_all_restaurant.dart';
 import 'package:threekm/commenwidgets/CustomSnakBar.dart';
+import 'package:threekm/localization/localize.dart';
 import 'package:threekm/main.dart';
 import 'package:threekm/providers/Location/locattion_Provider.dart';
 import 'package:threekm/providers/shop/cart_provider.dart';
@@ -86,8 +87,10 @@ class _RestaurantsHomeState extends State<RestaurantsHome> {
                   setState(() {});
                 },
 
-                decoration: const InputDecoration(
-                  hintText: 'Search Restaurant or Cusines',
+                decoration: InputDecoration(
+                  hintText: AppLocalizations.of(context)!
+                          .translate('Search_Restaurant_or_Cusines') ??
+                      'Search Restaurant or Cusines',
                   hintStyle: TextStyle(color: Color(0xFF0F0F2D)),
                   counterText: '',
                   filled: true,
@@ -181,7 +184,9 @@ class _RestaurantsHomeState extends State<RestaurantsHome> {
                           });
                         },
                         child: Text(
-                          'Change Location',
+                          AppLocalizations.of(context)!
+                                  .translate('change_location') ??
+                              'Change Location',
                           style:
                               ThreeKmTextConstants.tk12PXPoppinsBlackSemiBold,
                         ),
@@ -448,8 +453,10 @@ class _RestaurantsHomeState extends State<RestaurantsHome> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text(
-                        'Nearby Restaurants',
+                      Text(
+                        AppLocalizations.of(context)!
+                                .translate('nearby_restaurants') ??
+                            'Nearby Restaurants',
                         style: TextStyle(
                             color: Color(0xFF0F0F2D),
                             fontSize: 19,
@@ -464,9 +471,11 @@ class _RestaurantsHomeState extends State<RestaurantsHome> {
                                   builder: (_) => AllRestaurantList()));
                         },
                         child: Row(
-                          children: const [
+                          children: [
                             Text(
-                              'View all',
+                              AppLocalizations.of(context)!
+                                      .translate('view_all_text') ??
+                                  'View all',
                               style: TextStyle(color: Color(0xFF43B978)),
                             ),
                             Icon(
@@ -493,7 +502,8 @@ class _RestaurantsHomeState extends State<RestaurantsHome> {
                                 CustomSnackBar(
                                     navigatorKey.currentContext!,
                                     Text(
-                                        "Restaurant is Currentlly not accepting orders"));
+                                       AppLocalizations.of(context)!
+                                          .translate('Restaurant_offline') ?? "Restaurant is Currentlly not accepting orders"));
                               }
                               Navigator.push(
                                   context,

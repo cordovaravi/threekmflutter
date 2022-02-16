@@ -8,6 +8,7 @@ import 'package:threekm/Models/shopModel/cart_hive_model.dart';
 import 'package:threekm/Models/shopModel/shipping_rate_model.dart';
 import 'package:threekm/UI/shop/address/new_address.dart';
 import 'package:threekm/commenwidgets/CustomSnakBar.dart';
+import 'package:threekm/localization/localize.dart';
 import 'package:threekm/providers/shop/address_list_provider.dart';
 import 'package:threekm/providers/shop/cart_provider.dart';
 import 'package:threekm/providers/shop/checkout/checkout_provider.dart';
@@ -88,7 +89,8 @@ class _RestaurantsCheckOutScreenState extends State<RestaurantsCheckOutScreen> {
           foregroundColor: Colors.black,
           elevation: 0,
           title: Text(
-            'RESTAURANTS CHECKOUT',
+            AppLocalizations.of(context)!.translate('RESTAURANTS_CHECKOUT') ??
+                'RESTAURANTS CHECKOUT',
             style: ThreeKmTextConstants.tk16PXPoppinsBlackSemiBold
                 .copyWith(letterSpacing: 2),
           ),
@@ -267,7 +269,11 @@ class _RestaurantsCheckOutScreenState extends State<RestaurantsCheckOutScreen> {
                                             },
                                             icon: const Icon(Icons.add,
                                                 color: Color(0xFF3E7EFF)),
-                                            label: Text('Add New Address',
+                                            label: Text(
+                                                AppLocalizations.of(context)!
+                                                        .translate(
+                                                            'Add_New_Address') ??
+                                                    'Add New Address',
                                                 style: ThreeKmTextConstants
                                                     .tk14PXPoppinsBlackSemiBold
                                                     .copyWith(
@@ -283,7 +289,10 @@ class _RestaurantsCheckOutScreenState extends State<RestaurantsCheckOutScreen> {
                                               padding: const EdgeInsets.only(
                                                   top: 10, left: 20),
                                               child: Text(
-                                                'Delivering to:',
+                                                AppLocalizations.of(context)!
+                                                        .translate(
+                                                            'Delivering_to') ??
+                                                    'Delivering to:',
                                                 style: ThreeKmTextConstants
                                                     .tk14PXPoppinsBlackMedium,
                                               ),
@@ -361,7 +370,10 @@ class _RestaurantsCheckOutScreenState extends State<RestaurantsCheckOutScreen> {
                                         padding: const EdgeInsets.only(
                                             top: 30, left: 20, bottom: 10),
                                         child: Text(
-                                          'Saved Addresses:',
+                                          AppLocalizations.of(context)!
+                                                  .translate(
+                                                      'Saved_Addresses') ??
+                                              'Saved Addresses:',
                                           style: ThreeKmTextConstants
                                               .tk14PXPoppinsBlackMedium,
                                         ),
@@ -704,7 +716,10 @@ class _RestaurantsCheckOutScreenState extends State<RestaurantsCheckOutScreen> {
                                                             .spaceBetween,
                                                     children: [
                                                       Text(
-                                                        'Subtotal',
+                                                        AppLocalizations.of(
+                                                                      context)!
+                                                                  .translate(
+                                                                      'Subtotal') ?? 'Subtotal',
                                                         style: ThreeKmTextConstants
                                                             .tk12PXPoppinsBlackSemiBold
                                                             .copyWith(
@@ -733,7 +748,10 @@ class _RestaurantsCheckOutScreenState extends State<RestaurantsCheckOutScreen> {
                                                             .spaceBetween,
                                                     children: [
                                                       Text(
-                                                        'Taxes',
+                                                        AppLocalizations.of(
+                                                                      context)!
+                                                                  .translate(
+                                                                      'Taxes') ?? 'Taxes',
                                                         style: ThreeKmTextConstants
                                                             .tk12PXPoppinsBlackSemiBold
                                                             .copyWith(
@@ -762,7 +780,10 @@ class _RestaurantsCheckOutScreenState extends State<RestaurantsCheckOutScreen> {
                                                             .spaceBetween,
                                                     children: [
                                                       Text(
-                                                        'Delivery Charges',
+                                                        AppLocalizations.of(
+                                                                      context)!
+                                                                  .translate(
+                                                                      'Delivery_Charges') ?? 'Delivery Charges',
                                                         style: ThreeKmTextConstants
                                                             .tk12PXPoppinsBlackSemiBold
                                                             .copyWith(
@@ -791,7 +812,10 @@ class _RestaurantsCheckOutScreenState extends State<RestaurantsCheckOutScreen> {
                                                             .spaceBetween,
                                                     children: [
                                                       Text(
-                                                        'Platform Charges',
+                                                        AppLocalizations.of(
+                                                                      context)!
+                                                                  .translate(
+                                                                      'Platform_Charges') ?? 'Platform Charges',
                                                         style: ThreeKmTextConstants
                                                             .tk12PXPoppinsBlackSemiBold
                                                             .copyWith(
@@ -824,7 +848,10 @@ class _RestaurantsCheckOutScreenState extends State<RestaurantsCheckOutScreen> {
                                                               .spaceBetween,
                                                       children: [
                                                         Text(
-                                                          'Cart Total',
+                                                          AppLocalizations.of(
+                                                                      context)!
+                                                                  .translate(
+                                                                      'Cart_Total') ?? 'Cart Total',
                                                           style: ThreeKmTextConstants
                                                               .tk18PXPoppinsBlackMedium
                                                               .copyWith(
@@ -882,7 +909,11 @@ class _RestaurantsCheckOutScreenState extends State<RestaurantsCheckOutScreen> {
                     ),
                   ),
                   label: Text(
-                    currentPage == 0 ? 'Continue' : "Pay Now",
+                    currentPage == 0
+                        ? AppLocalizations.of(context)!.translate('Continue') ??
+                            'Continue'
+                        : AppLocalizations.of(context)!.translate('Pay_Now') ??
+                            "Pay Now",
                     style: ThreeKmTextConstants.tk14PXPoppinsBlackBold
                         .copyWith(color: Colors.white, letterSpacing: 0.56),
                   ),
@@ -921,7 +952,7 @@ class _RestaurantsCheckOutScreenState extends State<RestaurantsCheckOutScreen> {
                                   )));
                     }
                     if (deliveryAddressdata?.addressId == 0) {
-                      CustomSnackBar(context, Text("Please select address"));
+                      CustomSnackBar(context, Text(AppLocalizations.of(context)!.translate('Please_select_address') ?? "Please select address"));
                     }
                   },
                 ),

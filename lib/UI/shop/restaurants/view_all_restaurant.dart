@@ -5,6 +5,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/src/provider.dart';
 import 'package:threekm/UI/shop/cart/cart_item_list_modal.dart';
+import 'package:threekm/localization/localize.dart';
 
 import 'package:threekm/providers/shop/shop_home_provider.dart';
 import 'package:threekm/utils/threekm_textstyles.dart';
@@ -71,7 +72,8 @@ class _AllRestaurantListState extends State<AllRestaurantList> {
                   },
                 )
               : Text(
-                  'ALL RESTAURANTS',
+                  AppLocalizations.of(context)!.translate('ALL_RESTAURANTS') ??
+                      'ALL RESTAURANTS',
                   style: ThreeKmTextConstants.tk16PXPoppinsBlackSemiBold,
                 ),
           titleTextStyle: const TextStyle(

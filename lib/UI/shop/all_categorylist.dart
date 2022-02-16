@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/src/provider.dart';
 import 'package:threekm/UI/shop/cart/cart_item_list_modal.dart';
+import 'package:threekm/localization/localize.dart';
 import 'package:threekm/providers/shop/all_category_provider.dart';
 import 'package:threekm/Models/shopModel/all_category_model.dart';
 import '../shop/sub_categorylist.dart';
@@ -30,8 +31,10 @@ class _AllCategoryListState extends State<AllCategoryList> {
           elevation: 1,
           backgroundColor: Colors.white,
           iconTheme: const IconThemeData(color: Colors.black),
-          title: const Text(
-            'ALL CATEGORIES',
+          title:  Text(
+           AppLocalizations.of(
+                                                          context)!
+                                                      .translate('all_cat_text') ?? 'ALL CATEGORIES',
           ),
           titleTextStyle: const TextStyle(
               color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold),
