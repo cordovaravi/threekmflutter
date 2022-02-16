@@ -90,7 +90,10 @@ class _CheckOutSuccessState extends State<CheckOutSuccess> {
                             ),
                           ),
                         ),
-                        Text('Confirming With Sellers:'),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 10),
+                          child: Text('Confirming With Sellers:'),
+                        ),
                         ListView.builder(
                             shrinkWrap: true,
                             itemCount: productList?.length,

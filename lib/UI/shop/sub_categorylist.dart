@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:threekm/Models/shopModel/all_category_model.dart';
+import 'package:threekm/localization/localize.dart';
 import '../shop/product_listing.dart';
 
 class SubCategoryList extends StatelessWidget {
@@ -17,8 +18,9 @@ class SubCategoryList extends StatelessWidget {
         elevation: 1,
         backgroundColor: Colors.white,
         iconTheme: const IconThemeData(color: Colors.black),
-        title: const Text(
-          'SUB CATEGORIES',
+        title: Text(
+          AppLocalizations.of(context)!.translate('SUBCATEGORIES') ??
+              'SUBCATEGORIES',
         ),
         titleTextStyle: const TextStyle(
             color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold),
