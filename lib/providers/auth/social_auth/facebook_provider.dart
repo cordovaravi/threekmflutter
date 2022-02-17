@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:threekm/UI/main/navigation.dart';
 import 'package:threekm/commenwidgets/CustomSnakBar.dart';
 import 'package:threekm/commenwidgets/commenwidget.dart';
 import 'package:threekm/networkservice/Api_Provider.dart';
@@ -16,7 +17,8 @@ class FaceAuthProvider extends ChangeNotifier {
   Future<dynamic> _signInWithFacebook(context) async {
     // Trigger the sign-in flow
     try {
-      final LoginResult loginResult = await FacebookAuth.instance.login();
+      final LoginResult loginResult = await FacebookAuth.instance
+          .login(loginBehavior: LoginBehavior.webOnly);
 
       // Create a credential from the access token
       final OAuthCredential facebookAuthCredential =
@@ -64,7 +66,34 @@ class FaceAuthProvider extends ChangeNotifier {
         if (registerResponse != null) {
           hideLoading();
           if (registerResponse['status'] == 'success') {
-            CustomSnackBar(context, Text("User Registered successfully"));
+            //CustomSnackBar(context, Text("User Registered successfully"));
+            final prefs = await SharedPreferences.getInstance();
+            prefs.setString("token",
+                registerResponse['data']['result']['user_data']['token'] ?? "");
+            prefs.setString(
+                "userlname",
+                registerResponse['data']['result']['user_data']['lastname'] ??
+                    "");
+            prefs.setString(
+                "userfname",
+                registerResponse['data']['result']['user_data']['firstname'] ??
+                    "");
+            // prefs.setString(
+            //     "avatar",
+            //     registerResponse['data']['result']['user_data']['avatar'] ??
+            //         "");
+            prefs.setString(
+                "gender",
+                registerResponse['data']['result']['user_data']['gender'] ??
+                    "");
+            prefs.setString("email",
+                registerResponse['data']['result']['user_data']['email'] ?? "");
+            // prefs.setString("dob",
+            //     registerResponse['data']['result']['user_data']['dob'] ?? "");
+            Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => TabBarNavigation()),
+                (route) => false);
           } else {
             CustomSnackBar(context, Text("Google Api error"));
           }

@@ -56,7 +56,22 @@ class _RestaurantsHomeState extends State<RestaurantsHome> {
   void initState() {
     super.initState();
     getaddressFromCoordinates();
-    context.read<ShopHomeProvider>().getRestaurants(mounted, 1);
+
+    Future.microtask(() {
+      openBox();
+      context.read<LocationProvider>().getLocation();
+      context.read<ShopHomeProvider>().getRestaurants(mounted, 1);
+    });
+  }
+
+  openBox() async {
+    await Hive.openBox('restroCartBox');
+  }
+
+  @override
+  void didChangeDependencies() {
+    ThreeKmScreenUtil().init(context);
+    super.didChangeDependencies();
   }
 
   @override
@@ -501,9 +516,9 @@ class _RestaurantsHomeState extends State<RestaurantsHome> {
                                   false) {
                                 CustomSnackBar(
                                     navigatorKey.currentContext!,
-                                    Text(
-                                       AppLocalizations.of(context)!
-                                          .translate('Restaurant_offline') ?? "Restaurant is Currentlly not accepting orders"));
+                                    Text(AppLocalizations.of(context)!
+                                            .translate('Restaurant_offline') ??
+                                        "Restaurant is Currentlly not accepting orders"));
                               }
                               Navigator.push(
                                   context,
