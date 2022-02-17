@@ -245,6 +245,10 @@ class _RestaurantsCheckOutScreenState extends State<RestaurantsCheckOutScreen> {
                                                             CheckoutProvider>()
                                                         .getShippingRateData
                                                         .deliveryRate!,
+                                                shippingDistance:  context
+                                                        .read<
+                                                            CheckoutProvider>()
+                                                        .getShippingRateData.distance!,
                                                 mode: 'restro',
                                               )));
                                 }
@@ -948,6 +952,10 @@ class _RestaurantsCheckOutScreenState extends State<RestaurantsCheckOutScreen> {
                                     dropLocation: deliveryAddressdata,
                                     productList: box,
                                     shippingAmount: totalPrice,
+                                    shippingDistance: context
+                                                        .read<
+                                                            CheckoutProvider>()
+                                                        .getShippingRateData.distance!,
                                     mode: 'restro',
                                   )));
                     }

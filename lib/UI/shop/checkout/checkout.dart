@@ -239,6 +239,10 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
                                                             CheckoutProvider>()
                                                         .getShippingRateData
                                                         .deliveryRate!,
+                                                shippingDistance: context
+                                                    .read<CheckoutProvider>()
+                                                    .getShippingRateData
+                                                    .distance!,
                                                 mode: 'shop',
                                               )));
                                 }
@@ -836,8 +840,11 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
                                                 ),
                                               )
                                             : Center(
-                                                child: Text(
-                                                     AppLocalizations.of(context)!.translate('blank_cart_text') ?? 'There is no items in your cart.'),
+                                                child: Text(AppLocalizations.of(
+                                                            context)!
+                                                        .translate(
+                                                            'blank_cart_text') ??
+                                                    'There is no items in your cart.'),
                                               );
                                       }),
                                 ),
@@ -875,7 +882,11 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
                     ),
                   ),
                   label: Text(
-                    currentPage == 0 ?  AppLocalizations.of(context)!.translate('Continue') ?? 'Continue' :  AppLocalizations.of(context)!.translate('Pay_Now') ?? "Pay Now",
+                    currentPage == 0
+                        ? AppLocalizations.of(context)!.translate('Continue') ??
+                            'Continue'
+                        : AppLocalizations.of(context)!.translate('Pay_Now') ??
+                            "Pay Now",
                     style: ThreeKmTextConstants.tk14PXPoppinsBlackBold
                         .copyWith(color: Colors.white, letterSpacing: 0.56),
                   ),
@@ -902,20 +913,23 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
                                     builder: (_) => PaymentConfirmingScreen(
                                           dropLocation: deliveryAddressdata,
                                           productList: box,
-                                          shippingAmount:
-                                              //  context
-                                              //         .read<CartProvider>()
-                                              //         .getBoxTotal(Hive.box('cartBox')) +
-                                              context
-                                                  .read<CheckoutProvider>()
-                                                  .getShippingRateData
-                                                  .deliveryRate!,
+                                          shippingAmount: context
+                                              .read<CheckoutProvider>()
+                                              .getShippingRateData
+                                              .deliveryRate!,
+                                          shippingDistance: context
+                                              .read<CheckoutProvider>()
+                                              .getShippingRateData
+                                              .distance!,
                                           mode: 'shop',
                                         )));
                           }
                           if (deliveryAddressdata?.addressId == 0) {
                             CustomSnackBar(
-                                context, Text( AppLocalizations.of(context)!.translate('Please_select_address') ?? "Please select address"));
+                                context,
+                                Text(AppLocalizations.of(context)!
+                                        .translate('Please_select_address') ??
+                                    "Please select address"));
                           }
                         }
                       : () {

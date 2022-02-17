@@ -12,11 +12,13 @@ class PaymentConfirmingScreen extends StatefulWidget {
       required this.dropLocation,
       required this.productList,
       required this.shippingAmount,
+      required this.shippingDistance,
       required this.mode})
       : super(key: key);
   final Addresses? dropLocation;
   List productList = [];
   final int shippingAmount;
+  final String shippingDistance;
   final String mode;
 
   @override
@@ -29,7 +31,7 @@ class _PaymentConfirmingScreenState extends State<PaymentConfirmingScreen> {
   void initState() {
     super.initState();
     context.read<CheckoutProvider>().createOrder(
-        widget.dropLocation, widget.productList, widget.shippingAmount, widget.mode);
+        widget.dropLocation, widget.productList, widget.shippingAmount,widget.shippingDistance, widget.mode);
   }
 
   @override

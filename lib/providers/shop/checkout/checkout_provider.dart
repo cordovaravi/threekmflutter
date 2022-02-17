@@ -3,6 +3,8 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:threekm/Models/shopModel/address_list_model.dart';
 import 'package:threekm/Models/shopModel/order_details_model.dart'
     as OrderDetailModel;
 
@@ -88,18 +90,22 @@ class CheckoutProvider extends ChangeNotifier {
   OrderModel _OrderRes = OrderModel(StatusCode: 0, result: Result());
   OrderModel get getOrderResponseData => _OrderRes;
 
-  Future<void> createOrder(
-      dropLocation, productList, shippingAmount, mode) async {
+  Future<void> createOrder(Addresses? dropLocation, productList, shippingAmount,
+      shippingDistance, mode) async {
+    SharedPreferences _pref = await SharedPreferences.getInstance();
+    var fname = await _pref.getString('userfname');
+    var lname = await _pref.getString('userlname');
+    var phone = await _pref.getString('userphone');
     log('create order process started ');
     var creatorid = Hive.box('restrocreatorID');
     _state = 'loading';
     try {
       var requestJson = {
         "products": productList,
-        "customer_firstname": "Ravi",
-        "customer_lastname": "Gulhane",
-        "customer_phone": 8087618710,
-        "distance": "9 Km",
+        "customer_firstname": fname ?? dropLocation?.firstname,
+        "customer_lastname": lname ?? dropLocation?.lastname,
+        "customer_phone": phone ?? dropLocation?.phoneNo,
+        "distance": shippingDistance,
         "drop_location": dropLocation,
         "shipping_amount": shippingAmount,
         // "shipping_amount": creatorid.get('id') == 6232 ? 0 : shippingAmount,
@@ -138,6 +144,10 @@ class CheckoutProvider extends ChangeNotifier {
   /// razorpay_flutter handler
 
   void openCheckout({amount, orderID, rzorderID}) async {
+    SharedPreferences _pref = await SharedPreferences.getInstance();
+    var phone = await _pref.getString('userphone');
+    var email = await _pref.getString('email');
+
     var creatorid = Hive.box('restrocreatorID');
     var options = {
       'key': 'rzp_live_xcgamtZiTgvjWA',
@@ -150,7 +160,7 @@ class CheckoutProvider extends ChangeNotifier {
       'description': 'Order Pay description',
       'retry': {'enabled': true, 'max_count': 1},
       'send_sms_hash': true,
-      'prefill': {'contact': '8888888888', 'email': 'test@razorpay.com'},
+      'prefill': {'contact': phone ?? "", 'email': email ?? ""},
       'external': {
         'wallets': ['paytm']
       }
