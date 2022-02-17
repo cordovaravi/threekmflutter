@@ -30,6 +30,13 @@ class _DraggablePageState extends State<DraggablePage>
   final ImagePicker _imagePicker = ImagePicker();
   String? _selecetdAddress;
   Geometry? _geometry;
+
+  @override
+  void initState() {
+    Future.microtask(() => context.read<LocationProvider>().getLocation());
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     super.build(context);

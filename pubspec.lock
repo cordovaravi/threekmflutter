@@ -7,14 +7,14 @@ packages:
       name: _fe_analyzer_shared
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "32.0.0"
+    version: "34.0.0"
   analyzer:
     dependency: transitive
     description:
       name: analyzer
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.0.0"
+    version: "3.2.0"
   animated_widgets:
     dependency: "direct main"
     description:
@@ -126,7 +126,7 @@ packages:
       name: built_value
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "8.1.3"
+    version: "8.1.4"
   cached_network_image:
     dependency: "direct main"
     description:
@@ -182,7 +182,7 @@ packages:
       name: chewie
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.1.0"
+    version: "1.2.2"
   cli_util:
     dependency: transitive
     description:
@@ -580,7 +580,7 @@ packages:
       name: flutter_widget_from_html_core
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.8.4"
+    version: "0.8.5+1"
   flutter_zoom_drawer:
     dependency: "direct main"
     description:
@@ -825,7 +825,7 @@ packages:
       name: http_multi_server
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.0.1"
+    version: "3.2.0"
   http_parser:
     dependency: transitive
     description:
@@ -1000,7 +1000,7 @@ packages:
       name: nm
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.4.3"
+    version: "0.4.4"
   octo_image:
     dependency: transitive
     description:
@@ -1175,7 +1175,7 @@ packages:
       name: provider
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "6.0.2"
+    version: "5.0.0"
   pub_semver:
     dependency: transitive
     description:
@@ -1203,7 +1203,7 @@ packages:
       name: razorpay_flutter
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.2.7"
+    version: "1.2.9"
   rxdart:
     dependency: transitive
     description:
@@ -1495,7 +1495,7 @@ packages:
       name: url_launcher
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "6.0.18"
+    version: "6.0.17"
   url_launcher_android:
     dependency: transitive
     description:
@@ -1586,7 +1586,7 @@ packages:
       name: vimeo_player_flutter
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.0.3+1"
+    version: "0.0.3+2"
   visibility_detector:
     dependency: "direct main"
     description:
@@ -1649,7 +1649,7 @@ packages:
       name: webview_flutter
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.8.0"
+    version: "3.0.0"
   webview_flutter_android:
     dependency: transitive
     description:
