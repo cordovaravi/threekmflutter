@@ -1,5 +1,6 @@
 {
   "you_can_change_it_later": "You can change it later in profile",
+  "reset_password":"Reset Your password",
 
   "Task_title": "My Task",
   "Orders": "Orders",
@@ -13,6 +14,7 @@
   "postNow": "Post Now",
   "image_video": "Image/Video",
   "click_upload": "Click to upload Pictures or videos",
+  "upload_to_Cotinue":"Upload Image to Continue",
   "description_text": "Description",
   "topic_tags_text": "Topic Tags",
   "topic_tags_desc": "Add multiple tags relating to this post.",
@@ -150,6 +152,7 @@
   "you_need_text": "Sign up to get access to all the hyperlocal news, products and businesses",
   "phone_number_text": "Phone Number",
   "valid_digit_text": "please enter a valid 10 digit phone number",
+  "ten_digit_text": "Enter phone number",
   "proceed_button_text": "Proceed",
   "otp_sent_to": "OTP sent to",
   "Change_number_text": "Change Phone Number",
@@ -250,7 +253,11 @@
   "sold_by": "Sold By",
   "view_all_reviews": "View All Reviews",
   "view_less_reviews": "View Less Reviews",
-
+  "new_Post":"NEW POST",
+  "flip":"Flip",
+  "rotate":"Rotate",
+  "reset":"Reset",
+  "save_edits":"Save Edits",
   "SUBCATEGORIES": "SUBCATEGORIES",
   "change_location": "Change Location",
   "Search_Restaurant_or_Cusines": "Search Restaurant or Cuisines",

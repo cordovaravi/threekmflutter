@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:threekm/Models/ProfilePostModel.dart';
@@ -122,8 +123,9 @@ class AutthorProfileProvider extends ChangeNotifier {
         json.encode({"id": authorId, "author_type": "user", "token": _token});
     final response = await _apiProvider.post(Author_Profile, requestJson);
     if (response != null) {
-      print(response);
+      //print(response);
       if (response["status"] == "success") {
+        log("athor profile response is ${response}");
         _authorProfilePostModel = ProfilePostModel.fromJson(response);
         _gettingAuthorprofile = false;
         notifyListeners();

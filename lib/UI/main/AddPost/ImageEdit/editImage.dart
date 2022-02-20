@@ -12,6 +12,7 @@ import 'package:provider/src/provider.dart';
 import 'package:threekm/UI/main/AddPost/AddNewPost.dart';
 import 'package:threekm/UI/main/News/NewsList.dart';
 import 'package:threekm/providers/Widgets/local_player.dart';
+import 'package:threekm/providers/localization_Provider/AppLocaliztion.dart';
 import 'package:threekm/providers/main/AddPost_Provider.dart';
 import 'package:threekm/utils/utils.dart';
 import 'package:video_player/video_player.dart';
@@ -98,13 +99,15 @@ class _EditImageState extends State<EditImage> {
             // }
           },
           label: imageList.getMoreImages.length > 0
-              ? Text("Next")
-              : Text("Upload Image to Continue")),
+              ? Text(AppLocalizations.of(context)?.translate("next") ?? "")
+              : Text(AppLocalizations.of(context)
+                      ?.translate("upload_to_Cotinue") ??
+                  "")),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       appBar: AppBar(
         backgroundColor: Color(0xff0F0F2D),
         title: Text(
-          "NEW POST",
+          AppLocalizations.of(context)?.translate("new_Post") ?? "",
           style: ThreeKmTextConstants.tk16PXPoppinsWhiteBold,
         ),
         actions: [
@@ -323,7 +326,9 @@ class _EditImageState extends State<EditImage> {
                                       .flip();
                                 },
                                 icon: Icon(Icons.flip),
-                                label: Text("Flip")),
+                                label: Text(AppLocalizations.of(context)
+                                        ?.translate("flip") ??
+                                    "")),
                             // TextButton.icon(
                             //     onPressed: () {
                             //       editorKey.currentState!.rotate(right: false);
@@ -338,7 +343,9 @@ class _EditImageState extends State<EditImage> {
                                       .rotate();
                                 },
                                 icon: Icon(Icons.rotate_right),
-                                label: Text("Rotat")),
+                                label: Text(AppLocalizations.of(context)
+                                        ?.translate("rotate") ??
+                                    "")),
                             TextButton.icon(
                                 onPressed: () {
                                   imageKey[imageselectedIndex]
@@ -350,7 +357,9 @@ class _EditImageState extends State<EditImage> {
                                   // });
                                 },
                                 icon: Icon(Icons.restore),
-                                label: Text("Reset")),
+                                label: Text(AppLocalizations.of(context)
+                                        ?.translate("reset") ??
+                                    "")),
                             TextButton(
                                 onPressed: () async {
                                   editingIndex++;
@@ -398,7 +407,9 @@ class _EditImageState extends State<EditImage> {
                                 },
                                 child: Container(
                                   child: Text(
-                                    "Save Edits",
+                                    AppLocalizations.of(context)
+                                            ?.translate("save_edits") ??
+                                        "Save Edits",
                                     style: ThreeKmTextConstants
                                         .tk14PXPoppinsWhiteMedium,
                                   ),
