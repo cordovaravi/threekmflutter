@@ -74,6 +74,7 @@ dependencies:
   #social
   google_sign_in:
   flutter_facebook_auth: ^4.0.1
+  firebase_analytics: ^9.1.0
   # audio_service: ^0.18.2
   # just_audio: ^0.9.18
   path_provider:
@@ -90,6 +91,7 @@ dependencies:
   dotted_border:
   flutter_rating_bar:
   timelines:
+  
 
 dev_dependencies:
   flutter_test:

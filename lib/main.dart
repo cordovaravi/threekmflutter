@@ -6,6 +6,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -55,41 +56,60 @@ import 'providers/shop/wish_list_provide.dart';
 
 //late List<CameraDescription> cameras;
 final navigatorKey = GlobalKey<NavigatorState>();
-//Fcm code------------------------------------------------------------------------
+
+/// Define a top-level named handler which background/terminated messages will
+/// call.
+///
+/// To verify things are working, check out the native platform logs.
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   // If you're going to use other Firebase services in the background, such as Firestore,
   // make sure you call `initializeApp` before using other Firebase services.
   await Firebase.initializeApp();
   print('Handling a background message ${message.messageId}');
-  // await AwesomeNotifications().createNotification(
-  //     content: NotificationContent(
-  //         autoDismissible: false,
-  //         displayOnForeground: true,
-  //         locked: true,
-  //         displayOnBackground: true,
-  //         id: 1,
-  //         channelKey: 'key1',
-  //         title: '${message.notification?.title}',
-  //         body: '${message.notification?.body}',
-  //         notificationLayout: NotificationLayout.BigText),
-  //     actionButtons: [
-  //       NotificationActionButton(key: "disableSound", label: "Stop Buzzer")
-  //     ]).then((value) async {
-  //   var audiofile = await AudioSource.uri(Uri.parse(
-  //       "https://file-examples-com.github.io/uploads/2017/11/file_example_MP3_700KB.mp3"));
-  //   await _player.setAsset(audiofile.uri.path);
-  //   await _player.play();
-  // });
-  // AwesomeNotifications().actionStream.listen((event) {
-  //   print("top evenent");
-  //   print(event);
-  // });
 }
 
-//end fcm code------------------------------------------------------------
+/// Create a [AndroidNotificationChannel] for heads up notifications
+late AndroidNotificationChannel channel;
+
+/// Initialize the [FlutterLocalNotificationsPlugin] package.
+late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  //fcm code--------------------
+  await Firebase.initializeApp();
+  // Set the background messaging handler early on, as a named top-level function
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
+  if (!kIsWeb) {
+    channel = const AndroidNotificationChannel(
+      'high_importance_channel', // id
+      'High Importance Notifications', // title
+      importance: Importance.high,
+    );
+
+    flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+
+    /// Create an Android Notification Channel.
+    ///
+    /// We use this channel in the `AndroidManifest.xml` file to override the
+    /// default FCM channel to enable heads up notifications.
+    await flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>()
+        ?.createNotificationChannel(channel);
+
+    /// Update the iOS foreground notification presentation options to allow
+    /// heads up notifications.
+    await FirebaseMessaging.instance
+        .setForegroundNotificationPresentationOptions(
+      alert: true,
+      badge: true,
+      sound: true,
+    );
+  }
+
+  //end fcm code----------------------------
 
   AppLanguage appLanguage = AppLanguage();
   await appLanguage.fetchLocale();
@@ -120,39 +140,9 @@ void main() async {
     statusBarColor: Colors.transparent,
   ));
 
-  //// fcm code-------------
-  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-  await FirebaseMessaging.instance.getToken().then((value) => print(value));
+  await FirebaseMessaging.instance.getToken().then((value) => log("$value"));
 
-  if (!kIsWeb) {
-    // channel = const AndroidNotificationChannel(
-    //   'high_importance_channel', // id
-    //   'High Importance Notifications', // title
-    //   importance: Importance.high,
-    // );
-
-    // flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-
-    // /// Create an Android Notification Channel.
-    // ///
-    // /// We use this channel in the `AndroidManifest.xml` file to override the
-    // /// default FCM channel to enable heads up notifications.
-    // await flutterLocalNotificationsPlugin
-    //     .resolvePlatformSpecificImplementation<
-    //         AndroidFlutterLocalNotificationsPlugin>()
-    //     ?.createNotificationChannel(channel);
-
-    /// Update the iOS foreground notification presentation options to allow
-    /// heads up notifications.
-    await FirebaseMessaging.instance
-        .setForegroundNotificationPresentationOptions(
-      alert: true,
-      badge: true,
-      sound: true,
-    );
-  }
-
-  //fcm code------------------------------------------------------------
+  //end fcm code------------------------------------------------------------
 
   Directory directory = await pathProvider.getApplicationDocumentsDirectory();
   Hive.init(directory.path);
@@ -274,3 +264,142 @@ class MyApp extends StatelessWidget {
         ));
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+// Future<void> setupInteractedMessage() async {
+//   // Get any messages which caused the application to open from
+//   // a terminated state.
+//   RemoteMessage? initialMessage =
+//       await FirebaseMessaging.instance.getInitialMessage();
+
+//   if (initialMessage != null) {
+//     _handleMessage(initialMessage);
+//   }
+
+//   // Also handle any interaction when the app is in the background via a
+//   // Stream listener
+//   FirebaseMessaging.onMessageOpenedApp.listen(_handleMessage);
+// }
+
+// void _handleMessage(RemoteMessage message) {
+//   log("this is from firebase $message ");
+// }
+
+// Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+//   // If you're going to use other Firebase services in the background, such as Firestore,
+//   // make sure you call `initializeApp` before using other Firebase services.
+//   await Firebase.initializeApp();
+//   print('Handling a background message ${message.messageId}');
+// }
+
+// void lookme() async {
+//   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+//   await FirebaseMessaging.instance.getToken().then((value) => print(value));
+
+//   if (!kIsWeb) {
+//     var channel = const AndroidNotificationChannel(
+//       'high_importance_channel', // id
+//       'High Importance Notifications', // title
+//       importance: Importance.high,
+//     );
+
+//     final flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+
+//     /// Create an Android Notification Channel.
+//     ///
+//     /// We use this channel in the `AndroidManifest.xml` file to override the
+//     /// default FCM channel to enable heads up notifications.
+//     await flutterLocalNotificationsPlugin
+//         .resolvePlatformSpecificImplementation<
+//             AndroidFlutterLocalNotificationsPlugin>()
+//         ?.createNotificationChannel(channel)
+//         .then((value) {
+//       log("local notification is fired evenet ");
+//       apponForeground();
+//     });
+
+//     /// Update the iOS foreground notification presentation options to allow
+//     /// heads up notifications.
+//     await FirebaseMessaging.instance
+//         .setForegroundNotificationPresentationOptions(
+//       alert: true,
+//       badge: true,
+//       sound: true,
+//     );
+
+//     FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
+//       RemoteNotification? notification = message.notification;
+//       AndroidNotification? android = message.notification?.android;
+
+//       log("this is notificarion $message");
+
+//       // If `onMessage` is triggered with a notification, construct our own
+//       // local notification to show to users using the created channel.
+//       if (notification != null && android != null) {
+//         flutterLocalNotificationsPlugin.show(
+//             notification.hashCode,
+//             notification.title,
+//             notification.body,
+//             NotificationDetails(
+//               android: AndroidNotificationDetails(
+//                 channel.id,
+//                 channel.name,
+//                 //channel.description,
+//                 icon: android.smallIcon,
+//                 // other properties...
+//               ),
+//             ));
+//       }
+//     });
+//   }
+// }
+
+// void apponForeground() async {
+//   var channel = const AndroidNotificationChannel(
+//     'high_importance_channel', // id
+//     'High Importance Notifications', // title
+//     importance: Importance.max,
+//   );
+
+//   final flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+
+//   await flutterLocalNotificationsPlugin
+//       .resolvePlatformSpecificImplementation<
+//           AndroidFlutterLocalNotificationsPlugin>()
+//       ?.createNotificationChannel(channel);
+
+//   FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
+//     RemoteNotification? notification = message.notification;
+//     AndroidNotification? android = message.notification?.android;
+
+//     log("this is notificarion $message");
+
+//     // If `onMessage` is triggered with a notification, construct our own
+//     // local notification to show to users using the created channel.
+//     if (notification != null && android != null) {
+//       flutterLocalNotificationsPlugin.show(
+//           notification.hashCode,
+//           notification.title,
+//           notification.body,
+//           NotificationDetails(
+//             android: AndroidNotificationDetails(
+//               channel.id,
+//               channel.name,
+//               //channel.description,
+//               icon: android.smallIcon,
+//               // other properties...
+//             ),
+//           ));
+//     }
+//   });
+// }
