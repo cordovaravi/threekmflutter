@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -14,20 +15,34 @@ class FaceAuthProvider extends ChangeNotifier {
   ApiProvider _apiProvider = ApiProvider();
   String? accessToken;
 
-  Future<dynamic> _signInWithFacebook(context) async {
+  Future<UserCredential?> _signInWithFacebook(context) async {
     // Trigger the sign-in flow
-    try {
-      final LoginResult loginResult = await FacebookAuth.instance
-          .login(loginBehavior: LoginBehavior.webOnly);
+    // try {
+    //   final LoginResult loginResult = await FacebookAuth.instance
+    //       .login(loginBehavior: LoginBehavior.webOnly);
 
+    //   // Create a credential from the access token
+    //   final OAuthCredential facebookAuthCredential =
+    //       FacebookAuthProvider.credential(loginResult.accessToken?.token??"");
+
+    //   // Once signed in, return the UserCredential
+    //   return FirebaseAuth.instance.signInWithCredential(facebookAuthCredential);
+    // } on FirebaseAuthException catch (e) {
+    //   // TODO
+    //   hideLoading();
+    //   CustomSnackBar(context, Text("Error from FB API"));
+    // }
+    // return null;
+
+    //changelog Feb
+    final LoginResult result = await FacebookAuth.instance.login();
+    if (result.status == LoginStatus.success) {
       // Create a credential from the access token
-      final OAuthCredential facebookAuthCredential =
-          FacebookAuthProvider.credential(loginResult.accessToken!.token);
-
+      final OAuthCredential credential =
+          FacebookAuthProvider.credential(result.accessToken!.token);
       // Once signed in, return the UserCredential
-      return FirebaseAuth.instance.signInWithCredential(facebookAuthCredential);
-    } on FirebaseAuthException catch (e) {
-      // TODO
+      return await FirebaseAuth.instance.signInWithCredential(credential);
+    } else {
       hideLoading();
       CustomSnackBar(context, Text("Error from FB API"));
     }
@@ -50,6 +65,8 @@ class FaceAuthProvider extends ChangeNotifier {
           _prefs.setString(
               "userlname", response.user!.displayName!.split(" ").last);
           _prefs.setString("user_email", response.user!.email.toString());
+          _prefs.setString("avatar", response.user?.photoURL ?? "");
+          log("${response.user?.photoURL}");
         }
         String requestJson = json.encode({
           "platform": "facebook",
@@ -100,6 +117,15 @@ class FaceAuthProvider extends ChangeNotifier {
         }
       }
     } on Exception catch (e) {
+      log(e.toString());
+      if (e.toString() ==
+          "[firebase_auth/account-exists-with-different-credential] An account already exists with the same email address but different sign-in credentials. Sign in using a provider associated with this email address.") {
+        CustomSnackBar(
+            context,
+            Text(
+                "Your Email is Already registered with us with Google login, Please Login with google"),
+            duration: Duration(seconds: 7));
+      }
       hideLoading();
     }
   }

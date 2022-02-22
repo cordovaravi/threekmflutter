@@ -3,4 +3,5 @@
   <string name="app_name">3km</string>
   <string name="facebook_app_id">254747476567049</string>
   <string name="fb_login_protocol_scheme">fb254747476567049</string>
+  <string name="facebook_client_token">311895346ba79df92759ff34dcfef4e5</string>
 </resources>

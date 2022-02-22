@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -8,35 +9,24 @@ import 'package:threekm/UI/Auth/signup/sign_up.dart';
 import 'package:uni_links/uni_links.dart';
 
 class SplashScreen extends StatefulWidget {
+  // final String? uri;
+  // SplashScreen({this.uri});
   @override
   _SplashScreenState createState() => _SplashScreenState();
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-  StreamSubscription? _linkSubscription;
   GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey();
 
   //ScreenshotController screenshotController = ScreenshotController();
   @override
   void initState() {
-    Future.delayed(Duration(seconds: 2), () {
-      handleDeepLink().whenComplete(() => handleNavigation());
-    });
     super.initState();
+    handleDeepLink();
   }
-
-  // void showSnack(String text) {
-  //   ScaffoldMessenger.of(context).removeCurrentSnackBar();
-  //   if (_scaffoldKey.currentContext != null) {
-  //     ScaffoldMessenger.of(_scaffoldKey.currentContext!).showSnackBar(SnackBar(
-  //       content: Text(text),
-  //     ));
-  //   }
-  // }
 
   @override
   void dispose() {
-    _linkSubscription?.cancel();
     super.dispose();
   }
 
@@ -45,7 +35,7 @@ class _SplashScreenState extends State<SplashScreen> {
       final initialLink = await getInitialLink();
       // Parse the link and warn the user, if it is not correct,
       // but keep in mind it could be `null`.
-      print('this is deep link via console ${initialLink?.substring(30, 35)}');
+      log('this is deep link via console ${initialLink?.substring(30, 35)}');
       if (initialLink != null) {
         Navigator.push(context,
             MaterialPageRoute(builder: (BuildContext context) {
@@ -53,7 +43,14 @@ class _SplashScreenState extends State<SplashScreen> {
               postId: initialLink
                   .substring(30, initialLink.length)
                   .replaceAll('&lang=en', ''));
-        }));
+        })).then((value) => Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (_) => TabBarNavigation()),
+            (route) => false));
+      } else {
+        Future.delayed(Duration(seconds: 2), () {
+          handleNavigation();
+        });
       }
       return initialLink;
     } on PlatformException {

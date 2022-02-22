@@ -73,7 +73,7 @@ dependencies:
   uuid: ^3.0.5
   #social
   google_sign_in:
-  flutter_facebook_auth: ^3.5.0
+  flutter_facebook_auth: ^4.0.1
   # audio_service: ^0.18.2
   # just_audio: ^0.9.18
   path_provider:

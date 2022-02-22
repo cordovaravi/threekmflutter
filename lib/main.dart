@@ -38,7 +38,6 @@ import 'package:threekm/providers/shop/shop_home_provider.dart';
 import 'package:threekm/theme/setup.dart';
 import 'Models/businessesModel/businesses_wishlist_model.dart';
 import 'Models/shopModel/cart_hive_model.dart';
-import 'UI/main/News/PostView.dart';
 import 'localization/localize.dart';
 import 'providers/businesses/businesses_detail_provider.dart';
 import 'providers/businesses/businesses_wishlist_provider.dart';
@@ -268,37 +267,8 @@ class MyApp extends StatelessWidget {
               theme: lightTheme,
               //restorationScopeId: 'app',
               themeMode: ThemeMode.light,
-              // darkTheme: darkTheme,
-              home: //BeforeRunning(),
-                  // SelectLanguage(),
-                  SplashScreen(),
+              home: SplashScreen(),
               navigatorKey: navigatorKey,
-              onGenerateRoute: (RouteSettings routeName) {
-                print('this is generated route $routeName');
-                // if (routeName != null) {
-                //   if (routeName.name!.contains("/post-detail")) {
-                //     Future.delayed(Duration(seconds: 2), () {
-                //       Navigator.push(context,
-                //           MaterialPageRoute(builder: (BuildContext context) {
-                //         return Postview(
-                //             postId: routeName.name!
-                //                 .substring(16, routeName.name!.length)
-                //                 .replaceAll('&lang=en', ''));
-                //       }));
-                //     });
-                //   }
-                // }
-              },
-              //initialRoute: SplashScreen(),
-              // localeResolutionCallback: (Locale userLocale, Iterable < Locale > supportedLocales) {
-              //   for (var locale in supportedLocales) {
-              //     if (locale.languageCode == userLocale.languageCode &&
-              //       locale.countryCode == userLocale.countryCode) {
-              //       return userLocale;
-              //     }
-              //   }
-              //   return supportedLocales.first;
-              // },
             );
           },
         ));

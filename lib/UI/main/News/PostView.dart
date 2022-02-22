@@ -50,7 +50,7 @@ class _PostviewState extends State<Postview> {
   @override
   void dispose() {
     SinglePostProvider? _singlepost;
-    _singlepost!.resetRefresh();
+    _singlepost?.resetRefresh();
     super.dispose();
   }
 

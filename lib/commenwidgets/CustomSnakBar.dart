@@ -5,11 +5,14 @@ const Color uploadColor = Color(0xff0F0F2D);
 
 class CustomSnackBar {
   CustomSnackBar(BuildContext context, Widget content,
-      {SnackBarAction? snackBarAction, Color backgroundColor = bgColor}) {
+      {SnackBarAction? snackBarAction,
+      Color backgroundColor = bgColor,
+      Duration? duration}) {
     final SnackBar snackBar = SnackBar(
         action: snackBarAction,
         backgroundColor: backgroundColor,
         content: content,
+        duration: duration ?? Duration(seconds: 3),
         behavior: SnackBarBehavior.floating);
     ScaffoldMessenger.of(context).hideCurrentSnackBar();
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
