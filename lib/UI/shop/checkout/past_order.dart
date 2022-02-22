@@ -257,7 +257,9 @@ class _PastOrderState extends State<PastOrder> {
                                           style: TextStyle(color: Colors.green),
                                         ),
                                         Text(
-                                            '${DateFormat.jm().format(DateTime.parse(order.centerTime))} ${DateFormat.yMMMEd().format(DateTime.parse(order.centerTime))}')
+                                            '${formatDate(order.centerTime)} ${DateFormat.yMMMEd().format(DateTime.parse(order.centerTime))}'
+                                            // '${DateFormat.jm().format(DateTime.parse(order.centerTime))} ${DateFormat.yMMMEd().format(DateTime.parse(order.centerTime))}'
+                                            )
                                       ],
                                     ),
                                     TextButton(

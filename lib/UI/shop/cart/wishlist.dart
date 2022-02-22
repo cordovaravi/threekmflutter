@@ -9,6 +9,7 @@ import 'package:threekm/Models/shopModel/cart_hive_model.dart';
 import 'package:threekm/UI/businesses/businesses_detail.dart';
 import 'package:threekm/UI/shop/cart/cart_item_list_modal.dart';
 import 'package:threekm/UI/shop/product/product_details.dart';
+import 'package:threekm/localization/localize.dart';
 import 'package:threekm/providers/shop/cart_provider.dart';
 import 'package:threekm/utils/screen_util.dart';
 import 'package:threekm/utils/threekm_textstyles.dart';
@@ -338,7 +339,11 @@ class _WishListState extends State<WishList> {
                                                                       .weight);
                                                         },
                                                         child: Text(
-                                                            'Add to Cart')),
+                                                            AppLocalizations.of(
+                                                                        context)!
+                                                                    .translate(
+                                                                        'detail_add_cart') ??
+                                                                'Add to Cart')),
                                                     InkWell(
                                                       onTap: () {
                                                         data.delete();
@@ -362,7 +367,9 @@ class _WishListState extends State<WishList> {
                             );
                           })
                       : Center(
-                          child: Text('No Product Found'),
+                          child: Text(AppLocalizations.of(context)!
+                                  .translate('No_Product_Found') ??
+                              'No Product Found'),
                         )
                   : businessWishbox.length != 0
                       ? ListView.builder(
@@ -455,7 +462,8 @@ class _WishListState extends State<WishList> {
                             );
                           })
                       : Center(
-                          child: Text('No Business Found'),
+                          child: Text(AppLocalizations.of(context)!
+                                  .translate('No_Business_Found') ?? 'No Business Found'),
                         )
             ],
           ),

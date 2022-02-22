@@ -12,6 +12,7 @@ import 'package:provider/src/provider.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:threekm/UI/businesses/businesses_detail.dart';
+import 'package:threekm/UI/shop/indicator.dart';
 import 'package:threekm/commenwidgets/CustomSnakBar.dart';
 import 'package:threekm/localization/localize.dart';
 import 'package:threekm/main.dart';
@@ -46,6 +47,7 @@ class _ProductDetailsState extends State<ProductDetails> {
   int? variationid = 0;
   var variation;
   int? variationIndex = 0;
+  int selectedindex = 0;
 
   List<String> wordList = [];
   bool isReadMore = true;
@@ -126,6 +128,8 @@ class _ProductDetailsState extends State<ProductDetails> {
         .watch<WishListProvider>()
         .isinWishList(data.result?.product.catalogId);
 
+ 
+
     return RefreshIndicator(onRefresh: () {
       return context
           .read<ProductDetailsProvider>()
@@ -196,6 +200,9 @@ class _ProductDetailsState extends State<ProductDetails> {
                       // pageSnapping: true,
                       onPageChanged: (val) {
                         print(val);
+                        setState(() {
+                          selectedindex = val;
+                        });
                       },
                       itemCount: variationid == 0
                           ? data.result?.product.images.length != 0
@@ -276,6 +283,22 @@ class _ProductDetailsState extends State<ProductDetails> {
                             : Container();
                       }),
                 ),
+                //..._buildPageIndicator(data.result?.product.images),
+              if( statusData == 'loaded' && data.result != null)
+                      Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      for (int i = 0;
+                          i < data.result!.product.images.length;
+                          i++)
+                        i == selectedindex ? indicator(true) : indicator(false),
+                    ],
+                  ),
+                ),
+
                 statusData == 'loaded' && data.result != null
                     ? Container(
                         decoration: BoxDecoration(
@@ -696,9 +719,8 @@ class _ProductDetailsState extends State<ProductDetails> {
                                                                   context.read<CartProvider>().addItemToCart(
                                                                       context:
                                                                           context,
-                                                                      creatorId:
-                                                                          product
-                                                                              .creatorId,
+                                                                      creatorId: product
+                                                                          .creatorId,
                                                                       image: product
                                                                           .image,
                                                                       name: product
@@ -713,16 +735,24 @@ class _ProductDetailsState extends State<ProductDetails> {
                                                                           .catalogId,
                                                                       variationId:
                                                                           variationid,
-                                                                      variation_name: variationid !=
-                                                                              0
+                                                                      variation_name: variationid != 0
                                                                           ? variation.options[
                                                                               'variation_name']
                                                                           : null,
-                                                                      weight: weight !=
-                                                                              0
+                                                                      weight: weight != 0
                                                                           ? weight
                                                                           : product
                                                                               .weight,
+                                                                      masterStock: variationid != 0
+                                                                          ? data
+                                                                              .result
+                                                                              ?.variations![
+                                                                                  variationIndex!]
+                                                                              .masterStock
+                                                                          : product
+                                                                              .masterStock,
+                                                                      manageStock: product
+                                                                          .manageStock,
                                                                       creatorName: product
                                                                           .creatorDetails
                                                                           .businessName);
@@ -797,9 +827,8 @@ class _ProductDetailsState extends State<ProductDetails> {
                                                                   context.read<CartProvider>().addItemToCart(
                                                                       context:
                                                                           context,
-                                                                      creatorId:
-                                                                          product
-                                                                              .creatorId,
+                                                                      creatorId: product
+                                                                          .creatorId,
                                                                       image: product
                                                                           .image,
                                                                       name: product
@@ -814,16 +843,24 @@ class _ProductDetailsState extends State<ProductDetails> {
                                                                           .catalogId,
                                                                       variationId:
                                                                           variationid,
-                                                                      variation_name: variationid !=
-                                                                              0
+                                                                      variation_name: variationid != 0
                                                                           ? variation.options[
                                                                               'variation_name']
                                                                           : null,
-                                                                      weight: weight !=
-                                                                              0
+                                                                      weight: weight != 0
                                                                           ? weight
                                                                           : product
                                                                               .weight,
+                                                                      masterStock: variationid != 0
+                                                                          ? data
+                                                                              .result
+                                                                              ?.variations![
+                                                                                  variationIndex!]
+                                                                              .masterStock
+                                                                          : product
+                                                                              .masterStock,
+                                                                      manageStock: product
+                                                                          .manageStock,
                                                                       creatorName: product
                                                                           .creatorDetails
                                                                           .businessName);
@@ -1451,6 +1488,15 @@ class _ProductDetailsState extends State<ProductDetails> {
                                                   weight: weight != 0
                                                       ? weight
                                                       : product.weight,
+                                                  masterStock: variationid != 0
+                                                      ? data
+                                                          .result
+                                                          ?.variations![
+                                                              variationIndex!]
+                                                          .masterStock
+                                                      : product.masterStock,
+                                                  manageStock:
+                                                      product.manageStock,
                                                   creatorName: product
                                                       .creatorDetails
                                                       .businessName);
@@ -1491,6 +1537,15 @@ class _ProductDetailsState extends State<ProductDetails> {
                                                   weight: weight != 0
                                                       ? weight
                                                       : product.weight,
+                                                  masterStock: variationid != 0
+                                                      ? data
+                                                          .result
+                                                          ?.variations![
+                                                              variationIndex!]
+                                                          .masterStock
+                                                      : product.masterStock,
+                                                  manageStock:
+                                                      product.manageStock,
                                                   creatorName: product
                                                       .creatorDetails
                                                       .businessName);

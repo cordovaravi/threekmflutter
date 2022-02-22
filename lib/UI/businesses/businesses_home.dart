@@ -10,6 +10,7 @@ import 'package:threekm/UI/Search/SearchPage.dart';
 import 'package:threekm/UI/businesses/businesses_detail.dart';
 import 'package:threekm/UI/main/navigation.dart';
 import 'package:threekm/UI/shop/cart/cart_item_list_modal.dart';
+import 'package:threekm/localization/localize.dart';
 import 'package:threekm/providers/Location/locattion_Provider.dart';
 import 'package:threekm/providers/businesses/businesses_home_provider.dart';
 import 'package:threekm/utils/screen_util.dart';
@@ -45,12 +46,15 @@ class _BusinessesHomeState extends State<BusinessesHome>
     super.build(context);
     // context.read<BusinessesHomeProvider>().getBusinesses(mounted);
     final businessesHomeProvider = context.watch<BusinessesHomeProvider>();
-    final _location =
-        context.read<LocationProvider>().getlocationData;
+    final _location = context.read<LocationProvider>().getlocationData;
     return Scaffold(
       body: RefreshIndicator(
         onRefresh: () {
-          var initJson = json.encode({"lat": _location?.latitude ?? '', "lng": _location?.longitude ?? '', "page": 1});
+          var initJson = json.encode({
+            "lat": _location?.latitude ?? '',
+            "lng": _location?.longitude ?? '',
+            "page": 1
+          });
           return context
               .read<BusinessesHomeProvider>()
               .onRefresh(initJson, mounted);
@@ -66,7 +70,7 @@ class _BusinessesHomeState extends State<BusinessesHome>
           } else if (businessesHomeProvider.state == "loaded") {
             return businessesHomeProvider.businessesHomedata != null
                 ? Home()
-                : Center(child: Text("null"));
+                : Center(child: Text(""));
           }
           return Container();
         }),
@@ -135,7 +139,9 @@ class _HomeState extends State<Home> {
                                 Padding(
                                     padding: EdgeInsets.only(left: 11),
                                     child: Text(
-                                      "Search Hyperlocal Business",
+                                      AppLocalizations.of(context)!.translate(
+                                              'Search_Hyperlocal_Business') ??
+                                          "Search Hyperlocal Business",
                                       style: ThreeKmTextConstants
                                           .tk12PXLatoBlackBold
                                           .copyWith(color: Colors.grey),
@@ -295,7 +301,9 @@ class _HomeState extends State<Home> {
                                     child: Row(
                                       children: [
                                         Text(
-                                          'View All ',
+                                          AppLocalizations.of(context)!
+                                                  .translate('view_all_text') ??
+                                              'View All ',
                                           style: ThreeKmTextConstants
                                               .tk14PXPoppinsGreenSemiBold,
                                         ),

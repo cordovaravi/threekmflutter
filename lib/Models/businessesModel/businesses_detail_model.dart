@@ -225,7 +225,7 @@ class AddressObj {
     landmark = json['landmark'] ?? "";
     area = json['area'];
     city = json['city'] ?? "";
-    state = json['state'];
+    state = json['state'] ?? "";
     country = json['country'];
     pincode = json['pincode'];
     latitude = json['latitude'] ?? 0.0;

@@ -1,6 +1,6 @@
 import 'package:hive/hive.dart';
 
-part 'cart_hive_model.g.dart';
+part "cart_hive_model.g.dart";
 
 @HiveType(typeId: 0)
 class CartHiveModel extends HiveObject {
@@ -21,8 +21,12 @@ class CartHiveModel extends HiveObject {
   @HiveField(7)
   num? weight;
   @HiveField(8)
-  int? creatorId;
+  num? masterStock;
   @HiveField(9)
+  bool? manageStock;
+  @HiveField(10)
+  int? creatorId;
+  @HiveField(11)
   String? creatorName;
 
   CartHiveModel(
@@ -33,6 +37,8 @@ class CartHiveModel extends HiveObject {
       this.id,
       this.variation_id,
       this.weight,
+      this.masterStock,
+      this.manageStock,
       this.creatorId,
       this.creatorName,
       this.variation_name});
@@ -46,6 +52,8 @@ class CartHiveModel extends HiveObject {
     variation_id = json['variation_id'];
     variation_name = json['variation_name'];
     weight = json['weight'];
+    masterStock = json['masterStock'];
+    manageStock = json['manageStock'];
     creatorId = json['creatorId'];
     creatorName = json['creatorName'];
   }
@@ -60,6 +68,8 @@ class CartHiveModel extends HiveObject {
     _data['variation_id'] = variation_id;
     _data['variation_name'] = variation_name;
     _data['weight'] = weight;
+    _data['masterStock'] = masterStock;
+    _data['manageStock'] = manageStock;
     _data['creatorId'] = creatorId;
     _data['creatorName'] = creatorName;
     return _data;

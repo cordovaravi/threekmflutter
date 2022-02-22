@@ -282,5 +282,10 @@
   "RESTAURANTS_CHECKOUT": "रेस्तरां चेकआउट",
   "Taxes": "करों",
   "Platform_Charges": "प्लॅटफॉर्म शुल्क",
-  "About_Restaurant": "रेस्टोरेंट के बारे में"
+  "About_Restaurant": "रेस्टोरेंट के बारे में",
+  "Offerings":"पेशकश",
+  "View_All_Offerings":"सभी पेशकश देखें",
+  "Search_Hyperlocal_Business":"हाइपरलोकल बिजनेस खोजें",
+  "No_Product_Found":"कोई उत्पाद नहीं मिला",
+  "No_Business_Found":"कोई व्यवसाय नहीं मिला"
 }

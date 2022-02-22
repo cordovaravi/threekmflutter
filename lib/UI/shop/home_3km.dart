@@ -80,7 +80,7 @@ class _Home3KMState extends State<Home3KM> {
                   imgSrg: imgSrg,
                   shopHomeProvider: shopHomeProvider,
                 )
-              : Center(child: Text("null"));
+              : Center(child: Text(""));
         }
         return Container();
       })),

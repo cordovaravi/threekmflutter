@@ -80,7 +80,7 @@ class Product {
   late int masterStock;
   late bool hasDiscount;
   late String discountType;
-  late int discountValue;
+  late num discountValue;
   late bool discountDates;
   late String discountStartDate;
   late String discountEndDate;
@@ -160,7 +160,7 @@ class Product {
     masterStock = json['master_stock'];
     hasDiscount = json['has_discount'];
     discountType = json['discount_type'];
-    discountValue = json['discount_value'];
+    discountValue = json['discount_value'] ?? 0;
     discountDates = json['discount_dates'];
     discountStartDate = json['discount_start_date'];
     discountEndDate = json['discount_end_date'];
@@ -325,7 +325,7 @@ class Variations {
     required this.weight,
     required this.imagesLinks,
     required this.isInStock,
-    this.masterStock,
+    required this.masterStock,
     required this.isActive,
     required this.options,
     this.id,
@@ -336,7 +336,7 @@ class Variations {
   late var weight;
   late final List<dynamic> imagesLinks;
   late final bool isInStock;
-  late final Null masterStock;
+  late var masterStock;
   late final bool isActive;
   late final Map<String, dynamic> options;
   late final Null id;
@@ -348,7 +348,7 @@ class Variations {
     weight = json['weight'];
     imagesLinks = List.castFrom<dynamic, dynamic>(json['images_links']);
     isInStock = json['is_in_stock'];
-    masterStock = null;
+    masterStock = json['master_stock'] ?? 0;
     isActive = json['is_active'];
     options = json['options'];
     id = null;
