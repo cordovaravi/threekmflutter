@@ -80,7 +80,7 @@ class _Home3KMState extends State<Home3KM> {
                   imgSrg: imgSrg,
                   shopHomeProvider: shopHomeProvider,
                 )
-              : Center(child: Text("null"));
+              : Center(child: Text(""));
         }
         return Container();
       })),
@@ -360,13 +360,15 @@ class _ShopHomeState extends State<ShopHome>
                               children: [
                                 Text(
                                   AppLocalizations.of(context)!
-                                          .translate('order_food_from_your') ?? 'Order Food from your',
+                                          .translate('order_food_from_your') ??
+                                      'Order Food from your',
                                   style:
                                       ThreeKmTextConstants.tk20PXPoppinsRedBold,
                                 ),
                                 Text(
                                   AppLocalizations.of(context)!
-                                          .translate('favorite_restaurant!') ?? 'Favorite Restaurant!',
+                                          .translate('favorite_restaurant!') ??
+                                      'Favorite Restaurant!',
                                   style:
                                       ThreeKmTextConstants.tk20PXPoppinsRedBold,
                                 ),
@@ -399,9 +401,9 @@ class _ShopHomeState extends State<ShopHome>
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                             AppLocalizations.of(context)!
-                                          .translate('nearby_restaurants') ??
-                                      'Nearby Restaurants',
+                            AppLocalizations.of(context)!
+                                    .translate('nearby_restaurants') ??
+                                'Nearby Restaurants',
                             style:
                                 ThreeKmTextConstants.tk16PXPoppinsBlackSemiBold,
                           ),

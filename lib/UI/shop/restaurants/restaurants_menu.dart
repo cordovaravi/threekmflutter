@@ -395,7 +395,9 @@ class MenuTile extends StatelessWidget {
                           decoration: BoxDecoration(
                               border: Border.all(
                                   color: status != false
-                                      ? Colors.green
+                                      ? menu.isVeg
+                                          ? Colors.green
+                                          : Colors.red
                                       : Colors.grey,
                                   width: 2)),
                           width: 20,
@@ -403,14 +405,22 @@ class MenuTile extends StatelessWidget {
                           child: Container(
                             decoration: BoxDecoration(
                                 color: status != false
-                                    ? Colors.green
+                                    ? menu.isVeg
+                                        ? Colors.green
+                                        : Colors.red
                                     : Colors.grey,
                                 shape: BoxShape.circle),
                           ),
                         ),
-                        Text(
-                          menu.name,
-                          style: ThreeKmTextConstants.tk14PXPoppinsBlackMedium,
+                        Container(
+                          constraints: BoxConstraints(
+                              maxWidth:
+                                  MediaQuery.of(context).size.width / 1.6),
+                          child: Text(
+                            menu.name,
+                            style:
+                                ThreeKmTextConstants.tk14PXPoppinsBlackMedium,
+                          ),
                         ),
                         Text(
                           '₹${menu.price}',

@@ -674,20 +674,39 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
                                                                     InkWell(
                                                                       onTap:
                                                                           () {
-                                                                        context.read<CheckoutProvider>().getShippingRate(
-                                                                            mounted,
-                                                                            context,
-                                                                            deliveryAddressdata?.latitude,
-                                                                            deliveryAddressdata?.longitude,
-                                                                            deliveryAddressdata?.pincode,
-                                                                            context.read<CartProvider>().getBoxWeightTotal(Hive.box('cartBox')),
-                                                                            'shop');
-                                                                        cartItem
-                                                                            .quantity = cartItem
-                                                                                .quantity +
-                                                                            1;
-                                                                        cartItem
-                                                                            .save();
+                                                                        if (cartItem.manageStock! ==
+                                                                            false) {
+                                                                          context.read<CheckoutProvider>().getShippingRate(
+                                                                              mounted,
+                                                                              context,
+                                                                              deliveryAddressdata?.latitude,
+                                                                              deliveryAddressdata?.longitude,
+                                                                              deliveryAddressdata?.pincode,
+                                                                              context.read<CartProvider>().getBoxWeightTotal(Hive.box('cartBox')),
+                                                                              'shop');
+                                                                          cartItem.quantity =
+                                                                              cartItem.quantity + 1;
+                                                                          cartItem
+                                                                              .save();
+                                                                        } else if (cartItem.quantity <
+                                                                            cartItem.masterStock!) {
+                                                                          context.read<CheckoutProvider>().getShippingRate(
+                                                                              mounted,
+                                                                              context,
+                                                                              deliveryAddressdata?.latitude,
+                                                                              deliveryAddressdata?.longitude,
+                                                                              deliveryAddressdata?.pincode,
+                                                                              context.read<CartProvider>().getBoxWeightTotal(Hive.box('cartBox')),
+                                                                              'shop');
+                                                                          cartItem.quantity =
+                                                                              cartItem.quantity + 1;
+                                                                          cartItem
+                                                                              .save();
+                                                                        } else {
+                                                                          CustomSnackBar(
+                                                                              context,
+                                                                              Text("This Product is now out of stock"));
+                                                                        }
                                                                       },
                                                                       child:
                                                                           const Image(

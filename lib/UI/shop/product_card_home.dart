@@ -46,20 +46,22 @@ class BuildCard extends StatelessWidget {
               width: double.infinity,
               child: Stack(
                 children: [
-                  ClipRRect(
-                    borderRadius: const BorderRadius.all(Radius.circular(20)),
-                    child: CachedNetworkImage(
-                      alignment: Alignment.topCenter,
-                      placeholder: (context, url) => Transform.scale(
-                        scale: 0.5,
-                        child: CircularProgressIndicator(
-                          color: Colors.grey[400],
+                  Center(
+                    child: ClipRRect(
+                      borderRadius: const BorderRadius.all(Radius.circular(20)),
+                      child: CachedNetworkImage(
+                        alignment: Alignment.topCenter,
+                        placeholder: (context, url) => Transform.scale(
+                          scale: 0.5,
+                          child: CircularProgressIndicator(
+                            color: Colors.grey[400],
+                          ),
                         ),
+                        imageUrl: cardImage,
+                        // height: ThreeKmScreenUtil.screenHeightDp / 3,
+                        width: MediaQuery.of(context).size.width,
+                        fit: BoxFit.contain,
                       ),
-                      imageUrl: cardImage,
-                      // height: ThreeKmScreenUtil.screenHeightDp / 3,
-                      // width: ThreeKmScreenUtil.screenWidthDp,
-                      fit: BoxFit.fill,
                     ),
                   ),
                   if (hasDiscount)

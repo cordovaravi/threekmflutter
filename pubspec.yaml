@@ -85,7 +85,8 @@ dependencies:
   hive_flutter:
   visibility_detector:
   im_stepper:
-  razorpay_flutter: ^1.2.7
+  # razorpay_flutter: ^1.2.7
+  razorpay_flutter:
   url_launcher:
   dotted_border:
   flutter_rating_bar:

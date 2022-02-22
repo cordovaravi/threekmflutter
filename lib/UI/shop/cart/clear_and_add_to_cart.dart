@@ -8,7 +8,7 @@ import 'package:threekm/localization/localize.dart';
 import 'package:threekm/providers/shop/cart_provider.dart';
 
 Future clearAndAddToCartModal(context, image, name, quantity, price, creatorId,
-    id, variationId, weight, creatorName, mode) async {
+    id, variationId, weight,masterStock,manageStock, creatorName, mode) async {
   return showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -48,6 +48,8 @@ Future clearAndAddToCartModal(context, image, name, quantity, price, creatorId,
                                 id: id,
                                 variationId: 0,
                                 weight: weight,
+                                masterStock: masterStock,
+                                manageStock:manageStock,
                                 creatorName: creatorName);
                           })));
 

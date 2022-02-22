@@ -5,7 +5,9 @@ import 'package:provider/src/provider.dart';
 import 'package:threekm/Models/shopModel/product_listing_model.dart';
 import 'package:threekm/UI/shop/cart/cart_item_list_modal.dart';
 import 'package:threekm/UI/shop/product/product_details.dart';
+import 'package:threekm/providers/businesses/businesses_wishlist_provider.dart';
 import 'package:threekm/providers/shop/product_listing_provider.dart';
+import 'package:threekm/providers/shop/wish_list_provide.dart';
 import 'package:threekm/utils/screen_util.dart';
 import 'package:threekm/utils/threekm_textstyles.dart';
 
@@ -184,7 +186,6 @@ class ItemBuilderWidget extends StatefulWidget {
 }
 
 class _ItemBuilderWidgetState extends State<ItemBuilderWidget> {
-  bool isLiked = false;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -211,7 +212,7 @@ class _ItemBuilderWidgetState extends State<ItemBuilderWidget> {
                       opacity: animation,
                       child: child,
                     );
-                  }));
+                  })).then((value) => {setState(() {})});
         },
         child: Container(
           decoration: BoxDecoration(
@@ -237,7 +238,7 @@ class _ItemBuilderWidgetState extends State<ItemBuilderWidget> {
                       ClipRRect(
                         borderRadius: BorderRadius.circular(20),
                         child: CachedNetworkImage(
-                          alignment: Alignment.topCenter,
+                          alignment: Alignment.center,
                           placeholder: (context, url) => Transform.scale(
                             scale: 0.5,
                             child: CircularProgressIndicator(
@@ -247,7 +248,7 @@ class _ItemBuilderWidgetState extends State<ItemBuilderWidget> {
                           imageUrl: '${widget.data[widget.i].image}',
                           height: ThreeKmScreenUtil.screenHeightDp / 6,
                           width: ThreeKmScreenUtil.screenWidthDp / 2.5,
-                          fit: BoxFit.fill,
+                          fit: BoxFit.contain,
                         ),
                       ),
                       if (double.parse((widget.data[widget.i].strikePrice! -
@@ -303,12 +304,38 @@ class _ItemBuilderWidgetState extends State<ItemBuilderWidget> {
                                         fontWeight: FontWeight.bold)),
                             InkWell(
                               onTap: () {
-                                setState(() {
-                                  isLiked = isLiked ? false : true;
-                                });
-                                print('heart clicked $isLiked');
+                                if (context
+                                        .read<WishListProvider>()
+                                        .isinWishList(
+                                            widget.data[widget.i].catalogId) ==
+                                    null) {
+                                  context
+                                      .read<WishListProvider>()
+                                      .addToWishList(
+                                          image: widget.data[widget.i].image,
+                                          name: widget.data[widget.i].name,
+                                          price: widget.data[widget.i].price,
+                                          id: widget.data[widget.i].catalogId,
+                                          variationId: 0,
+                                          variation_name: '',
+                                          creatorId:
+                                              widget.data[widget.i].creatorId,
+                                          creatorName: widget
+                                              .data[widget.i].businessName);
+                                  setState(() {});
+                                } else {
+                                  context.read<WishListProvider>().removeWish(
+                                      widget.data[widget.i].catalogId);
+                                  setState(() {});
+                                }
+
+                                print('heart clicked ');
                               },
-                              child: isLiked
+                              child: context
+                                          .read<WishListProvider>()
+                                          .isinWishList(widget
+                                              .data[widget.i].catalogId) !=
+                                      null
                                   ? Container(
                                       child: Lottie.asset(
                                         "assets/kadokado-heart.json",
