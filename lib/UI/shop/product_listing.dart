@@ -352,6 +352,10 @@ class _ItemBuilderWidgetState extends State<ItemBuilderWidget> {
                                           id: widget.data[widget.i].catalogId,
                                           variationId: 0,
                                           variation_name: '',
+                                          weight: widget.data[widget.i].weight,
+                                          // manageStock: widget.data[widget.i].,
+                                          masterStock:
+                                              widget.data[widget.i].masterStock,
                                           creatorId:
                                               widget.data[widget.i].creatorId,
                                           creatorName: widget

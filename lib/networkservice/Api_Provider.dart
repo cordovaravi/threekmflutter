@@ -53,7 +53,7 @@ class ApiProvider {
   //future get
   Future<dynamic> get(String url) async {
     var responseJson;
-    String token = await getToken();
+    String token = await getToken() ?? '';
     try {
       //showLoading();
       final response = await http
@@ -79,7 +79,7 @@ class ApiProvider {
   //future post
   Future<dynamic> post(String url, requestJson) async {
     var responseJson;
-    String token = await getToken();
+    String token = await getToken() ?? "";
     print(_baseUrl! + url);
     print(requestJson);
     try {

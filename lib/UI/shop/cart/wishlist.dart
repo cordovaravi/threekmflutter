@@ -9,6 +9,7 @@ import 'package:threekm/Models/shopModel/cart_hive_model.dart';
 import 'package:threekm/UI/businesses/businesses_detail.dart';
 import 'package:threekm/UI/shop/cart/cart_item_list_modal.dart';
 import 'package:threekm/UI/shop/product/product_details.dart';
+import 'package:threekm/commenwidgets/CustomSnakBar.dart';
 import 'package:threekm/localization/localize.dart';
 import 'package:threekm/providers/shop/cart_provider.dart';
 import 'package:threekm/utils/screen_util.dart';
@@ -33,6 +34,20 @@ class _WishListState extends State<WishList> {
   getWishBoxData() async {
     await Hive.openBox('shopWishListBox');
     await Hive.openBox('businessWishListBox');
+  }
+
+  isProductExist(box, id, {variationId}) {
+    if (variationId != null && variationId != 0) {
+      var existingItem = box.values.toList().firstWhere(
+          (dd) => dd.variation_id == variationId,
+          orElse: () => null);
+      return existingItem;
+    } else {
+      var existingItem = box.values
+          .toList()
+          .firstWhere((dd) => dd.id == id, orElse: () => null);
+      return existingItem;
+    }
   }
 
   @override
@@ -62,18 +77,41 @@ class _WishListState extends State<WishList> {
           titleTextStyle: const TextStyle(
               color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold),
           actions: [
-            Container(
-                margin: const EdgeInsets.only(right: 16),
-                decoration: BoxDecoration(
-                    color: Colors.grey[200], shape: BoxShape.circle),
-                child: IconButton(
-                    onPressed: () {
-                      viewCart(context, 'shop');
-                    },
-                    icon: const Icon(
-                      Icons.shopping_cart_rounded,
-                      size: 30,
-                    )))
+            Stack(
+              clipBehavior: Clip.none,
+              children: [
+                Container(
+                    margin: const EdgeInsets.only(right: 16),
+                    decoration: BoxDecoration(
+                        color: Colors.grey[200], shape: BoxShape.circle),
+                    child: IconButton(
+                        onPressed: () {
+                          viewCart(context, 'shop');
+                        },
+                        icon: const Icon(
+                          Icons.shopping_cart_rounded,
+                          size: 30,
+                        ))),
+                ValueListenableBuilder(
+                    valueListenable: Hive.box('cartBox').listenable(),
+                    builder: (context, Box box, snapshot) {
+                      return Positioned(
+                          top: 0,
+                          right: 6,
+                          child: Container(
+                              decoration: BoxDecoration(
+                                  shape: BoxShape.circle, color: Colors.red),
+                              child: Padding(
+                                padding: const EdgeInsets.all(4.0),
+                                child: Text(
+                                  '${box.length}',
+                                  style: TextStyle(
+                                      fontSize: 11, color: Colors.white),
+                                ),
+                              )));
+                    }),
+              ],
+            )
           ],
         ),
       ),
@@ -314,36 +352,64 @@ class _WishListState extends State<WishList> {
                                                                       0xFFFFFFFF)),
                                                         ),
                                                         onPressed: () {
-                                                          context
-                                                              .read<
-                                                                  CartProvider>()
-                                                              .addItemToCart(
-                                                                  context:
-                                                                      context,
-                                                                  creatorId: data
-                                                                      .creatorId,
-                                                                  creatorName: data
-                                                                      .creatorName,
-                                                                  id: data.id,
-                                                                  image: data
-                                                                      .image,
-                                                                  name:
-                                                                      data.name,
-                                                                  price: data
-                                                                      .price,
-                                                                  quantity: data
-                                                                      .quantity,
+                                                          if (isProductExist(
+                                                                  Hive.box(
+                                                                      'cartBox'),
+                                                                  data.id,
                                                                   variationId: data
-                                                                      .variation_id,
-                                                                  weight: data
-                                                                      .weight);
+                                                                      .variation_id) ==
+                                                              null) {
+                                                            context.read<CartProvider>().addItemToCart(
+                                                                context:
+                                                                    context,
+                                                                creatorId: data
+                                                                    .creatorId,
+                                                                creatorName: data
+                                                                    .creatorName,
+                                                                id: data.id,
+                                                                image:
+                                                                    data.image,
+                                                                name: data.name,
+                                                                price:
+                                                                    data.price,
+                                                                quantity: data
+                                                                    .quantity,
+                                                                variationId: data
+                                                                    .variation_id,
+                                                                weight:
+                                                                    data.weight,
+                                                                manageStock: data
+                                                                    .manageStock,
+                                                                masterStock: data
+                                                                    .masterStock,
+                                                                variation_name:
+                                                                    data.variation_name);
+                                                            setState(() {});
+                                                          } else {
+                                                            CustomSnackBar(
+                                                                context,
+                                                                Text(
+                                                                    "This product is already added to your cart"));
+                                                          }
                                                         },
-                                                        child: Text(
-                                                            AppLocalizations.of(
+                                                        child: Text(isProductExist(
+                                                                    Hive.box(
+                                                                        'cartBox'),
+                                                                    data.id,
+                                                                    variationId:
+                                                                        data
+                                                                            .variation_id) ==
+                                                                null
+                                                            ? AppLocalizations.of(
                                                                         context)!
                                                                     .translate(
                                                                         'detail_add_cart') ??
-                                                                'Add to Cart')),
+                                                                'Add to Cart'
+                                                            : AppLocalizations.of(
+                                                                        context)!
+                                                                    .translate(
+                                                                        'added_to_cart') ??
+                                                                'Added to cart')),
                                                     InkWell(
                                                       onTap: () {
                                                         data.delete();
@@ -463,7 +529,8 @@ class _WishListState extends State<WishList> {
                           })
                       : Center(
                           child: Text(AppLocalizations.of(context)!
-                                  .translate('No_Business_Found') ?? 'No Business Found'),
+                                  .translate('No_Business_Found') ??
+                              'No Business Found'),
                         )
             ],
           ),

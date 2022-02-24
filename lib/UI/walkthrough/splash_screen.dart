@@ -5,9 +5,11 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:threekm/UI/businesses/businesses_detail.dart';
 import 'package:threekm/UI/main/News/PostView.dart';
 import 'package:threekm/UI/main/navigation.dart';
 import 'package:threekm/UI/Auth/signup/sign_up.dart';
+import 'package:threekm/UI/shop/product/product_details.dart';
 import 'package:threekm/main.dart';
 import 'package:uni_links/uni_links.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -72,18 +74,40 @@ class _SplashScreenState extends State<SplashScreen> {
       final initialLink = await getInitialLink();
       // Parse the link and warn the user, if it is not correct,
       // but keep in mind it could be `null`.
+      log('this is deep link via 2 ${initialLink?.contains('/sell/')}');
+      log('this is deep link via 2 ${initialLink?.split('?id=')[1]}');
       log('this is deep link via console ${initialLink?.substring(30, 35)}');
       if (initialLink != null) {
-        Navigator.push(context,
-            MaterialPageRoute(builder: (BuildContext context) {
-          return Postview(
-              postId: initialLink
-                  .substring(30, initialLink.length)
-                  .replaceAll('&lang=en', ''));
-        })).then((value) => Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(builder: (_) => TabBarNavigation()),
-            (route) => false));
+        if (initialLink.contains('/sell/')) {
+          Navigator.push(context, MaterialPageRoute(builder: (_) {
+            return ProductDetails(
+              id: int.parse(initialLink.split('?id=')[1]),
+            );
+          })).then((value) => Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (_) => TabBarNavigation()),
+              (route) => false));
+        } else if (initialLink.contains('/biz/')) {
+          Navigator.push(context, MaterialPageRoute(builder: (_) {
+            return BusinessDetail(
+              id: int.parse(initialLink.split('?id=')[1]),
+            );
+          })).then((value) => Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (_) => TabBarNavigation()),
+              (route) => false));
+        } else {
+          Navigator.push(context,
+              MaterialPageRoute(builder: (BuildContext context) {
+            return Postview(
+                postId: initialLink
+                    .substring(30, initialLink.length)
+                    .replaceAll('&lang=en', ''));
+          })).then((value) => Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (_) => TabBarNavigation()),
+              (route) => false));
+        }
       } else {
         Future.delayed(Duration(seconds: 2), () {
           handleNavigation();

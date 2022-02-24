@@ -8,6 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:threekm/UI/Auth/sign_in.dart';
 import 'package:threekm/UI/Help_Supportpage.dart';
+import 'package:threekm/UI/main/navigation.dart';
 import 'package:threekm/providers/auth/signUp_Provider.dart';
 import 'package:threekm/providers/auth/social_auth/facebook_provider.dart';
 import 'package:threekm/providers/auth/social_auth/google_provider.dart';
@@ -121,6 +122,7 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
               children: [
                 Stack(
                   alignment: Alignment.center,
+                  clipBehavior: Clip.none,
                   children: [
                     Container(
                         child: Image.asset(
@@ -132,7 +134,7 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
                       child: SvgPicture.asset(
                         "assets/logopic1.svg",
                       ),
-                    )
+                    ),
                   ],
                 ),
                 buildInputs,
@@ -360,7 +362,20 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
                 child: buildLoginButtons(
                     "assets/facebook.png", "Login with Apple"),
               )
-            : Container()
+            : Container(),
+        TextButton(
+          onPressed: () {
+            print("skip login");
+            Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => TabBarNavigation()),
+                (route) => false);
+          },
+          child: Text(
+            'Skip Login',
+            style: TextStyle(color: Colors.white),
+          ),
+        ),
       ],
     );
   }

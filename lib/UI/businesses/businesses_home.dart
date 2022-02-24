@@ -13,7 +13,7 @@ import 'package:threekm/UI/shop/cart/cart_item_list_modal.dart';
 import 'package:threekm/localization/localize.dart';
 import 'package:threekm/providers/Location/locattion_Provider.dart';
 import 'package:threekm/providers/businesses/businesses_home_provider.dart';
-import 'package:threekm/utils/screen_util.dart';
+// import 'package:threekm/utils/screen_util.dart';
 
 import 'package:threekm/utils/threekm_textstyles.dart';
 
@@ -32,13 +32,6 @@ class _BusinessesHomeState extends State<BusinessesHome>
   void initState() {
     context.read<BusinessesHomeProvider>().getBusinesses(mounted);
     super.initState();
-  }
-
-  @override
-  void didChangeDependencies() {
-    ThreeKmScreenUtil.getInstance();
-    ThreeKmScreenUtil.instance.init(context);
-    super.didChangeDependencies();
   }
 
   @override
@@ -99,8 +92,8 @@ class _HomeState extends State<Home> {
         child: Container(
           padding: EdgeInsets.only(top: 20),
           color: Colors.white,
-          width: ThreeKmScreenUtil.screenWidthDp,
-          height: ThreeKmScreenUtil.screenHeightDp,
+          width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.height,
           child: SingleChildScrollView(
             child: Column(
               children: [
@@ -256,7 +249,7 @@ class _HomeState extends State<Home> {
                                   borderRadius: BorderRadius.circular(10),
                                   child: CachedNetworkImage(
                                       imageUrl: '${advData?.images.first}',
-                                      width: ThreeKmScreenUtil.screenWidthDp /
+                                      width: MediaQuery.of(context).size.width /
                                           1.1888,
                                       // height: ThreeKmScreenUtil.screenHeightDp / 19,
                                       fit: BoxFit.fill,
@@ -417,7 +410,7 @@ class _HomeState extends State<Home> {
                                   borderRadius: BorderRadius.circular(10),
                                   child: CachedNetworkImage(
                                       imageUrl: '${advData?.images[0]}',
-                                      width: ThreeKmScreenUtil.screenWidthDp /
+                                      width: MediaQuery.of(context).size.width /
                                           1.1888,
                                       // height: ThreeKmScreenUtil.screenHeightDp / 19,
                                       fit: BoxFit.fill,

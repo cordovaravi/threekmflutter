@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:device_info/device_info.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
+import 'package:hive/hive.dart';
 import 'package:provider/src/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:threekm/UI/businesses/businesses_home.dart';
@@ -70,13 +71,18 @@ class _TabBarNavigationState extends State<TabBarNavigation>
     var fname = _prefs.getString("userfname");
     var lname = _prefs.getString("userlname");
     UserName = "$fname $lname";
-    avatar = _prefs.getString("avatar")!;
+    avatar = _prefs.getString("avatar") ?? "";
   }
 
   @override
   void didChangeDependencies() {
     ThreeKmScreenUtil().init(context);
     super.didChangeDependencies();
+  }
+
+  openBox() async {
+    await Hive.openBox('restroCartBox');
+    await Hive.openBox('cartBox');
   }
 
   @override
@@ -119,6 +125,7 @@ class _TabBarNavigationState extends State<TabBarNavigation>
         });
       });
     });
+    openBox();
     super.initState();
   }
 

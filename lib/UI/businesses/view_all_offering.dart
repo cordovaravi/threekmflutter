@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/src/provider.dart';
 import 'package:threekm/Models/shopModel/product_listing_model.dart';
@@ -60,18 +61,54 @@ class _ViewAllOfferingState extends State<ViewAllOffering> {
           titleTextStyle: const TextStyle(
               color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold),
           actions: [
-            Container(
-                margin: const EdgeInsets.only(right: 16),
-                decoration: BoxDecoration(
-                    color: Colors.grey[200], shape: BoxShape.circle),
-                child: IconButton(
-                    onPressed: () {
-                      viewCart(context, 'shop');
-                    },
-                    icon: const Icon(
-                      Icons.shopping_cart_rounded,
-                      size: 30,
-                    )))
+            Stack(
+              clipBehavior: Clip.none,
+              children: [
+                Container(
+                    margin: const EdgeInsets.only(right: 16),
+                    decoration: BoxDecoration(
+                        color: Colors.grey[200], shape: BoxShape.circle),
+                    child: IconButton(
+                        onPressed: () {
+                          viewCart(context, 'shop');
+                        },
+                        icon: const Icon(
+                          Icons.shopping_cart_rounded,
+                          size: 30,
+                        ))),
+                ValueListenableBuilder(
+                    valueListenable: Hive.box('cartBox').listenable(),
+                    builder: (context, Box box, snapshot) {
+                      return Positioned(
+                          top: 0,
+                          right: 8,
+                          child: Container(
+                              decoration: BoxDecoration(
+                                  shape: BoxShape.circle, color: Colors.red),
+                              child: Padding(
+                                padding: const EdgeInsets.all(4.0),
+                                child: Text(
+                                  '${box.length}',
+                                  style: TextStyle(
+                                      fontSize: 11, color: Colors.white),
+                                ),
+                              )));
+                    }),
+                // Positioned(
+                //     top: 0,
+                //     right: -8,
+                //     child: Container(
+                //         decoration: BoxDecoration(
+                //             shape: BoxShape.circle, color: Colors.red),
+                //         child: Padding(
+                //           padding: const EdgeInsets.all(4.0),
+                //           child: Text(
+                //             '${Hive.box('cartBox').length}',
+                //             style: TextStyle(fontSize: 11, color: Colors.white),
+                //           ),
+                //         )))
+              ],
+            )
           ],
         ),
       ),
@@ -318,6 +355,10 @@ class _ItemBuilderWidgetState extends State<ItemBuilderWidget> {
                                           id: widget.data[widget.i].catalogId,
                                           variationId: 0,
                                           variation_name: '',
+                                          weight: widget.data[widget.i].weight,
+                                          // manage stock is missing here
+                                          masterStock:
+                                              widget.data[widget.i].masterStock,
                                           creatorId:
                                               widget.data[widget.i].creatorId,
                                           creatorName: widget

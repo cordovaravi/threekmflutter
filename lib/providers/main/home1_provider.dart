@@ -12,7 +12,7 @@ class HomefirstProvider extends ChangeNotifier {
   NewsHomeModel? get homeNewsFirst => _homeModel;
 
   Future<Null> getNewsfirst(requestJson) async {
-    String token = await _apiProvider.getToken();
+    String token = await _apiProvider.getToken() ?? "";
     log("token is $token");
     try {
       showLoading();

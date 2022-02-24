@@ -128,8 +128,6 @@ class _ProductDetailsState extends State<ProductDetails> {
         .watch<WishListProvider>()
         .isinWishList(data.result?.product.catalogId);
 
- 
-
     return RefreshIndicator(onRefresh: () {
       return context
           .read<ProductDetailsProvider>()
@@ -167,23 +165,59 @@ class _ProductDetailsState extends State<ProductDetails> {
                   onPressed: () {
                     log("share button ");
                     var url =
-                        'https://3km.in/sell/${product?.name}/${product?.catalogId}';
+                        'https://3km.in/sell/${product?.name}/?id=${product?.catalogId}';
                     Share.share('check out this Product ${Uri.parse(url)}');
                   }),
             ),
-            Container(
-              margin: const EdgeInsets.only(left: 10, right: 5),
-              decoration: const BoxDecoration(
-                  color: Colors.black45, shape: BoxShape.circle),
-              child: IconButton(
-                  icon: const Icon(
-                    Icons.shopping_cart_rounded,
-                    size: 20,
-                    color: Colors.white,
-                  ),
-                  onPressed: () {
-                    viewCart(context, 'shop');
-                  }),
+            Stack(
+              clipBehavior: Clip.none,
+              children: [
+                Container(
+                  margin: const EdgeInsets.only(left: 10, right: 5),
+                  decoration: const BoxDecoration(
+                      color: Colors.black45, shape: BoxShape.circle),
+                  child: IconButton(
+                      icon: const Icon(
+                        Icons.shopping_cart_rounded,
+                        size: 20,
+                        color: Colors.white,
+                      ),
+                      onPressed: () {
+                        viewCart(context, 'shop');
+                      }),
+                ),
+                ValueListenableBuilder(
+                    valueListenable: Hive.box('cartBox').listenable(),
+                    builder: (context, Box box, snapshot) {
+                      return Positioned(
+                          top: 0,
+                          right: 6,
+                          child: Container(
+                              decoration: BoxDecoration(
+                                  shape: BoxShape.circle, color: Colors.red),
+                              child: Padding(
+                                padding: const EdgeInsets.all(4.0),
+                                child: Text(
+                                  '${box.length}',
+                                  style: TextStyle(
+                                      fontSize: 11, color: Colors.white),
+                                ),
+                              )));
+                    }),
+                // Positioned(
+                //     top: 0,
+                //     right: 6,
+                //     child: Container(
+                //         decoration: BoxDecoration(
+                //             shape: BoxShape.circle, color: Colors.red),
+                //         child: Padding(
+                //           padding: const EdgeInsets.all(4.0),
+                //           child: Text(
+                //             '${Hive.box('cartBox').length}',
+                //             style: TextStyle(fontSize: 11, color: Colors.white),
+                //           ),
+                //         )))
+              ],
             ),
           ],
         ),
@@ -244,7 +278,9 @@ class _ProductDetailsState extends State<ProductDetails> {
                                                   0
                                               ? '${data.result?.product.images[index]}'
                                               : '${data.result?.product.image}'
-                                          : variation.imagesLinks[index]),
+                                          : variation.imagesLinks.length != 0
+                                              ? variation.imagesLinks[index]
+                                              : data.result?.product.image),
                                       fit: BoxFit.contain,
                                       // width: ThreeKmScreenUtil.screenWidthDp /
                                       //     1.1888,
@@ -284,20 +320,22 @@ class _ProductDetailsState extends State<ProductDetails> {
                       }),
                 ),
                 //..._buildPageIndicator(data.result?.product.images),
-              if( statusData == 'loaded' && data.result != null)
-                      Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      for (int i = 0;
-                          i < data.result!.product.images.length;
-                          i++)
-                        i == selectedindex ? indicator(true) : indicator(false),
-                    ],
+                if (statusData == 'loaded' && data.result != null)
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        for (int i = 0;
+                            i < data.result!.product.images.length;
+                            i++)
+                          i == selectedindex
+                              ? indicator(true)
+                              : indicator(false),
+                      ],
+                    ),
                   ),
-                ),
 
                 statusData == 'loaded' && data.result != null
                     ? Container(
@@ -1405,6 +1443,9 @@ class _ProductDetailsState extends State<ProductDetails> {
                                               ? variation
                                                   .options['variation_name']
                                               : null,
+                                          weight: product?.weight,
+                                          manageStock: product?.manageStock,
+                                          masterStock: product?.masterStock,
                                           creatorId: product?.creatorId,
                                           creatorName: product
                                               ?.creatorDetails.businessName);
@@ -1591,15 +1632,29 @@ class _ProductDetailsState extends State<ProductDetails> {
                                         ? isProductExist(box, widget.id,
                                                     variationId: variationid) ==
                                                 null
-                                            ? 'Add to Cart'
-                                            : 'Added to cart'
+                                            ? AppLocalizations.of(context)!
+                                                    .translate(
+                                                        'detail_add_cart') ??
+                                                'Add to Cart'
+                                            : AppLocalizations.of(context)!
+                                                    .translate(
+                                                        'added_to_cart') ??
+                                                'Added to cart'
                                         : variation == null &&
                                                 product!.isInStock
                                             ? isProductExist(box, widget.id) ==
                                                     null
-                                                ? 'Add to Cart'
-                                                : 'Added to cart'
-                                            : 'Out of stock',
+                                                ? AppLocalizations.of(context)!
+                                                        .translate(
+                                                            'detail_add_cart') ??
+                                                    'Add to Cart'
+                                                : AppLocalizations.of(context)!
+                                                        .translate(
+                                                            'added_to_cart') ??
+                                                    'Added to cart'
+                                            : AppLocalizations.of(context)!
+                                                    .translate('out_of_stock') ??
+                                                'Out of stock',
                                     style: ThreeKmTextConstants
                                         .tk14PXPoppinsWhiteMedium,
                                   ));

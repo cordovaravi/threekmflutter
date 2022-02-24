@@ -13,7 +13,7 @@ class SinglePostProvider extends ChangeNotifier {
   Future<Null> getPostDetails(postId, mounted) async {
     _isLoading = true;
     notifyListeners();
-    String _token = await _apiProvider.getToken();
+    String _token = await _apiProvider.getToken() ?? "";
     if (mounted) {
       try {
         var response =
