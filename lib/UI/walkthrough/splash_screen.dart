@@ -4,6 +4,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:hive/hive.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:threekm/UI/businesses/businesses_detail.dart';
 import 'package:threekm/UI/main/News/PostView.dart';
@@ -30,6 +31,12 @@ class _SplashScreenState extends State<SplashScreen> {
     super.initState();
     handleDeepLink();
     handleFcm();
+    openBox();
+  }
+
+  openBox() async {
+    await Hive.openBox('restroCartBox');
+    await Hive.openBox('cartBox');
   }
 
   void handleFcm() {
@@ -72,6 +79,7 @@ class _SplashScreenState extends State<SplashScreen> {
   Future<dynamic> handleDeepLink() async {
     try {
       final initialLink = await getInitialLink();
+      openBox();
       // Parse the link and warn the user, if it is not correct,
       // but keep in mind it could be `null`.
       log('this is deep link via 2 ${initialLink?.contains('/sell/')}');

@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/src/provider.dart';
 
@@ -62,18 +63,35 @@ class _ProductListingState extends State<ProductListing> {
           titleTextStyle: const TextStyle(
               color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold),
           actions: [
-            Container(
-                margin: const EdgeInsets.only(right: 16),
-                decoration: BoxDecoration(
-                    color: Colors.grey[200], shape: BoxShape.circle),
-                child: IconButton(
-                    onPressed: () {
-                      viewCart(context, 'shop');
-                    },
-                    icon: const Icon(
-                      Icons.shopping_cart_rounded,
-                      size: 30,
-                    )))
+            Stack(
+              children: [
+                Container(
+                    margin: const EdgeInsets.only(right: 16),
+                    decoration: BoxDecoration(
+                        color: Colors.grey[200], shape: BoxShape.circle),
+                    child: IconButton(
+                        onPressed: () {
+                          viewCart(context, 'shop');
+                        },
+                        icon: const Icon(
+                          Icons.shopping_cart_rounded,
+                          size: 30,
+                        ))),
+                Positioned(
+                    top: 0,
+                    right: 12,
+                    child: Container(
+                        decoration: BoxDecoration(
+                            shape: BoxShape.circle, color: Colors.red),
+                        child: Padding(
+                          padding: const EdgeInsets.all(4.0),
+                          child: Text(
+                            '${Hive.box('cartBox').length}',
+                            style: TextStyle(fontSize: 11, color: Colors.white),
+                          ),
+                        )))
+              ],
+            )
           ],
         ),
       ),

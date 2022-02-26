@@ -285,7 +285,7 @@ class _WishListState extends State<WishList> {
                                               imageUrl: '${data.image}',
                                               // height: ThreeKmScreenUtil.screenHeightDp / 3,
                                               // width: ThreeKmScreenUtil.screenWidthDp,
-                                              fit: BoxFit.fill,
+                                              fit: BoxFit.contain,
                                             ),
                                           ),
                                         ),

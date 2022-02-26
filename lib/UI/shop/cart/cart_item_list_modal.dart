@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/src/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:threekm/Models/shopModel/cart_hive_model.dart';
+import 'package:threekm/UI/Auth/signup/sign_up.dart';
 import 'package:threekm/commenwidgets/CustomSnakBar.dart';
 import 'package:threekm/localization/localize.dart';
 import 'package:threekm/main.dart';
@@ -506,14 +508,27 @@ Future viewCart(BuildContext context, mode) async {
                                       padding: const EdgeInsets.only(
                                           top: 20, bottom: 20),
                                       child: ElevatedButton.icon(
-                                          onPressed: () {
-                                            Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (_) => mode ==
-                                                            'shop'
-                                                        ? CheckOutScreen()
-                                                        : RestaurantsCheckOutScreen()));
+                                          onPressed: () async {
+                                            SharedPreferences _pref =
+                                                await SharedPreferences
+                                                    .getInstance();
+                                            var token =
+                                                _pref.getString("token");
+                                            if (token != null) {
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (_) => mode ==
+                                                              'shop'
+                                                          ? CheckOutScreen()
+                                                          : RestaurantsCheckOutScreen()));
+                                            } else {
+                                              Navigator.pushAndRemoveUntil(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (_) => SignUp()),
+                                                  (route) => false);
+                                            }
                                           },
                                           style: ButtonStyle(
                                               shape: MaterialStateProperty.all(

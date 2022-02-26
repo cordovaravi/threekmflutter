@@ -45,6 +45,7 @@ class BuildCard extends StatelessWidget {
               height: 160.0,
               width: double.infinity,
               child: Stack(
+                fit: StackFit.expand,
                 children: [
                   Center(
                     child: ClipRRect(
@@ -52,6 +53,7 @@ class BuildCard extends StatelessWidget {
                       child: CachedNetworkImage(
                         alignment: Alignment.topCenter,
                         placeholder: (context, url) => Transform.scale(
+                          alignment: Alignment.topLeft,
                           scale: 0.5,
                           child: CircularProgressIndicator(
                             color: Colors.grey[400],

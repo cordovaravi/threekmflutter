@@ -5,7 +5,9 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:provider/src/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:threekm/UI/Auth/signup/sign_up.dart';
 import 'package:threekm/UI/Search/SearchPage.dart';
 import 'package:threekm/UI/businesses/businesses_detail.dart';
 import 'package:threekm/UI/main/navigation.dart';
@@ -160,7 +162,18 @@ class _HomeState extends State<Home> {
                           ),
                         ),
                         InkWell(
-                          onTap: () => drawerController.open!(),
+                          onTap: () async {
+                            SharedPreferences _pref =
+                                await SharedPreferences.getInstance();
+
+                            var token = _pref.getString("token");
+                            token != null
+                                ? drawerController.open!()
+                                : Navigator.pushAndRemoveUntil(
+                                    context,
+                                    MaterialPageRoute(builder: (_) => SignUp()),
+                                    (route) => false);
+                          },
                           child: Padding(
                             padding: EdgeInsets.only(left: 12),
                             child: Container(

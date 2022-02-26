@@ -60,6 +60,12 @@ class _BusinessDetailState extends State<BusinessDetail> {
     context
         .read<BusinessDetailProvider>()
         .getBusinessesDetail(mounted, widget.id);
+    openBox();
+  }
+
+  openBox() async {
+    await Hive.openBox('restroCartBox');
+    await Hive.openBox('cartBox');
   }
 
   @override
@@ -705,7 +711,8 @@ class _BusinessDetailState extends State<BusinessDetail> {
                                                                   animation,
                                                               child: child,
                                                             );
-                                                          })).then((value) => setState((){}));
+                                                          })).then((value) =>
+                                                      setState(() {}));
                                                 },
                                                 child: Container(
                                                   // color: Colors.red,

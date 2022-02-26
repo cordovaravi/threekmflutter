@@ -3,12 +3,15 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:threekm/UI/Auth/signup/sign_up.dart';
 import 'package:threekm/UI/Search/SearchPage.dart';
 import 'package:threekm/UI/businesses/businesses_home.dart';
 import 'package:threekm/UI/main/navigation.dart';
 import 'package:threekm/UI/shop/cart/cart_item_list_modal.dart';
 import 'package:threekm/UI/shop/checkout/order_detail.dart';
 import 'package:threekm/localization/localize.dart';
+import 'package:threekm/networkservice/Api_Provider.dart';
 import 'package:threekm/providers/Location/locattion_Provider.dart';
 import 'package:threekm/providers/shop/shop_home_provider.dart';
 import 'package:provider/provider.dart';
@@ -301,7 +304,19 @@ class _ShopHomeState extends State<ShopHome>
                         ),
                       ),
                       InkWell(
-                        onTap: () => drawerController.open!(),
+                        onTap: () async {
+                          SharedPreferences _pref =
+                              await SharedPreferences.getInstance();
+                          var token = _pref.getString("token");
+                          token != null
+                              ? drawerController.open!()
+                              // : Navigator.push(context,
+                              //     MaterialPageRoute(builder: (_) => SignUp()));
+                              : Navigator.pushAndRemoveUntil(
+                                  context,
+                                  MaterialPageRoute(builder: (_) => SignUp()),
+                                  (route) => false);
+                        },
                         child: Padding(
                           padding: EdgeInsets.only(left: 12),
                           child: Container(

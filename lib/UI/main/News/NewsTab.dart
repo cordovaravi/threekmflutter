@@ -9,9 +9,11 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:threekm/Custom_library/Polls/simple_polls.dart';
 import 'package:threekm/Models/home1_model.dart';
 import 'package:threekm/UI/Animation/AnimatedSizeRoute.dart';
+import 'package:threekm/UI/Auth/signup/sign_up.dart';
 import 'package:threekm/UI/Search/SearchPage.dart';
 import 'package:threekm/UI/main/News/NewsList.dart';
 import 'package:threekm/UI/main/News/PostView.dart';
@@ -174,7 +176,18 @@ class _NewsTabState extends State<NewsTab>
                       ),
                     ),
                     InkWell(
-                      onTap: () => drawerController.open!(),
+                      onTap: () async {
+                        SharedPreferences _pref =
+                            await SharedPreferences.getInstance();
+
+                        var token = _pref.getString("token");
+                        token != null
+                            ? drawerController.open!()
+                            : Navigator.pushAndRemoveUntil(
+                                context,
+                                MaterialPageRoute(builder: (_) => SignUp()),
+                                (route) => false);
+                      },
                       child: Padding(
                         padding: EdgeInsets.only(left: 12),
                         child: Container(

@@ -80,11 +80,6 @@ class _TabBarNavigationState extends State<TabBarNavigation>
     super.didChangeDependencies();
   }
 
-  openBox() async {
-    await Hive.openBox('restroCartBox');
-    await Hive.openBox('cartBox');
-  }
-
   @override
   void initState() {
     _getConstants();
@@ -125,7 +120,7 @@ class _TabBarNavigationState extends State<TabBarNavigation>
         });
       });
     });
-    openBox();
+
     super.initState();
   }
 
