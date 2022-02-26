@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
@@ -26,6 +27,7 @@ import 'package:threekm/widgets/emotion_Button.dart';
 import 'package:threekm/widgets/video_widget.dart';
 
 import 'package:threekm/widgets/reactions_assets.dart' as reactionAssets;
+import 'package:timelines/timelines.dart';
 import 'package:vimeo_player_flutter/vimeo_player_flutter.dart';
 
 class NewsListPage extends StatefulWidget {
@@ -179,34 +181,38 @@ class _NewsListPageState extends State<NewsListPage> {
             style: ThreeKmTextConstants.tk18PXLatoBlackMedium,
           ),
         ),
-        body: RefreshIndicator(
-          onRefresh: () {
-            return context
-                .read<NewsListProvider>()
-                .onRefresh(initJson, widget.title, mounted, 10, 0, true);
-          },
-          child: Builder(
-            builder: (context) {
-              if (newsProvider.state == "loading") {
-                return Center(
-                  child: CircularProgressIndicator(),
-                );
-              } else if (newsProvider.state == "error") {
-                return Center(
-                  child: Lottie.asset("assets/Caterror.json"),
-                );
-              } else if (newsProvider.state == "loaded") {
-                return newsProvider.newsBycategory != null
-                    ? NewsPostCard(
-                        noScorll:
-                            widget.hasPostfromBanner != null ? true : false,
-                        newsListProvider: newsProvider,
-                        name: widget.title,
-                      )
-                    : Text("null");
-              }
-              return Container();
+        body: SizedBox(
+          height: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
+          child: RefreshIndicator(
+            onRefresh: () {
+              return context
+                  .read<NewsListProvider>()
+                  .onRefresh(initJson, widget.title, mounted, 10, 0, true);
             },
+            child: Builder(
+              builder: (context) {
+                if (newsProvider.state == "loading") {
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                } else if (newsProvider.state == "error") {
+                  return Center(
+                    child: Lottie.asset("assets/Caterror.json"),
+                  );
+                } else if (newsProvider.state == "loaded") {
+                  return newsProvider.newsBycategory != null
+                      ? NewsPostCard(
+                          noScorll:
+                              widget.hasPostfromBanner != null ? true : false,
+                          newsListProvider: newsProvider,
+                          name: widget.title,
+                        )
+                      : Text("null");
+                }
+                return Container();
+              },
+            ),
           ),
         ),
       ),
@@ -283,6 +289,8 @@ class _NewsPostCardState extends State<NewsPostCard>
   Widget build(BuildContext context) {
     super.build(context);
     return Container(
+      height: MediaQuery.of(context).size.height,
+      width: MediaQuery.of(context).size.width,
       child: widget.newsListProvider.newsBycategory?.data?.result?.posts != null
           ? ListView.builder(
               shrinkWrap: true,
@@ -452,92 +460,179 @@ class _NewsPostCardState extends State<NewsPostCard>
                                       ],
                                     ),
                                   ),
-                                  //pic
-                                  if (newsData.images != null &&
-                                      newsData.images!.length > 0)
-                                    newsData.images!.length == 1
-                                        ? CachedNetworkImage(
-                                            height: 254,
-                                            width: MediaQuery.of(context)
-                                                .size
-                                                .width,
-                                            fit: BoxFit.fitWidth,
-                                            imageUrl:
-                                                '${newsData.images!.first}',
-                                          )
-                                        : CarouselSlider.builder(
-                                            itemCount: newsData.images!.length,
-                                            itemBuilder: (context, index, _) {
-                                              return Container(
-                                                  child: CachedNetworkImage(
-                                                height: 254,
-                                                width: MediaQuery.of(context)
-                                                    .size
-                                                    .width,
-                                                fit: BoxFit.fitWidth,
-                                                imageUrl:
-                                                    '${newsData.images![index]}',
-                                              ));
-                                            },
-                                            options: CarouselOptions(
-                                              autoPlay: true,
-                                              viewportFraction: 0.99,
-                                            )),
-                                  if (newsData.videos != null &&
-                                      newsData.videos!.length > 0)
-                                    Stack(children: [
+                                  //both pics and images is present
+                                  newsData.images != null &&
+                                          newsData.videos != null
+                                      ?
+                                      //video and image both
                                       Container(
-                                        //height: 254,
-                                        width:
-                                            MediaQuery.of(context).size.width,
-                                        child: newsData
-                                                    .videos?.first.vimeoUrl !=
-                                                null
-                                            ? Container(
-                                                height: 254,
-                                                width: MediaQuery.of(context)
-                                                    .size
-                                                    .width,
-                                                child: VimeoPlayer(
-                                                    videoId: Uri.parse(newsData
-                                                            .videos!
-                                                            .first
-                                                            .vimeoUrl
-                                                            .toString())
-                                                        .pathSegments
-                                                        .last),
-                                              )
-                                            : VideoWidget(
-                                                thubnail: newsData.videos?.first
-                                                            .thumbnail !=
-                                                        null
-                                                    ? newsData
-                                                        .videos!.first.thumbnail
-                                                        .toString()
-                                                    : '',
-                                                url: newsData.videos!.first.src
-                                                    .toString(),
-                                                play: false),
-                                      ),
-                                    ]),
-                                  // newsData.images!.length > 1
-                                  //     ? Row(
-                                  //         children: [
-                                  //           ListView.builder(
-                                  //               itemCount:
-                                  //                   newsData.images!.length,
-                                  //               itemBuilder: (context, index) {
-                                  //                 return Container(
-                                  //                   height: 2,
-                                  //                   width: 2,
-                                  //                   decoration: BoxDecoration(
-                                  //                     color: Colors.black
-                                  //                   ),
-                                  //                 );
-                                  //               })
-                                  //         ],
-                                  //       )
-                                  //     : SizedBox.shrink(),
+                                          height: 400,
+                                          width: 400,
+                                          child: PageView.builder(
+                                            itemCount: newsData.images!.length +
+                                                newsData.videos!.length,
+                                            // options: CarouselOptions(
+                                            //   // aspectRatio: null,
+                                            //   viewportFraction: 0.99,
+                                            // ),
+                                            itemBuilder: (
+                                              context,
+                                              index,
+                                            ) {
+                                              List videoUrls = newsData.videos!
+                                                  .map((e) => e.src)
+                                                  .toList();
+                                              List templist = List.from(
+                                                  newsData.images!.toList())
+                                                ..addAll(videoUrls);
+                                              return templist != null
+                                                  ? templist[index]
+                                                          .toString()
+                                                          .contains(".mp4")
+                                                      ? SizedBox(
+                                                          height: 300,
+                                                          width: MediaQuery.of(
+                                                                  context)
+                                                              .size
+                                                              .width,
+                                                          child: VideoWidget(
+                                                              thubnail: '',
+                                                              url: templist[
+                                                                      index]
+                                                                  .toString(),
+                                                              play: false),
+                                                        )
+                                                      : CachedNetworkImage(
+                                                          height: 254,
+                                                          width: MediaQuery.of(
+                                                                  context)
+                                                              .size
+                                                              .width,
+                                                          fit: BoxFit.contain,
+                                                          imageUrl:
+                                                              templist[index])
+                                                  : SizedBox(
+                                                      child: Text("null"),
+                                                    );
+                                            },
+                                          ),
+                                        )
+                                      // image or video
+                                      : Container(),
+                                  newsData.images != null &&
+                                              newsData.images!.length > 1 ||
+                                          newsData.videos != null &&
+                                              newsData.videos!.length > 1
+                                      ? Container(
+                                          height: 10,
+                                          width:
+                                              MediaQuery.of(context).size.width,
+                                          child: Builder(builder: (context) {
+                                            List videoUrls = newsData.videos!
+                                                .map((e) => e.src)
+                                                .toList();
+                                            List templist = List.from(
+                                                newsData.images!.toList())
+                                              ..addAll(videoUrls);
+                                            return Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: templist
+                                                    .asMap()
+                                                    .entries
+                                                    .map((entry) {
+                                                  return Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            left: 2),
+                                                    child: DotIndicator(
+                                                      size: 8.0,
+                                                      color: Colors.grey,
+                                                    ),
+                                                  );
+                                                }).toList());
+                                          }),
+                                          // child: ListView.builder(
+                                          //     shrinkWrap: true,
+                                          //     scrollDirection: Axis.horizontal,
+                                          //     itemCount:
+                                          //         newsData.images!.length +
+                                          //             newsData.videos!.length,
+                                          //     itemBuilder: (context, index) {
+                                          //       return Center(
+                                          //           child: DotIndicator());
+                                          //     }),
+                                        )
+                                      : SizedBox.shrink(),
+
+                                  // if (newsData.images != null &&
+                                  //     newsData.images!.length > 0)
+                                  //   newsData.images!.length == 1
+                                  //       ? CachedNetworkImage(
+                                  //           height: 254,
+                                  //           width: MediaQuery.of(context)
+                                  //               .size
+                                  //               .width,
+                                  //           fit: BoxFit.fitWidth,
+                                  //           imageUrl:
+                                  //               '${newsData.images!.first}',
+                                  //         )
+                                  //       : CarouselSlider.builder(
+                                  //           itemCount: newsData.images!.length,
+                                  //           itemBuilder: (context, index, _) {
+                                  //             return Container(
+                                  //                 child: CachedNetworkImage(
+                                  //               height: 254,
+                                  //               width: MediaQuery.of(context)
+                                  //                   .size
+                                  //                   .width,
+                                  //               fit: BoxFit.fitWidth,
+                                  //               imageUrl:
+                                  //                   '${newsData.images![index]}',
+                                  //             ));
+                                  //           },
+                                  //           options: CarouselOptions(
+                                  //             autoPlay: true,
+                                  //             viewportFraction: 0.99,
+                                  //           )),
+                                  // if (newsData.videos != null &&
+                                  //     newsData.videos!.length > 0)
+                                  //   Stack(children: [
+                                  //     Container(
+                                  //       //height: 254,
+                                  //       width:
+                                  //           MediaQuery.of(context).size.width,
+                                  //       child: newsData
+                                  //                   .videos?.first.vimeoUrl !=
+                                  //               null
+                                  //           ? Container(
+                                  //               height: 254,
+                                  //               width: MediaQuery.of(context)
+                                  //                   .size
+                                  //                   .width,
+                                  //               child: VimeoPlayer(
+                                  //                   videoId: Uri.parse(newsData
+                                  //                           .videos!
+                                  //                           .first
+                                  //                           .vimeoUrl
+                                  //                           .toString())
+                                  //                       .pathSegments
+                                  //                       .last),
+                                  //             )
+                                  //           : VideoWidget(
+                                  //               thubnail: newsData.videos?.first
+                                  //                           .thumbnail !=
+                                  //                       null
+                                  //                   ? newsData
+                                  //                       .videos!.first.thumbnail
+                                  //                       .toString()
+                                  //                   : '',
+                                  //               url: newsData.videos!.first.src
+                                  //                   .toString(),
+                                  //               play: false),
+                                  //     ),
+                                  //   ]),
+
                                   Row(children: [
                                     Padding(
                                         padding: EdgeInsets.only(
@@ -552,11 +647,6 @@ class _NewsPostCardState extends State<NewsPostCard>
                                             children: [
                                               Text('👍❤️😩'),
                                               Container(
-                                                // height: 30,
-                                                // width: 30,
-                                                // decoration: BoxDecoration(
-                                                //     shape: BoxShape.circle,
-                                                //     color: Color(0xffFC5E6A)),
                                                 child: Center(
                                                     child: Text('+' +
                                                         newsData.likes
@@ -945,50 +1035,138 @@ class _NewsPostCardState extends State<NewsPostCard>
                                   ],
                                 ),
                               ),
-                              if (newsData.images != null &&
-                                  newsData.images!.length > 0)
-                                newsData.images!.length > 1
-                                    ? CarouselSlider.builder(
-                                        itemCount: newsData.images!.length,
-                                        itemBuilder: (context, index, _) {
-                                          return CachedNetworkImage(
-                                            height: 254,
-                                            width: MediaQuery.of(context)
-                                                .size
-                                                .width,
-                                            fit: BoxFit.fitWidth,
-                                            imageUrl:
-                                                '${newsData.images![index]}',
-                                          );
-                                        },
-                                        options: CarouselOptions(
-                                            viewportFraction: 0.99,
-                                            autoPlay: true))
-                                    : CachedNetworkImage(
-                                        height: 254,
-                                        width:
-                                            MediaQuery.of(context).size.width,
-                                        fit: BoxFit.fitWidth,
-                                        imageUrl: '${newsData.images!.first}',
-                                      )
-                              else if (newsData.videos != null &&
-                                  newsData.videos!.length > 0)
-                                Stack(children: [
+                              newsData.images != null && newsData.videos != null
+                                  ?
+                                  //video and image both
                                   Container(
-                                    //height: 254,
-                                    width: MediaQuery.of(context).size.width,
-                                    child: VideoWidget(
-                                        thubnail: newsData
-                                                    .videos?.first.thumbnail !=
-                                                null
-                                            ? newsData.videos!.first.thumbnail
-                                                .toString()
-                                            : '',
-                                        url: newsData.videos!.first.src
-                                            .toString(),
-                                        play: true),
-                                  ),
-                                ]),
+                                      height: 400,
+                                      width: 400,
+                                      child: PageView.builder(
+                                        itemCount: newsData.images!.length +
+                                            newsData.videos!.length,
+                                        // options: CarouselOptions(
+                                        //   // aspectRatio: null,
+                                        //   viewportFraction: 0.99,
+                                        // ),
+                                        itemBuilder: (
+                                          context,
+                                          index,
+                                        ) {
+                                          List videoUrls = newsData.videos!
+                                              .map((e) => e.src)
+                                              .toList();
+                                          List templist = List.from(
+                                              newsData.images!.toList())
+                                            ..addAll(videoUrls);
+                                          return templist != null
+                                              ? templist[index]
+                                                      .toString()
+                                                      .contains(".mp4")
+                                                  ? SizedBox(
+                                                      height: 300,
+                                                      width:
+                                                          MediaQuery.of(context)
+                                                              .size
+                                                              .width,
+                                                      child: VideoWidget(
+                                                          thubnail: '',
+                                                          url: templist[index]
+                                                              .toString(),
+                                                          play: false),
+                                                    )
+                                                  : CachedNetworkImage(
+                                                      height: 254,
+                                                      width:
+                                                          MediaQuery.of(context)
+                                                              .size
+                                                              .width,
+                                                      fit: BoxFit.contain,
+                                                      imageUrl: templist[index])
+                                              : SizedBox(
+                                                  child: Text("null"),
+                                                );
+                                        },
+                                      ),
+                                    )
+                                  // image or video
+                                  : Container(),
+                              newsData.images != null &&
+                                          newsData.images!.length > 1 ||
+                                      newsData.videos != null &&
+                                          newsData.videos!.length > 1
+                                  ? Container(
+                                      height: 10,
+                                      width: MediaQuery.of(context).size.width,
+                                      child: Builder(builder: (context) {
+                                        List videoUrls = newsData.videos!
+                                            .map((e) => e.src)
+                                            .toList();
+                                        List templist =
+                                            List.from(newsData.images!.toList())
+                                              ..addAll(videoUrls);
+                                        return Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: templist
+                                                .asMap()
+                                                .entries
+                                                .map((entry) {
+                                              return Padding(
+                                                padding: const EdgeInsets.only(
+                                                    left: 2),
+                                                child: DotIndicator(
+                                                  size: 8.0,
+                                                  color: Colors.grey,
+                                                ),
+                                              );
+                                            }).toList());
+                                      }),
+                                    )
+                                  : SizedBox.shrink(),
+                              // if (newsData.images != null &&
+                              //     newsData.images!.length > 0)
+                              //   newsData.images!.length > 1
+                              //       ? CarouselSlider.builder(
+                              //           itemCount: newsData.images!.length,
+                              //           itemBuilder: (context, index, _) {
+                              //             return CachedNetworkImage(
+                              //               height: 254,
+                              //               width: MediaQuery.of(context)
+                              //                   .size
+                              //                   .width,
+                              //               fit: BoxFit.fitWidth,
+                              //               imageUrl:
+                              //                   '${newsData.images![index]}',
+                              //             );
+                              //           },
+                              //           options: CarouselOptions(
+                              //               viewportFraction: 0.99,
+                              //               autoPlay: true))
+                              //       : CachedNetworkImage(
+                              //           height: 254,
+                              //           width:
+                              //               MediaQuery.of(context).size.width,
+                              //           fit: BoxFit.fitWidth,
+                              //           imageUrl: '${newsData.images!.first}',
+                              //         )
+                              // else if (newsData.videos != null &&
+                              //     newsData.videos!.length > 0)
+                              //   Stack(children: [
+                              //     Container(
+                              //       //height: 254,
+                              //       width: MediaQuery.of(context).size.width,
+                              //       child: VideoWidget(
+                              //           thubnail: newsData
+                              //                       .videos?.first.thumbnail !=
+                              //                   null
+                              //               ? newsData.videos!.first.thumbnail
+                              //                   .toString()
+                              //               : '',
+                              //           url: newsData.videos!.first.src
+                              //               .toString(),
+                              //           play: true),
+                              //     ),
+                              //   ]),
                               Row(children: [
                                 Padding(
                                     padding: EdgeInsets.only(

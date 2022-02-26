@@ -1,5 +1,7 @@
 {
   "you_can_change_it_later": "तुम्ही ते नंतर प्रोफाइलमध्ये बदलू शकता",
+  "next": "पुढे",
+  "enter_phone":"Enter Your Phone Number",
   "reset_password":"आपला संकेतशब्द पुनर्प्रस्थापित करा",
   "Task_title": "माझे कार्य",
   "Orders": "कार्ये",
@@ -216,7 +218,6 @@
   "offers": "ऑफर, सवलत आणि कूपन",
   "support": "3 किमी ग्राहक समर्थन",
   "cart_total": "कार्ट एकूण",
-  "next": "पुढे",
   "checkout": "चेकआउट ",
   "business_header": "स्थानिक व्यवसाय शोधा",
   "your_location_text": "आपले स्थानः",

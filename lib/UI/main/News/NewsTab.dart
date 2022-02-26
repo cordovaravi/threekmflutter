@@ -8,7 +8,10 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:lottie/lottie.dart';
+import 'package:threekm/Custom_library/GooleMapsWidget/src/place_picker.dart';
 import 'package:threekm/Custom_library/Polls/simple_polls.dart';
 import 'package:threekm/Models/home1_model.dart';
 import 'package:threekm/UI/Animation/AnimatedSizeRoute.dart';
@@ -19,11 +22,14 @@ import 'package:threekm/UI/main/Notification/NotificationPage.dart';
 import 'package:threekm/UI/main/navigation.dart';
 import 'package:threekm/commenwidgets/CustomSnakBar.dart';
 import 'package:threekm/networkservice/Api_Provider.dart';
+import 'package:threekm/providers/Location/locattion_Provider.dart';
+import 'package:threekm/providers/localization_Provider/AppLocaliztion.dart';
 import 'package:threekm/providers/main/AddPost_Provider.dart';
 import 'package:threekm/providers/main/Quiz_Provider.dart';
 import 'package:threekm/providers/main/home1_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:threekm/providers/main/home2_provider.dart';
+import 'package:threekm/utils/api_paths.dart';
 import 'package:threekm/utils/threekm_textstyles.dart';
 import 'package:threekm/widgets/vimeoPlayer.dart';
 
@@ -43,9 +49,12 @@ class _NewsTabState extends State<NewsTab>
   late final AnimationController _controller;
   String? requestJson;
   int? answerIndex;
+  String? _selecetdAddress;
+
   @override
   void initState() {
     super.initState();
+
     _controller = AnimationController(vsync: this);
     if (widget.reload != true) {
       Future.delayed(Duration.zero, () async {
@@ -113,83 +122,146 @@ class _NewsTabState extends State<NewsTab>
       child: SingleChildScrollView(
         child: Column(
           children: [
-            Container(
-              child: Padding(
-                padding: EdgeInsets.zero,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    InkWell(
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => SearchPage(
-                                      tabNuber: 0,
-                                    )));
-                      },
-                      child: Container(
-                        height: 32,
-                        width: 250,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(21),
-                            border: Border.all(color: Color(0xffDFE5EE))),
-                        child: Row(
-                          children: [
-                            Padding(
-                              padding: EdgeInsets.only(left: 15),
-                              child: Icon(
-                                Icons.search_rounded,
-                                color: Colors.grey,
-                              ),
-                            ),
-                            Padding(
-                                padding: EdgeInsets.only(left: 11),
-                                child: Text(
-                                  "Search Hyperlocal News",
-                                  style: ThreeKmTextConstants
-                                      .tk12PXLatoBlackBold
-                                      .copyWith(color: Colors.grey),
-                                ))
-                          ],
-                        ),
-                      ),
+            SizedBox(
+              height: 5,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(left: 15),
+                  child: SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.6,
+                    child: Text(
+                      _selecetdAddress ?? "UnSepcified Location",
+                      style: ThreeKmTextConstants.tk12PXPoppinsBlackSemiBold,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                    InkWell(
-                      onTap: () {
-                        Navigator.push(context,
-                            AnimatedSizeRoute(page: Notificationpage()));
-                      },
-                      child: Padding(
-                        padding: EdgeInsets.only(left: 12),
-                        child: Container(
-                            height: 32,
-                            width: 32,
-                            decoration: BoxDecoration(
-                              image: DecorationImage(
-                                  image: AssetImage("assets/bell.png")),
-                              shape: BoxShape.circle,
-                              //color: Color(0xff7572ED)
-                            )),
-                      ),
-                    ),
-                    InkWell(
-                      onTap: () => drawerController.open!(),
-                      child: Padding(
-                        padding: EdgeInsets.only(left: 12),
-                        child: Container(
-                            height: 32,
-                            width: 32,
-                            decoration: BoxDecoration(
-                              image: DecorationImage(
-                                  image: AssetImage("assets/male-user.png")),
-                              shape: BoxShape.circle,
-                              //color: Color(0xffFF464B)
-                            )),
-                      ),
-                    )
-                  ],
+                  ),
                 ),
+                TextButton(
+                    onPressed: () {
+                      Future.delayed(Duration.zero, () {
+                        context
+                            .read<LocationProvider>()
+                            .getLocation()
+                            .whenComplete(() {
+                          final _locationProvider =
+                              context.read<LocationProvider>().getlocationData;
+                          final kInitialPosition = LatLng(
+                              _locationProvider!.latitude!,
+                              _locationProvider.longitude!);
+                          if (_locationProvider != null) {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => PlacePicker(
+                                    apiKey: GMap_Api_Key,
+                                    // initialMapType: MapType.satellite,
+                                    onPlacePicked: (result) {
+                                      //print(result.formattedAddress);
+                                      setState(() {
+                                        _selecetdAddress =
+                                            result.formattedAddress;
+                                        print(result.geometry!.toJson());
+                                        //  _geometry = result.geometry;
+                                      });
+                                      Navigator.of(context).pop();
+                                    },
+                                    initialPosition: kInitialPosition,
+                                    useCurrentLocation: true,
+                                    selectInitialPosition: true,
+                                    usePinPointingSearch: true,
+                                    usePlaceDetailSearch: true,
+                                  ),
+                                ));
+                          }
+                        });
+                      });
+                    },
+                    child: Text(
+                      AppLocalizations.of(context)
+                              ?.translate("change_location") ??
+                          "Change Location",
+                      style: TextStyle(
+                        color: Colors.blue,
+                      ),
+                    ))
+              ],
+            ),
+            Container(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  InkWell(
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => SearchPage(
+                                    tabNuber: 0,
+                                  )));
+                    },
+                    child: Container(
+                      height: 32,
+                      width: 250,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(21),
+                          border: Border.all(color: Color(0xffDFE5EE))),
+                      child: Row(
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.only(left: 15),
+                            child: Icon(
+                              Icons.search_rounded,
+                              color: Colors.grey,
+                            ),
+                          ),
+                          Padding(
+                              padding: EdgeInsets.only(left: 11),
+                              child: Text(
+                                "Search Hyperlocal News",
+                                style: ThreeKmTextConstants.tk12PXLatoBlackBold
+                                    .copyWith(color: Colors.grey),
+                              ))
+                        ],
+                      ),
+                    ),
+                  ),
+                  InkWell(
+                    onTap: () {
+                      Navigator.push(
+                          context, AnimatedSizeRoute(page: Notificationpage()));
+                    },
+                    child: Padding(
+                      padding: EdgeInsets.only(left: 12),
+                      child: Container(
+                          height: 32,
+                          width: 32,
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                                image: AssetImage("assets/bell.png")),
+                            shape: BoxShape.circle,
+                            //color: Color(0xff7572ED)
+                          )),
+                    ),
+                  ),
+                  InkWell(
+                    onTap: () => drawerController.open!(),
+                    child: Padding(
+                      padding: EdgeInsets.only(left: 12),
+                      child: Container(
+                          height: 32,
+                          width: 32,
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                                image: AssetImage("assets/male-user.png")),
+                            shape: BoxShape.circle,
+                            //color: Color(0xffFF464B)
+                          )),
+                    ),
+                  )
+                ],
               ),
             ),
             // Banner

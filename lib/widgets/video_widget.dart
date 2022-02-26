@@ -52,6 +52,12 @@ class _VideoWidgetState extends State<VideoWidget> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+    _betterPlayerController!.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     log("building video context");
     return Container(

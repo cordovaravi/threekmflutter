@@ -1,6 +1,8 @@
 {
   "you_can_change_it_later": "You can change it later in profile",
   "reset_password":"Reset Your password",
+  "next": "Next",
+  "enter_phone":"Enter Your Phone Number",
 
   "Task_title": "My Task",
   "Orders": "Orders",
@@ -214,7 +216,6 @@
   "offers": "Offers, Discounts and Coupons",
   "support": "3km Customer Support",
   "cart_total": "Cart total",
-  "next": "Next",
   "checkout": "Checkout",
   "business_header": "Find local Businesses",
   "your_location_text": "Your location:",

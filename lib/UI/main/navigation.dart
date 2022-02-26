@@ -6,6 +6,7 @@ import 'package:provider/src/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:threekm/UI/businesses/businesses_home.dart';
 import 'package:threekm/UI/main/DrawerScreen.dart';
+import 'package:threekm/UI/main/News/NewsTab.dart';
 import 'package:threekm/UI/main/draggableex.dart';
 import 'package:threekm/UI/shop/home_3km.dart';
 import 'package:threekm/UI/shop/restaurants/restaurants_home_page.dart';
@@ -350,12 +351,13 @@ class _TabBarNavigationState extends State<TabBarNavigation>
               TabsWrapper(
                 animation: _animationController2!,
                 bodyWidget: Container(
-                  height: MediaQuery.of(context).size.height,
-                  width: MediaQuery.of(context).size.width,
-                  child: DraggablePage(
-                    isredirected: widget.redirectedFromPost,
-                  ),
-                ),
+                    height: MediaQuery.of(context).size.height,
+                    width: MediaQuery.of(context).size.width,
+                    child: NewsTab(reload: widget.redirectedFromPost)
+                    // DraggablePage(
+                    //   isredirected: widget.redirectedFromPost,
+                    // ),
+                    ),
               ),
               TabsWrapper(
                 animation: _animationController2!,
