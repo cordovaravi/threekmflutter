@@ -21,6 +21,7 @@ import 'package:threekm/utils/threekm_textstyles.dart';
 import 'package:provider/provider.dart';
 import 'package:threekm/widgets/video_widget.dart';
 import 'package:threekm/widgets/reactions_assets.dart' as reactionAsset;
+import 'package:timelines/timelines.dart';
 
 import 'Widgets/comment_Loading.dart';
 import 'Widgets/likes_Loading.dart';
@@ -197,30 +198,133 @@ class _PostviewState extends State<Postview> {
                                           ],
                                         ),
                                       ),
-                                      if (newsData.images!.isNotEmpty ||
-                                          newsData.images!.length > 0) ...{
-                                        CachedNetworkImage(
-                                          height: 254,
-                                          width:
-                                              MediaQuery.of(context).size.width,
-                                          fit: BoxFit.fitWidth,
-                                          imageUrl: '${newsData.images!.first}',
-                                        )
-                                      } else if (newsData.videos!.isNotEmpty ||
-                                          newsData.videos!.length > 0) ...{
-                                        Container(
-                                          // height: 254,
-                                          width:
-                                              MediaQuery.of(context).size.width,
-                                          child: VideoWidget(
-                                            play: true,
-                                            thubnail: newsData
-                                                .videos!.first.thumbnail,
-                                            url: newsData.videos!.first.src
-                                                .toString(),
-                                          ),
-                                        )
-                                      },
+                                      newsData.images != null &&
+                                              newsData.videos != null
+                                          ?
+                                          //video and image both
+                                          Container(
+                                              height: 400,
+                                              width: 400,
+                                              child: PageView.builder(
+                                                itemCount:
+                                                    newsData.images!.length +
+                                                        newsData.videos!.length,
+                                                // options: CarouselOptions(
+                                                //   // aspectRatio: null,
+                                                //   viewportFraction: 0.99,
+                                                // ),
+                                                itemBuilder: (
+                                                  context,
+                                                  index,
+                                                ) {
+                                                  List videoUrls = newsData
+                                                      .videos!
+                                                      .map((e) => e.src)
+                                                      .toList();
+                                                  List templist = List.from(
+                                                      newsData.images!.toList())
+                                                    ..addAll(videoUrls);
+                                                  return templist != null
+                                                      ? templist[index]
+                                                              .toString()
+                                                              .contains(".mp4")
+                                                          ? SizedBox(
+                                                              height: 300,
+                                                              width:
+                                                                  MediaQuery.of(
+                                                                          context)
+                                                                      .size
+                                                                      .width,
+                                                              child: VideoWidget(
+                                                                  thubnail: '',
+                                                                  url: templist[
+                                                                          index]
+                                                                      .toString(),
+                                                                  play: false),
+                                                            )
+                                                          : CachedNetworkImage(
+                                                              height: 254,
+                                                              width:
+                                                                  MediaQuery.of(
+                                                                          context)
+                                                                      .size
+                                                                      .width,
+                                                              fit: BoxFit
+                                                                  .contain,
+                                                              imageUrl:
+                                                                  templist[
+                                                                      index])
+                                                      : SizedBox(
+                                                          child: Text("null"),
+                                                        );
+                                                },
+                                              ),
+                                            )
+                                          // image or video
+                                          : Container(),
+                                      newsData.images != null &&
+                                                  newsData.images!.length > 1 ||
+                                              newsData.videos != null &&
+                                                  newsData.videos!.length > 1
+                                          ? Container(
+                                              height: 10,
+                                              width: MediaQuery.of(context)
+                                                  .size
+                                                  .width,
+                                              child:
+                                                  Builder(builder: (context) {
+                                                List videoUrls = newsData
+                                                    .videos!
+                                                    .map((e) => e.src)
+                                                    .toList();
+                                                List templist = List.from(
+                                                    newsData.images!.toList())
+                                                  ..addAll(videoUrls);
+                                                return Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    children: templist
+                                                        .asMap()
+                                                        .entries
+                                                        .map((entry) {
+                                                      return Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .only(left: 2),
+                                                        child: DotIndicator(
+                                                          size: 8.0,
+                                                          color: Colors.grey,
+                                                        ),
+                                                      );
+                                                    }).toList());
+                                              }),
+                                            )
+                                          : SizedBox.shrink(),
+                                      // if (newsData.images!.isNotEmpty ||
+                                      //     newsData.images!.length > 0) ...{
+                                      //   CachedNetworkImage(
+                                      //     height: 254,
+                                      //     width:
+                                      //         MediaQuery.of(context).size.width,
+                                      //     fit: BoxFit.fitWidth,
+                                      //     imageUrl: '${newsData.images!.first}',
+                                      //   )
+                                      // } else if (newsData.videos!.isNotEmpty ||
+                                      //     newsData.videos!.length > 0) ...{
+                                      //   Container(
+                                      //     // height: 254,
+                                      //     width:
+                                      //         MediaQuery.of(context).size.width,
+                                      //     child: VideoWidget(
+                                      //       play: true,
+                                      //       thubnail: newsData
+                                      //           .videos!.first.thumbnail,
+                                      //       url: newsData.videos!.first.src
+                                      //           .toString(),
+                                      //     ),
+                                      //   )
+                                      // },
                                       // if (newsData.images != null &&
                                       //     newsData.images!.length > 0)
                                       //   CachedNetworkImage(

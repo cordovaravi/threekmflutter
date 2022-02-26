@@ -6,6 +6,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:threekm/UI/Auth/signup/forgot_password.dart';
 import 'package:threekm/providers/auth/signIn_Provider.dart';
+import 'package:threekm/providers/localization_Provider/AppLocaliztion.dart';
 import 'package:threekm/utils/constants.dart';
 import 'package:threekm/utils/intl.dart';
 import 'package:threekm/utils/spacings.dart';
@@ -144,7 +145,9 @@ class _SignInScreenState extends State<SignInScreen> {
                       children: [
                         verticalSpacing(height: 24),
                         Text(
-                          "Enter Your Phone Number",
+                          AppLocalizations.of(context)
+                                  ?.translate("phone_number") ??
+                              "Enter Your Phone Number",
                           style: ThreeKmTextConstants.tk16PXPoppinsBlackSemiBold
                               .copyWith(color: Colors.white),
                         ),
