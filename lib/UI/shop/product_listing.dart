@@ -198,7 +198,7 @@ class ItemBuilderWidget extends StatefulWidget {
 
 class _ItemBuilderWidgetState extends State<ItemBuilderWidget> {
   isInWish(productId) {
-    var isWish = context.read<WishListProvider>().isinWishList(productId);
+    var isWish = context.watch<WishListProvider>().isinWishList(productId);
 
     return isWish;
   }
@@ -230,7 +230,7 @@ class _ItemBuilderWidgetState extends State<ItemBuilderWidget> {
                       opacity: animation,
                       child: child,
                     );
-                  }));
+                  })).then((value) => {setState(() {})});
         },
         child: Container(
           decoration: BoxDecoration(
@@ -266,7 +266,7 @@ class _ItemBuilderWidgetState extends State<ItemBuilderWidget> {
                           imageUrl: '${widget.data[widget.i].image}',
                           height: ThreeKmScreenUtil.screenHeightDp / 6,
                           width: ThreeKmScreenUtil.screenWidthDp / 2.5,
-                          fit: BoxFit.fill,
+                          fit: BoxFit.contain,
                         ),
                       ),
                       if (double.parse((widget.data[widget.i].strikePrice! -
@@ -336,8 +336,13 @@ class _ItemBuilderWidgetState extends State<ItemBuilderWidget> {
                             ),
                             InkWell(
                               onTap: () {
-                                if (isInWish(widget.data[widget.i].catalogId) ==
-                                    null) {
+                                if (
+                                    //isInWish(widget.data[widget.i].catalogId)
+                                    context
+                                            .read<WishListProvider>()
+                                            .isinWishList(widget
+                                                .data[widget.i].catalogId) ==
+                                        null) {
                                   context
                                       .read<WishListProvider>()
                                       .addToWishList(
@@ -347,6 +352,10 @@ class _ItemBuilderWidgetState extends State<ItemBuilderWidget> {
                                           id: widget.data[widget.i].catalogId,
                                           variationId: 0,
                                           variation_name: '',
+                                          weight: widget.data[widget.i].weight,
+                                          // manageStock: widget.data[widget.i].,
+                                          masterStock:
+                                              widget.data[widget.i].masterStock,
                                           creatorId:
                                               widget.data[widget.i].creatorId,
                                           creatorName: widget
@@ -361,7 +370,10 @@ class _ItemBuilderWidgetState extends State<ItemBuilderWidget> {
                                 print('heart clicked $isLiked');
                               },
                               child:
-                                  isInWish(widget.data[widget.i].catalogId) !=
+                                  // isInWish(widget.data[widget.i].catalogId)
+                                  context.read<WishListProvider>().isinWishList(
+                                              widget
+                                                  .data[widget.i].catalogId) !=
                                           null
                                       ? Container(
                                           child: Lottie.asset(

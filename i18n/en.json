@@ -286,5 +286,11 @@
   "RESTAURANTS_CHECKOUT": "RESTAURANTS CHECKOUT",
   "Taxes": "Taxes",
   "Platform_Charges": "Platform Charges",
-  "About_Restaurant": "About Restaurant"
+  "About_Restaurant": "About Restaurant",
+  
+  "Offerings":"Offerings",
+  "View_All_Offerings":"View All Offerings",
+  "Search_Hyperlocal_Business":"Search Hyperlocal Business",
+  "No_Product_Found":"No Product Found",
+  "No_Business_Found":"No Business Found"
 }

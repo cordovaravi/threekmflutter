@@ -14,8 +14,8 @@ class CartProvider extends ChangeNotifier {
   Box? _restroCartBox;
   Box? get restroCartBoxData => _restroCartBox;
 
-  addToCart(image, name, quantity, price, id, variationId, variation_name, weight, creatorId,
-      creatorName) async {
+  addToCart(image, name, quantity, price, id, variationId, variation_name,
+      weight, masterStock,manageStock, creatorId, creatorName) async {
     _state = 'loading';
     Box _creatorIDBox = await Hive.openBox('creatorID');
     _creatorIDBox.put('creatorName', creatorName);
@@ -30,6 +30,8 @@ class CartProvider extends ChangeNotifier {
         ..variation_id = variationId
         ..variation_name = variation_name
         ..weight = weight
+        ..masterStock = masterStock
+        ..manageStock = manageStock
         ..creatorId = creatorId
         ..creatorName = creatorName;
 
@@ -76,6 +78,8 @@ class CartProvider extends ChangeNotifier {
       variationId,
       variation_name,
       weight,
+      masterStock,
+      manageStock,
       creatorName}) async {
     Box _creatorIDBox = await Hive.openBox('creatorID');
     _cartBox = await Hive.openBox('cartBox');
@@ -85,16 +89,16 @@ class CartProvider extends ChangeNotifier {
     if (_creatorIDBox.isEmpty) {
       _creatorIDBox.put('id', creatorId);
       _creatorIDBox.put('creatorName', creatorName);
-      addToCart(image, name, quantity, price, id, variationId,variation_name, weight,
-          creatorId, creatorName);
+      addToCart(image, name, quantity, price, id, variationId, variation_name,
+          weight, masterStock,manageStock, creatorId, creatorName);
     } else {
       var Cid = _creatorIDBox.get('id');
       if (creatorId == Cid) {
-        addToCart(image, name, quantity, price, id, variationId,variation_name, weight,
-            creatorId, creatorName);
+        addToCart(image, name, quantity, price, id, variationId, variation_name,
+            weight, masterStock,manageStock, creatorId, creatorName);
       } else {
         clearAndAddToCartModal(context, image, name, quantity, price, creatorId,
-            id, variationId, weight, creatorName, 'shop');
+            id, variationId, weight, masterStock,manageStock, creatorName, 'shop');
       }
     }
 
@@ -166,7 +170,7 @@ class CartProvider extends ChangeNotifier {
             image, name, quantity, price, id, variationId, weight);
       } else {
         clearAndAddToCartModal(context, image, name, quantity, price, creatorId,
-            id, variationId, weight, creatorName, 'restro');
+            id, variationId, weight, 0,false, creatorName, 'restro');
       }
     }
 

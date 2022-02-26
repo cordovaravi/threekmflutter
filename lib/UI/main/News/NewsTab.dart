@@ -58,7 +58,7 @@ class _NewsTabState extends State<NewsTab>
     _controller = AnimationController(vsync: this);
     if (widget.reload != true) {
       Future.delayed(Duration.zero, () async {
-        String token = await ApiProvider().getToken();
+        String token = await ApiProvider().getToken() ?? "";
         requestJson = json.encode({
           "lat": "",
           "lng": "",

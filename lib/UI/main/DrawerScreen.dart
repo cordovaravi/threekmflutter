@@ -52,6 +52,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
   getWishBoxData() async {
     await Hive.openBox('shopWishListBox');
     await Hive.openBox('businessWishListBox');
+    
   }
 
   @override

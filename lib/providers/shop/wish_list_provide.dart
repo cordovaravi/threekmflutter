@@ -20,7 +20,7 @@ class WishListProvider extends ChangeNotifier {
   Box? get wishBoxData => _wishBox;
 
   addToWishList(
-      {image, name, price, id, variationId,variation_name, creatorId, creatorName}) async {
+      {image, name, price, id, variationId,variation_name, weight,masterStock,manageStock, creatorId, creatorName}) async {
     _state = 'loading';
     try {
       _wishBox = await Hive.openBox('shopWishListBox');
@@ -31,6 +31,9 @@ class WishListProvider extends ChangeNotifier {
         ..id = id
         ..variation_id = variationId
         ..variation_name = variation_name
+        ..weight = weight
+        ..masterStock = masterStock
+        ..manageStock = manageStock
         ..creatorId = creatorId
         ..creatorName = creatorName;
 

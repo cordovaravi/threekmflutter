@@ -284,5 +284,10 @@
   "RESTAURANTS_CHECKOUT": "रेस्टॉरंट चेकआउट",
   "Taxes": "कर",
   "Platform_Charges": "प्लॅटफॉर्म शुल्क",
-  "About_Restaurant": "रेस्टॉरंट बद्दल"
+  "About_Restaurant": "रेस्टॉरंट बद्दल",
+  "Offerings": "अर्पण",
+  "View_All_Offerings": "सर्व ऑफरिंग पहा",
+  "Search_Hyperlocal_Business": "हायपरलोकल व्यवसाय शोधा",
+  "No_Product_Found": "कोणतेही उत्पादन आढळले नाही",
+  "No_Business_Found": "कोणताही व्यवसाय आढळला नाही"
 }

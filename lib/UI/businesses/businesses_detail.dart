@@ -3,14 +3,18 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:hive/hive.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/src/provider.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:threekm/Custom_library/GooleMapsWidget/src/google_map_place_picker.dart';
 import 'package:threekm/UI/businesses/view_all_offering.dart';
 import 'package:threekm/UI/shop/cart/cart_item_list_modal.dart';
+import 'package:threekm/UI/shop/indicator.dart';
 import 'package:threekm/UI/shop/product/product_details.dart';
 import 'package:threekm/UI/shop/product_card_home.dart';
 import 'package:threekm/commenwidgets/creatorLocation.dart';
+import 'package:threekm/localization/localize.dart';
 import 'package:threekm/providers/businesses/businesses_detail_provider.dart';
 import 'package:threekm/providers/businesses/businesses_wishlist_provider.dart';
 import 'package:threekm/utils/utils.dart';
@@ -35,6 +39,7 @@ class _BusinessDetailState extends State<BusinessDetail> {
   GlobalKey appBarKey = GlobalKey();
   List<String> wordList = [];
   bool isReadMore = true;
+  int selectedindex = 0;
   String getReadMoreWord(inputString) {
     if (inputString != null) {
       wordList = inputString.split(" ");
@@ -98,21 +103,43 @@ class _BusinessDetailState extends State<BusinessDetail> {
                   size: 20,
                   color: Colors.white,
                 ),
-                onPressed: () {}),
-          ),
-          Container(
-            margin: const EdgeInsets.only(left: 10, right: 5),
-            decoration: const BoxDecoration(
-                color: Colors.black45, shape: BoxShape.circle),
-            child: IconButton(
-                icon: const Icon(
-                  Icons.shopping_cart_rounded,
-                  size: 20,
-                  color: Colors.white,
-                ),
                 onPressed: () {
-                  viewCart(context, 'shop');
+                  var url =
+                      'https://3km.in/biz/${data?.creator.businessName}/?id=${data?.creator.creatorId}';
+                  Share.share('${Uri.parse(url)}');
                 }),
+          ),
+          Stack(
+            clipBehavior: Clip.none,
+            children: [
+              Container(
+                margin: const EdgeInsets.only(left: 10, right: 5),
+                decoration: const BoxDecoration(
+                    color: Colors.black45, shape: BoxShape.circle),
+                child: IconButton(
+                    icon: const Icon(
+                      Icons.shopping_cart_rounded,
+                      size: 20,
+                      color: Colors.white,
+                    ),
+                    onPressed: () {
+                      viewCart(context, 'shop');
+                    }),
+              ),
+              Positioned(
+                  top: 0,
+                  right: 6,
+                  child: Container(
+                      decoration: BoxDecoration(
+                          shape: BoxShape.circle, color: Colors.red),
+                      child: Padding(
+                        padding: const EdgeInsets.all(4.0),
+                        child: Text(
+                          '${Hive.box('cartBox').length}',
+                          style: TextStyle(fontSize: 11, color: Colors.white),
+                        ),
+                      )))
+            ],
           ),
         ],
       ),
@@ -122,7 +149,7 @@ class _BusinessDetailState extends State<BusinessDetail> {
                   //color: Colors.blue,
                   borderRadius: BorderRadius.circular(20)),
               // padding: EdgeInsets.only(top: 200),
-              height: ThreeKmScreenUtil.screenHeightDp,
+              height: MediaQuery.of(context).size.height,
               child: SingleChildScrollView(
                 child: Column(
                   children: [
@@ -135,6 +162,9 @@ class _BusinessDetailState extends State<BusinessDetail> {
                             // pageSnapping: true,
                             onPageChanged: (val) {
                               print(val);
+                              setState(() {
+                                selectedindex = val;
+                              });
                             },
                             itemCount: data.creator.coverImages.length != 0
                                 ? data.creator.coverImages.length
@@ -201,6 +231,23 @@ class _BusinessDetailState extends State<BusinessDetail> {
                         //     fit: BoxFit.fill,
                         //   ),
                         ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          for (int i = 0;
+                              data.creator.coverImages.length != 0
+                                  ? i < data.creator.coverImages.length
+                                  : i < [data.creator.image].length;
+                              i++)
+                            i == selectedindex
+                                ? indicator(true)
+                                : indicator(false),
+                        ],
+                      ),
+                    ),
                     Container(
                       decoration: BoxDecoration(
                           color: Colors.white,
@@ -302,7 +349,9 @@ class _BusinessDetailState extends State<BusinessDetail> {
                                           isReadMore = false;
                                         });
                                       },
-                                      child: Text('Read More'))
+                                      child: Text(AppLocalizations.of(context)!
+                                              .translate('read_more') ??
+                                          'Read More'))
                               ],
                             ),
                           ),
@@ -329,7 +378,8 @@ class _BusinessDetailState extends State<BusinessDetail> {
                               padding: const EdgeInsets.only(top: 15),
                               child: Center(
                                 child: Container(
-                                  width: ThreeKmScreenUtil.screenWidthDp / 1.2,
+                                  width:
+                                      MediaQuery.of(context).size.width / 1.2,
                                   height: 60,
                                   child: Row(
                                     crossAxisAlignment:
@@ -404,8 +454,16 @@ class _BusinessDetailState extends State<BusinessDetail> {
                                             //Icon(Icons.favorite_outline_sharp),
                                             label: Text(
                                               isinBusinessWishlist != null
-                                                  ? 'Remove'
-                                                  : 'Wishlist',
+                                                  ? AppLocalizations.of(
+                                                              context)!
+                                                          .translate(
+                                                              'remove') ??
+                                                      'Remove'
+                                                  : AppLocalizations.of(
+                                                              context)!
+                                                          .translate(
+                                                              'wishlist') ??
+                                                      'Wishlist',
                                               style: ThreeKmTextConstants
                                                   .tk14PXPoppinsBlackMedium,
                                             )),
@@ -575,7 +633,9 @@ class _BusinessDetailState extends State<BusinessDetail> {
                                             left: 20, right: 20),
                                         child: Wrap(children: [
                                           Text(
-                                            'Offerings',
+                                            AppLocalizations.of(context)!
+                                                    .translate('Offerings') ??
+                                                'Offerings',
                                             style: ThreeKmTextConstants
                                                 .tk16PXPoppinsWhiteBold
                                                 .copyWith(
@@ -645,7 +705,7 @@ class _BusinessDetailState extends State<BusinessDetail> {
                                                                   animation,
                                                               child: child,
                                                             );
-                                                          }));
+                                                          })).then((value) => setState((){}));
                                                 },
                                                 child: Container(
                                                   // color: Colors.red,
@@ -722,7 +782,10 @@ class _BusinessDetailState extends State<BusinessDetail> {
                                                             top: 15,
                                                             bottom: 15))),
                                             child: Text(
-                                              'View All Offerings',
+                                              AppLocalizations.of(context)!
+                                                      .translate(
+                                                          'View_All_Offerings') ??
+                                                  'View All Offerings',
                                               style: ThreeKmTextConstants
                                                   .tk14PXPoppinsWhiteMedium,
                                             ),
@@ -825,8 +888,12 @@ class _BusinessDetailState extends State<BusinessDetail> {
                             // Icon(Icons.favorite_outline_sharp),
                             label: Text(
                               isinBusinessWishlist != null
-                                  ? 'Remove'
-                                  : 'Wishlist',
+                                  ? AppLocalizations.of(context)!
+                                          .translate('remove') ??
+                                      'Remove'
+                                  : AppLocalizations.of(context)!
+                                          .translate('wishlist') ??
+                                      'Wishlist',
                               style:
                                   ThreeKmTextConstants.tk14PXPoppinsBlackMedium,
                             )),

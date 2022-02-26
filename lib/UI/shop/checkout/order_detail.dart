@@ -190,7 +190,7 @@ class _OrderDetailsState extends State<OrderDetails> {
   Widget build(BuildContext context) {
     var data = context.watch<CheckoutProvider>().orderDetailData?.result.order;
     var state = context.watch<CheckoutProvider>().state;
-    var productList = data?.cart;
+    var productList = data?.lineItems;
     var sum = 0.0;
     productList?.forEach((e) {
       sum += e.subtotal.toDouble();
@@ -304,7 +304,10 @@ class _OrderDetailsState extends State<OrderDetails> {
                                         children: [
                                           Padding(
                                             padding: const EdgeInsets.only(
-                                                top: 20, left: 20, right: 20),
+                                                top: 20,
+                                                left: 20,
+                                                right: 20,
+                                                bottom: 10),
                                             child: Text(
                                                 'Order provided by ${data.soldby}'),
                                           ),
@@ -321,18 +324,33 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                     productList?[i];
                                                 return ListTile(
                                                   dense: true,
-                                                  // leading: Image(image: NetworkImage(''),),
-                                                  title: Text(
-                                                    '${productData?.name}',
-                                                    style: ThreeKmTextConstants
-                                                        .tk14PXPoppinsBlackSemiBold,
+                                                  leading: Image(
+                                                    image: NetworkImage(
+                                                        '${productData?.image}'),
+                                                    width: 60,
                                                   ),
-                                                  // subtitle: Text(
-                                                  //   'By ${productData.}',
-                                                  //   style: ThreeKmTextConstants
-                                                  //       .tk12PXPoppinsBlackSemiBold
-                                                  //       .copyWith(color: Color(0xFF979EA4)),
-                                                  // ),
+                                                  title: Container(
+                                                    constraints: BoxConstraints(
+                                                        minWidth: 100,
+                                                        maxWidth: 260),
+                                                    child: Text(
+                                                      '${productData?.name}',
+                                                      style: ThreeKmTextConstants
+                                                          .tk14PXPoppinsBlackSemiBold,
+                                                    ),
+                                                  ),
+                                                  subtitle:
+                                                      productData?.variation !=
+                                                              ""
+                                                          ? Text(
+                                                              '${productData?.variation}',
+                                                              style: ThreeKmTextConstants
+                                                                  .tk12PXPoppinsBlackSemiBold
+                                                                  .copyWith(
+                                                                      color: Color(
+                                                                          0xFF979EA4)),
+                                                            )
+                                                          : null,
                                                   trailing: Column(
                                                     crossAxisAlignment:
                                                         CrossAxisAlignment.end,
@@ -346,7 +364,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                                     0xFF979EA4)),
                                                       ),
                                                       Text(
-                                                        '₹${productData?.price}',
+                                                        '₹${productData?.subtotal}',
                                                         style: ThreeKmTextConstants
                                                             .tk14PXPoppinsBlackSemiBold
                                                             .copyWith(
@@ -361,27 +379,27 @@ class _OrderDetailsState extends State<OrderDetails> {
                                             padding: EdgeInsets.all(23),
                                             child: Column(
                                               children: [
-                                                Divider(
-                                                  color: Colors.grey[350],
-                                                  thickness: 1,
-                                                ),
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  children: [
-                                                    Text(
-                                                      'Taxes',
-                                                      style: ThreeKmTextConstants
-                                                          .tk12PXPoppinsBlackSemiBold,
-                                                    ),
-                                                    Text(
-                                                      '₹${productList?[0].tax}',
-                                                      style: ThreeKmTextConstants
-                                                          .tk12PXLatoBlackBold,
-                                                    )
-                                                  ],
-                                                ),
+                                                // Divider(
+                                                //   color: Colors.grey[350],
+                                                //   thickness: 1,
+                                                // ),
+                                                // Row(
+                                                //   mainAxisAlignment:
+                                                //       MainAxisAlignment
+                                                //           .spaceBetween,
+                                                //   children: [
+                                                //     Text(
+                                                //       'Taxes',
+                                                //       style: ThreeKmTextConstants
+                                                //           .tk12PXPoppinsBlackSemiBold,
+                                                //     ),
+                                                //     Text(
+                                                //       '₹${productList?[0].tax}',
+                                                //       style: ThreeKmTextConstants
+                                                //           .tk12PXLatoBlackBold,
+                                                //     )
+                                                //   ],
+                                                // ),
                                                 Divider(
                                                   color: Colors.grey[350],
                                                   thickness: 1,
@@ -974,7 +992,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                                           minWidth:
                                                                               100,
                                                                           maxWidth:
-                                                                              260),
+                                                                              MediaQuery.of(context).size.width / 1.6),
                                                                       child:
                                                                           Text(
                                                                         '${productData.name}',

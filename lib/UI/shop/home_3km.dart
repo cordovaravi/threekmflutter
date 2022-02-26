@@ -80,7 +80,7 @@ class _Home3KMState extends State<Home3KM> {
                   imgSrg: imgSrg,
                   shopHomeProvider: shopHomeProvider,
                 )
-              : Center(child: Text("null"));
+              : Center(child: Text(""));
         }
         return Container();
       })),
@@ -126,6 +126,7 @@ class _ShopHomeState extends State<ShopHome>
 
   openBox() async {
     await Hive.openBox('restroCartBox');
+    await Hive.openBox('cartBox');
   }
 
   void showAlert(BuildContext context, ShopAdv? data) {
@@ -262,19 +263,41 @@ class _ShopHomeState extends State<ShopHome>
                         ),
                       ),
                       InkWell(
-                        onTap: () => viewCart(context, 'shop'),
+                        onTap: () => viewCart(context, 'shop')
+                            .whenComplete(() => setState(() {})),
                         child: Padding(
                           padding: EdgeInsets.only(left: 12),
-                          child: Container(
-                              height: 32,
-                              width: 32,
-                              decoration: BoxDecoration(
-                                image: DecorationImage(
-                                    image: AssetImage(
-                                        "assets/shopImg/Group 40724.png")),
-                                shape: BoxShape.circle,
-                                //color: Color(0xff7572ED)
-                              )),
+                          child: Stack(
+                            clipBehavior: Clip.none,
+                            children: [
+                              Container(
+                                  height: 32,
+                                  width: 32,
+                                  decoration: BoxDecoration(
+                                    image: DecorationImage(
+                                        image: AssetImage(
+                                            "assets/shopImg/Group 40724.png")),
+                                    shape: BoxShape.circle,
+                                    //color: Color(0xff7572ED)
+                                  )),
+                              Positioned(
+                                  top: -10,
+                                  right: -8,
+                                  child: Container(
+                                      decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          color: Colors.red),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(4.0),
+                                        child: Text(
+                                          '${Hive.box('cartBox').length}',
+                                          style: TextStyle(
+                                              fontSize: 11,
+                                              color: Colors.white),
+                                        ),
+                                      )))
+                            ],
+                          ),
                         ),
                       ),
                       InkWell(

@@ -85,40 +85,39 @@ class _RestaurantsHomeState extends State<RestaurantsHome> {
           backgroundColor: Colors.transparent,
           elevation: 0,
           iconTheme: IconThemeData(color: Colors.black),
-          actions: [
-            Container(
-              margin: EdgeInsets.only(right: 30),
-              width: ThreeKmScreenUtil.screenWidthDp / 1.3,
-              child: TextFormField(
-                autocorrect: false, autofocus: false,
+          centerTitle: true,
+          title: Container(
+            //margin: EdgeInsets.only(right: 30),
+            width: ThreeKmScreenUtil.screenWidthDp / 1.3,
+            child: TextFormField(
+              autocorrect: false, autofocus: false,
 
-                keyboardType: TextInputType.text,
-                controller: SearchController,
-                // controller: _firstName,
-                onChanged: (val) {
-                  context
-                      .read<ShopHomeProvider>()
-                      .getRestaurants(mounted, 1, query: val);
-                  setState(() {});
-                },
+              keyboardType: TextInputType.text,
+              controller: SearchController,
+              // controller: _firstName,
+              onChanged: (val) {
+                context
+                    .read<ShopHomeProvider>()
+                    .getRestaurants(mounted, 1, query: val);
+                setState(() {});
+              },
 
-                decoration: InputDecoration(
-                  hintText: AppLocalizations.of(context)!
-                          .translate('Search_Restaurant_or_Cusines') ??
-                      'Search Restaurant or Cusines',
-                  hintStyle: TextStyle(color: Color(0xFF0F0F2D)),
-                  counterText: '',
-                  filled: true,
-                  prefixIcon: Icon(Icons.search, color: Color(0xFF0F0F2D)),
-                  fillColor: Colors.white,
-                  contentPadding: EdgeInsets.fromLTRB(10, 13, 10, 13),
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(25)),
-                      borderSide: BorderSide.none),
-                ),
+              decoration: InputDecoration(
+                hintText: AppLocalizations.of(context)!
+                        .translate('Search_Restaurant_or_Cusines') ??
+                    'Search Restaurant or Cusines',
+                hintStyle: TextStyle(color: Color(0xFF0F0F2D)),
+                counterText: '',
+                filled: true,
+                prefixIcon: Icon(Icons.search, color: Color(0xFF0F0F2D)),
+                fillColor: Colors.white,
+                contentPadding: EdgeInsets.fromLTRB(10, 13, 10, 13),
+                border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(25)),
+                    borderSide: BorderSide.none),
               ),
             ),
-          ],
+          ),
         ),
         body: GestureDetector(
           onTap: () {
