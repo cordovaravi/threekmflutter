@@ -165,7 +165,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                   onPressed: () {
                     log("share button ");
                     var url =
-                        'https://3km.in/sell/${product?.name}/?id=${product?.catalogId}';
+                        'https://3km.in/sell/${product?.name.replaceAll(" ", "")}/${product?.catalogId}';
                     Share.share(
                         '${Uri.parse(url)} ${product?.name} from ${product?.businessName}');
                   }),

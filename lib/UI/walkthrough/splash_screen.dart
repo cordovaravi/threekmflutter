@@ -91,8 +91,9 @@ class _SplashScreenState extends State<SplashScreen> {
       if (initialLink != null) {
         if (initialLink.contains('/sell/')) {
           Navigator.push(context, MaterialPageRoute(builder: (_) {
+            var initLink = initialLink.split('/');
             return ProductDetails(
-              id: int.parse(initialLink.split('?id=')[1]),
+              id: num.parse(initLink.last),
             );
           })).then((value) => Navigator.pushAndRemoveUntil(
               context,
