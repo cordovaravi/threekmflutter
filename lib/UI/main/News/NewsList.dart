@@ -461,8 +461,8 @@ class _NewsPostCardState extends State<NewsPostCard>
                                     ),
                                   ),
                                   //both pics and images is present
-                                  newsData.images != null &&
-                                          newsData.videos != null
+                                  newsData.images!.length > 1 ||
+                                          newsData.videos!.length > 1
                                       ?
                                       //video and image both
                                       Container(
@@ -517,12 +517,41 @@ class _NewsPostCardState extends State<NewsPostCard>
                                             },
                                           ),
                                         )
-                                      // image or video
-                                      : Container(),
+                                      // image or video single
+
+                                      : Container(
+                                          child: newsData.images!.length == 1
+                                              ? CachedNetworkImage(
+                                                  height: 254,
+                                                  width: MediaQuery.of(context)
+                                                      .size
+                                                      .width,
+                                                  fit: BoxFit.fitWidth,
+                                                  imageUrl:
+                                                      '${newsData.images!.first}',
+                                                )
+                                              : VideoWidget(
+                                                  thubnail: newsData
+                                                              .videos
+                                                              ?.first
+                                                              .thumbnail !=
+                                                          null
+                                                      ? newsData.videos!.first
+                                                          .thumbnail
+                                                          .toString()
+                                                      : '',
+                                                  url: newsData
+                                                      .videos!.first.src
+                                                      .toString(),
+                                                  fromSinglePage: true,
+                                                  play: false),
+                                        ),
                                   newsData.images != null &&
-                                              newsData.images!.length > 1 ||
+                                              newsData.images!.length > 1 &&
+                                              newsData.images!.length != 1 ||
                                           newsData.videos != null &&
-                                              newsData.videos!.length > 1
+                                              newsData.videos!.length > 1 &&
+                                              newsData.videos!.length != 1
                                       ? Container(
                                           height: 10,
                                           width:

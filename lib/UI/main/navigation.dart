@@ -1,24 +1,18 @@
-import 'dart:developer';
 import 'dart:io';
 import 'package:device_info/device_info.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
-import 'package:hive/hive.dart';
 import 'package:provider/src/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:threekm/UI/businesses/businesses_home.dart';
 import 'package:threekm/UI/main/DrawerScreen.dart';
 import 'package:threekm/UI/main/News/NewsTab.dart';
-import 'package:threekm/UI/main/draggableex.dart';
 import 'package:threekm/UI/shop/home_3km.dart';
 import 'package:threekm/UI/shop/restaurants/restaurants_home_page.dart';
 import 'package:threekm/UI/shop/showOrderStatus.dart';
-import 'package:threekm/main.dart';
+import 'package:threekm/providers/localization_Provider/appLanguage_provider.dart';
 import 'package:threekm/providers/main/AthorProfile_Provider.dart';
-import 'package:threekm/providers/shop/checkout/order_realtime_detail_provider.dart';
 import 'package:threekm/utils/screen_util.dart';
 import 'package:threekm/utils/spacings.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 
 final drawerController = ZoomDrawerController();
 
@@ -93,6 +87,7 @@ class _TabBarNavigationState extends State<TabBarNavigation>
     _getConstants();
     Future.delayed(Duration.zero, () {
       context.read<AutthorProfileProvider>().getSelfProfile();
+      context.read<AppLanguage>().fetchLocale();
     });
     //initAnimation();
     //getDeviceId();
@@ -179,6 +174,7 @@ class _TabBarNavigationState extends State<TabBarNavigation>
 
   @override
   Widget build(BuildContext context) {
+    final languageProvider = context.watch<AppLanguage>();
     super.build(context);
     return WillPopScope(
       onWillPop: onWillPop,
@@ -286,7 +282,7 @@ class _TabBarNavigationState extends State<TabBarNavigation>
                               Stack(
                                 children: [
                                   buildTabs,
-                                  buildTabViews,
+                                  buildTabViews(languageProvider.appLocal),
                                 ],
                               ),
                             ],
@@ -345,7 +341,7 @@ class _TabBarNavigationState extends State<TabBarNavigation>
     // );
   }
 
-  Widget get buildTabViews {
+  Widget buildTabViews(Locale? langauge) {
     return Container(
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
@@ -366,6 +362,7 @@ class _TabBarNavigationState extends State<TabBarNavigation>
                     child: NewsTab(
                       reload: widget.redirectedFromPost,
                       isPostUploaded: widget.isPostUploaded,
+                      appLanguage: langauge,
                     )
                     // DraggablePage(
                     //   isredirected: widget.redirectedFromPost,

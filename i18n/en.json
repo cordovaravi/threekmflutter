@@ -3,6 +3,11 @@
   "reset_password":"Reset Your password",
   "next": "Next",
   "enter_phone":"Enter Your Phone Number",
+  "add_post":"Add Post",
+  "shopping_cart":"shopping cart",
+  "my_post":"My Post",
+  "privacy_policy":"Privacy Policy",
+  "logout":"Logout",
 
   "Task_title": "My Task",
   "Orders": "Orders",
@@ -10,6 +15,7 @@
   "Tomorrow": "Tomorrow",
   "Month": "This Month",
   "Week": "This Week",
+  "Shop":"Shop",
 
   "post_header": "Create a Post",
   "post_desc": "Create a post using pictures, text, hashtags, links etc.",
@@ -102,7 +108,7 @@
   "tags_search_placeholder": "Search by keyword, business name",
   "tags_top_tags": "Top Tags",
   "tags_other_tags": "Other Trending Tags",
-  "profile_header_name": "Profile",
+  "profile_header_name": "My Profile",
   "profile_header_desc": "You can view profile options here.",
   "profile_options": "Phone, Email, Gender",
   "profile_addresses_text": "Addresses",

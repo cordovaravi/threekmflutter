@@ -106,3 +106,6 @@ const String Search_News = "newspost/geolistelastic";
 
 // Notification
 const String Get_Notification = "notification/list";
+
+// Send fcm
+const String attchToekn = "user/attachtokenwithoutuser";
