@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive/hive.dart';
 import 'package:provider/src/provider.dart';
+import 'package:threekm/UI/main/navigation.dart';
 import 'package:threekm/localization/localize.dart';
 import 'package:threekm/providers/localization_Provider/appLanguage_provider.dart';
 import 'package:threekm/utils/util_methods.dart';
@@ -133,8 +134,6 @@ class _SelectLanguageState extends State<SelectLanguage>
                             AppLocalizations.of(context)!
                                     .translate('you_can_change_it_later') ??
                                 "",
-                            // translations[you_can_change_it_later_in_profile]![
-                            //     (snapshot.data?.value as Language).language],
                             style: GoogleFonts.montserrat()
                                 .copyWith(fontSize: 16, color: Colors.white),
                             textAlign: TextAlign.center,
@@ -142,17 +141,12 @@ class _SelectLanguageState extends State<SelectLanguage>
                         ],
                       );
                     }
-                    // else {
-                    //   return Container();
-                    // }
                   }),
                 ),
                 SizedBox(height: 68.48),
                 Column(
                   children: [
-                    StreamBuilder<BoxEvent>(
-                        //stream: Hive.box("language").watch(),
-                        builder: (context, snapshot) {
+                    StreamBuilder<BoxEvent>(builder: (context, snapshot) {
                       if (true) {
                         return Container(
                           height: MediaQuery.of(context).size.width * 0.9,
@@ -336,13 +330,34 @@ class _SelectLanguageState extends State<SelectLanguage>
                       print("index id $index");
                       if (index == 0.0) {
                         appLanguage.changeLanguage(Locale("en"));
+                        Future.delayed(Duration(seconds: 1), () {
+                          Navigator.pushAndRemoveUntil(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (_) => TabBarNavigation()),
+                              (route) => false);
+                        });
                         print("English");
                       } else if (index == 0.5) {
                         print("marathi");
                         appLanguage.changeLanguage(Locale("mr"));
+                        Future.delayed(Duration(seconds: 1), () {
+                          Navigator.pushAndRemoveUntil(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (_) => TabBarNavigation()),
+                              (route) => false);
+                        });
                       } else {
                         print("hindi");
                         appLanguage.changeLanguage(Locale("hi"));
+                        Future.delayed(Duration(seconds: 1), () {
+                          Navigator.pushAndRemoveUntil(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (_) => TabBarNavigation()),
+                              (route) => false);
+                        });
                       }
 
                       ///update Language here

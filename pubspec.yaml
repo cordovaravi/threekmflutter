@@ -36,15 +36,11 @@ dependencies:
   carousel_slider: ^4.0.0
   cached_network_image: ^3.1.0
   connectivity_plus: ^2.2.0
-  #shifting_tabbar: ^1.0.2
   flutter_widget_from_html:
-  #inview_notifier_list: ^2.0.0
   vimeo_player_flutter: ^0.0.3+1
   better_player: ^0.0.81
-  #chewie: ^1.2.2
   video_player:
   shimmer: ^2.0.0
-  #awesome_notifications: ^0.6.18+2
   in_app_update: ^2.0.0
   flutter_inappwebview: ^5.3.2
   animated_widgets: ^1.1.0
@@ -56,7 +52,7 @@ dependencies:
   timeago: ^3.1.0
   flutter_zoom_drawer: ^2.1.2
   hidden_drawer_menu: ^3.0.1
-  #circle_bottom_navigation_bar: ^1.0.0
+  light_compressor: ^1.2.2
   #firebase
   firebase_core:
   firebase_auth:
@@ -105,6 +101,7 @@ dev_dependencies:
 
 # The following section is specific to Flutter.
 flutter:
+  generate: true
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.

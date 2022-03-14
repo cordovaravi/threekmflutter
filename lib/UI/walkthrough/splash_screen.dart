@@ -12,6 +12,7 @@ import 'package:threekm/UI/main/navigation.dart';
 import 'package:threekm/UI/Auth/signup/sign_up.dart';
 import 'package:threekm/UI/shop/product/product_details.dart';
 import 'package:threekm/main.dart';
+import 'package:threekm/providers/Global/logged_in_or_not.dart';
 import 'package:uni_links/uni_links.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
@@ -35,8 +36,10 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   openBox() async {
-    await Hive.openBox('restroCartBox');
-    await Hive.openBox('cartBox');
+    if (await getAuthStatus()) {
+      await Hive.openBox('restroCartBox');
+      await Hive.openBox('cartBox');
+    }
   }
 
   void handleFcm() {

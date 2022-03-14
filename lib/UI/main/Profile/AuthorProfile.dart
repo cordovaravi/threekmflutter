@@ -19,6 +19,7 @@ import 'package:threekm/UI/main/News/Widgets/comment_Loading.dart';
 import 'package:threekm/UI/main/News/Widgets/likes_Loading.dart';
 import 'package:threekm/commenwidgets/CustomSnakBar.dart';
 import 'package:threekm/commenwidgets/commenwidget.dart';
+import 'package:threekm/providers/Global/logged_in_or_not.dart';
 import 'package:threekm/providers/main/AthorProfile_Provider.dart';
 import 'package:threekm/providers/main/LikeList_Provider.dart';
 import 'package:threekm/providers/main/comment_Provider.dart';
@@ -31,13 +32,13 @@ import 'package:threekm/widgets/video_widget.dart';
 class AuthorProfile extends StatefulWidget {
   final int id;
   final String avatar;
-  //final String authorType;
+  final String? authorType;
   final String userName;
   //final int page;
   AuthorProfile({
     Key? key,
     //required this.page,
-    //required this.authorType,
+    required this.authorType,
     required this.id,
     required this.avatar,
     required this.userName,
@@ -59,7 +60,7 @@ class _AuthorProfileState extends State<AuthorProfile>
     Future.delayed(Duration.zero, () {
       context
           .read<AutthorProfileProvider>()
-          .getAuthorProfile(authorId: widget.id);
+          .getAuthorProfile(authorId: widget.id, authorType: widget.authorType);
     });
     super.initState();
   }
@@ -399,11 +400,15 @@ class _AuthorProfileState extends State<AuthorProfile>
       required int authorId,
       required bool isLoading}) {
     return GestureDetector(
-      onTap: () {
-        if (isFollowed) {
-          context.read<AutthorProfileProvider>().unfollowAuthor(authorId);
+      onTap: () async {
+        if (await getAuthStatus()) {
+          if (isFollowed) {
+            context.read<AutthorProfileProvider>().unfollowAuthor(authorId);
+          } else {
+            context.read<AutthorProfileProvider>().followAuthor(authorId);
+          }
         } else {
-          context.read<AutthorProfileProvider>().followAuthor(authorId);
+          NaviagateToLogin(context);
         }
       },
       child: Container(

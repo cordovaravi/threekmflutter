@@ -154,7 +154,7 @@ class Imageswcta {
   String? vimeoUrl;
   String? header;
   List<int>? post;
-  String? business;
+  var business;
   String? website;
   String? product;
   String? phone;

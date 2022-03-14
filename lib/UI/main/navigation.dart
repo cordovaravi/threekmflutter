@@ -19,7 +19,9 @@ final drawerController = ZoomDrawerController();
 
 class TabBarNavigation extends StatefulWidget {
   final bool? redirectedFromPost;
-  TabBarNavigation({this.redirectedFromPost, Key? key}) : super(key: key);
+  final bool? isPostUploaded;
+  TabBarNavigation({this.redirectedFromPost, this.isPostUploaded, Key? key})
+      : super(key: key);
 
   @override
   _TabBarNavigationState createState() => _TabBarNavigationState();
@@ -156,7 +158,7 @@ class _TabBarNavigationState extends State<TabBarNavigation>
 
   @override
   void dispose() {
-    _animationController!.dispose();
+    // _animationController!.dispose();
     // _tabController!.dispose();
     _animationController2!.dispose();
     _animationController1!.dispose();
@@ -355,7 +357,10 @@ class _TabBarNavigationState extends State<TabBarNavigation>
                 bodyWidget: Container(
                     height: MediaQuery.of(context).size.height,
                     width: MediaQuery.of(context).size.width,
-                    child: NewsTab(reload: widget.redirectedFromPost)
+                    child: NewsTab(
+                      reload: widget.redirectedFromPost,
+                      isPostUploaded: widget.isPostUploaded,
+                    )
                     // DraggablePage(
                     //   isredirected: widget.redirectedFromPost,
                     // ),

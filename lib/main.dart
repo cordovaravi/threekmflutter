@@ -13,7 +13,6 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:in_app_update/in_app_update.dart';
 import 'package:path_provider/path_provider.dart' as pathProvider;
 import 'package:provider/provider.dart';
-import 'package:threekm/UI/walkthrough/splash_screen.dart';
 import 'package:threekm/providers/Location/locattion_Provider.dart';
 import 'package:threekm/providers/Notification/Notification_Provider.dart';
 import 'package:threekm/providers/ProfileInfo/ProfileInfo_Provider.dart';
@@ -39,6 +38,8 @@ import 'package:threekm/providers/shop/shop_home_provider.dart';
 import 'package:threekm/theme/setup.dart';
 import 'Models/businessesModel/businesses_wishlist_model.dart';
 import 'Models/shopModel/cart_hive_model.dart';
+
+import 'UI/walkthrough/splash_screen.dart';
 import 'localization/localize.dart';
 import 'providers/businesses/businesses_detail_provider.dart';
 import 'providers/businesses/businesses_wishlist_provider.dart';
@@ -156,6 +157,11 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
         providers: [
+          //Applanguage
+          ChangeNotifierProvider<AppLanguage>(
+              create: (context) => AppLanguage()),
+
+          //Auth
           ChangeNotifierProvider<SignUpProvider>(
               create: (context) => SignUpProvider()),
           ChangeNotifierProvider<GoogleSignInprovider>(
@@ -233,19 +239,17 @@ class MyApp extends StatelessWidget {
           ///Notification Provider
           ChangeNotifierProvider<NotificationProvider>(
               create: (context) => NotificationProvider()),
-          //Applanguage
-          ChangeNotifierProvider<AppLanguage>(
-              create: (context) => AppLanguage())
         ],
         child: Consumer<AppLanguage>(
           builder: (context, controller, _) {
+            log("app lang is ${controller.appLocal}");
             return MaterialApp(
               locale: controller.appLocal,
+              //controller.appLocal,
               localizationsDelegates: [
                 AppLocalizations.delegate,
                 GlobalMaterialLocalizations.delegate,
                 GlobalWidgetsLocalizations.delegate,
-                GlobalCupertinoLocalizations.delegate,
               ],
               supportedLocales: [
                 Locale('en', 'US'),
@@ -256,8 +260,16 @@ class MyApp extends StatelessWidget {
               debugShowCheckedModeBanner: false,
               theme: lightTheme,
               themeMode: ThemeMode.light,
-              home: SplashScreen(),
+              home: //SignUp(),
+                  //    SelectLanguage(),
+                  SplashScreen(),
               navigatorKey: navigatorKey,
+              // localeResolutionCallback: (
+              //   Locale? locale,
+              //   Iterable<Locale> supportedLocales,
+              // ) {
+              //   return locale;
+              // },
             );
           },
         ));
