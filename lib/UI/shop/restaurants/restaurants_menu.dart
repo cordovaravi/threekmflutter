@@ -39,12 +39,89 @@ class _RestaurantMenuState extends State<RestaurantMenu> {
   void initState() {
     context
         .read<RestaurantMenuProvider>()
-        .menuDetailsData(mounted, widget.data?.creatorId);
+        .menuDetailsData(mounted, widget.data?.creatorId)
+        .whenComplete(() => filterSearchedItems(''));
+
     super.initState();
   }
 
   refresh() {
     setState(() {});
+  }
+
+  List<Menu> categoriesToShow = <Menu>[];
+
+  void updateCategoriesToShow(List<Menu> value) {
+    setState(() {
+      categoriesToShow = value;
+    });
+  }
+
+  isVegFilter() {
+    var data =
+        context.read<RestaurantMenuProvider>().menuDetails.result?.menu ??
+            <Menu>[];
+
+    var tempMenu = <Menu>[];
+    if (isVeg && !isEgg) {
+      data.forEach((menuHeader) {
+        var tempMenus = [...menuHeader.menus];
+        tempMenus.retainWhere((product) {
+          return product.isVeg;
+        });
+        if (tempMenus.length > 0) {
+          var tempSingleMenu = Menu.fromJson(menuHeader.toJson());
+          tempSingleMenu.menus = tempMenus;
+          tempMenu.add(tempSingleMenu);
+        }
+      });
+      updateCategoriesToShow(tempMenu);
+    } else if (isEgg && !isVeg) {
+      data.forEach((menuHeader) {
+        var tempMenus = [...menuHeader.menus];
+        tempMenus.retainWhere((product) {
+          return product.isVeg == false;
+        });
+        if (tempMenus.length > 0) {
+          var tempSingleMenu = Menu.fromJson(menuHeader.toJson());
+          tempSingleMenu.menus = tempMenus;
+          tempMenu.add(tempSingleMenu);
+        }
+      });
+      updateCategoriesToShow(tempMenu);
+    } else if (isVeg && isEgg) {
+      updateCategoriesToShow(data);
+    } else if (isVeg == false && isEgg == false) {
+      updateCategoriesToShow(data);
+    }
+  }
+
+  filterSearchedItems(String text) {
+    var data =
+        context.read<RestaurantMenuProvider>().menuDetails.result?.menu ??
+            <Menu>[];
+    if (text == null || text == "") {
+      updateCategoriesToShow(data);
+    }
+
+    var tempMenu = <Menu>[];
+    data.forEach((menuHeader) {
+      if (menuHeader.name.toLowerCase().contains(text.toLowerCase())) {
+        tempMenu.add(menuHeader);
+      } else {
+        var tempMenus = [...menuHeader.menus];
+        tempMenus.retainWhere((product) {
+          return product.name.toLowerCase().contains(text.toLowerCase());
+        });
+
+        if (tempMenus.length > 0) {
+          var tempSingleMenu = Menu.fromJson(menuHeader.toJson());
+          tempSingleMenu.menus = tempMenus;
+          tempMenu.add(tempSingleMenu);
+        }
+      }
+    });
+    updateCategoriesToShow(tempMenu);
   }
 
   @override
@@ -178,65 +255,79 @@ class _RestaurantMenuState extends State<RestaurantMenu> {
               //         );
               //       }),
               // ),
-              // Container(
-              //   padding: EdgeInsets.all(10),
-              //   child: Row(
-              //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              //     children: [
-              //       CustomCheckBox(
-              //         size: 6,
-              //         label: Text('VEG'),
-              //         activeColor: Colors.green,
-              //         onClick: (status) {
-              //           setState(() {
-              //             isVeg = status;
-              //           });
-              //         },
-              //       ),
-              //       CustomCheckBox(
-              //         size: 6,
-              //         label: Text('EGG'),
-              //         activeColor: Colors.amber,
-              //         onClick: (status) {
-              //           isEgg = status;
-              //         },
-              //       ),
-              //       Container(
-              //         // padding: const EdgeInsets.only(left: 20),
-              //         width: ThreeKmScreenUtil.screenWidthDp / 2.5,
-              //         child: TextFormField(
-              //           keyboardType: TextInputType.text,
-              //           // controller: _firstName,
-              //           validator: (val) {},
-              //           //maxLength: 16,
-              //           decoration: InputDecoration(
-              //             hintText: 'Search',
-              //             hintStyle: const TextStyle(color: Color(0xFF0F0F2D)),
-              //             counterText: '',
-              //             filled: true,
-              //             prefixIcon: const Icon(Icons.search,
-              //                 color: Color(0xFF0F0F2D)),
-              //             fillColor: Colors.grey[200],
-              //             //isDense: true,
-              //             contentPadding:
-              //                 const EdgeInsets.fromLTRB(10, 13, 10, 13),
+              Container(
+                padding: EdgeInsets.all(10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    CustomCheckBox(
+                      size: 6,
+                      label: Text(
+                        'VEG',
+                        style: TextStyle(fontSize: 12),
+                      ),
+                      activeColor: Colors.green,
+                      onClick: (status) {
+                        setState(() {
+                          isVeg = status;
+                          isVegFilter();
+                        });
+                      },
+                    ),
+                    CustomCheckBox(
+                      size: 6,
+                      label: Text(
+                        'NON-VEG',
+                        style: TextStyle(fontSize: 12),
+                      ),
+                      activeColor: Colors.red,
+                      onClick: (status) {
+                        setState(() {
+                          isEgg = status;
+                          isVegFilter();
+                        });
+                      },
+                    ),
+                    Container(
+                      // padding: const EdgeInsets.only(left: 20),
+                      width: ThreeKmScreenUtil.screenWidthDp / 2.5,
+                      child: TextFormField(
+                        keyboardType: TextInputType.text,
+                        // controller: _firstName,
 
-              //             border: const OutlineInputBorder(
-              //                 borderRadius:
-              //                     BorderRadius.all(Radius.circular(20)),
-              //                 borderSide: BorderSide.none),
-              //           ),
-              //         ),
-              //       ),
-              //     ],
-              //   ),
-              // ),
+                        onChanged: (val) {
+                          filterSearchedItems(val);
+                        },
+                        //maxLength: 16,
+                        decoration: InputDecoration(
+                          hintText: 'Search',
+                          hintStyle: const TextStyle(color: Color(0xFF0F0F2D)),
+                          counterText: '',
+                          filled: true,
+                          prefixIcon: const Icon(Icons.search,
+                              color: Color(0xFF0F0F2D)),
+                          fillColor: Colors.grey[200],
+                          //isDense: true,
+                          contentPadding:
+                              const EdgeInsets.fromLTRB(10, 13, 10, 13),
+
+                          border: const OutlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(20)),
+                              borderSide: BorderSide.none),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
               state == 'loaded'
                   ? Container(
                       padding: EdgeInsets.only(top: 20, bottom: 140),
                       color: Colors.white,
                       child: Column(children: [
-                        ...?data.result?.menu
+                        //...?data.result?.menu
+                        ...categoriesToShow
                             .map((e) => MenuTile(
                                 e: e,
                                 creatorName: data.result?.creator.businessName,

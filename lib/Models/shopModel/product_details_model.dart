@@ -156,7 +156,7 @@ class Product {
     nationwideDeliveryCost = json['nationwide_delivery_cost'] ?? 0;
     hasVariations = json['has_variations'];
     manageStock = json['manage_stock'];
-    isInStock = json['is_in_stock'];
+    isInStock = json['is_in_stock'] ?? false;
     masterStock = json['master_stock'];
     hasDiscount = json['has_discount'];
     discountType = json['discount_type'];
@@ -292,7 +292,7 @@ class Reviews {
         images.add(v);
       });
     }
-    deliveryRating = json['delivery_rating'];
+    deliveryRating = json['delivery_rating'] ?? 0;
     id = json['id'];
     date = json['date'];
     user = json['user'];

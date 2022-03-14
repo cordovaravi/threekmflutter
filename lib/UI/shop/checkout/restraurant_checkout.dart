@@ -7,6 +7,7 @@ import 'package:threekm/Models/shopModel/address_list_model.dart';
 import 'package:threekm/Models/shopModel/cart_hive_model.dart';
 import 'package:threekm/Models/shopModel/shipping_rate_model.dart';
 import 'package:threekm/UI/shop/address/new_address.dart';
+import 'package:threekm/UI/shop/address/openMap.dart';
 import 'package:threekm/commenwidgets/CustomSnakBar.dart';
 import 'package:threekm/localization/localize.dart';
 import 'package:threekm/providers/shop/address_list_provider.dart';
@@ -28,7 +29,7 @@ class _RestaurantsCheckOutScreenState extends State<RestaurantsCheckOutScreen> {
   late Addresses? deliveryAddressdata;
   int selsectedId = 0;
   int currentPage = 0;
-  late Box restrobox;
+  Box? restrobox;
   ShippingRateModel rate = ShippingRateModel();
 
   final PageController _pageController = PageController();
@@ -162,7 +163,7 @@ class _RestaurantsCheckOutScreenState extends State<RestaurantsCheckOutScreen> {
                                 ),
                                 InkWell(
                                   onTap: () {
-                                    restrobox.length == 0
+                                    restrobox?.length == 0
                                         ? null
                                         : _pageController.jumpToPage(2);
                                   },
@@ -245,10 +246,10 @@ class _RestaurantsCheckOutScreenState extends State<RestaurantsCheckOutScreen> {
                                                             CheckoutProvider>()
                                                         .getShippingRateData
                                                         .deliveryRate!,
-                                                shippingDistance:  context
-                                                        .read<
-                                                            CheckoutProvider>()
-                                                        .getShippingRateData.distance!,
+                                                shippingDistance: context
+                                                    .read<CheckoutProvider>()
+                                                    .getShippingRateData
+                                                    .distance!,
                                                 mode: 'restro',
                                               )));
                                 }
@@ -265,11 +266,12 @@ class _RestaurantsCheckOutScreenState extends State<RestaurantsCheckOutScreen> {
                                             left: 17, bottom: 10),
                                         child: TextButton.icon(
                                             onPressed: () {
-                                              Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                      builder: (_) =>
-                                                          NewAddress()));
+                                              OpenMap(context);
+                                              // Navigator.push(
+                                              //     context,
+                                              //     MaterialPageRoute(
+                                              //         builder: (_) =>
+                                              //             NewAddress()));
                                             },
                                             icon: const Icon(Icons.add,
                                                 color: Color(0xFF3E7EFF)),
@@ -498,15 +500,22 @@ class _RestaurantsCheckOutScreenState extends State<RestaurantsCheckOutScreen> {
                                         Hive.box('restroCartBox').listenable(),
                                     builder: (context, Box box, widget) {
                                       //CartHiveModel cartItem = box.getAt(i);
-                                      var taxes = double.parse(((context
-                                                      .read<CheckoutProvider>()
-                                                      .getShippingRateData
-                                                      .taxPercent /
-                                                  100) *
-                                              context
-                                                  .read<CartProvider>()
-                                                  .getBoxTotal(box))
-                                          .toStringAsFixed(2));
+                                      var taxes = context
+                                                  .read<CheckoutProvider>()
+                                                  .getShippingRateData
+                                                  .taxPercent !=
+                                              null
+                                          ? double.parse(((context
+                                                          .read<
+                                                              CheckoutProvider>()
+                                                          .getShippingRateData
+                                                          .taxPercent /
+                                                      100) *
+                                                  context
+                                                      .read<CartProvider>()
+                                                      .getBoxTotal(box))
+                                              .toStringAsFixed(2))
+                                          : 0.0;
                                       var totalRate = context
                                               .read<CartProvider>()
                                               .getBoxTotal(box) +
@@ -637,14 +646,7 @@ class _RestaurantsCheckOutScreenState extends State<RestaurantsCheckOutScreen> {
                                                                         InkWell(
                                                                           onTap:
                                                                               () {
-                                                                            context.read<CheckoutProvider>().getShippingRate(
-                                                                                mounted,
-                                                                                context,
-                                                                                deliveryAddressdata?.latitude,
-                                                                                deliveryAddressdata?.longitude,
-                                                                                deliveryAddressdata?.pincode,
-                                                                                context.read<CartProvider>().getBoxWeightTotal(Hive.box('restroCartBox')),
-                                                                                'restro');
+                                                                           
                                                                             if (cartItem.quantity <
                                                                                 2) {
                                                                               cartItem.delete();
@@ -654,6 +656,14 @@ class _RestaurantsCheckOutScreenState extends State<RestaurantsCheckOutScreen> {
                                                                             if (cartItem.isInBox) {
                                                                               cartItem.save();
                                                                             }
+                                                                             context.read<CheckoutProvider>().getShippingRate(
+                                                                                mounted,
+                                                                                context,
+                                                                                deliveryAddressdata?.latitude,
+                                                                                deliveryAddressdata?.longitude,
+                                                                                deliveryAddressdata?.pincode,
+                                                                                context.read<CartProvider>().getBoxWeightTotal(Hive.box('restroCartBox')),
+                                                                                'restro');
                                                                           },
                                                                           child:
                                                                               const Image(
@@ -673,7 +683,11 @@ class _RestaurantsCheckOutScreenState extends State<RestaurantsCheckOutScreen> {
                                                                         InkWell(
                                                                           onTap:
                                                                               () {
-                                                                            context.read<CheckoutProvider>().getShippingRate(
+                                                                           
+                                                                            cartItem.quantity =
+                                                                                cartItem.quantity + 1;
+                                                                            cartItem.save();
+                                                                             context.read<CheckoutProvider>().getShippingRate(
                                                                                 mounted,
                                                                                 context,
                                                                                 deliveryAddressdata?.latitude,
@@ -681,9 +695,6 @@ class _RestaurantsCheckOutScreenState extends State<RestaurantsCheckOutScreen> {
                                                                                 deliveryAddressdata?.pincode,
                                                                                 context.read<CartProvider>().getBoxWeightTotal(Hive.box('restroCartBox')),
                                                                                 'restro');
-                                                                            cartItem.quantity =
-                                                                                cartItem.quantity + 1;
-                                                                            cartItem.save();
                                                                           },
                                                                           child:
                                                                               const Image(
@@ -721,9 +732,10 @@ class _RestaurantsCheckOutScreenState extends State<RestaurantsCheckOutScreen> {
                                                     children: [
                                                       Text(
                                                         AppLocalizations.of(
-                                                                      context)!
-                                                                  .translate(
-                                                                      'Subtotal') ?? 'Subtotal',
+                                                                    context)!
+                                                                .translate(
+                                                                    'Subtotal') ??
+                                                            'Subtotal',
                                                         style: ThreeKmTextConstants
                                                             .tk12PXPoppinsBlackSemiBold
                                                             .copyWith(
@@ -753,9 +765,10 @@ class _RestaurantsCheckOutScreenState extends State<RestaurantsCheckOutScreen> {
                                                     children: [
                                                       Text(
                                                         AppLocalizations.of(
-                                                                      context)!
-                                                                  .translate(
-                                                                      'Taxes') ?? 'Taxes',
+                                                                    context)!
+                                                                .translate(
+                                                                    'Taxes') ??
+                                                            'Taxes',
                                                         style: ThreeKmTextConstants
                                                             .tk12PXPoppinsBlackSemiBold
                                                             .copyWith(
@@ -785,9 +798,10 @@ class _RestaurantsCheckOutScreenState extends State<RestaurantsCheckOutScreen> {
                                                     children: [
                                                       Text(
                                                         AppLocalizations.of(
-                                                                      context)!
-                                                                  .translate(
-                                                                      'Delivery_Charges') ?? 'Delivery Charges',
+                                                                    context)!
+                                                                .translate(
+                                                                    'Delivery_Charges') ??
+                                                            'Delivery Charges',
                                                         style: ThreeKmTextConstants
                                                             .tk12PXPoppinsBlackSemiBold
                                                             .copyWith(
@@ -817,9 +831,10 @@ class _RestaurantsCheckOutScreenState extends State<RestaurantsCheckOutScreen> {
                                                     children: [
                                                       Text(
                                                         AppLocalizations.of(
-                                                                      context)!
-                                                                  .translate(
-                                                                      'Platform_Charges') ?? 'Platform Charges',
+                                                                    context)!
+                                                                .translate(
+                                                                    'Platform_Charges') ??
+                                                            'Platform Charges',
                                                         style: ThreeKmTextConstants
                                                             .tk12PXPoppinsBlackSemiBold
                                                             .copyWith(
@@ -855,7 +870,8 @@ class _RestaurantsCheckOutScreenState extends State<RestaurantsCheckOutScreen> {
                                                           AppLocalizations.of(
                                                                       context)!
                                                                   .translate(
-                                                                      'Cart_Total') ?? 'Cart Total',
+                                                                      'Cart_Total') ??
+                                                              'Cart Total',
                                                           style: ThreeKmTextConstants
                                                               .tk18PXPoppinsBlackMedium
                                                               .copyWith(
@@ -889,7 +905,7 @@ class _RestaurantsCheckOutScreenState extends State<RestaurantsCheckOutScreen> {
                 ]))
             : Container(),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-        floatingActionButton: restrobox.length == 0
+        floatingActionButton: restrobox?.length == 0
             ? Container(height: 50)
             : Container(
                 margin: EdgeInsets.only(bottom: 20),
@@ -953,14 +969,21 @@ class _RestaurantsCheckOutScreenState extends State<RestaurantsCheckOutScreen> {
                                     productList: box,
                                     shippingAmount: totalPrice,
                                     shippingDistance: context
-                                                        .read<
-                                                            CheckoutProvider>()
-                                                        .getShippingRateData.distance!,
+                                        .read<CheckoutProvider>()
+                                        .getShippingRateData
+                                        .distance!,
                                     mode: 'restro',
                                   )));
                     }
                     if (deliveryAddressdata?.addressId == 0) {
-                      CustomSnackBar(context, Text(AppLocalizations.of(context)!.translate('Please_select_address') ?? "Please select address"));
+                      CustomToast(AppLocalizations.of(context)!
+                              .translate('Please_select_address') ??
+                          "Please select address");
+                      // CustomSnackBar(
+                      //     context,
+                      //     Text(AppLocalizations.of(context)!
+                      //             .translate('Please_select_address') ??
+                      //         "Please select address"));
                     }
                   },
                 ),

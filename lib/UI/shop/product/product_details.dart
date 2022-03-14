@@ -166,7 +166,8 @@ class _ProductDetailsState extends State<ProductDetails> {
                     log("share button ");
                     var url =
                         'https://3km.in/sell/${product?.name}/?id=${product?.catalogId}';
-                    Share.share('check out this Product ${Uri.parse(url)}');
+                    Share.share(
+                        '${Uri.parse(url)} ${product?.name} from ${product?.businessName}');
                   }),
             ),
             Stack(
@@ -186,23 +187,27 @@ class _ProductDetailsState extends State<ProductDetails> {
                         viewCart(context, 'shop');
                       }),
                 ),
+
                 ValueListenableBuilder(
                     valueListenable: Hive.box('cartBox').listenable(),
                     builder: (context, Box box, snapshot) {
                       return Positioned(
                           top: 0,
                           right: 6,
-                          child: Container(
-                              decoration: BoxDecoration(
-                                  shape: BoxShape.circle, color: Colors.red),
-                              child: Padding(
-                                padding: const EdgeInsets.all(4.0),
-                                child: Text(
-                                  '${box.length}',
-                                  style: TextStyle(
-                                      fontSize: 11, color: Colors.white),
-                                ),
-                              )));
+                          child: box.length != 0
+                              ? Container(
+                                  decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: Colors.red),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(4.0),
+                                    child: Text(
+                                      '${box.length}',
+                                      style: TextStyle(
+                                          fontSize: 11, color: Colors.white),
+                                    ),
+                                  ))
+                              : Container());
                     }),
                 // Positioned(
                 //     top: 0,
@@ -243,7 +248,11 @@ class _ProductDetailsState extends State<ProductDetails> {
                               ? data.result?.product.images.length
                               : [data.result?.product.image].length
                           : data.result?.variations?[variationIndex!]
-                              .imagesLinks.length,
+                                      .imagesLinks.length !=
+                                  0
+                              ? data.result?.variations![variationIndex!]
+                                  .imagesLinks.length
+                              : [data.result?.product.image].length,
                       itemBuilder: (context, index) {
                         return statusData == 'loaded'
                             //&&
@@ -265,8 +274,13 @@ class _ProductDetailsState extends State<ProductDetails> {
                                                               0
                                                           ? '${data.result?.product.images[index]}'
                                                           : '${data.result?.product.image}'
-                                                      : variation
-                                                          .imagesLinks[index],
+                                                      : variation.imagesLinks
+                                                                  .length !=
+                                                              0
+                                                          ? variation
+                                                                  .imagesLinks[
+                                                              index]
+                                                          : '${data.result?.product.image}',
                                                 )));
                                   },
                                   child: Hero(
@@ -328,7 +342,20 @@ class _ProductDetailsState extends State<ProductDetails> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         for (int i = 0;
-                            i < data.result!.product.images.length;
+                            i <
+                                (variationid == 0
+                                    ? data.result!.product.images.length != 0
+                                        ? data.result!.product.images.length
+                                        : [data.result?.product.image].length
+                                    : data.result?.variations?[variationIndex!]
+                                                .imagesLinks.length !=
+                                            0
+                                        ? data
+                                            .result!
+                                            .variations![variationIndex!]
+                                            .imagesLinks
+                                            .length
+                                        : [data.result?.product.image].length);
                             i++)
                           i == selectedindex
                               ? indicator(true)
@@ -795,59 +822,72 @@ class _ProductDetailsState extends State<ProductDetails> {
                                                                           .creatorDetails
                                                                           .businessName);
                                                                 } else {
-                                                                  ScaffoldMessenger.of(
-                                                                          context)
-                                                                      .showSnackBar(
-                                                                          SnackBar(
-                                                                    elevation:
-                                                                        0,
-                                                                    backgroundColor:
-                                                                        Colors
-                                                                            .transparent,
-                                                                    content:
-                                                                        Container(
-                                                                      margin: EdgeInsets
-                                                                          .all(
-                                                                              15),
-                                                                      padding:
-                                                                          EdgeInsets.all(
-                                                                              20),
-                                                                      color:
-                                                                          bgColor,
-                                                                      child: Text(
-                                                                          AppLocalizations.of(context)!.translate('this_product_is_already_added_to_your_cart') ??
-                                                                              "This product is already added to your cart"),
-                                                                    ),
-                                                                  ));
+                                                                  viewCart(
+                                                                      context,
+                                                                      'shop');
+                                                                  // CustomToast(AppLocalizations.of(
+                                                                  //             context)!
+                                                                  //         .translate(
+                                                                  //             'this_product_is_already_added_to_your_cart') ??
+                                                                  //     "This product is already added to your cart");
+                                                                  // ScaffoldMessenger.of(
+                                                                  //         context)
+                                                                  //     .showSnackBar(
+                                                                  //         SnackBar(
+                                                                  //   elevation:
+                                                                  //       0,
+                                                                  //   backgroundColor:
+                                                                  //       Colors
+                                                                  //           .transparent,
+                                                                  //   content:
+                                                                  //       Container(
+                                                                  //     margin: EdgeInsets
+                                                                  //         .all(
+                                                                  //             15),
+                                                                  //     padding:
+                                                                  //         EdgeInsets.all(
+                                                                  //             20),
+                                                                  //     color:
+                                                                  //         bgColor,
+                                                                  //     child: Text(
+                                                                  //         AppLocalizations.of(context)!.translate('this_product_is_already_added_to_your_cart') ??
+                                                                  //             "This product is already added to your cart"),
+                                                                  //   ),
+                                                                  // ));
                                                                   //                    CustomSnackBar(
                                                                   // navigatorKey.currentContext!,
                                                                   // Text(
                                                                   //     "This product is already added to your cart"));
                                                                 }
                                                               } else {
-                                                                ScaffoldMessenger.of(
-                                                                        context)
-                                                                    .showSnackBar(
-                                                                        SnackBar(
-                                                                  elevation: 0,
-                                                                  backgroundColor:
-                                                                      Colors
-                                                                          .transparent,
-                                                                  content:
-                                                                      Container(
-                                                                    margin: EdgeInsets
-                                                                        .all(
-                                                                            15),
-                                                                    padding:
-                                                                        EdgeInsets.all(
-                                                                            20),
-                                                                    color:
-                                                                        bgColor,
-                                                                    child: Text(
-                                                                        AppLocalizations.of(context)!.translate('product_is_out_of_stock') ??
-                                                                            "Product is out of stock"),
-                                                                  ),
-                                                                ));
+                                                                CustomToast(AppLocalizations.of(
+                                                                            context)!
+                                                                        .translate(
+                                                                            'product_is_out_of_stock') ??
+                                                                    "Product is out of stock");
+                                                                // ScaffoldMessenger.of(
+                                                                //         context)
+                                                                //     .showSnackBar(
+                                                                //         SnackBar(
+                                                                //   elevation: 0,
+                                                                //   backgroundColor:
+                                                                //       Colors
+                                                                //           .transparent,
+                                                                //   content:
+                                                                //       Container(
+                                                                //     margin: EdgeInsets
+                                                                //         .all(
+                                                                //             15),
+                                                                //     padding:
+                                                                //         EdgeInsets.all(
+                                                                //             20),
+                                                                //     color:
+                                                                //         bgColor,
+                                                                //     child: Text(
+                                                                //         AppLocalizations.of(context)!.translate('product_is_out_of_stock') ??
+                                                                //             "Product is out of stock"),
+                                                                //   ),
+                                                                // ));
                                                               }
                                                             } else if (product
                                                                     .hasVariations &&
@@ -908,59 +948,69 @@ class _ProductDetailsState extends State<ProductDetails> {
                                                                       'shop');
                                                                 }
                                                               } else {
-                                                                ScaffoldMessenger.of(
-                                                                        context)
-                                                                    .showSnackBar(
-                                                                        SnackBar(
-                                                                  elevation: 0,
-                                                                  backgroundColor:
-                                                                      Colors
-                                                                          .transparent,
-                                                                  content:
-                                                                      Container(
-                                                                    margin: EdgeInsets
-                                                                        .all(
-                                                                            15),
-                                                                    padding:
-                                                                        EdgeInsets.all(
-                                                                            20),
-                                                                    color:
-                                                                        bgColor,
-                                                                    child: Text(
-                                                                        AppLocalizations.of(context)!.translate('product_is_out_of_stock') ??
-                                                                            "Product is out of stock"),
-                                                                  ),
-                                                                ));
+                                                                CustomToast(AppLocalizations.of(
+                                                                            context)!
+                                                                        .translate(
+                                                                            'product_is_out_of_stock') ??
+                                                                    "Product is out of stock");
+                                                                // ScaffoldMessenger.of(
+                                                                //         context)
+                                                                //     .showSnackBar(
+                                                                //         SnackBar(
+                                                                //   elevation: 0,
+                                                                //   backgroundColor:
+                                                                //       Colors
+                                                                //           .transparent,
+                                                                //   content:
+                                                                //       Container(
+                                                                //     margin: EdgeInsets
+                                                                //         .all(
+                                                                //             15),
+                                                                //     padding:
+                                                                //         EdgeInsets.all(
+                                                                //             20),
+                                                                //     color:
+                                                                //         bgColor,
+                                                                //     child: Text(
+                                                                //         AppLocalizations.of(context)!.translate('product_is_out_of_stock') ??
+                                                                //             "Product is out of stock"),
+                                                                //   ),
+                                                                // ));
                                                               }
                                                             } else {
-                                                              ScaffoldMessenger
-                                                                      .of(
-                                                                          context)
-                                                                  .showSnackBar(
-                                                                      SnackBar(
-                                                                elevation: 0,
-                                                                backgroundColor:
-                                                                    Colors
-                                                                        .transparent,
-                                                                content:
-                                                                    Container(
-                                                                  margin:
-                                                                      EdgeInsets
-                                                                          .all(
-                                                                              15),
-                                                                  padding:
-                                                                      EdgeInsets
-                                                                          .all(
-                                                                              20),
-                                                                  color:
-                                                                      bgColor,
-                                                                  child: Text(AppLocalizations.of(
-                                                                              context)!
-                                                                          .translate(
-                                                                              'please_select_variant') ??
-                                                                      "Please select variant"),
-                                                                ),
-                                                              ));
+                                                              CustomToast(AppLocalizations.of(
+                                                                          context)!
+                                                                      .translate(
+                                                                          'please_select_variant') ??
+                                                                  "Please select variant");
+                                                              // ScaffoldMessenger
+                                                              //         .of(
+                                                              //             context)
+                                                              //     .showSnackBar(
+                                                              //         SnackBar(
+                                                              //   elevation: 0,
+                                                              //   backgroundColor:
+                                                              //       Colors
+                                                              //           .transparent,
+                                                              //   content:
+                                                              //       Container(
+                                                              //     margin:
+                                                              //         EdgeInsets
+                                                              //             .all(
+                                                              //                 15),
+                                                              //     padding:
+                                                              //         EdgeInsets
+                                                              //             .all(
+                                                              //                 20),
+                                                              //     color:
+                                                              //         bgColor,
+                                                              //     child: Text(AppLocalizations.of(
+                                                              //                 context)!
+                                                              //             .translate(
+                                                              //                 'please_select_variant') ??
+                                                              //         "Please select variant"),
+                                                              //   ),
+                                                              // ));
                                                             }
 
                                                             // viewCart(context,
@@ -1218,7 +1268,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                                       physics:
                                           const NeverScrollableScrollPhysics(),
                                       padding: const EdgeInsets.only(
-                                          top: 10, bottom: 10),
+                                          top: 10, bottom: 20),
                                       itemCount: listLength(
                                           data.result?.reviews?.length),
                                       shrinkWrap: true,
@@ -1235,6 +1285,11 @@ class _ProductDetailsState extends State<ProductDetails> {
                                                   child: Image(
                                                     image: NetworkImage(
                                                         '${data.result?.reviews?[i].avatar}'),
+                                                    errorBuilder: (e, _, __) =>
+                                                        Container(
+                                                            color: Colors.grey,
+                                                            width: 24,
+                                                            height: 24),
                                                     width: 60,
                                                     height: 60,
                                                   ),
@@ -1340,63 +1395,83 @@ class _ProductDetailsState extends State<ProductDetails> {
                                                     color: Color(0xBF0F0F2D)),
                                               ),
                                             ),
+                                            if (data.result!.reviews![i].images
+                                                    .length >
+                                                0)
+                                              SizedBox(
+                                                width: MediaQuery.of(context)
+                                                    .size
+                                                    .width,
+                                                height: 90,
+                                                child: ListView.builder(
+                                                    shrinkWrap: true,
+                                                    scrollDirection:
+                                                        Axis.horizontal,
+                                                    itemCount: data
+                                                        .result
+                                                        ?.reviews?[i]
+                                                        .images
+                                                        .length,
+                                                    itemBuilder: (_, index) {
+                                                      return Image(
+                                                          image: NetworkImage(
+                                                              '${data.result?.reviews?[i].images[index]}'),
+                                                          width: 80,
+                                                          height: 80);
+                                                    }),
+                                              )
                                           ],
                                         );
                                       }),
-                                  data.result?.reviews?.length != 0
-                                      ? Container(
-                                          padding: const EdgeInsets.only(
-                                              top: 30, bottom: 30),
-                                          margin: EdgeInsets.only(bottom: 30),
-                                          width:
-                                              ThreeKmScreenUtil.screenWidthDp,
-                                          child: ElevatedButton(
-                                              onPressed: () {
-                                                setState(() {
-                                                  readReview =
-                                                      readReview ? false : true;
-                                                });
-                                              },
-                                              style: ButtonStyle(
-                                                  shape:
-                                                      MaterialStateProperty.all(
-                                                          const StadiumBorder()),
-                                                  backgroundColor: MaterialStateProperty.all(
+                                  if (data.result!.reviews!.length != 0 &&
+                                      data.result!.reviews!.length > 2)
+                                    Container(
+                                      padding: const EdgeInsets.only(
+                                          top: 30, bottom: 30),
+                                      margin: EdgeInsets.only(bottom: 30),
+                                      width: ThreeKmScreenUtil.screenWidthDp,
+                                      child: ElevatedButton(
+                                          onPressed: () {
+                                            setState(() {
+                                              readReview =
+                                                  readReview ? false : true;
+                                            });
+                                          },
+                                          style: ButtonStyle(
+                                              shape: MaterialStateProperty.all(
+                                                  const StadiumBorder()),
+                                              backgroundColor:
+                                                  MaterialStateProperty.all(
                                                       const Color(0xFFF4F3F8)),
-                                                  foregroundColor:
-                                                      MaterialStateProperty.all(
-                                                          Color(0xFF0F0F2D)),
-                                                  elevation:
-                                                      MaterialStateProperty.all(
-                                                          0),
-                                                  shadowColor:
-                                                      MaterialStateProperty.all(
-                                                          Color(0xFFFC5E6A33)),
-                                                  padding:
-                                                      MaterialStateProperty.all(
-                                                          const EdgeInsets.only(
-                                                              left: 30,
-                                                              right: 30,
-                                                              top: 15,
-                                                              bottom: 15))),
-                                              child: Text(
-                                                !readReview
-                                                    ? AppLocalizations.of(
-                                                                context)!
-                                                            .translate(
-                                                                'view_all_reviews') ??
-                                                        'View All Reviews'
-                                                    : AppLocalizations.of(
-                                                                context)!
-                                                            .translate(
-                                                                'view_less_reviews') ??
-                                                        'View Less Reviews',
-                                                style: const TextStyle(
-                                                    fontSize: 18,
-                                                    letterSpacing: 3),
-                                              )),
-                                        )
-                                      : SizedBox(),
+                                              foregroundColor:
+                                                  MaterialStateProperty.all(
+                                                      Color(0xFF0F0F2D)),
+                                              elevation:
+                                                  MaterialStateProperty.all(0),
+                                              shadowColor:
+                                                  MaterialStateProperty.all(
+                                                      Color(0xFFFC5E6A33)),
+                                              padding:
+                                                  MaterialStateProperty.all(
+                                                      const EdgeInsets.only(
+                                                          left: 30,
+                                                          right: 30,
+                                                          top: 15,
+                                                          bottom: 15))),
+                                          child: Text(
+                                            !readReview
+                                                ? AppLocalizations.of(context)!
+                                                        .translate(
+                                                            'view_all_reviews') ??
+                                                    'View All Reviews'
+                                                : AppLocalizations.of(context)!
+                                                        .translate(
+                                                            'view_less_reviews') ??
+                                                    'View Less Reviews',
+                                            style: const TextStyle(
+                                                fontSize: 18, letterSpacing: 3),
+                                          )),
+                                    )
                                 ],
                               ),
                             )
@@ -1542,14 +1617,17 @@ class _ProductDetailsState extends State<ProductDetails> {
                                                       .creatorDetails
                                                       .businessName);
                                         } else {
-                                          CustomSnackBar(
-                                              context,
-                                              Text(
-                                                  "This product is already added to your cart"));
+                                          viewCart(context, 'shop');
+
+                                          // CustomSnackBar(
+                                          //     context,
+                                          //     Text(
+                                          //         "This product is already added to your cart"));
                                         }
                                       } else {
-                                        CustomSnackBar(context,
-                                            Text("Product is out of stock"));
+                                        CustomToast("Product is out of stock");
+                                        // CustomSnackBar(context,
+                                        //     Text("Product is out of stock"));
                                       }
                                     } else if (product.hasVariations &&
                                         variationid != 0) {
@@ -1593,7 +1671,9 @@ class _ProductDetailsState extends State<ProductDetails> {
                                         } else {
                                           CustomSnackBar(
                                               context,
-                                              Text(
+                                              Text(AppLocalizations.of(context)!
+                                                      .translate(
+                                                          'this_product_is_already_added_to_your_cart') ??
                                                   "This product is already added to your cart"));
                                         }
                                       } else {
@@ -1601,8 +1681,12 @@ class _ProductDetailsState extends State<ProductDetails> {
                                             Text("Product is out of stock"));
                                       }
                                     } else {
-                                      CustomSnackBar(context,
-                                          Text("Please select variant"));
+                                      CustomToast(AppLocalizations.of(context)!
+                                              .translate(
+                                                  'please_select_variant') ??
+                                          "Please select variant");
+                                      // CustomSnackBar(context,
+                                      //     Text("Please select variant"));
                                     }
 
                                     // viewCart(context,

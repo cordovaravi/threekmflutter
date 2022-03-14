@@ -121,9 +121,9 @@ class LineItems {
   late final String image;
   late final String soldby;
   late final String variation;
-  late final int price;
+  late final num price;
   late final int quantity;
-  late final int subtotal;
+  late final num subtotal;
 
   LineItems.fromJson(Map<String, dynamic> json) {
     name = json['name'];

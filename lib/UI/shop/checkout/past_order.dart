@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:provider/src/provider.dart';
 import 'package:threekm/UI/shop/checkout/order_detail.dart';
 import 'package:threekm/providers/shop/checkout/past_order_provider.dart';
@@ -19,10 +20,16 @@ class _PastOrderState extends State<PastOrder> {
     super.initState();
     context.read<PastOrderProvider>().getPastShopOrderList(mounted);
     context.read<PastOrderProvider>().getPastMenuOrderList(mounted);
+    openBox();
+  }
+
+  openBox() async {
+    await Hive.openBox('orderStatusBox');
   }
 
   formatDate(dateUtc) {
-    var dateFormat = DateFormat("hh:mm aa"); // you can change the format here
+    var dateFormat =
+        DateFormat("hh:mm aa d MMM yyyy"); // you can change the format here
     // DateFormat("dd-MM-yyyy hh:mm aa"); // you can change the format here
     var utcDate =
         dateFormat.format(DateTime.parse(dateUtc)); // pass the UTC time here
@@ -151,8 +158,7 @@ class _PastOrderState extends State<PastOrder> {
                                           '${order.centerStatus}',
                                           style: TextStyle(color: Colors.green),
                                         ),
-                                        Text(
-                                            '${formatDate(order.centerTime)} ${DateFormat.yMMMEd().format(DateTime.parse(order.centerTime))}')
+                                        Text('${formatDate(order.centerTime)}')
                                       ],
                                     ),
                                     TextButton(
@@ -256,9 +262,8 @@ class _PastOrderState extends State<PastOrder> {
                                           '${order.centerStatus}',
                                           style: TextStyle(color: Colors.green),
                                         ),
-                                        Text(
-                                            '${formatDate(order.centerTime)} ${DateFormat.yMMMEd().format(DateTime.parse(order.centerTime))}'
-                                            // '${DateFormat.jm().format(DateTime.parse(order.centerTime))} ${DateFormat.yMMMEd().format(DateTime.parse(order.centerTime))}'
+                                        Text('${formatDate(order.centerTime)} '
+                                            // ${DateFormat.yMMMEd().format(DateTime.parse(order.centerTime))}
                                             )
                                       ],
                                     ),

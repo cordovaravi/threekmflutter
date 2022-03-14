@@ -2,7 +2,8 @@ import 'dart:developer';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+
 import 'package:lottie/lottie.dart';
 import 'package:provider/src/provider.dart';
 
@@ -77,19 +78,27 @@ class _ProductListingState extends State<ProductListing> {
                           Icons.shopping_cart_rounded,
                           size: 30,
                         ))),
-                Positioned(
-                    top: 0,
-                    right: 12,
-                    child: Container(
-                        decoration: BoxDecoration(
-                            shape: BoxShape.circle, color: Colors.red),
-                        child: Padding(
-                          padding: const EdgeInsets.all(4.0),
-                          child: Text(
-                            '${Hive.box('cartBox').length}',
-                            style: TextStyle(fontSize: 11, color: Colors.white),
-                          ),
-                        )))
+                ValueListenableBuilder(
+                    valueListenable: Hive.box('cartBox').listenable(),
+                    builder: (context, Box box, snapshot) {
+                      return Positioned(
+                          top: 0,
+                          right: 6,
+                          child: box.length != 0
+                              ? Container(
+                                  decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: Colors.red),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(4.0),
+                                    child: Text(
+                                      '${box.length}',
+                                      style: TextStyle(
+                                          fontSize: 11, color: Colors.white),
+                                    ),
+                                  ))
+                              : Container());
+                    }),
               ],
             )
           ],
@@ -248,7 +257,7 @@ class _ItemBuilderWidgetState extends State<ItemBuilderWidget> {
                       opacity: animation,
                       child: child,
                     );
-                  })).then((value) => {setState(() {})});
+                  })).whenComplete(() => {setState(() {})});
         },
         child: Container(
           decoration: BoxDecoration(
@@ -276,7 +285,7 @@ class _ItemBuilderWidgetState extends State<ItemBuilderWidget> {
                         child: CachedNetworkImage(
                           alignment: Alignment.topCenter,
                           placeholder: (context, url) => Transform.scale(
-                            scale: 0.5,
+                            scale: 0.2,
                             child: CircularProgressIndicator(
                               color: Colors.grey[400],
                             ),
@@ -335,15 +344,17 @@ class _ItemBuilderWidgetState extends State<ItemBuilderWidget> {
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
-                                    '₹${widget.data[widget.i].strikePrice ?? ''}',
-                                    style: ThreeKmTextConstants
-                                        .tk14PXPoppinsBlackMedium
-                                        .copyWith(
-                                            decoration:
-                                                TextDecoration.lineThrough,
-                                            color: Colors.red[300],
-                                            fontWeight: FontWeight.bold)),
+                                if (widget.data[widget.i].strikePrice !=
+                                    widget.data[widget.i].price)
+                                  Text(
+                                      '₹${widget.data[widget.i].strikePrice ?? ''}',
+                                      style: ThreeKmTextConstants
+                                          .tk14PXPoppinsBlackMedium
+                                          .copyWith(
+                                              decoration:
+                                                  TextDecoration.lineThrough,
+                                              color: Colors.red[300],
+                                              fontWeight: FontWeight.bold)),
                                 Text('₹${widget.data[widget.i].price}',
                                     style: ThreeKmTextConstants
                                         .tk18PXPoppinsBlackMedium

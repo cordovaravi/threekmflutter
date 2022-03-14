@@ -15,7 +15,7 @@ class CartProvider extends ChangeNotifier {
   Box? get restroCartBoxData => _restroCartBox;
 
   addToCart(image, name, quantity, price, id, variationId, variation_name,
-      weight, masterStock,manageStock, creatorId, creatorName) async {
+      weight, masterStock, manageStock, creatorId, creatorName) async {
     _state = 'loading';
     Box _creatorIDBox = await Hive.openBox('creatorID');
     _creatorIDBox.put('creatorName', creatorName);
@@ -90,15 +90,27 @@ class CartProvider extends ChangeNotifier {
       _creatorIDBox.put('id', creatorId);
       _creatorIDBox.put('creatorName', creatorName);
       addToCart(image, name, quantity, price, id, variationId, variation_name,
-          weight, masterStock,manageStock, creatorId, creatorName);
+          weight, masterStock, manageStock, creatorId, creatorName);
     } else {
       var Cid = _creatorIDBox.get('id');
       if (creatorId == Cid) {
         addToCart(image, name, quantity, price, id, variationId, variation_name,
-            weight, masterStock,manageStock, creatorId, creatorName);
+            weight, masterStock, manageStock, creatorId, creatorName);
       } else {
-        clearAndAddToCartModal(context, image, name, quantity, price, creatorId,
-            id, variationId, weight, masterStock,manageStock, creatorName, 'shop');
+        clearAndAddToCartModal(
+            context,
+            image,
+            name,
+            quantity,
+            price,
+            creatorId,
+            id,
+            variationId,
+            weight,
+            masterStock,
+            manageStock,
+            creatorName,
+            'shop');
       }
     }
 
@@ -170,7 +182,7 @@ class CartProvider extends ChangeNotifier {
             image, name, quantity, price, id, variationId, weight);
       } else {
         clearAndAddToCartModal(context, image, name, quantity, price, creatorId,
-            id, variationId, weight, 0,false, creatorName, 'restro');
+            id, variationId, weight, 0, false, creatorName, 'restro');
       }
     }
 
@@ -191,7 +203,7 @@ class CartProvider extends ChangeNotifier {
     for (var i = 0; i < data.length; i++) {
       CartHiveModel d = data.getAt(i);
       totalWeight = totalWeight.toDouble() +
-          (d.weight ?? 0).toDouble() * d.quantity.toDouble();
+          ((d.weight ?? 0).toDouble() * d.quantity.toDouble());
     }
     return totalWeight;
   }

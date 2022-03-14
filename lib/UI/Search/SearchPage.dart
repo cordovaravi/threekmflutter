@@ -369,8 +369,11 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
                           name: controller.BusinessSearchData!.data!.result!
                               .creators![index].businessName
                               .toString(),
-                          tags:
-                              "${controller.BusinessSearchData!.data!.result!.creators![index].tags!.first.toString()},  ${controller.BusinessSearchData!.data!.result!.creators![index].tags!.last.toString()}",
+                          tags: controller.BusinessSearchData!.data!.result!
+                                      .creators![index].tags?.length !=
+                                  0
+                              ? "${controller.BusinessSearchData!.data!.result!.creators![index].tags?.first.toString()},  ${controller.BusinessSearchData!.data!.result!.creators![index].tags?.last.toString()}"
+                              : "",
                           ownername:
                               "${controller.BusinessSearchData!.data!.result!.creators![index].firstname} ${controller.BusinessSearchData!.data!.result!.creators![index].lastname}",
                           id: controller.BusinessSearchData!.data!.result!

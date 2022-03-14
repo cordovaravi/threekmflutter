@@ -45,7 +45,6 @@ class BuildCard extends StatelessWidget {
               height: 160.0,
               width: double.infinity,
               child: Stack(
-                fit: StackFit.expand,
                 children: [
                   Center(
                     child: ClipRRect(
@@ -53,8 +52,8 @@ class BuildCard extends StatelessWidget {
                       child: CachedNetworkImage(
                         alignment: Alignment.topCenter,
                         placeholder: (context, url) => Transform.scale(
-                          alignment: Alignment.topLeft,
-                          scale: 0.5,
+                          alignment: Alignment.center,
+                          scale: 0.1,
                           child: CircularProgressIndicator(
                             color: Colors.grey[400],
                           ),
@@ -74,7 +73,7 @@ class BuildCard extends StatelessWidget {
                           borderRadius:
                               BorderRadius.only(topLeft: Radius.circular(20))),
                       child: Text(
-                        '${discountType == 'percentage' ? "" : "₹"}${discountValue}${discountType == 'percentage' ? '%' : ''} Off',
+                        '${discountType == 'percentage' || discountType == "percent" ? "" : "₹"}${discountValue}${discountType == 'percentage' || discountType == "percent" ? '%' : ''} Off',
                         style: ThreeKmTextConstants.tk12PXPoppinsWhiteRegular,
                       ),
                     ),

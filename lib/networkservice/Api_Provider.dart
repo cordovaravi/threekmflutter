@@ -97,6 +97,27 @@ class ApiProvider {
     }
     return responseJson;
   }
+   //future post
+  Future<dynamic> CuisinesPost(String url, requestJson) async {
+    var responseJson;
+    String token = await getToken() ?? "";
+   
+    print(requestJson);
+    try {
+      final response = await http
+          .post(Uri.parse('https://bulbandkey.com/gateway/${url}'), body: requestJson, headers: {
+        "Authorization": token,
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      });
+
+      responseJson = _response(response);
+    } on SocketException {
+      //Get.defaultDialog(title: 'No Internet connection',middleText: 'I guess your Internet is not availble!');
+      throw FetchDataException('No Internet connection');
+    }
+    return responseJson;
+  }
 
   //future put
   Future<dynamic> put(String url, requestJson) async {

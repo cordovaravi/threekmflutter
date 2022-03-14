@@ -29,6 +29,7 @@ class _ViewAllOfferingState extends State<ViewAllOffering> {
 
   @override
   void initState() {
+    context.read<ProductListingProvider>().clearProductListState(mounted);
     context.read<ProductListingProvider>().getProductListing(
         mounted: mounted, page: 1, creatorId: widget.creatorId);
     super.initState();
@@ -76,23 +77,27 @@ class _ViewAllOfferingState extends State<ViewAllOffering> {
                           Icons.shopping_cart_rounded,
                           size: 30,
                         ))),
+
                 ValueListenableBuilder(
                     valueListenable: Hive.box('cartBox').listenable(),
                     builder: (context, Box box, snapshot) {
                       return Positioned(
                           top: 0,
                           right: 8,
-                          child: Container(
-                              decoration: BoxDecoration(
-                                  shape: BoxShape.circle, color: Colors.red),
-                              child: Padding(
-                                padding: const EdgeInsets.all(4.0),
-                                child: Text(
-                                  '${box.length}',
-                                  style: TextStyle(
-                                      fontSize: 11, color: Colors.white),
-                                ),
-                              )));
+                          child: box.length != 0
+                              ? Container(
+                                  decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: Colors.red),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(4.0),
+                                    child: Text(
+                                      '${box.length}',
+                                      style: TextStyle(
+                                          fontSize: 11, color: Colors.white),
+                                    ),
+                                  ))
+                              : Container());
                     }),
                 // Positioned(
                 //     top: 0,
@@ -277,7 +282,7 @@ class _ItemBuilderWidgetState extends State<ItemBuilderWidget> {
                         child: CachedNetworkImage(
                           alignment: Alignment.center,
                           placeholder: (context, url) => Transform.scale(
-                            scale: 0.5,
+                            scale: 0.3,
                             child: CircularProgressIndicator(
                               color: Colors.grey[400],
                             ),
@@ -295,9 +300,12 @@ class _ItemBuilderWidgetState extends State<ItemBuilderWidget> {
                         Container(
                           padding: EdgeInsets.all(8),
                           decoration: BoxDecoration(
-                              color: Colors.green,
-                              borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(20))),
+                            color: Colors.green,
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(20),
+                              bottomRight: Radius.circular(20),
+                            ),
+                          ),
                           child: Text(
                             '₹${(widget.data[widget.i].strikePrice! - widget.data[widget.i].price!).toStringAsFixed(2)} Off',
                             style:
@@ -333,12 +341,28 @@ class _ItemBuilderWidgetState extends State<ItemBuilderWidget> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text('₹${widget.data[widget.i].price}',
-                                style: ThreeKmTextConstants
-                                    .tk18PXPoppinsBlackMedium
-                                    .copyWith(
-                                        color: Color(0xFF3E7EFF),
-                                        fontWeight: FontWeight.bold)),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                if (widget.data[widget.i].strikePrice !=
+                                    widget.data[widget.i].price)
+                                  Text(
+                                      '₹${widget.data[widget.i].strikePrice ?? ''}',
+                                      style: ThreeKmTextConstants
+                                          .tk14PXPoppinsBlackMedium
+                                          .copyWith(
+                                              decoration:
+                                                  TextDecoration.lineThrough,
+                                              color: Colors.red[300],
+                                              fontWeight: FontWeight.bold)),
+                                Text('₹${widget.data[widget.i].price}',
+                                    style: ThreeKmTextConstants
+                                        .tk18PXPoppinsBlackMedium
+                                        .copyWith(
+                                            color: Color(0xFF3E7EFF),
+                                            fontWeight: FontWeight.bold)),
+                              ],
+                            ),
                             InkWell(
                               onTap: () {
                                 if (context

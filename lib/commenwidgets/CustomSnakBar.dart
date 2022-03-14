@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 const Color bgColor = Color(0xFF0044CE);
 const Color uploadColor = Color(0xff0F0F2D);
@@ -30,5 +31,16 @@ class UploadingSnackBar {
         behavior: SnackBarBehavior.fixed);
     // ScaffoldMessenger.of(context).hideCurrentSnackBar();
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
+}
+
+class CustomToast {
+  CustomToast(String message) {
+    Fluttertoast.showToast(
+      msg: message,
+      gravity: ToastGravity.BOTTOM,
+      backgroundColor: Colors.blue,
+      textColor: Colors.white,
+    );
   }
 }

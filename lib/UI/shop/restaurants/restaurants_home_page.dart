@@ -19,6 +19,7 @@ import 'package:threekm/localization/localize.dart';
 import 'package:threekm/main.dart';
 import 'package:threekm/providers/Location/locattion_Provider.dart';
 import 'package:threekm/providers/shop/cart_provider.dart';
+import 'package:threekm/providers/shop/restaurant_menu_provider.dart';
 import 'package:threekm/providers/shop/shop_home_provider.dart';
 import 'package:threekm/utils/api_paths.dart';
 import 'package:threekm/utils/screen_util.dart';
@@ -61,6 +62,7 @@ class _RestaurantsHomeState extends State<RestaurantsHome> {
       openBox();
       context.read<LocationProvider>().getLocation();
       context.read<ShopHomeProvider>().getRestaurants(mounted, 1);
+      context.read<RestaurantMenuProvider>().cuisinesList(mounted);
     });
   }
 
@@ -75,9 +77,17 @@ class _RestaurantsHomeState extends State<RestaurantsHome> {
   }
 
   @override
+  void dispose() {
+    SearchController.dispose();
+    // TODO: implement dispose
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     var data = context.watch<ShopHomeProvider>().restaurantData?.result;
     var state = context.watch<ShopHomeProvider>().state;
+    var cuisinesData = context.watch<RestaurantMenuProvider>().cuisinesListdata;
 
     return Scaffold(
         backgroundColor: Color(0xFFF4F3F8),
@@ -220,7 +230,7 @@ class _RestaurantsHomeState extends State<RestaurantsHome> {
                 //                     child: ClipRRect(
                 //                         borderRadius: BorderRadius.circular(10),
                 //                         child: Image(
-                //                             image: NetworkImage(data.advertisements[i].images.),
+                //                             image: NetworkImage(data?.advertisements?[i].images),
                 //                             width: ThreeKmScreenUtil.screenWidthDp / 1.1888,
                 //                             height: ThreeKmScreenUtil.screenHeightDp / 5,
                 //                             fit: BoxFit.fill)),
@@ -285,9 +295,13 @@ class _RestaurantsHomeState extends State<RestaurantsHome> {
                 //                               color: Colors.grey[400],
                 //                             ),
                 //                           ),
-                //                           imageUrl: '${data?.creators?[i].cover}',
-                //                           height: ThreeKmScreenUtil.screenHeightDp / 1.8,
-                //                           width: ThreeKmScreenUtil.screenWidthDp,
+                //                           imageUrl:
+                //                               '${data?.creators?[i].cover}',
+                //                           height:
+                //                               ThreeKmScreenUtil.screenHeightDp /
+                //                                   1.8,
+                //                           width:
+                //                               ThreeKmScreenUtil.screenWidthDp,
                 //                           fit: BoxFit.fill,
                 //                         ),
                 //                       ),
@@ -306,8 +320,8 @@ class _RestaurantsHomeState extends State<RestaurantsHome> {
                 //                             maxLines: 2,
                 //                           ),
                 //                           Padding(
-                //                               padding:
-                //                                   const EdgeInsets.only(top: 10),
+                //                               padding: const EdgeInsets.only(
+                //                                   top: 10),
                 //                               child: Text(
                 //                                   '${data?.creators?[i].restaurant!.cuisines?.join(", ")}'))
                 //                         ],
@@ -369,9 +383,13 @@ class _RestaurantsHomeState extends State<RestaurantsHome> {
                 //                               color: Colors.grey[400],
                 //                             ),
                 //                           ),
-                //                           imageUrl: '${data?.creators?[i].cover}',
-                //                           height: ThreeKmScreenUtil.screenHeightDp / 1.8,
-                //                           width: ThreeKmScreenUtil.screenWidthDp,
+                //                           imageUrl:
+                //                               '${data?.creators?[i].cover}',
+                //                           height:
+                //                               ThreeKmScreenUtil.screenHeightDp /
+                //                                   1.8,
+                //                           width:
+                //                               ThreeKmScreenUtil.screenWidthDp,
                 //                           fit: BoxFit.fill,
                 //                         ),
                 //                       ),
@@ -390,8 +408,8 @@ class _RestaurantsHomeState extends State<RestaurantsHome> {
                 //                             maxLines: 2,
                 //                           ),
                 //                           Padding(
-                //                               padding:
-                //                                   const EdgeInsets.only(top: 10),
+                //                               padding: const EdgeInsets.only(
+                //                                   top: 10),
                 //                               child: Text(
                 //                                   '${data?.creators?[i].restaurant!.cuisines?.join(", ")}'))
                 //                         ],
@@ -403,65 +421,81 @@ class _RestaurantsHomeState extends State<RestaurantsHome> {
                 //     },
                 //   ),
                 // ),
-                // category section
-                // Container(
-                //   padding: const EdgeInsets.all(20),
-                //   color: Colors.white,
-                //   child: Column(
-                //     crossAxisAlignment: CrossAxisAlignment.start,
-                //     children: [
-                //       const Padding(
-                //         padding: EdgeInsets.all(8.0),
-                //         child: Text(
-                //           'Categories',
-                //           style: TextStyle(
-                //               color: Color(0xFF0F0F2D),
-                //               fontSize: 19,
-                //               fontWeight: FontWeight.bold),
-                //         ),
-                //       ),
-                //       GridView.builder(
-                //           physics: const NeverScrollableScrollPhysics(),
-                //           gridDelegate:
-                //               const SliverGridDelegateWithFixedCrossAxisCount(
-                //             crossAxisCount: 3,
-                //             crossAxisSpacing: 10,
-                //             mainAxisSpacing: 10,
-                //           ),
-                //           itemCount:  data?.trending?.length,
-                //           shrinkWrap: true,
-                //           itemBuilder: (_, i) {
-                //             return Container(
-                //               padding: EdgeInsets.only(top: 15, bottom: 10),
-                //               decoration: BoxDecoration(
-                //                   border: Border.all(color: Color(0xFFE2E4E6)),
-                //                   borderRadius: BorderRadius.circular(15)),
-                //               child: Column(
-                //                 children: [
-                //                   CachedNetworkImage(
-                //                     alignment: Alignment.topCenter,
-                //                     placeholder: (context, url) =>
-                //                         Transform.scale(
-                //                       scale: 0.5,
-                //                       child: CircularProgressIndicator(
-                //                         color: Colors.grey[400],
-                //                       ),
-                //                     ),
-                //                     imageUrl:
-                //                         '${ data?.trending?[i].image}',
-                //                     height: ThreeKmScreenUtil.screenHeightDp / 15,
-                //                     width: ThreeKmScreenUtil.screenWidthDp / 7,
-                //                     fit: BoxFit.fill,
-                //                   ),
-                //                   Spacer(),
-                //                   Text('${ data?.trending?[i].name}')
-                //                 ],
-                //               ),
-                //             );
-                //           }),
-                //     ],
-                //   ),
-                // ),
+                //  category section
+                if (cuisinesData.data != null &&
+                    cuisinesData.data!.result.data.isNotEmpty)
+                  Container(
+                    // width: MediaQuery.of(context).size.width,
+                    // height: 400,
+                    padding: const EdgeInsets.all(20),
+                    color: Colors.white,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Text(
+                            'Categories',
+                            style: TextStyle(
+                                color: Color(0xFF0F0F2D),
+                                fontSize: 19,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        Container(
+                          width: MediaQuery.of(context).size.width,
+                          height: 400,
+                          child: GridView.builder(
+                              //physics: const NeverScrollableScrollPhysics(),
+                              gridDelegate:
+                                  const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 3,
+                                crossAxisSpacing: 10,
+                                mainAxisSpacing: 10,
+                              ),
+                              scrollDirection: Axis.horizontal,
+                              itemCount: cuisinesData.data!.result.data.length,
+                              shrinkWrap: true,
+                              itemBuilder: (_, i) {
+                                var cuisinesdata =
+                                    cuisinesData.data!.result.data[i];
+                                return Container(
+                                  // width: 150,
+                                  // height: 150,
+                                  padding: EdgeInsets.only(top: 15, bottom: 10),
+                                  decoration: BoxDecoration(
+                                      border:
+                                          Border.all(color: Color(0xFFE2E4E6)),
+                                      borderRadius: BorderRadius.circular(15)),
+                                  child: Column(
+                                    children: [
+                                      CachedNetworkImage(
+                                        alignment: Alignment.center,
+                                        placeholder: (context, url) =>
+                                            Transform.scale(
+                                          scale: 0.5,
+                                          child: CircularProgressIndicator(
+                                            color: Colors.grey[400],
+                                          ),
+                                        ),
+                                        imageUrl: '${cuisinesdata.photo}',
+                                        // height:
+                                        //     ThreeKmScreenUtil.screenHeightDp /
+                                        //         13,
+                                        width:
+                                            ThreeKmScreenUtil.screenWidthDp / 6,
+                                        fit: BoxFit.fill,
+                                      ),
+                                      Spacer(),
+                                      Text('${cuisinesdata.name}')
+                                    ],
+                                  ),
+                                );
+                              }),
+                        ),
+                      ],
+                    ),
+                  ),
                 Container(
                   padding: const EdgeInsets.all(20),
                   child: Row(
@@ -519,6 +553,8 @@ class _RestaurantsHomeState extends State<RestaurantsHome> {
                                             .translate('Restaurant_offline') ??
                                         "Restaurant is Currentlly not accepting orders"));
                               }
+                              FocusScope.of(context).unfocus();
+                              SearchController.clear();
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(

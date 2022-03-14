@@ -58,7 +58,7 @@ class Menu {
   });
   late final int id;
   late final String name;
-  late final List<Menus> menus;
+  late List<Menus> menus;
   bool isExpanded = true;
 
   Menu.fromJson(Map<String, dynamic> json) {

@@ -44,12 +44,12 @@ class RestaurantHomeCard extends StatelessWidget {
                     borderRadius: const BorderRadius.all(Radius.circular(10)),
                     child: CachedNetworkImage(
                       alignment: Alignment.topCenter,
-                      placeholder: (context, url) => Transform.scale(
-                        scale: 0.1,
-                        child: CircularProgressIndicator(
-                          color: Colors.grey[400],
-                        ),
-                      ),
+                      // placeholder: (context, url) => Transform.scale(
+                      //   scale: 0.1,
+                      //   child: CircularProgressIndicator(
+                      //     color: Colors.grey[400],
+                      //   ),
+                      // ),
                       imageUrl: cardImage,
                       height: ThreeKmScreenUtil.screenHeightDp / 1.8,
                       width: double.infinity,

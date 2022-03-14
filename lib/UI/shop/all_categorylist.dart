@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/src/provider.dart';
 import 'package:threekm/UI/shop/cart/cart_item_list_modal.dart';
 import 'package:threekm/localization/localize.dart';
@@ -31,26 +32,50 @@ class _AllCategoryListState extends State<AllCategoryList> {
           elevation: 1,
           backgroundColor: Colors.white,
           iconTheme: const IconThemeData(color: Colors.black),
-          title:  Text(
-           AppLocalizations.of(
-                                                          context)!
-                                                      .translate('all_cat_text') ?? 'ALL CATEGORIES',
+          title: Text(
+            AppLocalizations.of(context)!.translate('all_cat_text') ??
+                'ALL CATEGORIES',
           ),
           titleTextStyle: const TextStyle(
               color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold),
           actions: [
-            Container(
-                margin: const EdgeInsets.only(right: 16),
-                decoration: BoxDecoration(
-                    color: Colors.grey[200], shape: BoxShape.circle),
-                child: IconButton(
-                    onPressed: () {
-                      viewCart(context, 'shop');
-                    },
-                    icon: const Icon(
-                      Icons.shopping_cart_rounded,
-                      size: 30,
-                    )))
+            Stack(
+              children: [
+                Container(
+                    margin: const EdgeInsets.only(right: 16),
+                    decoration: BoxDecoration(
+                        color: Colors.grey[200], shape: BoxShape.circle),
+                    child: IconButton(
+                        onPressed: () {
+                          viewCart(context, 'shop');
+                        },
+                        icon: const Icon(
+                          Icons.shopping_cart_rounded,
+                          size: 30,
+                        ))),
+                ValueListenableBuilder(
+                    valueListenable: Hive.box('cartBox').listenable(),
+                    builder: (context, Box box, snapshot) {
+                      return Positioned(
+                          top: 0,
+                          right: 6,
+                          child: box.length != 0
+                              ? Container(
+                                  decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: Colors.red),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(4.0),
+                                    child: Text(
+                                      '${box.length}',
+                                      style: TextStyle(
+                                          fontSize: 11, color: Colors.white),
+                                    ),
+                                  ))
+                              : Container());
+                    }),
+              ],
+            )
           ],
         ),
       ),
@@ -66,6 +91,7 @@ class _AllCategoryListState extends State<AllCategoryList> {
               child: CircularProgressIndicator(),
             );
           } else if (allCategoryProvider.state == "error") {
+            context.read<AllCategoryListProvider>().getAllCategory(mounted);
             return const Center(
               child: Text("error"),
             );
@@ -124,7 +150,7 @@ class _AllCategoryWidgetState extends State<AllCategoryWidget> {
                           opacity: animation,
                           child: child,
                         );
-                      }));
+                      })).whenComplete(() => setState(() {}));
               // SubCategoryList(data: _subCategoryData)
               // subCategoryData =data?[i].childs;
               // widget.setsubcat(widget.data?[i].childs, true);

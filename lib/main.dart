@@ -78,6 +78,11 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   AppLanguage appLanguage = AppLanguage();
   await appLanguage.fetchLocale();
+  Hive
+    ..initFlutter()
+    ..registerAdapter(CartHiveModelAdapter())
+    ..registerAdapter(BusinesseswishListHiveModelAdapter());
+    
   runApp(MyApp(
     appLanguage: appLanguage,
   ));
@@ -131,10 +136,7 @@ void main() async {
       });
     }
   }
-  Hive
-    ..initFlutter()
-    ..registerAdapter(CartHiveModelAdapter())
-    ..registerAdapter(BusinesseswishListHiveModelAdapter());
+
   await Firebase.initializeApp();
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
     statusBarColor: Colors.transparent,
@@ -145,7 +147,7 @@ void main() async {
   //end fcm code------------------------------------------------------------
 
   Directory directory = await pathProvider.getApplicationDocumentsDirectory();
-  Hive.init(directory.path);
+  // Hive.init(directory.path);
 }
 
 class MyApp extends StatelessWidget {

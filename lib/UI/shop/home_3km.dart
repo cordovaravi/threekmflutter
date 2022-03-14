@@ -283,22 +283,23 @@ class _ShopHomeState extends State<ShopHome>
                                     shape: BoxShape.circle,
                                     //color: Color(0xff7572ED)
                                   )),
-                              Positioned(
-                                  top: -10,
-                                  right: -8,
-                                  child: Container(
-                                      decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          color: Colors.red),
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(4.0),
-                                        child: Text(
-                                          '${Hive.box('cartBox').length}',
-                                          style: TextStyle(
-                                              fontSize: 11,
-                                              color: Colors.white),
-                                        ),
-                                      )))
+                              if (Hive.box('cartBox').length != 0)
+                                Positioned(
+                                    top: -10,
+                                    right: -8,
+                                    child: Container(
+                                        decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: Colors.red),
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(4.0),
+                                          child: Text(
+                                            '${Hive.box('cartBox').length}',
+                                            style: TextStyle(
+                                                fontSize: 11,
+                                                color: Colors.white),
+                                          ),
+                                        )))
                             ],
                           ),
                         ),
@@ -334,6 +335,17 @@ class _ShopHomeState extends State<ShopHome>
                   ),
                 ),
               ),
+              InkWell(
+                onTap: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (_) => BusinessesHome()));
+                },
+                child: Image(
+                  image: AssetImage('assets/BusinessesImg/shopHomeBiz.png'),
+                  width: double.infinity,
+                  //height: 400,
+                ),
+              ),
               CategoryListHome(
                 category:
                     widget.shopHomeProvider.shopHomeData!.result!.trending,
@@ -343,7 +355,7 @@ class _ShopHomeState extends State<ShopHome>
                 padding: const EdgeInsets.only(top: 8, bottom: 8),
                 color: Colors.white70,
                 //width: ThreeKmScreenUtil.screenWidthDp / 1.1,
-                height: 200,
+                height: 300,
                 child: ListView.builder(
                     padding: EdgeInsets.only(right: 20),
                     shrinkWrap: true,
@@ -364,11 +376,13 @@ class _ShopHomeState extends State<ShopHome>
                                 borderRadius: BorderRadius.circular(10),
                                 child: CachedNetworkImage(
                                     imageUrl: shopAdvData![i].images!.first,
-                                    width: ThreeKmScreenUtil.screenWidthDp /
-                                        1.1888,
+                                    // width: ThreeKmScreenUtil.screenWidthDp /
+                                    //     1.1888,
                                     // height: ThreeKmScreenUtil.screenHeightDp / 19,
-                                    fit: BoxFit.fill,
+                                    fit: BoxFit.contain,
                                     placeholder: (context, url) => Container(
+                                          width:
+                                              MediaQuery.of(context).size.width,
                                           color: Colors.grey[200],
                                         ))),
                           ),
@@ -457,7 +471,7 @@ class _ShopHomeState extends State<ShopHome>
                                 Text(
                                   AppLocalizations.of(context)!
                                           .translate('view_all_text') ??
-                                      "",
+                                      "View All ",
                                   // 'View All ',
                                   style: ThreeKmTextConstants
                                       .tk14PXPoppinsRedSemiBold,
@@ -520,14 +534,14 @@ class _ShopHomeState extends State<ShopHome>
                         : Container(),
                     Padding(
                       padding: const EdgeInsets.only(
-                        bottom: 30,
-                        top: 20,
+                        bottom: 10,
+                        top: 10,
                       ),
                       child: ElevatedButton(
                           child: Text(
                             AppLocalizations.of(context)!
                                     .translate('view_all_restaurants') ??
-                                "",
+                                "View all restaurants",
                             style: TextStyle(
                               fontSize: 20,
                             ),

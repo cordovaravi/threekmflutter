@@ -91,8 +91,9 @@ class _CheckOutSuccessState extends State<CheckOutSuccess> {
                           ),
                         ),
                         Padding(
-                          padding: const EdgeInsets.only(left: 10),
-                          child: Text('Confirming With Sellers:'),
+                          padding: const EdgeInsets.only(left: 20),
+                          child: Text(
+                              'Waiting for Restaurant to accept the order'),
                         ),
                         ListView.builder(
                             shrinkWrap: true,

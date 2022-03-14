@@ -150,9 +150,11 @@ class _AllRestaurantListState extends State<AllRestaurantList> {
                           mainAxisSize: MainAxisSize.min,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            SizedBox(
+                            Container(
+                              alignment: Alignment.topLeft,
                               height: ThreeKmScreenUtil.screenHeightDp / 4,
                               child: Stack(
+                                alignment: Alignment.topLeft,
                                 fit: StackFit.loose,
                                 children: [
                                   ClipRRect(
@@ -169,14 +171,9 @@ class _AllRestaurantListState extends State<AllRestaurantList> {
                                               : Colors.grey,
                                           BlendMode.color),
                                       child: CachedNetworkImage(
-                                        alignment: Alignment.topCenter,
-                                        // placeholder: (context, url) =>
-                                        //     Transform.scale(
-                                        //   scale: 0.5,
-                                        //   child: CircularProgressIndicator(
-                                        //     color: Colors.grey[400],
-                                        //   ),
-                                        // ),
+                                        alignment: Alignment.center,
+                                        placeholder: (context, url) =>
+                                            Container(color: Colors.grey),
                                         imageUrl: '${restaurantdata[i].cover}',
                                         //height: ThreeKmScreenUtil.screenHeightDp / 5,
                                         width: ThreeKmScreenUtil.screenWidthDp,

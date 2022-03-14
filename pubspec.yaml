@@ -92,6 +92,7 @@ dependencies:
   dotted_border:
   flutter_rating_bar:
   timelines:
+ 
   
 
 dev_dependencies:

@@ -7,6 +7,7 @@ import 'package:threekm/Models/shopModel/address_list_model.dart';
 import 'package:threekm/Models/shopModel/cart_hive_model.dart';
 import 'package:threekm/Models/shopModel/shipping_rate_model.dart';
 import 'package:threekm/UI/shop/address/new_address.dart';
+import 'package:threekm/UI/shop/address/openMap.dart';
 import 'package:threekm/UI/shop/checkout/payment_confirming_screen.dart';
 import 'package:threekm/commenwidgets/CustomSnakBar.dart';
 import 'package:threekm/localization/localize.dart';
@@ -198,6 +199,9 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
                                   currentPage = i;
                                 });
                                 if (currentPage == 1) {
+                                  var weight = context
+                                      .read<CartProvider>()
+                                      .getBoxWeightTotal(Hive.box('cartBox'));
                                   context
                                       .read<CheckoutProvider>()
                                       .getShippingRate(
@@ -206,10 +210,7 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
                                           deliveryAddressdata?.latitude,
                                           deliveryAddressdata?.longitude,
                                           deliveryAddressdata?.pincode,
-                                          context
-                                              .read<CartProvider>()
-                                              .getBoxWeightTotal(
-                                                  Hive.box('cartBox')),
+                                          weight,
                                           'shop');
                                 }
                                 if (currentPage == 2 &&
@@ -259,11 +260,12 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
                                             left: 17, bottom: 10),
                                         child: TextButton.icon(
                                             onPressed: () {
-                                              Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                      builder: (_) =>
-                                                          NewAddress()));
+                                              OpenMap(context);
+                                              // Navigator.push(
+                                              //     context,
+                                              //     MaterialPageRoute(
+                                              //         builder: (_) =>
+                                              //             NewAddress()));
                                             },
                                             icon: const Icon(Icons.add,
                                                 color: Color(0xFF3E7EFF)),
@@ -634,14 +636,7 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
                                                                     InkWell(
                                                                       onTap:
                                                                           () {
-                                                                        context.read<CheckoutProvider>().getShippingRate(
-                                                                            mounted,
-                                                                            context,
-                                                                            deliveryAddressdata?.latitude,
-                                                                            deliveryAddressdata?.longitude,
-                                                                            deliveryAddressdata?.pincode,
-                                                                            context.read<CartProvider>().getBoxWeightTotal(Hive.box('cartBox')),
-                                                                            'shop');
+                                                                        
                                                                         if (cartItem.quantity <
                                                                             2) {
                                                                           return;
@@ -655,6 +650,17 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
                                                                           cartItem
                                                                               .save();
                                                                         }
+                                                                        var weight = context
+                                                                            .read<CartProvider>()
+                                                                            .getBoxWeightTotal(Hive.box('cartBox'));
+                                                                        context.read<CheckoutProvider>().getShippingRate(
+                                                                            mounted,
+                                                                            context,
+                                                                            deliveryAddressdata?.latitude,
+                                                                            deliveryAddressdata?.longitude,
+                                                                            deliveryAddressdata?.pincode,
+                                                                            weight,
+                                                                            'shop');
                                                                       },
                                                                       child:
                                                                           const Image(
@@ -676,36 +682,44 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
                                                                           () {
                                                                         if (cartItem.manageStock! ==
                                                                             false) {
+                                                                          
+                                                                          cartItem.quantity =
+                                                                              cartItem.quantity + 1;
+                                                                          cartItem
+                                                                              .save();
+                                                                              var weight = context
+                                                                              .read<CartProvider>()
+                                                                              .getBoxWeightTotal(Hive.box('cartBox'));
                                                                           context.read<CheckoutProvider>().getShippingRate(
                                                                               mounted,
                                                                               context,
                                                                               deliveryAddressdata?.latitude,
                                                                               deliveryAddressdata?.longitude,
                                                                               deliveryAddressdata?.pincode,
-                                                                              context.read<CartProvider>().getBoxWeightTotal(Hive.box('cartBox')),
+                                                                              weight,
                                                                               'shop');
-                                                                          cartItem.quantity =
-                                                                              cartItem.quantity + 1;
-                                                                          cartItem
-                                                                              .save();
                                                                         } else if (cartItem.quantity <
                                                                             cartItem.masterStock!) {
+                                                                              cartItem.quantity =
+                                                                              cartItem.quantity + 1;
+                                                                         
+                                                                          cartItem
+                                                                              .save();
+                                                                               var weight = context
+                                                                              .read<CartProvider>()
+                                                                              .getBoxWeightTotal(Hive.box('cartBox'));
                                                                           context.read<CheckoutProvider>().getShippingRate(
                                                                               mounted,
                                                                               context,
                                                                               deliveryAddressdata?.latitude,
                                                                               deliveryAddressdata?.longitude,
                                                                               deliveryAddressdata?.pincode,
-                                                                              context.read<CartProvider>().getBoxWeightTotal(Hive.box('cartBox')),
+                                                                              weight,
                                                                               'shop');
-                                                                          cartItem.quantity =
-                                                                              cartItem.quantity + 1;
-                                                                          cartItem
-                                                                              .save();
+                                                                          
                                                                         } else {
-                                                                          CustomSnackBar(
-                                                                              context,
-                                                                              Text("This Product is now out of stock"));
+                                                                          CustomToast(
+                                                                              'This Product is now out of stock');
                                                                         }
                                                                       },
                                                                       child:
@@ -883,82 +897,92 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
                 margin: EdgeInsets.only(bottom: 20),
                 height: 50,
                 child: ElevatedButton.icon(
-                  style: ButtonStyle(
-                      shape: MaterialStateProperty.all(StadiumBorder()),
-                      backgroundColor:
-                          MaterialStateProperty.all(const Color(0xFF3E7EFF)),
-                      foregroundColor: MaterialStateProperty.all(Colors.black),
-                      padding: MaterialStateProperty.all(const EdgeInsets.only(
-                          left: 30, right: 30, top: 15, bottom: 15))),
-                  icon: Container(
-                    padding: const EdgeInsets.all(5),
-                    decoration: const BoxDecoration(
-                        color: Color(0x80FFFFFF), shape: BoxShape.circle),
-                    child: Container(
+                    style: ButtonStyle(
+                        shape: MaterialStateProperty.all(StadiumBorder()),
+                        backgroundColor:
+                            MaterialStateProperty.all(const Color(0xFF3E7EFF)),
+                        foregroundColor:
+                            MaterialStateProperty.all(Colors.black),
+                        padding: MaterialStateProperty.all(
+                            const EdgeInsets.only(
+                                left: 30, right: 30, top: 15, bottom: 15))),
+                    icon: Container(
                       padding: const EdgeInsets.all(5),
                       decoration: const BoxDecoration(
-                          color: Color(0xFFFFFFFF), shape: BoxShape.circle),
+                          color: Color(0x80FFFFFF), shape: BoxShape.circle),
+                      child: Container(
+                        padding: const EdgeInsets.all(5),
+                        decoration: const BoxDecoration(
+                            color: Color(0xFFFFFFFF), shape: BoxShape.circle),
+                      ),
                     ),
-                  ),
-                  label: Text(
-                    currentPage == 0
-                        ? AppLocalizations.of(context)!.translate('Continue') ??
-                            'Continue'
-                        : AppLocalizations.of(context)!.translate('Pay_Now') ??
-                            "Pay Now",
-                    style: ThreeKmTextConstants.tk14PXPoppinsBlackBold
-                        .copyWith(color: Colors.white, letterSpacing: 0.56),
-                  ),
-                  onPressed: context.read<CheckoutProvider>().state != 'error'
-                      ? () {
-                          if (currentPage == 0 &&
-                              deliveryAddressdata?.addressId != 0) {
-                            _pageController.jumpToPage(1);
-                          } else if (currentPage == 1) {
-                            _pageController.jumpToPage(2);
-                          } else if (currentPage == 2 &&
-                              context
-                                      .read<CheckoutProvider>()
-                                      .getShippingRateData
-                                      .deliveryRate! !=
-                                  0) {
-                            _pageController.jumpToPage(3);
-                            var box = Hive.box<List<CartHiveModel>>('cartBox')
-                                .values
-                                .toList();
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (_) => PaymentConfirmingScreen(
-                                          dropLocation: deliveryAddressdata,
-                                          productList: box,
-                                          shippingAmount: context
-                                              .read<CheckoutProvider>()
-                                              .getShippingRateData
-                                              .deliveryRate!,
-                                          shippingDistance: context
-                                              .read<CheckoutProvider>()
-                                              .getShippingRateData
-                                              .distance!,
-                                          mode: 'shop',
-                                        )));
-                          }
-                          if (deliveryAddressdata?.addressId == 0) {
-                            CustomSnackBar(
-                                context,
-                                Text(AppLocalizations.of(context)!
-                                        .translate('Please_select_address') ??
-                                    "Please select address"));
-                          }
-                        }
-                      : () {
-                          var snackBar = SnackBar(
-                            content: Text(
-                                '${context.read<CheckoutProvider>().message}'),
-                          );
-                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                        },
-                ),
+                    label: Text(
+                      currentPage == 0
+                          ? AppLocalizations.of(context)!
+                                  .translate('Continue') ??
+                              'Continue'
+                          : AppLocalizations.of(context)!
+                                  .translate('Pay_Now') ??
+                              "Pay Now",
+                      style: ThreeKmTextConstants.tk14PXPoppinsBlackBold
+                          .copyWith(color: Colors.white, letterSpacing: 0.56),
+                    ),
+                    onPressed:
+                        // context.read<CheckoutProvider>().state != 'error'
+                        //     ?
+                        () {
+                      if (currentPage == 0 &&
+                          deliveryAddressdata?.addressId != 0) {
+                        _pageController.jumpToPage(1);
+                      } else if (currentPage == 1) {
+                        _pageController.jumpToPage(2);
+                      } else if (currentPage == 2 &&
+                          context
+                                  .read<CheckoutProvider>()
+                                  .getShippingRateData
+                                  .deliveryRate! !=
+                              0) {
+                        _pageController.jumpToPage(3);
+                        var box = Hive.box<List<CartHiveModel>>('cartBox')
+                            .values
+                            .toList();
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (_) => PaymentConfirmingScreen(
+                                      dropLocation: deliveryAddressdata,
+                                      productList: box,
+                                      shippingAmount: context
+                                          .read<CheckoutProvider>()
+                                          .getShippingRateData
+                                          .deliveryRate!,
+                                      shippingDistance: context
+                                          .read<CheckoutProvider>()
+                                          .getShippingRateData
+                                          .distance!,
+                                      mode: 'shop',
+                                    )));
+                      }
+                      if (deliveryAddressdata?.addressId == 0) {
+                        CustomToast(AppLocalizations.of(context)!
+                                .translate('Please_select_address') ??
+                            "Please select address");
+                        // CustomSnackBar(
+                        //     context,
+                        //     Text(AppLocalizations.of(context)!
+                        //             .translate('Please_select_address') ??
+                        //         "Please select address"));
+                      }
+                    }
+                    // : () {
+                    //     CustomToast('${context.read<CheckoutProvider>().message}');
+                    // var snackBar = SnackBar(
+                    //   content: Text(
+                    //       '${context.read<CheckoutProvider>().message}'),
+                    // );
+                    // ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                    //  },
+                    ),
               )
             : Container());
   }

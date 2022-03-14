@@ -17,16 +17,20 @@ class OrderRealtimeDetailProvider extends ChangeNotifier {
 
   String? _state;
   String? get state => _state;
-  // FirebaseDatabase(databaseURL: 'https://km-production.firebaseio.com')
-  //     .reference();
+
 // test 75116  2022-02-01T04:12:34.824Z
-  Stream<OrderRealtimeDetailModel?> getOrderDetail(date, orderId) {
+  Stream<OrderRealtimeDetailModel?> getOrderDetail(date, orderId, {home}) {
     FirebaseDatabase db = FirebaseDatabase.instanceFor(
         app: secondaryApp, databaseURL: 'https://km-production.firebaseio.com');
     var _dbReference = db.ref();
     try {
-      DateFormat formatter = DateFormat('ddMMMyyyy');
-      var datedata = formatter.format(DateTime.parse(date));
+      DateFormat dateFormat = DateFormat('ddMMMyyyy-hh:mm aa');
+      var utcDate =
+          dateFormat.format(DateTime.parse(date)); // pass the UTC time here
+      var localDate = dateFormat.parse(utcDate, true).toLocal().toString();
+      String createdDate = dateFormat.format(DateTime.parse(localDate));
+      var datedata = createdDate.split('-')[0];
+
       var orders = _dbReference
           .child('orders')
           .child(datedata)
@@ -41,8 +45,7 @@ class OrderRealtimeDetailProvider extends ChangeNotifier {
           return OrderRealtimeDetailModel.fromJson(
               jsonDecode(jsonEncode(event.snapshot.value)));
         } else {
-          
-          navigatorKey.currentState?.pop();
+          if (home == null) navigatorKey.currentState?.pop();
           return null;
         }
       });
@@ -56,5 +59,26 @@ class OrderRealtimeDetailProvider extends ChangeNotifier {
       //  hideLoading();
       // notifyListeners();
     }
+  }
+
+  getLiveOrder() {
+    FirebaseDatabase db = FirebaseDatabase.instanceFor(
+        app: secondaryApp, databaseURL: 'https://km-production.firebaseio.com');
+    var _dbReference = db.ref();
+    DateFormat formatter = DateFormat('ddMMMyyyy');
+    var datedata = formatter.format(DateTime.now());
+    try {
+      var orders = _dbReference
+          .child('orders')
+          .child(datedata)
+          .onValue
+          .asBroadcastStream();
+      orders.map((event) {
+        log(event.snapshot.value.toString());
+      });
+      log('');
+    } catch (e) {}
+
+    return "";
   }
 }

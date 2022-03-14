@@ -7,6 +7,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_webservice/src/core.dart';
 import 'package:provider/src/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:threekm/Custom_library/GooleMapsWidget/src/models/pick_result.dart';
 import 'package:threekm/Custom_library/GooleMapsWidget/src/place_picker.dart';
 import 'package:threekm/providers/Location/locattion_Provider.dart';
 import 'package:threekm/providers/shop/address_list_provider.dart';
@@ -16,7 +17,8 @@ import 'package:threekm/utils/screen_util.dart';
 import 'package:threekm/utils/threekm_textstyles.dart';
 
 class NewAddress extends StatefulWidget {
-  const NewAddress({Key? key}) : super(key: key);
+  const NewAddress({Key? key, this.locationResult}) : super(key: key);
+  final PickResult? locationResult;
 
   @override
   State<NewAddress> createState() => _NewAddressState();
@@ -43,6 +45,35 @@ class _NewAddressState extends State<NewAddress> {
   void initState() {
     super.initState();
     getdatafromLocal();
+    setData();
+  }
+
+  setData() {
+    setState(() {
+      _selecetedAddress = widget.locationResult?.formattedAddress;
+      searchedText.text = widget.locationResult?.formattedAddress ?? '';
+      geometry = widget.locationResult?.geometry?.location;
+      for (var i = 0;
+          i < widget.locationResult!.addressComponents!.length;
+          i++) {
+        if (widget.locationResult?.addressComponents?[i].types[0] ==
+            'postal_code') {
+          postalCode = widget.locationResult?.addressComponents![i].longName;
+        }
+
+        if (widget.locationResult?.addressComponents?[i].types.first ==
+            'administrative_area_level_2') {
+          city = widget.locationResult?.addressComponents![i].longName;
+        }
+
+        if (widget.locationResult?.addressComponents?[i].types.first ==
+            'administrative_area_level_1') {
+          state = widget.locationResult?.addressComponents![i].longName;
+        }
+      }
+
+      print(widget.locationResult?.geometry!.toJson());
+    });
   }
 
   getdatafromLocal() async {
@@ -80,124 +111,102 @@ class _NewAddressState extends State<NewAddress> {
               children: [
                 Container(
                   padding: const EdgeInsets.only(
-                      bottom: 20, left: 10, right: 10, top: 20),
+                      bottom: 20, left: 20, right: 10, top: 20),
                   width: ThreeKmScreenUtil.screenWidthDp,
                   child: InkWell(
-                    onTap: () {
-                      Future.delayed(Duration.zero, () {
-                        context
-                            .read<LocationProvider>()
-                            .getLocation()
-                            .whenComplete(() {
-                          final _locationProvider =
-                              context.read<LocationProvider>().getlocationData;
-                          final kInitialPosition = LatLng(
-                              _locationProvider!.latitude!,
-                              _locationProvider.longitude!);
-                          if (_locationProvider != null) {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => PlacePicker(
-                                    apiKey: GMap_Api_Key,
-                                    // initialMapType: MapType.satellite,
-                                    onPlacePicked: (result) {
-                                      //print(result.formattedAddress);
-                                      log(result.toString());
-                                      log('${result.geometry?.location.lat}');
+                      onTap: () {
+                        Future.delayed(Duration.zero, () {
+                          context
+                              .read<LocationProvider>()
+                              .getLocation()
+                              .whenComplete(() {
+                            final _locationProvider = context
+                                .read<LocationProvider>()
+                                .getlocationData;
+                            final kInitialPosition = LatLng(
+                                _locationProvider!.latitude!,
+                                _locationProvider.longitude!);
+                            if (_locationProvider != null) {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => PlacePicker(
+                                      apiKey: GMap_Api_Key,
+                                      // initialMapType: MapType.satellite,
+                                      onPlacePicked: (result) {
+                                        //print(result.formattedAddress);
+                                        log(result.toString());
+                                        log('${result.geometry?.location.lat}');
 
-                                      setState(() {
-                                        _selecetedAddress =
-                                            result.formattedAddress;
-                                        searchedText.text =
-                                            result.formattedAddress ?? '';
-                                        geometry = result.geometry?.location;
-                                        for (var i = 0;
-                                            i <
-                                                result
-                                                    .addressComponents!.length;
-                                            i++) {
-                                          if (result.addressComponents?[i]
-                                                  .types[0] ==
-                                              'postal_code') {
-                                            postalCode = result
-                                                .addressComponents![i].longName;
+                                        setState(() {
+                                          _selecetedAddress =
+                                              result.formattedAddress;
+                                          searchedText.text =
+                                              result.formattedAddress ?? '';
+                                          geometry = result.geometry?.location;
+                                          for (var i = 0;
+                                              i <
+                                                  result.addressComponents!
+                                                      .length;
+                                              i++) {
+                                            if (result.addressComponents?[i]
+                                                    .types[0] ==
+                                                'postal_code') {
+                                              postalCode = result
+                                                  .addressComponents![i]
+                                                  .longName;
+                                            }
+
+                                            if (result.addressComponents?[i]
+                                                    .types.first ==
+                                                'administrative_area_level_2') {
+                                              city = result
+                                                  .addressComponents![i]
+                                                  .longName;
+                                            }
+
+                                            if (result.addressComponents?[i]
+                                                    .types.first ==
+                                                'administrative_area_level_1') {
+                                              state = result
+                                                  .addressComponents![i]
+                                                  .longName;
+                                            }
                                           }
 
-                                          if (result.addressComponents?[i].types
-                                                  .first ==
-                                              'administrative_area_level_2') {
-                                            city = result
-                                                .addressComponents![i].longName;
-                                          }
-
-                                          if (result.addressComponents?[i].types
-                                                  .first ==
-                                              'administrative_area_level_1') {
-                                            state = result
-                                                .addressComponents![i].longName;
-                                          }
-                                        }
-
-                                        print(result.geometry!.toJson());
-                                      });
-                                      Navigator.of(context).pop();
-                                    },
-                                    initialPosition: kInitialPosition,
-                                    useCurrentLocation: true,
-                                    selectInitialPosition: true,
-                                    usePinPointingSearch: true,
-                                    usePlaceDetailSearch: true,
-                                  ),
-                                ));
-                          }
+                                          print(result.geometry!.toJson());
+                                        });
+                                        Navigator.of(context).pop();
+                                      },
+                                      initialPosition: kInitialPosition,
+                                      useCurrentLocation: true,
+                                      selectInitialPosition: true,
+                                      usePinPointingSearch: true,
+                                      usePlaceDetailSearch: true,
+                                    ),
+                                  ));
+                            }
+                          });
                         });
-                      });
-                    },
-                    child: IgnorePointer(
-                      child: TextFormField(
-                        readOnly: true,
-                        //enabled: false,
-                        controller: searchedText,
-                        keyboardType: TextInputType.text,
-                        validator: (val) {
-                          if (val == null || val == '') {
-                            return 'Please Select Address';
-                          }
-                        },
-                        autofocus: false,
-                        decoration: InputDecoration(
-                          hintText: 'Select/Search an address',
-                          hintStyle: ThreeKmTextConstants.tk14PXLatoGreyRegular,
-                          counterText: '',
-                          filled: true,
-                          prefixIcon: const Icon(Icons.search,
-                              color: Color(0xFF0F0F2D)),
-                          suffixIcon: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Image(
-                              image:
-                                  AssetImage('assets/shopImg/googlemaps.png'),
-                              width: 10,
-                              height: 10,
-                            ),
-                          ),
-                          fillColor: Colors.grey[200],
-                          //isDense: true,
-                          contentPadding:
-                              const EdgeInsets.fromLTRB(10, 13, 10, 13),
-                          // enabledBorder: OutlineInputBorder(
-                          //     borderSide: BorderSide(color: Colors.grey[400])),
-                          // focusedBorder: OutlineInputBorder(
-                          //     borderSide: BorderSide(color: Colors.grey[400])),
-                          border: const OutlineInputBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(20)),
-                              borderSide: BorderSide.none),
-                        ),
-                      ),
-                    ),
-                  ),
+                      },
+                      child: Row(
+                        children: [
+                          SizedBox(
+                              width: MediaQuery.of(context).size.width / 1.4,
+                              child: Text(
+                                '${_selecetedAddress ?? "Please Select Address"}',
+                              )),
+                          InkWell(
+                              onTap: () {},
+                              child: Text('Change',
+                                  style: TextStyle(color: Colors.blue)))
+                          // Image(
+                          //   image: AssetImage('assets/shopImg/googlemaps.png'),
+                          //   width: 24,
+                          //   height: 24,
+                          // ),
+                        ],
+                      )),
                 ),
                 const Divider(
                   thickness: 10,
@@ -211,7 +220,7 @@ class _NewAddressState extends State<NewAddress> {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(top: 14, bottom: 14, left: 18),
+                  padding: const EdgeInsets.only(left: 18),
                   child: TextFormField(
                     controller: firstNameText,
                     keyboardType: TextInputType.text,
@@ -242,7 +251,7 @@ class _NewAddressState extends State<NewAddress> {
                   color: Color(0xFFF4F3F8),
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(top: 14, bottom: 14, left: 18),
+                  padding: const EdgeInsets.only(left: 18),
                   child: TextFormField(
                     controller: lastNameText,
                     keyboardType: TextInputType.text,
@@ -272,18 +281,26 @@ class _NewAddressState extends State<NewAddress> {
                   color: Color(0xFFF4F3F8),
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(top: 14, bottom: 14, left: 18),
+                  padding: const EdgeInsets.only(left: 18),
                   child: TextFormField(
                     maxLength: 10,
                     controller: phoneNumberText,
                     keyboardType: TextInputType.number,
                     validator: (val) {
                       log('${val?.length}');
-                      if (val == null || val == '') {
-                        return 'Phone no. is required';
-                      } else if (val.length < 10) {
-                        return 'Phone no. must be of 10 digit';
+                      String pattern = r'(^[0-9]{10}$)';
+                      RegExp regExp = new RegExp(pattern);
+                      if (val?.length == 0) {
+                        return 'Please enter 10 digit mobile number';
+                      } else if (!regExp.hasMatch(val!)) {
+                        return 'Please enter valid mobile number';
                       }
+
+                      // if (val == null || val == '') {
+                      //   return 'Phone no. is required';
+                      // } else if (val.length < 10) {
+                      //   return 'Phone no. must be of 10 digit';
+                      // }
                     },
                     autofocus: false,
                     decoration: InputDecoration(
@@ -307,7 +324,7 @@ class _NewAddressState extends State<NewAddress> {
                   color: Color(0xFFF4F3F8),
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(top: 14, bottom: 14, left: 18),
+                  padding: const EdgeInsets.only(left: 18),
                   child: TextFormField(
                     controller: flatNumberText,
                     keyboardType: TextInputType.text,
@@ -370,7 +387,7 @@ class _NewAddressState extends State<NewAddress> {
                   color: Color(0xFFF4F3F8),
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(top: 14, bottom: 14, left: 18),
+                  padding: const EdgeInsets.only(left: 18),
                   child: TextFormField(
                     controller: landmarkText,
                     keyboardType: TextInputType.text,
@@ -614,11 +631,15 @@ class _NewAddressState extends State<NewAddress> {
                             "state": state, //administrative_area_level_1
                           };
 
-                          if (_formKey.currentState!.validate()) {
-                            context
-                                .read<AddressListProvider>()
-                                .addNewAddress(mounted, jsonEncode(data));
-                            log(data.toString());
+                          if (_selecetedAddress != null) {
+                            if (_formKey.currentState!.validate()) {
+                              context
+                                  .read<AddressListProvider>()
+                                  .addNewAddress(mounted, jsonEncode(data));
+                              log(data.toString());
+                            }
+                          } else {
+                            // openMap();
                           }
                         }),
                   ),

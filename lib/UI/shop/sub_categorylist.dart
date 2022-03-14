@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:threekm/Models/shopModel/all_category_model.dart';
 import 'package:threekm/localization/localize.dart';
 import '../shop/product_listing.dart';
@@ -25,16 +26,40 @@ class SubCategoryList extends StatelessWidget {
         titleTextStyle: const TextStyle(
             color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold),
         actions: [
-          Container(
-              margin: const EdgeInsets.only(right: 16),
-              decoration: BoxDecoration(
-                  color: Colors.grey[200], shape: BoxShape.circle),
-              child: IconButton(
-                  onPressed: () {},
-                  icon: const Icon(
-                    Icons.shopping_cart_rounded,
-                    size: 30,
-                  )))
+          Stack(
+            children: [
+              Container(
+                  margin: const EdgeInsets.only(right: 16),
+                  decoration: BoxDecoration(
+                      color: Colors.grey[200], shape: BoxShape.circle),
+                  child: IconButton(
+                      onPressed: () {},
+                      icon: const Icon(
+                        Icons.shopping_cart_rounded,
+                        size: 30,
+                      ))),
+              ValueListenableBuilder(
+                  valueListenable: Hive.box('cartBox').listenable(),
+                  builder: (context, Box box, snapshot) {
+                    return Positioned(
+                        top: 0,
+                        right: 6,
+                        child: box.length != 0
+                            ? Container(
+                                decoration: BoxDecoration(
+                                    shape: BoxShape.circle, color: Colors.red),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(4.0),
+                                  child: Text(
+                                    '${box.length}',
+                                    style: TextStyle(
+                                        fontSize: 11, color: Colors.white),
+                                  ),
+                                ))
+                            : Container());
+                  }),
+            ],
+          )
         ],
       ),
       body: Container(

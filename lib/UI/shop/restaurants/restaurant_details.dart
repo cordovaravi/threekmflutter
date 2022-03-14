@@ -92,7 +92,7 @@ class _RestaurantDetailsState extends State<RestaurantDetails>
                       height: ThreeKmScreenUtil.screenHeightDp / 5,
                       fit: BoxFit.fill,
                       placeholder: (context, url) => Transform.scale(
-                        scale: 0.5,
+                        scale: 0.2,
                         child: CircularProgressIndicator(
                           color: Colors.grey[400],
                         ),
@@ -143,7 +143,7 @@ class _RestaurantDetailsState extends State<RestaurantDetails>
                                 height: 80,
                                 fit: BoxFit.fill,
                                 placeholder: (context, url) => Transform.scale(
-                                  scale: 0.5,
+                                  scale: 0.2,
                                   child: CircularProgressIndicator(
                                     color: Colors.grey[400],
                                   ),

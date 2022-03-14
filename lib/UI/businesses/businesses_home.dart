@@ -10,6 +10,7 @@ import 'package:shimmer/shimmer.dart';
 import 'package:threekm/UI/Auth/signup/sign_up.dart';
 import 'package:threekm/UI/Search/SearchPage.dart';
 import 'package:threekm/UI/businesses/businesses_detail.dart';
+import 'package:threekm/UI/businesses/view_all_category_biz.dart';
 import 'package:threekm/UI/main/navigation.dart';
 import 'package:threekm/UI/shop/cart/cart_item_list_modal.dart';
 import 'package:threekm/localization/localize.dart';
@@ -43,6 +44,13 @@ class _BusinessesHomeState extends State<BusinessesHome>
     final businessesHomeProvider = context.watch<BusinessesHomeProvider>();
     final _location = context.read<LocationProvider>().getlocationData;
     return Scaffold(
+      // extendBody: true,
+      appBar: AppBar(
+        elevation: 0,
+        title: Text('Businesses'),
+        backgroundColor: Colors.transparent,
+        foregroundColor: Colors.black,
+      ),
       body: RefreshIndicator(
         onRefresh: () {
           var initJson = json.encode({
@@ -208,28 +216,38 @@ class _HomeState extends State<Home> {
                       itemCount: data?.result?.categories?.Result.length,
                       itemBuilder: (context, i) {
                         var category = data?.result?.categories?.Result[i];
-                        return Column(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(20),
-                                color: Color(0xFFF4F3F8),
+                        return InkWell(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (_) => ViewAllBiz(
+                                          query: '${category?.name}',
+                                        )));
+                          },
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(20),
+                                  color: Color(0xFFF4F3F8),
+                                ),
+                                child: Image(
+                                  image: NetworkImage('${category?.imageLink}'),
+                                  // height: 50,
+                                  // width: 50,
+                                ),
                               ),
-                              child: Image(
-                                image: NetworkImage('${category?.imageLink}'),
-                                // height: 50,
-                                // width: 50,
-                              ),
-                            ),
-                            Text(
-                              '${category?.name}',
-                              style: ThreeKmTextConstants
-                                  .tk12PXPoppinsBlackSemiBold
-                                  .copyWith(height: 2),
-                            )
-                          ],
+                              Text(
+                                '${category?.name}',
+                                style: ThreeKmTextConstants
+                                    .tk12PXPoppinsBlackSemiBold
+                                    .copyWith(height: 2),
+                              )
+                            ],
+                          ),
                         );
                       }),
                 ),
@@ -303,7 +321,14 @@ class _HomeState extends State<Home> {
                                         .tk16PXPoppinsBlackSemiBold,
                                   ),
                                   GestureDetector(
-                                    onTap: () {},
+                                    onTap: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (_) => ViewAllBiz(
+                                                    query: '${business?.name}',
+                                                  )));
+                                    },
                                     child: Row(
                                       children: [
                                         Text(

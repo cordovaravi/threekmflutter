@@ -149,9 +149,9 @@ class LineItems {
   late final String image;
   late final String soldby;
   late final String variation;
-  late final int price;
+  late final num price;
   late final int quantity;
-  late final int subtotal;
+  late final num subtotal;
 
   LineItems.fromJson(Map<String, dynamic> json) {
     name = json['name'];
@@ -309,10 +309,10 @@ class Cart {
   });
   late final int id;
   late final String name;
-  late final int price;
+  late final num price;
   late var weight;
   late final int quantity;
-  late final int subtotal;
+  late final num subtotal;
   late var tax;
   late var total;
   late final String image;

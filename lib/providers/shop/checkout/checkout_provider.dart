@@ -44,7 +44,7 @@ class CheckoutProvider extends ChangeNotifier {
       mounted, context, latitude, longitude, pincode, weight, mode) async {
     Box _creatorIDBox = await Hive.openBox('creatorID');
     Box _restrocreatorID = await Hive.openBox('restrocreatorID');
-
+    _state = 'loading';
     log(_creatorIDBox.get('id').toString());
     if (mounted) {
       showLoading();
@@ -57,11 +57,12 @@ class CheckoutProvider extends ChangeNotifier {
         "weight": weight,
         "pincode": pincode
       };
-      _state = 'loading';
+
       try {
         final response = await _apiProvider.post(
             mode == 'shop' ? shopShippingRate : shippingRate,
             json.encode(requestJson));
+        _rate = ShippingRateModel();
         if (response != null && response['status'] != 'failure') {
           hideLoading();
           _rate = ShippingRateModel.fromJson(response);
@@ -76,7 +77,6 @@ class CheckoutProvider extends ChangeNotifier {
           ScaffoldMessenger.of(context).showSnackBar(snackBar);
           _state = 'error';
           _message = response['message'];
-          log('errorrrrrrrrrrrrrrrrrr');
         }
       } catch (e) {
         hideLoading();

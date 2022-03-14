@@ -93,6 +93,7 @@ const String allCategoryList = "category/tree";
 const String restaurants = "menu/home";
 const String restaurantMenu = "restaurent/menu";
 const String restaurantMenuCheckout = "menu/checkout";
+const String cuisinesListAPI = "restaurant/cuisines/list";
 
 // Search
 const String Search_Business = "business/geolist";

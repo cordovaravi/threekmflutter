@@ -98,17 +98,20 @@ class _WishListState extends State<WishList> {
                       return Positioned(
                           top: 0,
                           right: 6,
-                          child: Container(
-                              decoration: BoxDecoration(
-                                  shape: BoxShape.circle, color: Colors.red),
-                              child: Padding(
-                                padding: const EdgeInsets.all(4.0),
-                                child: Text(
-                                  '${box.length}',
-                                  style: TextStyle(
-                                      fontSize: 11, color: Colors.white),
-                                ),
-                              )));
+                          child: box.length != 0
+                              ? Container(
+                                  decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: Colors.red),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(4.0),
+                                    child: Text(
+                                      '${box.length}',
+                                      style: TextStyle(
+                                          fontSize: 11, color: Colors.white),
+                                    ),
+                                  ))
+                              : Container());
                     }),
               ],
             )
@@ -214,7 +217,8 @@ class _WishListState extends State<WishList> {
                           gridDelegate:
                               const SliverGridDelegateWithFixedCrossAxisCount(
                                   crossAxisCount: 2,
-                                  childAspectRatio: 0.64,
+                                  mainAxisExtent: 250,
+                                  //childAspectRatio: 0.68,
                                   crossAxisSpacing: 10,
                                   mainAxisSpacing: 10),
                           itemCount: wishbox.length,
@@ -245,7 +249,7 @@ class _WishListState extends State<WishList> {
                                         }));
                               },
                               child: Container(
-                                  height: 200,
+                                  height: 250,
                                   width: 100,
                                   margin: EdgeInsets.only(bottom: 20),
                                   decoration: const BoxDecoration(
@@ -264,34 +268,57 @@ class _WishListState extends State<WishList> {
                                         CrossAxisAlignment.start,
                                     children: [
                                       Flexible(
-                                        flex: 1,
-                                        child: SizedBox(
-                                          height: 160.0,
-                                          width: double.infinity,
-                                          child: ClipRRect(
-                                            borderRadius:
-                                                const BorderRadius.all(
-                                                    Radius.circular(20)),
-                                            child: CachedNetworkImage(
-                                              alignment: Alignment.topCenter,
-                                              placeholder: (context, url) =>
-                                                  Transform.scale(
-                                                scale: 0.5,
-                                                child:
-                                                    CircularProgressIndicator(
-                                                  color: Colors.grey[400],
+                                        flex: 2,
+                                        child: Stack(
+                                          children: [
+                                            SizedBox(
+                                              height: 180.0,
+                                              width: double.infinity,
+                                              child: ClipRRect(
+                                                borderRadius:
+                                                    const BorderRadius.all(
+                                                        Radius.circular(20)),
+                                                child: CachedNetworkImage(
+                                                  alignment:
+                                                      Alignment.topCenter,
+                                                  placeholder: (context, url) =>
+                                                      Transform.scale(
+                                                    scale: 0.2,
+                                                    child:
+                                                        CircularProgressIndicator(
+                                                      color: Colors.grey[400],
+                                                    ),
+                                                  ),
+                                                  imageUrl: '${data.image}',
+                                                  // height: ThreeKmScreenUtil.screenHeightDp / 3,
+                                                  // width: ThreeKmScreenUtil.screenWidthDp,
+                                                  fit: BoxFit.contain,
                                                 ),
                                               ),
-                                              imageUrl: '${data.image}',
-                                              // height: ThreeKmScreenUtil.screenHeightDp / 3,
-                                              // width: ThreeKmScreenUtil.screenWidthDp,
-                                              fit: BoxFit.contain,
                                             ),
-                                          ),
+                                            Align(
+                                              alignment: Alignment.topRight,
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
+                                                child: InkWell(
+                                                  onTap: () {
+                                                    data.delete();
+                                                    setState(() {});
+                                                  },
+                                                  child: Image(
+                                                      image: AssetImage(
+                                                          'assets/shopImg/closeRed.png'),
+                                                      width: 24,
+                                                      height: 24),
+                                                ),
+                                              ),
+                                            )
+                                          ],
                                         ),
                                       ),
                                       Flexible(
-                                        flex: 1,
+                                        // flex: 1,
                                         child: Container(
                                           padding: const EdgeInsets.only(
                                               left: 16, right: 16, top: 5),
@@ -307,9 +334,10 @@ class _WishListState extends State<WishList> {
                                                 style: ThreeKmTextConstants
                                                     .tk14PXPoppinsBlackBold,
                                               ),
-                                              if (data.variation_name != null)
+                                              if (data.variation_name != null &&
+                                                  data.variation_name != "")
                                                 Text(
-                                                  '${data.variation_name}',
+                                                  '${data.variation_name}mm',
                                                   maxLines: 2,
                                                   style: ThreeKmTextConstants
                                                       .tk12PXPoppinsBlackSemiBold
@@ -329,101 +357,101 @@ class _WishListState extends State<WishList> {
                                                                 0xFFFC8338)),
                                                   )),
                                               Spacer(),
-                                              Padding(
-                                                padding: const EdgeInsets.only(
-                                                    bottom: 10),
-                                                child: Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  children: [
-                                                    ElevatedButton(
-                                                        style: ButtonStyle(
-                                                          shape: MaterialStateProperty
-                                                              .all(
-                                                                  StadiumBorder()),
-                                                          backgroundColor:
-                                                              MaterialStateProperty
-                                                                  .all(Color(
-                                                                      0xFF43B978)),
-                                                          foregroundColor:
-                                                              MaterialStateProperty
-                                                                  .all(Color(
-                                                                      0xFFFFFFFF)),
-                                                        ),
-                                                        onPressed: () {
-                                                          if (isProductExist(
-                                                                  Hive.box(
-                                                                      'cartBox'),
-                                                                  data.id,
-                                                                  variationId: data
-                                                                      .variation_id) ==
-                                                              null) {
-                                                            context.read<CartProvider>().addItemToCart(
-                                                                context:
-                                                                    context,
-                                                                creatorId: data
-                                                                    .creatorId,
-                                                                creatorName: data
-                                                                    .creatorName,
-                                                                id: data.id,
-                                                                image:
-                                                                    data.image,
-                                                                name: data.name,
-                                                                price:
-                                                                    data.price,
-                                                                quantity: data
-                                                                    .quantity,
-                                                                variationId: data
-                                                                    .variation_id,
-                                                                weight:
-                                                                    data.weight,
-                                                                manageStock: data
-                                                                    .manageStock,
-                                                                masterStock: data
-                                                                    .masterStock,
-                                                                variation_name:
-                                                                    data.variation_name);
-                                                            setState(() {});
-                                                          } else {
-                                                            CustomSnackBar(
-                                                                context,
-                                                                Text(
-                                                                    "This product is already added to your cart"));
-                                                          }
-                                                        },
-                                                        child: Text(isProductExist(
-                                                                    Hive.box(
-                                                                        'cartBox'),
-                                                                    data.id,
-                                                                    variationId:
-                                                                        data
-                                                                            .variation_id) ==
-                                                                null
-                                                            ? AppLocalizations.of(
-                                                                        context)!
-                                                                    .translate(
-                                                                        'detail_add_cart') ??
-                                                                'Add to Cart'
-                                                            : AppLocalizations.of(
-                                                                        context)!
-                                                                    .translate(
-                                                                        'added_to_cart') ??
-                                                                'Added to cart')),
-                                                    InkWell(
-                                                      onTap: () {
-                                                        data.delete();
-                                                        setState(() {});
-                                                      },
-                                                      child: Image(
-                                                          image: AssetImage(
-                                                              'assets/shopImg/closeRed.png'),
-                                                          width: 24,
-                                                          height: 24),
-                                                    )
-                                                  ],
-                                                ),
-                                              )
+                                              // Padding(
+                                              //   padding: const EdgeInsets.only(
+                                              //       bottom: 10),
+                                              //   child: Row(
+                                              //     mainAxisAlignment:
+                                              //         MainAxisAlignment
+                                              //             .spaceBetween,
+                                              //     children: [
+                                              //       ElevatedButton(
+                                              //           style: ButtonStyle(
+                                              //             shape: MaterialStateProperty
+                                              //                 .all(
+                                              //                     StadiumBorder()),
+                                              //             backgroundColor:
+                                              //                 MaterialStateProperty
+                                              //                     .all(Color(
+                                              //                         0xFF43B978)),
+                                              //             foregroundColor:
+                                              //                 MaterialStateProperty
+                                              //                     .all(Color(
+                                              //                         0xFFFFFFFF)),
+                                              //           ),
+                                              //           onPressed: () {
+                                              //             if (isProductExist(
+                                              //                     Hive.box(
+                                              //                         'cartBox'),
+                                              //                     data.id,
+                                              //                     variationId: data
+                                              //                         .variation_id) ==
+                                              //                 null) {
+                                              //               context.read<CartProvider>().addItemToCart(
+                                              //                   context:
+                                              //                       context,
+                                              //                   creatorId: data
+                                              //                       .creatorId,
+                                              //                   creatorName: data
+                                              //                       .creatorName,
+                                              //                   id: data.id,
+                                              //                   image:
+                                              //                       data.image,
+                                              //                   name: data.name,
+                                              //                   price:
+                                              //                       data.price,
+                                              //                   quantity: data
+                                              //                       .quantity,
+                                              //                   variationId: data
+                                              //                       .variation_id,
+                                              //                   weight:
+                                              //                       data.weight,
+                                              //                   manageStock: data
+                                              //                       .manageStock,
+                                              //                   masterStock: data
+                                              //                       .masterStock,
+                                              //                   variation_name:
+                                              //                       data.variation_name);
+                                              //               setState(() {});
+                                              //             } else {
+                                              //               CustomSnackBar(
+                                              //                   context,
+                                              //                   Text(
+                                              //                       "This product is already added to your cart"));
+                                              //             }
+                                              //           },
+                                              //           child: Text(isProductExist(
+                                              //                       Hive.box(
+                                              //                           'cartBox'),
+                                              //                       data.id,
+                                              //                       variationId:
+                                              //                           data
+                                              //                               .variation_id) ==
+                                              //                   null
+                                              //               ? AppLocalizations.of(
+                                              //                           context)!
+                                              //                       .translate(
+                                              //                           'detail_add_cart') ??
+                                              //                   'Add to Cart'
+                                              //               : AppLocalizations.of(
+                                              //                           context)!
+                                              //                       .translate(
+                                              //                           'added_to_cart') ??
+                                              //                   'Added to cart')),
+                                              //       InkWell(
+                                              //         onTap: () {
+                                              //           data.delete();
+                                              //           setState(() {});
+                                              //         },
+                                              //         child: Image(
+                                              //             image: AssetImage(
+                                              //                 'assets/shopImg/closeRed.png'),
+                                              //             width: 24,
+                                              //             height: 24),
+                                              //       )
+                                              //     ],
+                                              //   ),
+                                              // )
                                             ],
                                           ),
                                         ),

@@ -298,10 +298,13 @@ Future viewCart(BuildContext context, mode) async {
                                                                         1;
                                                                 cartItem.save();
                                                               } else {
-                                                                CustomSnackBar(
-                                                                    context,
-                                                                    Text(
-                                                                        "This Product is now out of stock"));
+                                                                CustomToast(
+                                                                    'This Product is now out of stock');
+
+                                                                // CustomSnackBar(
+                                                                //     context,
+                                                                //     Text(
+                                                                //         "This Product is now out of stock"));
                                                               }
                                                             },
                                                             child: const Image(

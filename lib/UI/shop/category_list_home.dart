@@ -70,17 +70,17 @@ class CategoryListHome extends StatelessWidget {
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(55),
                             child: CachedNetworkImage(
-                              alignment: Alignment.topCenter,
+                              alignment: Alignment.center,
                               placeholder: (context, url) => Transform.scale(
-                                scale: 0.5,
+                                scale: 0.2,
                                 child: CircularProgressIndicator(
                                   color: Colors.grey[400],
                                 ),
                               ),
                               imageUrl: category[i].image,
-                              height: ThreeKmScreenUtil.screenHeightDp / 1.8,
-                              width: ThreeKmScreenUtil.screenWidthDp,
-                              fit: BoxFit.fill,
+                              // height: ThreeKmScreenUtil.screenHeightDp / 1.8,
+                              // width: ThreeKmScreenUtil.screenWidthDp,
+                              fit: BoxFit.fitHeight,
                             ),
                           ),
                         ),

@@ -1,14 +1,23 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:provider/src/provider.dart';
+import 'package:threekm/UI/main/AddPost/BottomSnack.dart';
+import 'package:threekm/commenwidgets/CustomSnakBar.dart';
+import 'package:threekm/commenwidgets/commenwidget.dart';
+import 'package:threekm/networkservice/Api_Provider.dart';
+import 'package:threekm/providers/shop/product_details_provider.dart';
 
 import 'package:threekm/providers/shop/user_review_provider.dart';
-
+import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
+import 'package:threekm/utils/api_paths.dart';
 import 'package:threekm/utils/screen_util.dart';
- Color textColor = Color(0xFF0F0F2D);
+
+Color textColor = Color(0xFF0F0F2D);
+
 class PostReview extends StatefulWidget {
   PostReview({Key? key, required this.name, required this.catalogId})
       : super(key: key);
@@ -25,6 +34,92 @@ class _PostReviewState extends State<PostReview> {
   final picker = ImagePicker();
 
   List<XFile> img = [];
+  List<XFile> get getMoreImages => img;
+  List<String> _uploadImageUrls = [];
+  List<String> get uploadedImagesUrl => _uploadImageUrls;
+  final ApiProvider _apiProvider = ApiProvider();
+  uploadReview() async {
+    if (img.isNotEmpty && img.length != null) {
+      // showUploadingSnackbar(context, img.first);
+      img.forEach((element) async {
+        if (element.path.contains(".png") ||
+            element.path.contains(".jpg") ||
+            element.path.contains(".jpeg")) {
+          try {
+            showLoading();
+            var request = await http.MultipartRequest(
+                'POST', Uri.parse(upload_Imagefile));
+            request.headers['Authorization'] = await _apiProvider.getToken();
+            request.fields['storage_url'] = "review";
+            request.fields['record_id'] = "0";
+            request.fields['filename'] = "post.png";
+            request.files
+                .add(await http.MultipartFile.fromPath('file', element.path));
+            var httpresponse = await request.send();
+            final res = await http.Response.fromStream(httpresponse);
+            final response = json.decode(res.body);
+            if (httpresponse.statusCode == 200) {
+              print("uploaded");
+              if (response["status"] == "success") {
+                log(response["photo"]["photo"]);
+                _uploadImageUrls.add(response["photo"]["photo"]);
+                //log(_uploadImageUrls.toList().toString());
+                if (img.length == _uploadImageUrls.length) {
+                  log("progress is 100");
+                  // uploadPost(context, headLine, story, address, lat, long);
+                  var requestJson = {
+                    //  "Authorization": _apiProvider.getToken(),
+                    "module": "catalog",
+                    "entity_id": widget.catalogId.toString(),
+                    "rating": productRating.toString(),
+                    "title": _reviewTitle.text,
+                    "description": _reviewDetailed.text,
+                    "images": uploadedImagesUrl,
+                    "delivery_rating": deliveryRating.toString()
+                  };
+                  hideLoading();
+
+                  context
+                      .read<UserReviewProvider>()
+                      .postUserReview(mounted, jsonEncode(requestJson))
+                      .whenComplete(() {
+                    context
+                        .read<ProductDetailsProvider>()
+                        .productDetails(mounted, widget.catalogId);
+                    setState(() {});
+                  });
+                }
+              }
+            } else {
+              CustomSnackBar(context, Text("Upload Failed.!"));
+            }
+          } catch (e) {
+            CustomSnackBar(context, Text("Upload Failed.!"));
+          }
+        }
+      });
+    } else {
+      var requestJson = {
+        // "Authorization": _apiProvider.getToken(),
+        "module": "catalog",
+        "entity_id": widget.catalogId.toString(),
+        "rating": productRating.toString(),
+        "title": _reviewTitle.text,
+        "description": _reviewDetailed.text,
+        "images": uploadedImagesUrl,
+        "delivery_rating": deliveryRating.toString(),
+      };
+      context
+          .read<UserReviewProvider>()
+          .postUserReview(mounted, jsonEncode(requestJson))
+          .whenComplete(() {
+        context
+            .read<ProductDetailsProvider>()
+            .productDetails(mounted, widget.catalogId);
+        setState(() {});
+      });
+    }
+  }
 
   @override
   void initState() {
@@ -191,13 +286,13 @@ class _PostReviewState extends State<PostReview> {
                       padding: const EdgeInsets.only(top: 20, bottom: 30),
                       child: Text(
                         widget.name,
-                        style:  TextStyle(
+                        style: TextStyle(
                             color: textColor,
                             fontWeight: FontWeight.bold,
                             fontSize: 22),
                       ),
                     ),
-                     Text(
+                    Text(
                       '1.   Select a rating',
                       style: TextStyle(color: textColor, fontSize: 18),
                     ),
@@ -265,7 +360,7 @@ class _PostReviewState extends State<PostReview> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                           Text(
+                          Text(
                             '2.   Add Review Title',
                             style: TextStyle(color: textColor, fontSize: 18),
                           ),
@@ -292,7 +387,7 @@ class _PostReviewState extends State<PostReview> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                           Text(
+                          Text(
                             '3.   Detailed Review',
                             style: TextStyle(color: textColor, fontSize: 18),
                           ),
@@ -315,7 +410,7 @@ class _PostReviewState extends State<PostReview> {
                           border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(20))),
                     ),
-                     Padding(
+                    Padding(
                       padding: EdgeInsets.only(top: 30),
                       child: Text(
                         '4.   Add a Photo(optional)',
@@ -392,7 +487,7 @@ class _PostReviewState extends State<PostReview> {
                                 ))
                       ],
                     ),
-                     Padding(
+                    Padding(
                       padding: EdgeInsets.only(top: 30),
                       child: Text(
                         '5.   Rate Delivery Experience',
@@ -468,16 +563,7 @@ class _PostReviewState extends State<PostReview> {
                                   print(_reviewDetailed.text);
                                   print('$productRating========');
                                   print('$deliveryRating-------');
-                                  context
-                                      .read<UserReviewProvider>()
-                                      .postUserReview(
-                                          mounted,
-                                          widget.catalogId,
-                                          productRating,
-                                          _reviewTitle.text,
-                                          _reviewDetailed.text,
-                                          img,
-                                          deliveryRating);
+                                  uploadReview();
                                 },
                                 style: ButtonStyle(
                                     shape: MaterialStateProperty.all(

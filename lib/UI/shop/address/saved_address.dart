@@ -1,7 +1,14 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import 'package:provider/src/provider.dart';
+import 'package:threekm/Custom_library/GooleMapsWidget/src/place_picker.dart';
+import 'package:threekm/UI/shop/address/openMap.dart';
+import 'package:threekm/providers/Location/locattion_Provider.dart';
 import 'package:threekm/providers/shop/address_list_provider.dart';
+import 'package:threekm/utils/api_paths.dart';
 import 'package:threekm/utils/threekm_textstyles.dart';
 
 import 'package:threekm/utils/screen_util.dart';
@@ -22,6 +29,8 @@ class _SavedAddressState extends State<SavedAddress> {
     super.initState();
     context.read<AddressListProvider>().getAddressList(mounted);
   }
+
+ 
 
   @override
   Widget build(BuildContext context) {
@@ -138,9 +147,10 @@ class _SavedAddressState extends State<SavedAddress> {
                 children: [
                   InkWell(
                     onTap: () async {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (_) => NewAddress()));
-                      FocusScope.of(context).unfocus();
+                      OpenMap(context);
+                      // Navigator.push(context,
+                      //     MaterialPageRoute(builder: (_) => NewAddress()));...
+                      //FocusScope.of(context).unfocus();
                       // await Navigator.of(context)
                       //     .pushNamed(LocationBasePage.path);
                     },

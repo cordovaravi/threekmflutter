@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 import 'package:device_info/device_info.dart';
 import 'package:flutter/material.dart';
@@ -11,9 +12,13 @@ import 'package:threekm/UI/main/News/NewsTab.dart';
 import 'package:threekm/UI/main/draggableex.dart';
 import 'package:threekm/UI/shop/home_3km.dart';
 import 'package:threekm/UI/shop/restaurants/restaurants_home_page.dart';
+import 'package:threekm/UI/shop/showOrderStatus.dart';
+import 'package:threekm/main.dart';
 import 'package:threekm/providers/main/AthorProfile_Provider.dart';
+import 'package:threekm/providers/shop/checkout/order_realtime_detail_provider.dart';
 import 'package:threekm/utils/screen_util.dart';
 import 'package:threekm/utils/spacings.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 final drawerController = ZoomDrawerController();
 
@@ -121,6 +126,7 @@ class _TabBarNavigationState extends State<TabBarNavigation>
         });
       });
     });
+    ShowOrderStaus();
 
     super.initState();
   }

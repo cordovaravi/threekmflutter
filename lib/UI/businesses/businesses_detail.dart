@@ -7,7 +7,6 @@ import 'package:hive/hive.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/src/provider.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:threekm/Custom_library/GooleMapsWidget/src/google_map_place_picker.dart';
 import 'package:threekm/UI/businesses/view_all_offering.dart';
 import 'package:threekm/UI/shop/cart/cart_item_list_modal.dart';
 import 'package:threekm/UI/shop/indicator.dart';
@@ -132,19 +131,20 @@ class _BusinessDetailState extends State<BusinessDetail> {
                       viewCart(context, 'shop');
                     }),
               ),
-              Positioned(
-                  top: 0,
-                  right: 6,
-                  child: Container(
-                      decoration: BoxDecoration(
-                          shape: BoxShape.circle, color: Colors.red),
-                      child: Padding(
-                        padding: const EdgeInsets.all(4.0),
-                        child: Text(
-                          '${Hive.box('cartBox').length}',
-                          style: TextStyle(fontSize: 11, color: Colors.white),
-                        ),
-                      )))
+              if (Hive.box('cartBox').length != 0)
+                Positioned(
+                    top: 0,
+                    right: 6,
+                    child: Container(
+                        decoration: BoxDecoration(
+                            shape: BoxShape.circle, color: Colors.red),
+                        child: Padding(
+                          padding: const EdgeInsets.all(4.0),
+                          child: Text(
+                            '${Hive.box('cartBox').length}',
+                            style: TextStyle(fontSize: 11, color: Colors.white),
+                          ),
+                        )))
             ],
           ),
         ],
@@ -568,7 +568,7 @@ class _BusinessDetailState extends State<BusinessDetail> {
                                               .tk16PXPoppinsBlackMedium),
                                     ),
                                   ),
-                                Padding(
+                               if (data.creator.email != "") Padding(
                                   padding: const EdgeInsets.only(
                                     top: 20,
                                   ),
@@ -827,136 +827,136 @@ class _BusinessDetailState extends State<BusinessDetail> {
               ),
             )
           : Container(),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: !isvisible && statusData == 'loaded' && data != null
-          ? Container(
-              color: Colors.white,
-              height: 70,
-              child: Padding(
-                  padding: const EdgeInsets.only(left: 20, right: 20),
-                  child: SizedBox(
-                    height: 60,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        ElevatedButton.icon(
-                            onPressed: () {
-                              if (isinBusinessWishlist == null) {
-                                context
-                                    .read<BusinessesWishListProvider>()
-                                    .addToBusinessWishList(
-                                        name: data.creator.businessName,
-                                        address: data.creator.address,
-                                        logo: data.creator.logo,
-                                        creatorId: data.creator.creatorId);
-                              } else {
-                                context
-                                    .read<BusinessesWishListProvider>()
-                                    .removeWish(data.creator.creatorId);
-                              }
-                            },
-                            style: ButtonStyle(
-                                shape:
-                                    MaterialStateProperty.all(StadiumBorder()),
-                                backgroundColor: MaterialStateProperty.all(
-                                    const Color(0xFFF4F3F8)),
-                                foregroundColor:
-                                    MaterialStateProperty.all(Colors.black),
-                                padding:
-                                    MaterialStateProperty.all(
-                                        EdgeInsets.only(
-                                            left: isinBusinessWishlist != null
-                                                ? 10
-                                                : 30,
-                                            right: 30,
-                                            top: isinBusinessWishlist != null
-                                                ? 0
-                                                : 15,
-                                            bottom: isinBusinessWishlist != null
-                                                ? 0
-                                                : 15))),
-                            icon: isinBusinessWishlist != null
-                                ? Container(
-                                    //height: 30,
-                                    child: Lottie.asset(
-                                      "assets/kadokado-heart.json",
-                                      height: 50,
-                                      //fit: BoxFit.,
-                                      alignment: Alignment.center,
-                                      repeat: false,
-                                    ),
-                                  )
-                                : const Image(
-                                    image: AssetImage(
-                                        'assets/shopImg/wishlist.png'),
-                                    width: 25,
-                                    height: 25,
-                                  ),
-                            // Icon(Icons.favorite_outline_sharp),
-                            label: Text(
-                              isinBusinessWishlist != null
-                                  ? AppLocalizations.of(context)!
-                                          .translate('remove') ??
-                                      'Remove'
-                                  : AppLocalizations.of(context)!
-                                          .translate('wishlist') ??
-                                      'Wishlist',
-                              style:
-                                  ThreeKmTextConstants.tk14PXPoppinsBlackMedium,
-                            )),
-                        // ElevatedButton.icon(
-                        //     onPressed: () async {
-                        //       print('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
-                        //       // context
-                        //       //     .read<CartProvider>()
-                        //       //     .addToCart(
-                        //       //         image: product?.image,
-                        //       //         name: product?.name,
-                        //       //         price: product?.price,
-                        //       //         quantity: 1,
-                        //       //         id: product?.catalogId,
-                        //       //         variationId: 0);
+      // floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      // floatingActionButton: !isvisible && statusData == 'loaded' && data != null
+      //     ? Container(
+      //         color: Colors.white,
+      //         height: 70,
+      //         child: Padding(
+      //             padding: const EdgeInsets.only(left: 20, right: 20),
+      //             child: SizedBox(
+      //               height: 60,
+      //               child: Row(
+      //                 mainAxisAlignment: MainAxisAlignment.center,
+      //                 children: [
+      //                   ElevatedButton.icon(
+      //                       onPressed: () {
+      //                         if (isinBusinessWishlist == null) {
+      //                           context
+      //                               .read<BusinessesWishListProvider>()
+      //                               .addToBusinessWishList(
+      //                                   name: data.creator.businessName,
+      //                                   address: data.creator.address,
+      //                                   logo: data.creator.logo,
+      //                                   creatorId: data.creator.creatorId);
+      //                         } else {
+      //                           context
+      //                               .read<BusinessesWishListProvider>()
+      //                               .removeWish(data.creator.creatorId);
+      //                         }
+      //                       },
+      //                       style: ButtonStyle(
+      //                           shape:
+      //                               MaterialStateProperty.all(StadiumBorder()),
+      //                           backgroundColor: MaterialStateProperty.all(
+      //                               const Color(0xFFF4F3F8)),
+      //                           foregroundColor:
+      //                               MaterialStateProperty.all(Colors.black),
+      //                           padding:
+      //                               MaterialStateProperty.all(
+      //                                   EdgeInsets.only(
+      //                                       left: isinBusinessWishlist != null
+      //                                           ? 10
+      //                                           : 30,
+      //                                       right: 30,
+      //                                       top: isinBusinessWishlist != null
+      //                                           ? 0
+      //                                           : 15,
+      //                                       bottom: isinBusinessWishlist != null
+      //                                           ? 0
+      //                                           : 15))),
+      //                       icon: isinBusinessWishlist != null
+      //                           ? Container(
+      //                               //height: 30,
+      //                               child: Lottie.asset(
+      //                                 "assets/kadokado-heart.json",
+      //                                 height: 50,
+      //                                 //fit: BoxFit.,
+      //                                 alignment: Alignment.center,
+      //                                 repeat: false,
+      //                               ),
+      //                             )
+      //                           : const Image(
+      //                               image: AssetImage(
+      //                                   'assets/shopImg/wishlist.png'),
+      //                               width: 25,
+      //                               height: 25,
+      //                             ),
+      //                       // Icon(Icons.favorite_outline_sharp),
+      //                       label: Text(
+      //                         isinBusinessWishlist != null
+      //                             ? AppLocalizations.of(context)!
+      //                                     .translate('remove') ??
+      //                                 'Remove'
+      //                             : AppLocalizations.of(context)!
+      //                                     .translate('wishlist') ??
+      //                                 'Wishlist',
+      //                         style:
+      //                             ThreeKmTextConstants.tk14PXPoppinsBlackMedium,
+      //                       )),
+      //                   // ElevatedButton.icon(
+      //                   //     onPressed: () async {
+      //                   //       print('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
+      //                   //       // context
+      //                   //       //     .read<CartProvider>()
+      //                   //       //     .addToCart(
+      //                   //       //         image: product?.image,
+      //                   //       //         name: product?.name,
+      //                   //       //         price: product?.price,
+      //                   //       //         quantity: 1,
+      //                   //       //         id: product?.catalogId,
+      //                   //       //         variationId: 0);
 
-                        //       // context.read<CartProvider>().addItemToCart(
-                        //       //       context: context,
-                        //       //       creatorId: product?.creatorId,
-                        //       //       image: product?.image,
-                        //       //       name: product?.name,
-                        //       //       price: price != 0 ? price : product?.price,
-                        //       //       quantity: 1,
-                        //       //       id: product?.catalogId,
-                        //       //       variationId: variationid,
-                        //       //       weight:
-                        //       //           weight != 0 ? weight : product?.weight,
-                        //       //     );
-                        //     },
-                        //     style: ButtonStyle(
-                        //         shape: MaterialStateProperty.all(
-                        //             const StadiumBorder()),
-                        //         backgroundColor: MaterialStateProperty.all(
-                        //             const Color(0xFFFF5858)),
-                        //         foregroundColor:
-                        //             MaterialStateProperty.all(Colors.white),
-                        //         elevation: MaterialStateProperty.all(5),
-                        //         shadowColor: MaterialStateProperty.all(
-                        //             const Color(0xFFFC5E6A33)),
-                        //         padding: MaterialStateProperty.all(
-                        //             const EdgeInsets.only(
-                        //                 left: 30,
-                        //                 right: 30,
-                        //                 top: 15,
-                        //                 bottom: 15))),
-                        //     icon: const Icon(Icons.shopping_cart_rounded),
-                        //     label: Text(
-                        //       'Shop',
-                        //       style:
-                        //           ThreeKmTextConstants.tk14PXPoppinsWhiteMedium,
-                        //     )),
-                      ],
-                    ),
-                  )),
-            )
-          : Container(),
+      //                   //       // context.read<CartProvider>().addItemToCart(
+      //                   //       //       context: context,
+      //                   //       //       creatorId: product?.creatorId,
+      //                   //       //       image: product?.image,
+      //                   //       //       name: product?.name,
+      //                   //       //       price: price != 0 ? price : product?.price,
+      //                   //       //       quantity: 1,
+      //                   //       //       id: product?.catalogId,
+      //                   //       //       variationId: variationid,
+      //                   //       //       weight:
+      //                   //       //           weight != 0 ? weight : product?.weight,
+      //                   //       //     );
+      //                   //     },
+      //                   //     style: ButtonStyle(
+      //                   //         shape: MaterialStateProperty.all(
+      //                   //             const StadiumBorder()),
+      //                   //         backgroundColor: MaterialStateProperty.all(
+      //                   //             const Color(0xFFFF5858)),
+      //                   //         foregroundColor:
+      //                   //             MaterialStateProperty.all(Colors.white),
+      //                   //         elevation: MaterialStateProperty.all(5),
+      //                   //         shadowColor: MaterialStateProperty.all(
+      //                   //             const Color(0xFFFC5E6A33)),
+      //                   //         padding: MaterialStateProperty.all(
+      //                   //             const EdgeInsets.only(
+      //                   //                 left: 30,
+      //                   //                 right: 30,
+      //                   //                 top: 15,
+      //                   //                 bottom: 15))),
+      //                   //     icon: const Icon(Icons.shopping_cart_rounded),
+      //                   //     label: Text(
+      //                   //       'Shop',
+      //                   //       style:
+      //                   //           ThreeKmTextConstants.tk14PXPoppinsWhiteMedium,
+      //                   //     )),
+      //                 ],
+      //               ),
+      //             )),
+      //       )
+      //     : Container(),
     );
   }
 }
