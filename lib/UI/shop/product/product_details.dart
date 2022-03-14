@@ -1353,9 +1353,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                                                       Icons.star_rate_rounded,
                                                       color: Colors.amber,
                                                     ),
-                                                    onRatingUpdate: (rating) {
-                                                      print(rating);
-                                                    },
+                                                    onRatingUpdate: (v) => null,
                                                   ),
                                                   Text(
                                                       "${data.result?.reviews?[i].rating}"),

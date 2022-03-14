@@ -125,7 +125,7 @@ class _HomeState extends State<Home> {
                           },
                           child: Container(
                             height: 32,
-                            width: 250,
+                            width: MediaQuery.of(context).size.width / 1.5,
                             decoration: BoxDecoration(
                                 //color: Colors.white,
                                 borderRadius: BorderRadius.circular(21),
@@ -169,33 +169,33 @@ class _HomeState extends State<Home> {
                                 )),
                           ),
                         ),
-                        InkWell(
-                          onTap: () async {
-                            SharedPreferences _pref =
-                                await SharedPreferences.getInstance();
+                        // InkWell(
+                        //   onTap: () async {
+                        //     SharedPreferences _pref =
+                        //         await SharedPreferences.getInstance();
 
-                            var token = _pref.getString("token");
-                            token != null
-                                ? drawerController.open!()
-                                : Navigator.pushAndRemoveUntil(
-                                    context,
-                                    MaterialPageRoute(builder: (_) => SignUp()),
-                                    (route) => false);
-                          },
-                          child: Padding(
-                            padding: EdgeInsets.only(left: 12),
-                            child: Container(
-                                height: 32,
-                                width: 32,
-                                decoration: BoxDecoration(
-                                  image: DecorationImage(
-                                      image:
-                                          AssetImage("assets/male-user.png")),
-                                  shape: BoxShape.circle,
-                                  //color: Color(0xffFF464B)
-                                )),
-                          ),
-                        )
+                        //     var token = _pref.getString("token");
+                        //     token != null
+                        //         ? drawerController.open!()
+                        //         : Navigator.pushAndRemoveUntil(
+                        //             context,
+                        //             MaterialPageRoute(builder: (_) => SignUp()),
+                        //             (route) => false);
+                        //   },
+                        //   child: Padding(
+                        //     padding: EdgeInsets.only(left: 12),
+                        //     child: Container(
+                        //         height: 32,
+                        //         width: 32,
+                        //         decoration: BoxDecoration(
+                        //           image: DecorationImage(
+                        //               image:
+                        //                   AssetImage("assets/male-user.png")),
+                        //           shape: BoxShape.circle,
+                        //           //color: Color(0xffFF464B)
+                        //         )),
+                        //   ),
+                        // )
                       ],
                     ),
                   ),
@@ -326,7 +326,8 @@ class _HomeState extends State<Home> {
                                           context,
                                           MaterialPageRoute(
                                               builder: (_) => ViewAllBiz(
-                                                    query: '${business?.name}',
+                                                    query:
+                                                        '${business?.searchText}',
                                                   )));
                                     },
                                     child: Row(
