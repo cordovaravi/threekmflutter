@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:threekm/UI/main/AddPost/BottomSnack.dart';
+import 'package:threekm/UI/main/navigation.dart';
 import 'package:threekm/commenwidgets/CustomSnakBar.dart';
 import 'package:threekm/main.dart';
 
@@ -85,11 +86,11 @@ class AddPostProvider extends ChangeNotifier {
   bool _isUploadeerror = false;
   bool get isUploadError => _isUploadeerror;
   //UploadedFileProvider _uploadedFileProvider = UploadedFileProvider();
-  Future<Null> uploadPng(context, String headLine, String story, String address,
-      double lat, double long) async {
+  Future<Null> uploadPng(context, String? headLine, String? story,
+      String? address, double? lat, double? long) async {
     if (_moreImages.isNotEmpty && _moreImages.length != null) {
       /// Showing snackbar of uploading
-      showUploadingSnackbar(context, _moreImages.first);
+      //  showUploadingSnackbar(context, _moreImages.first);
 
       _moreImages.forEach((element) async {
         print("uploading");
@@ -108,6 +109,7 @@ class AddPostProvider extends ChangeNotifier {
             var httpresponse = await request.send();
             final res = await http.Response.fromStream(httpresponse);
             final response = json.decode(res.body);
+
             if (httpresponse.statusCode == 200) {
               print("uploaded");
               if (response["status"] == "success") {
@@ -169,13 +171,15 @@ class AddPostProvider extends ChangeNotifier {
           }
         }
       });
+    } else {
+      uploadPost(context, headLine, story, address, lat, long);
     }
   }
 
   List _videosUrl = [];
 
-  Future<Null> uploadPost(context, String headLine, String story,
-      String address, double lat, double long) async {
+  Future<Null> uploadPost(context, String? headLine, String? story,
+      String? address, double? lat, double? long) async {
     List tempImages = [];
     uploadedImagesUrl.forEach((element) {
       if (element.contains(".png") ||
@@ -215,6 +219,16 @@ class AddPostProvider extends ChangeNotifier {
         Future.delayed(Duration(seconds: 1), () {
           //CustomSnackBar(context, Text("Post Submitted"));
           _isUploaded = true;
+          Future.delayed(Duration.zero, () {
+            Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => TabBarNavigation(
+                          redirectedFromPost: false,
+                          isPostUploaded: true,
+                        )),
+                (route) => false);
+          });
           notifyListeners();
           resetUpload(context);
         });

@@ -14,6 +14,7 @@ import 'package:threekm/UI/main/News/Widgets/singlePost_Loading.dart';
 import 'package:threekm/UI/main/Profile/AuthorProfile.dart';
 import 'package:threekm/commenwidgets/CustomSnakBar.dart';
 import 'package:threekm/commenwidgets/commenwidget.dart';
+import 'package:threekm/providers/Global/logged_in_or_not.dart';
 import 'package:threekm/providers/main/LikeList_Provider.dart';
 import 'package:threekm/providers/main/comment_Provider.dart';
 import 'package:threekm/providers/main/singlePost_provider.dart';
@@ -128,9 +129,13 @@ class _PostviewState extends State<Postview> {
                                                     MaterialPageRoute(
                                                         builder: (context) =>
                                                             AuthorProfile(
-                                                                id: newsData!
-                                                                    .author!
-                                                                    .id!,
+                                                                authorType:
+                                                                    newsData
+                                                                        ?.authorType,
+                                                                id:
+                                                                    newsData!
+                                                                        .author!
+                                                                        .id!,
                                                                 avatar: newsData
                                                                     .author!
                                                                     .image!,
@@ -434,25 +439,32 @@ class _PostviewState extends State<Postview> {
                                         ? FlutterReactionButtonCheck(
                                             boxAlignment: Alignment.center,
                                             boxPosition: Position.TOP,
-                                            onReactionChanged:
-                                                (reaction, index, isChecked) {
-                                              print(
-                                                  'reaction selected index: $index');
-                                              print("is checked $isChecked");
-                                              if (newsData.isLiked == true) {
-                                                print("remove Like");
-                                                context
-                                                    .read<SinglePostProvider>()
-                                                    .postUnLike(newsData.postId
-                                                        .toString());
+                                            onReactionChanged: (reaction, index,
+                                                isChecked) async {
+                                              if (await getAuthStatus()) {
+                                                print(
+                                                    'reaction selected index: $index');
+                                                print("is checked $isChecked");
+                                                if (newsData.isLiked == true) {
+                                                  print("remove Like");
+                                                  context
+                                                      .read<
+                                                          SinglePostProvider>()
+                                                      .postUnLike(newsData
+                                                          .postId
+                                                          .toString());
+                                                } else {
+                                                  print("Liked");
+                                                  context
+                                                      .read<
+                                                          SinglePostProvider>()
+                                                      .postLike(
+                                                          newsData.postId
+                                                              .toString(),
+                                                          null);
+                                                }
                                               } else {
-                                                print("Liked");
-                                                context
-                                                    .read<SinglePostProvider>()
-                                                    .postLike(
-                                                        newsData.postId
-                                                            .toString(),
-                                                        null);
+                                                NaviagateToLogin(context);
                                               }
                                             },
                                             reactions: reactionAsset.reactions,
@@ -487,9 +499,13 @@ class _PostviewState extends State<Postview> {
                                   height: 60,
                                   width: 60,
                                   child: IconButton(
-                                      onPressed: () {
-                                        _showCommentsBottomModalSheet(
-                                            context, newsData.postId!.toInt());
+                                      onPressed: () async {
+                                        if (await getAuthStatus()) {
+                                          _showCommentsBottomModalSheet(context,
+                                              newsData.postId!.toInt());
+                                        } else {
+                                          NaviagateToLogin(context);
+                                        }
                                       },
                                       icon: Image.asset(
                                           'assets/icons-topic.png',

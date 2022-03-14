@@ -66,13 +66,13 @@ class NewsListProvider extends ChangeNotifier {
     //debugPrint("${partition(postIds, 10).take(2)}");
 
     debugPrint("${postIds.skip(0).take(10)}");
-    String _token = await _apiProvider.getToken();
+    String? _token = await _apiProvider.getToken();
     String platForm = Platform.isAndroid ? 'Android' : 'Ios';
     String requestJson = json.encode({
       "post_ids": postIds.skip(skipCount).take(takeCOunt).toList(),
       "lang": "en",
       "page": 1,
-      "token": _token,
+      "token": _token ?? "",
       "query": title,
       "os": platForm
     });

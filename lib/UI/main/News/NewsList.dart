@@ -1,7 +1,5 @@
 import 'dart:convert';
-import 'dart:developer';
 import 'dart:io';
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -18,6 +16,7 @@ import 'package:threekm/UI/main/News/Widgets/likes_Loading.dart';
 import 'package:threekm/UI/main/Profile/AuthorProfile.dart';
 import 'package:threekm/commenwidgets/CustomSnakBar.dart';
 import 'package:threekm/commenwidgets/commenwidget.dart';
+import 'package:threekm/providers/Global/logged_in_or_not.dart';
 import 'package:threekm/providers/main/LikeList_Provider.dart';
 import 'package:threekm/providers/main/comment_Provider.dart';
 import 'package:threekm/providers/main/newsList_provider.dart';
@@ -28,7 +27,6 @@ import 'package:threekm/widgets/video_widget.dart';
 
 import 'package:threekm/widgets/reactions_assets.dart' as reactionAssets;
 import 'package:timelines/timelines.dart';
-import 'package:vimeo_player_flutter/vimeo_player_flutter.dart';
 
 class NewsListPage extends StatefulWidget {
   final String title;
@@ -342,6 +340,8 @@ class _NewsPostCardState extends State<NewsPostCard>
                                                     MaterialPageRoute(
                                                         builder: (context) =>
                                                             AuthorProfile(
+                                                                authorType: newsData
+                                                                    .authorType,
                                                                 // page: 1,
                                                                 // authorType:
                                                                 //     "user",
@@ -732,9 +732,13 @@ class _NewsPostCardState extends State<NewsPostCard>
                                   height: 60,
                                   width: 60,
                                   child: IconButton(
-                                      onPressed: () {
-                                        _showCommentsBottomModalSheet(
-                                            context, newsData.postId!.toInt());
+                                      onPressed: () async {
+                                        if (await getAuthStatus()) {
+                                          _showCommentsBottomModalSheet(context,
+                                              newsData.postId!.toInt());
+                                        } else {
+                                          NaviagateToLogin(context);
+                                        }
                                       },
                                       icon: Image.asset(
                                           'assets/icons-topic.png',
@@ -962,6 +966,8 @@ class _NewsPostCardState extends State<NewsPostCard>
                                             MaterialPageRoute(
                                                 builder: (context) =>
                                                     AuthorProfile(
+                                                        authorType:
+                                                            newsData.authorType,
                                                         // page: 1,
                                                         // authorType:
                                                         //     "user",
@@ -1274,9 +1280,13 @@ class _NewsPostCardState extends State<NewsPostCard>
                       height: 60,
                       width: 60,
                       child: IconButton(
-                          onPressed: () {
-                            _showCommentsBottomModalSheet(
-                                context, newsData.postId);
+                          onPressed: () async {
+                            if (await getAuthStatus()) {
+                              _showCommentsBottomModalSheet(
+                                  context, newsData.postId);
+                            } else {
+                              NaviagateToLogin(context);
+                            }
                           },
                           icon: Image.asset('assets/icons-topic.png',
                               fit: BoxFit.cover)),

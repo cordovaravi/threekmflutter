@@ -6,6 +6,9 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:threekm/UI/Language/SelectLanguage.dart';
+import 'package:threekm/UI/main/AddPost/AddNewPost.dart';
+import 'package:threekm/UI/main/AddPost/utils/video.dart';
 import 'package:threekm/UI/main/News/NewsList.dart';
 import 'package:threekm/UI/main/Profile/MyProfilePost.dart';
 import 'package:threekm/UI/main/Profile/Profilepage.dart';
@@ -52,7 +55,6 @@ class _DrawerScreenState extends State<DrawerScreen> {
   getWishBoxData() async {
     await Hive.openBox('shopWishListBox');
     await Hive.openBox('businessWishListBox');
-    
   }
 
   @override
@@ -141,8 +143,6 @@ class CustomDrawer extends StatefulWidget {
 }
 
 class _CustomDrawerState extends State<CustomDrawer> {
-  final ImagePicker _imagePicker = ImagePicker();
-
   @override
   void initState() {
     super.initState();
@@ -222,7 +222,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
           name: widget.name,
         ),
         DrawerDivider(),
-        GestureDetector(
+        InkWell(
           onTap: () {
             Navigator.push(
                 context,
@@ -246,7 +246,12 @@ class _CustomDrawerState extends State<CustomDrawer> {
         InkWell(
           onTap: () {
             context.read<AddPostProvider>().deletImages();
-            _showImageVideoBottomModalSheet(context);
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) =>
+                        //VideoCompress()
+                        AddNewPost()));
           },
           child: CustomDrawerItem(
             icon: Icons.add,
@@ -313,8 +318,10 @@ class _CustomDrawerState extends State<CustomDrawer> {
           icon: Icons.g_translate_outlined,
           label: "Change language".toUpperCase(),
         ).onTap(() {
-          // Navigator.of(context)
-          //     .pushNamedAndRemoveUntil(SelectLanguage.path, (route) => false);
+          Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => SelectLanguage()),
+              (route) => false);
         }),
         SizedBox(
           height: 24,
@@ -350,116 +357,6 @@ class _CustomDrawerState extends State<CustomDrawer> {
         ),
       ],
     ));
-  }
-
-  _showImageVideoBottomModalSheet(BuildContext context) {
-    showModalBottomSheet<void>(
-      backgroundColor: Colors.transparent,
-      context: context,
-      isScrollControlled: true,
-      builder: (BuildContext context) {
-        return Padding(
-          padding: MediaQuery.of(context).viewInsets,
-          child: StatefulBuilder(
-            builder: (BuildContext context, StateSetter setModalState) {
-              return ClipPath(
-                clipper: OvalTopBorderClipper(),
-                child: Container(
-                  color: Colors.white,
-                  height: MediaQuery.of(context).size.height / 4,
-                  padding: const EdgeInsets.all(15.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      SizedBox(
-                        height: 20,
-                      ),
-                      InkWell(
-                        onTap: () async {
-                          List<XFile>? imageFileList = [];
-                          final List<XFile>? images =
-                              await _imagePicker.pickMultiImage();
-                          if (imageFileList.isEmpty) {
-                            imageFileList.addAll(images!);
-                          }
-                          imageFileList.forEach((element) {
-                            print(element.name);
-                            print(element.path);
-                          });
-
-                          if (imageFileList != null) {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        EditImage(images: imageFileList)));
-                          }
-                        },
-                        child: Container(
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(20),
-                              border: Border.all(
-                                color: Color(0xff0F0F2D),
-                              )),
-                          child: ListTile(
-                            leading: Image.asset(
-                              "assets/camera.png",
-                              color: Color(0xff0F0F2D),
-                            ),
-                            title: Text(
-                              "Upload Image via Gallery",
-                              style: ThreeKmTextConstants.tk14PXLatoBlackBold,
-                            ),
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      InkWell(
-                        onTap: () async {
-                          final pickedVideo = await _imagePicker.pickVideo(
-                              source: ImageSource.gallery);
-                          //final file = XFile(pickedVideo!.path);
-                          Navigator.pop(context);
-                          if (pickedVideo != null) {
-                            // context
-                            //     .read<AddPostProvider>()
-                            //     .addImages(File(pickedVideo.path));
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => EditImage(
-                                        images: [XFile(pickedVideo.path)])));
-                          }
-                        },
-                        child: Container(
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(20),
-                              border: Border.all(
-                                color: Color(0xff0F0F2D),
-                              )),
-                          child: ListTile(
-                            leading: Image.asset(
-                              "assets/videocam.png",
-                              color: Color(0xff0F0F2D),
-                            ),
-                            title: Text(
-                              "Upload Video via Gallery",
-                              style: ThreeKmTextConstants.tk14PXLatoBlackBold,
-                            ),
-                          ),
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-              );
-            },
-          ),
-        );
-      },
-    );
   }
 }
 

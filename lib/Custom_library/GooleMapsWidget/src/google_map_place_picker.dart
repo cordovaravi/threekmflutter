@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
+import 'package:flutter/widgets.dart';
 import 'package:geolocator/geolocator.dart';
 
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -424,11 +425,21 @@ class GoogleMapPlacePicker extends StatelessWidget {
                               onPlacePicked!(result);
                             }
                           },
-                          child: Icon(
-                              canBePicked
-                                  ? Icons.check_sharp
-                                  : Icons.app_blocking_sharp,
-                              color: buttonColor)),
+                          child: canBePicked
+                              ? Center(
+                                  child: Text(
+                                  "Confirm",
+                                  style: TextStyle(
+                                      color: Colors.blue,
+                                      fontWeight: FontWeight.w400),
+                                ))
+                              : Icon(Icons.app_blocking_sharp)
+                          //  Icon(
+                          //     canBePicked
+                          //         ? Icons.check_sharp
+                          //         : Icons.app_blocking_sharp,
+                          //     color: buttonColor)
+                          ),
                     ),
                   ),
                 )

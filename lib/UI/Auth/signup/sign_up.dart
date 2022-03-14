@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -9,6 +10,7 @@ import 'package:flutter/widgets.dart';
 import 'package:threekm/UI/Auth/sign_in.dart';
 import 'package:threekm/UI/Help_Supportpage.dart';
 import 'package:threekm/UI/main/navigation.dart';
+import 'package:threekm/localization/localize.dart';
 import 'package:threekm/providers/auth/signUp_Provider.dart';
 import 'package:threekm/providers/auth/social_auth/facebook_provider.dart';
 import 'package:threekm/providers/auth/social_auth/google_provider.dart';
@@ -31,31 +33,10 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
   bool _keyboardVisible = false;
   ScrollController scrollController = ScrollController();
 
-  // loadIntl() async {
-  //   Box hive = await Hive.openBox("language");
-  //   Language model = hive.getAt(0);
-  //   late S temp;
-  //   if (model.language == "English") {
-  //     temp = await S.delegate.load(Locale("en"));
-  //   } else if (model.language == "Marathi") {
-  //     temp = await S.delegate.load(Locale("mr"));
-  //   } else {
-  //     temp = await S.delegate.load(Locale("hi"));
-  //   }
-
-  //   WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
-  //     setState(() {
-  //       intl = temp;
-  //     });
-  //   });
-  // }
-
   @override
   void initState() {
     super.initState();
-    // WidgetsBinding.instance!.addObserver(this);
-    // loadIntl();
-    // controller.popRoute = widget.popRoute;
+    //Future.microtask(() => context.read<AppLanguage>());
     fowardController = AnimationController(
       vsync: this,
       duration: Duration(seconds: 10),
@@ -70,12 +51,10 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
 
   @override
   void dispose() {
-    // Get.delete<AuthController>();
     fowardController.dispose();
     backwardController.dispose();
     phonetextController.dispose();
     scrollController.dispose();
-    //WidgetsBinding.instance!.removeObserver(this);
     super.dispose();
   }
 
@@ -199,11 +178,9 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
   Widget get buildInputs {
     return Column(
       children: [
-        Text(
-          "Enter Your Phone Number",
-          style: ThreeKmTextConstants.tk12PXPoppinsWhiteRegular.copyWith(
-              color: Colors.white, fontWeight: FontWeight.w600, fontSize: 16),
-        ),
+        Text(AppLocalizations.of(context)!.translate('enter_phone') ?? "",
+            style: GoogleFonts.montserrat()
+                .copyWith(fontSize: 16, color: Colors.white)),
         space(
           height: 12,
         ),

@@ -9,6 +9,8 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -20,12 +22,13 @@ import 'package:threekm/UI/Auth/signup/sign_up.dart';
 import 'package:threekm/UI/Search/SearchPage.dart';
 import 'package:threekm/UI/main/News/NewsList.dart';
 import 'package:threekm/UI/main/News/PostView.dart';
+import 'package:threekm/UI/main/News/Widgets/HeighLightPost.dart';
 import 'package:threekm/UI/main/Notification/NotificationPage.dart';
 import 'package:threekm/UI/main/navigation.dart';
-import 'package:threekm/commenwidgets/CustomSnakBar.dart';
+import 'package:threekm/localization/localize.dart';
 import 'package:threekm/networkservice/Api_Provider.dart';
+import 'package:threekm/providers/Global/logged_in_or_not.dart';
 import 'package:threekm/providers/Location/locattion_Provider.dart';
-import 'package:threekm/providers/localization_Provider/AppLocaliztion.dart';
 import 'package:threekm/providers/main/AddPost_Provider.dart';
 import 'package:threekm/providers/main/Quiz_Provider.dart';
 import 'package:threekm/providers/main/home1_provider.dart';
@@ -41,7 +44,8 @@ import 'package:flutter_svg/svg.dart';
 class NewsTab extends StatefulWidget {
   final String? deviceId;
   final bool? reload;
-  NewsTab({this.reload, this.deviceId});
+  final bool? isPostUploaded;
+  NewsTab({this.reload, this.deviceId, this.isPostUploaded});
   @override
   _NewsTabState createState() => _NewsTabState();
 }
@@ -52,22 +56,24 @@ class _NewsTabState extends State<NewsTab>
   String? requestJson;
   int? answerIndex;
   String? _selecetdAddress;
+  //int _current = 0;
 
   @override
   void initState() {
     super.initState();
-
     _controller = AnimationController(vsync: this);
+    Future.microtask(() => context.read<LocationProvider>().getLocation());
     if (widget.reload != true) {
       Future.delayed(Duration.zero, () async {
-        String token = await ApiProvider().getToken() ?? "";
+        String? token = await ApiProvider().getToken() ?? "";
         requestJson = json.encode({
           "lat": "",
           "lng": "",
           "ios": Platform.isAndroid ? false : true,
           "lang": "en",
+          //"${appLanguage.appLocal}",
           "device": widget.deviceId ?? "",
-          "token": "$token"
+          "token": token ?? ""
         });
         context
             .read<HomefirstProvider>()
@@ -81,22 +87,12 @@ class _NewsTabState extends State<NewsTab>
         context.read<AddPostProvider>();
       });
     }
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    final addpostProvider = context.watch<AddPostProvider>();
-    if (addpostProvider.ispostUploaded != null &&
-        addpostProvider.ispostUploaded == true) {
-      ScaffoldMessenger.of(context).removeCurrentSnackBar();
-      Future.delayed(Duration(seconds: 1), () {
-        CustomSnackBar(context, Text("Post has been submmitted"));
-      }).then((value) => addpostProvider.removeSnack());
-    } else if (addpostProvider.isUploadError) {
-      Future.delayed(Duration(seconds: 1), () {
-        CustomSnackBar(context, Text("Upload Failed!"));
-      });
+    if (widget.isPostUploaded ?? false) {
+      // Future.delayed(Duration(seconds: 1), () {
+      //   CustomSnackBar(context, Text("Post has been submmitted"));
+      // });
+      Fluttertoast.showToast(
+          msg: "Post has been Submitted", backgroundColor: Color(0xFF0044CE));
     }
   }
 
@@ -106,10 +102,18 @@ class _NewsTabState extends State<NewsTab>
     super.dispose();
   }
 
+  getAddrress(double lat, double long) async {
+    final address = await placemarkFromCoordinates(lat, long);
+    setState(() {
+      _selecetdAddress = "${address.first.locality} ${address.first.locality}";
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     super.build(context);
     log("main building");
+    final locationProvider = context.watch<LocationProvider>();
     final newsFirstProvider = context.watch<HomefirstProvider>();
     final newsSecondProvider = context.watch<HomeSecondProvider>();
     return RefreshIndicator(
@@ -122,6 +126,7 @@ class _NewsTabState extends State<NewsTab>
         });
       },
       child: SingleChildScrollView(
+        physics: BouncingScrollPhysics(),
         child: Column(
           children: [
             SizedBox(
@@ -135,7 +140,9 @@ class _NewsTabState extends State<NewsTab>
                   child: SizedBox(
                     width: MediaQuery.of(context).size.width * 0.6,
                     child: Text(
-                      _selecetdAddress ?? "UnSepcified Location",
+                      _selecetdAddress ??
+                          locationProvider.AddressFromCordinate ??
+                          "",
                       style: ThreeKmTextConstants.tk12PXPoppinsBlackSemiBold,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -348,6 +355,7 @@ class _NewsTabState extends State<NewsTab>
                         } else if (finalPost.bannertype == "BWC") {
                           return finalPost.banners?.length != null
                               ? Column(
+                                  mainAxisSize: MainAxisSize.min,
                                   children: [
                                     CarouselSlider.builder(
                                       itemCount: finalPost.banners!.length,
@@ -416,7 +424,7 @@ class _NewsTabState extends State<NewsTab>
                                                             15)),
                                                 child: CachedNetworkImage(
                                                     fit: BoxFit.contain,
-                                                    width: 1000,
+                                                    // width: 1000,
                                                     imageUrl: finalPost
                                                         .banners![bannerIndex]
                                                         .images!
@@ -449,26 +457,24 @@ class _NewsTabState extends State<NewsTab>
                                     ),
                                     // Row(
                                     //   mainAxisAlignment:
-                                    //      MainAxisAlignment.center,
-                                    // children:
-                                    //     finalPost.banners!.map((banner) {
-                                    //   int index = finalPost.banners!
-                                    //       .indexOf(banner);
-                                    //   return Container(
-                                    //     width: 8.0,
-                                    //     height: 8.0,
-                                    //     margin: EdgeInsets.symmetric(
-                                    //         vertical: 10.0,
-                                    //         horizontal: 2.0),
-                                    //     decoration: BoxDecoration(
-                                    //       shape: BoxShape.circle,
-                                    //       color: _current == index
-                                    //           ? Color.fromRGBO(0, 0, 0, 0.9)
-                                    //           : Color.fromRGBO(
-                                    //               0, 0, 0, 0.4),
-                                    //     ),
-                                    //   );
-                                    // }).toList(),
+                                    //       MainAxisAlignment.center,
+                                    //   children:
+                                    //       finalPost.banners!.map((banner) {
+                                    //     int index =
+                                    //         finalPost.banners!.indexOf(banner);
+                                    //     return Container(
+                                    //       width: 8.0,
+                                    //       height: 8.0,
+                                    //       margin: EdgeInsets.symmetric(
+                                    //           vertical: 10.0, horizontal: 2.0),
+                                    //       decoration: BoxDecoration(
+                                    //         shape: BoxShape.circle,
+                                    //         color: _current == index
+                                    //             ? Color.fromRGBO(0, 0, 0, 0.9)
+                                    //             : Color.fromRGBO(0, 0, 0, 0.4),
+                                    //       ),
+                                    //     );
+                                    //   }).toList(),
                                     // ),
                                   ],
                                 )
@@ -502,9 +508,9 @@ class _NewsTabState extends State<NewsTab>
                   if (finalScondPost.type == 'news_cat') {
                     return NewsContainer(finalPost: finalScondPost);
                   } else if (finalScondPost.type == "quiz_carousel") {
-                    return Container(
-                      child: Text("quiz carousal"),
-                    );
+                    return Container(child: SizedBox.shrink()
+                        //Text("quiz carousal"),
+                        );
                   } else if (finalScondPost.type == "quiz" &&
                       finalScondPost.quiz!.type == "quiz") {
                     if (finalScondPost.quiz?.isAnswered == true) {
@@ -529,7 +535,7 @@ class _NewsTabState extends State<NewsTab>
                       builder: (context, quizProvider, _controller, _) {
                         return Container(
                           margin: EdgeInsets.only(
-                              top: 8, bottom: 8, left: 4, right: 4),
+                              bottom: 8, left: 4, right: 4, top: 0),
                           height: MediaQuery.of(context).size.height * 0.7,
                           width: MediaQuery.of(context).size.width,
                           decoration: BoxDecoration(
@@ -590,50 +596,52 @@ class _NewsTabState extends State<NewsTab>
                                                               left: 4,
                                                               right: 4),
                                                       child: GestureDetector(
-                                                        onTap: () {
-                                                          if (finalScondPost
-                                                                      .quiz
-                                                                      ?.isAnswered ==
-                                                                  false ||
-                                                              finalScondPost
-                                                                      .quiz
-                                                                      ?.isAnswered ==
-                                                                  null) {
-                                                            final ansIndex = finalScondPost
-                                                                .quiz!.options!
-                                                                .indexWhere((element) =>
-                                                                    element
-                                                                        .text ==
-                                                                    finalScondPost
-                                                                        .quiz!
-                                                                        .answer);
-                                                            log("ans index is $ansIndex");
-                                                            context
-                                                                .read<
-                                                                    QuizProvider>()
-                                                                .checkAns(
-                                                                    quizIndex,
-                                                                    ansIndex);
-                                                            context
-                                                                .read<
-                                                                    QuizProvider>()
-                                                                .submitQuiz(
-                                                                    finalScondPost
-                                                                        .quiz!
-                                                                        .quizId!
-                                                                        .toInt(),
-                                                                    finalScondPost
-                                                                        .quiz!
-                                                                        .options![
-                                                                            quizIndex]
-                                                                        .text
-                                                                        .toString());
-                                                            _controller.submitQuiz(
-                                                                quizId:
-                                                                    finalScondPost
-                                                                        .quiz!
-                                                                        .quizId!
-                                                                        .toInt());
+                                                        onTap: () async {
+                                                          if (await getAuthStatus()) {
+                                                            if (finalScondPost
+                                                                        .quiz
+                                                                        ?.isAnswered ==
+                                                                    false ||
+                                                                finalScondPost
+                                                                        .quiz
+                                                                        ?.isAnswered ==
+                                                                    null) {
+                                                              final ansIndex = finalScondPost
+                                                                  .quiz!
+                                                                  .options!
+                                                                  .indexWhere((element) =>
+                                                                      element
+                                                                          .text ==
+                                                                      finalScondPost
+                                                                          .quiz!
+                                                                          .answer);
+                                                              log("ans index is $ansIndex");
+                                                              context
+                                                                  .read<
+                                                                      QuizProvider>()
+                                                                  .checkAns(
+                                                                      quizIndex,
+                                                                      ansIndex);
+                                                              context.read<QuizProvider>().submitQuiz(
+                                                                  finalScondPost
+                                                                      .quiz!
+                                                                      .quizId!
+                                                                      .toInt(),
+                                                                  finalScondPost
+                                                                      .quiz!
+                                                                      .options![
+                                                                          quizIndex]
+                                                                      .text
+                                                                      .toString());
+                                                              _controller.submitQuiz(
+                                                                  quizId: finalScondPost
+                                                                      .quiz!
+                                                                      .quizId!
+                                                                      .toInt());
+                                                            }
+                                                          } else {
+                                                            NaviagateToLogin(
+                                                                context);
                                                           }
                                                         },
                                                         child: Container(
@@ -699,46 +707,7 @@ class _NewsTabState extends State<NewsTab>
                                                                           : SizedBox.shrink()
                                                               ],
                                                             )),
-                                                      )
-                                                      //  Option(
-                                                      //   selectedOptionIndex: finalScondPost
-                                                      //               .quiz!
-                                                      //               .selectedOption
-                                                      //               .toString() ==
-                                                      //           finalScondPost
-                                                      //               .quiz!
-                                                      //               .options![
-                                                      //                   quizIndex]
-                                                      //               .text
-                                                      //       ? quizIndex
-                                                      //       : 100,
-                                                      //   isAnswred: finalScondPost
-                                                      //       .quiz!.isAnswered!,
-                                                      //   quizId: finalScondPost
-                                                      //       .quiz!.quizId,
-                                                      //   text: finalScondPost
-                                                      //       .quiz!
-                                                      //       .options![quizIndex]
-                                                      //       .bullets
-                                                      //       .toString(),
-                                                      //   index: quizIndex,
-                                                      //   option: finalScondPost
-                                                      //       .quiz!
-                                                      //       .options![quizIndex]
-                                                      //       .text
-                                                      //       .toString(),
-                                                      //   correctAnsIndex: finalScondPost
-                                                      //               .quiz!.answer
-                                                      //               .toString() ==
-                                                      //           finalScondPost
-                                                      //               .quiz!
-                                                      //               .options![
-                                                      //                   quizIndex]
-                                                      //               .text
-                                                      //       ? quizIndex
-                                                      //       : 100,
-                                                      // ),
-                                                      );
+                                                      ));
                                                 },
                                               ),
                                             )
@@ -768,9 +737,9 @@ class _NewsTabState extends State<NewsTab>
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(16),
                           image: DecorationImage(
-                              fit: BoxFit.fill,
+                              fit: BoxFit.cover,
                               image: CachedNetworkImageProvider(
-                                  finalScondPost.quiz!.image.toString())),
+                                  finalScondPost.quiz!.image!)),
                         ),
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
@@ -787,23 +756,24 @@ class _NewsTabState extends State<NewsTab>
                                     color: Color(0xffFFFFFF).withOpacity(0.4),
                                   ),
                                   onSelection: (PollFrameModel model,
-                                      PollOptions selectedOptionModel) {
-                                    context
-                                        .read<QuizProvider>()
-                                        .submitPollAnswer(
-                                            answer: selectedOptionModel.label,
-                                            quizId: finalScondPost.quiz!.id!
-                                                .toInt());
-                                    context
-                                        .read<HomeSecondProvider>()
-                                        .pollSubmitted(
-                                            pollId: finalScondPost.quiz!.id!
-                                                .toInt(),
-                                            answer: selectedOptionModel.label);
-                                    // print('Now total polls are : ' +
-                                    //     model.totalPolls.toString());
-                                    // print('Selected option has label : ' +
-                                    //     selectedOptionModel.label);
+                                      PollOptions selectedOptionModel) async {
+                                    if (await getAuthStatus()) {
+                                      context
+                                          .read<QuizProvider>()
+                                          .submitPollAnswer(
+                                              answer: selectedOptionModel.label,
+                                              quizId: finalScondPost.quiz!.id!
+                                                  .toInt());
+                                      context
+                                          .read<HomeSecondProvider>()
+                                          .pollSubmitted(
+                                              pollId: finalScondPost.quiz!.id!
+                                                  .toInt(),
+                                              answer:
+                                                  selectedOptionModel.label);
+                                    } else {
+                                      NaviagateToLogin(context);
+                                    }
                                   },
                                   optionsBorderShape:
                                       StadiumBorder(), //Its Default so its not necessary to write this line
@@ -948,81 +918,82 @@ class _NewsTabState extends State<NewsTab>
                                   ThreeKmTextConstants.tk16PXPoppinsWhiteBold,
                             ),
                             SizedBox(height: 50),
-                            Container(
-                              height: 347,
-                              width: 247,
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(50),
-                                  color: Colors.white),
-                              child: Column(
-                                children: [
-                                  SizedBox(
-                                    height: 20,
-                                  ),
-                                  Container(
-                                    height: 215,
-                                    width: 215,
-                                    decoration: BoxDecoration(
-                                      image: DecorationImage(
-                                          image: CachedNetworkImageProvider(
-                                              finalScondPost.business!.videos!
-                                                  .first.thumbnail
-                                                  .toString()),
-                                          fit: BoxFit.cover),
-                                      borderRadius: BorderRadius.circular(50),
-                                    ),
-                                    // child: Stack(
-                                    //   children: [
-                                    //     Positioned(
-                                    //       bottom: 38,
-                                    //       left: 45,
-                                    //       top: 153,
-                                    //       right: 146,
-                                    //       child: Container(
-                                    //           child: Center(
-                                    //             child: Icon(Icons
-                                    //                 .arrow_forward_rounded),
-                                    //           ),
-                                    //           height: 24,
-                                    //           width: 24,
-                                    //           decoration: BoxDecoration(
-                                    //               shape: BoxShape.circle,
-                                    //               color: Colors.white)),
-                                    //     )
-                                    //   ],
-                                    // ),
-                                  ),
-                                  SizedBox(height: 10),
-                                  Text(
-                                    finalScondPost.business!.author!.name
-                                        .toString(),
-                                    style: ThreeKmTextConstants
-                                        .tk18PXLatoBlackMedium,
-                                  ),
-                                  SizedBox(
-                                    height: 15,
-                                  ),
-                                  Text(
-                                    finalScondPost.business?.headline
-                                            .toString() ??
-                                        "",
-                                    style:
-                                        ThreeKmTextConstants.tk11PXLatoGreyBold,
-                                  ),
-                                  TextButton(
-                                      onPressed: () {
-                                        Navigator.push(
-                                            context,
-                                            AnimatedSizeRoute(
-                                                page: Postview(
-                                                    postId: finalScondPost
-                                                        .business!.postId
-                                                        .toString())));
-                                      },
-                                      child: Text("Read More"))
-                                ],
-                              ),
-                            )
+                            HeighlightPost(business: finalScondPost.business!)
+                            // Container(
+                            //   height: 347,
+                            //   width: 247,
+                            //   decoration: BoxDecoration(
+                            //       borderRadius: BorderRadius.circular(50),
+                            //       color: Colors.white),
+                            //   child: Column(
+                            //     children: [
+                            //       SizedBox(
+                            //         height: 20,
+                            //       ),
+                            //       Container(
+                            //         height: 215,
+                            //         width: 215,
+                            //         decoration: BoxDecoration(
+                            //           image: DecorationImage(
+                            //               image: CachedNetworkImageProvider(
+                            //                   finalScondPost.business!.videos!
+                            //                       .first.thumbnail
+                            //                       .toString()),
+                            //               fit: BoxFit.cover),
+                            //           borderRadius: BorderRadius.circular(50),
+                            //         ),
+                            //         // child: Stack(
+                            //         //   children: [
+                            //         //     Positioned(
+                            //         //       bottom: 38,
+                            //         //       left: 45,
+                            //         //       top: 153,
+                            //         //       right: 146,
+                            //         //       child: Container(
+                            //         //           child: Center(
+                            //         //             child: Icon(Icons
+                            //         //                 .arrow_forward_rounded),
+                            //         //           ),
+                            //         //           height: 24,
+                            //         //           width: 24,
+                            //         //           decoration: BoxDecoration(
+                            //         //               shape: BoxShape.circle,
+                            //         //               color: Colors.white)),
+                            //         //     )
+                            //         //   ],
+                            //         // ),
+                            //       ),
+                            //       SizedBox(height: 10),
+                            //       Text(
+                            //         finalScondPost.business!.author!.name
+                            //             .toString(),
+                            //         style: ThreeKmTextConstants
+                            //             .tk18PXLatoBlackMedium,
+                            //       ),
+                            //       SizedBox(
+                            //         height: 15,
+                            //       ),
+                            //       Text(
+                            //         finalScondPost.business?.headline
+                            //                 .toString() ??
+                            //             "",
+                            //         style:
+                            //             ThreeKmTextConstants.tk11PXLatoGreyBold,
+                            //       ),
+                            //       TextButton(
+                            //           onPressed: () {
+                            //             Navigator.push(
+                            //                 context,
+                            //                 AnimatedSizeRoute(
+                            //                     page: Postview(
+                            //                         postId: finalScondPost
+                            //                             .business!.postId
+                            //                             .toString())));
+                            //           },
+                            //           child: Text("Read More"))
+                            //     ],
+                            //   ),
+                            // )
                           ]),
                     );
                   }
@@ -1069,8 +1040,9 @@ class NewsContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-        margin: EdgeInsets.only(top: 5),
+        //margin: EdgeInsets.only(top: 5),
         height: 280,
+
         // width: double.infinity,
         width: MediaQuery.of(context).size.width,
         color: Colors.white,
