@@ -4,12 +4,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:threekm/UI/Language/SelectLanguage.dart';
 import 'package:threekm/UI/main/AddPost/AddNewPost.dart';
-import 'package:threekm/UI/main/AddPost/utils/video.dart';
-import 'package:threekm/UI/main/News/NewsList.dart';
 import 'package:threekm/UI/main/Profile/MyProfilePost.dart';
 import 'package:threekm/UI/main/Profile/Profilepage.dart';
 import 'package:threekm/UI/main/navigation.dart';
@@ -18,6 +15,7 @@ import 'package:threekm/UI/shop/cart/cart_item_list_modal.dart';
 import 'package:threekm/UI/shop/cart/wishlist.dart';
 import 'package:threekm/UI/shop/checkout/past_order.dart';
 import 'package:threekm/UI/walkthrough/splash_screen.dart';
+import 'package:threekm/localization/localize.dart';
 import 'package:threekm/providers/ProfileInfo/ProfileInfo_Provider.dart';
 import 'package:threekm/providers/main/AddPost_Provider.dart';
 import 'package:threekm/providers/main/AthorProfile_Provider.dart';
@@ -161,7 +159,8 @@ class _CustomDrawerState extends State<CustomDrawer> {
               borderRadius: BorderRadius.circular(20),
             ),
             title: Text(
-              "Logout",
+              AppLocalizations.of(context)?.translate("profile_logout_text") ??
+                  "",
               style: ThreeKmTextConstants.tk16PXPoppinsBlackSemiBold
                   .copyWith(fontSize: 20),
             ),
@@ -237,7 +236,10 @@ class _CustomDrawerState extends State<CustomDrawer> {
           },
           child: CustomDrawerItem(
             image: "assets/feed.png",
-            label: "My Post".toUpperCase(),
+            label: AppLocalizations.of(context)
+                    ?.translate("my_post")
+                    ?.toUpperCase() ??
+                "",
           ),
         ),
         SizedBox(
@@ -255,13 +257,19 @@ class _CustomDrawerState extends State<CustomDrawer> {
           },
           child: CustomDrawerItem(
             icon: Icons.add,
-            label: "Add Post".toUpperCase(),
+            label: AppLocalizations.of(context)
+                    ?.translate("add_post")
+                    ?.toUpperCase() ??
+                "",
           ),
         ),
         DrawerDivider(),
         CustomDrawerItem(
           icon: Icons.shopping_cart_outlined,
-          label: "Shopping Cart".toUpperCase(),
+          label: AppLocalizations.of(context)
+                  ?.translate("shopping_cart")
+                  ?.toUpperCase() ??
+              "",
         ).onTap(() {
           Future.microtask(() => ThreeKmScreenUtil().init(context))
               .then((value) => viewCart(context, "shop"));
@@ -274,7 +282,10 @@ class _CustomDrawerState extends State<CustomDrawer> {
               context, MaterialPageRoute(builder: (_) => WishList())),
           child: CustomDrawerItem(
             icon: CupertinoIcons.heart,
-            label: "Wishlist".toUpperCase(),
+            label: AppLocalizations.of(context)
+                    ?.translate("profile_wishlist_text")
+                    ?.toUpperCase() ??
+                "",
           ),
         ),
         SizedBox(
@@ -285,7 +296,10 @@ class _CustomDrawerState extends State<CustomDrawer> {
               .push(MaterialPageRoute(builder: (context) => PastOrder())),
           child: CustomDrawerItem(
             image: "assets/inventory.png",
-            label: "Past Orders".toUpperCase(),
+            label: AppLocalizations.of(context)
+                    ?.translate("Orders")
+                    ?.toUpperCase() ??
+                "",
           ),
         ),
         SizedBox(
@@ -299,7 +313,10 @@ class _CustomDrawerState extends State<CustomDrawer> {
           },
           child: CustomDrawerItem(
             icon: Icons.place_outlined,
-            label: "Saved Addresses".toUpperCase(),
+            label: AppLocalizations.of(context)
+                    ?.translate("profile_addresses_desc")
+                    ?.toUpperCase() ??
+                "",
           ),
         ),
         DrawerDivider(),
@@ -308,7 +325,10 @@ class _CustomDrawerState extends State<CustomDrawer> {
               .push(MaterialPageRoute(builder: (context) => HelpAndSupport())),
           child: CustomDrawerItem(
             icon: Icons.contact_support_outlined,
-            label: "Help and Support".toUpperCase(),
+            label: AppLocalizations.of(context)
+                    ?.translate("profile_help_support")
+                    ?.toUpperCase() ??
+                "",
           ),
         ),
         SizedBox(
@@ -316,7 +336,10 @@ class _CustomDrawerState extends State<CustomDrawer> {
         ),
         CustomDrawerItem(
           icon: Icons.g_translate_outlined,
-          label: "Change language".toUpperCase(),
+          label: AppLocalizations.of(context)
+                  ?.translate("profile_change_language")
+                  ?.toUpperCase() ??
+              "",
         ).onTap(() {
           Navigator.pushAndRemoveUntil(
               context,
@@ -328,7 +351,10 @@ class _CustomDrawerState extends State<CustomDrawer> {
         ),
         CustomDrawerItem(
           icon: Icons.policy,
-          label: "Privacy Policy".toUpperCase(),
+          label: AppLocalizations.of(context)
+                  ?.translate("privacy_policy")
+                  ?.toUpperCase() ??
+              "",
         ).onTap(() {
           InAppBrowser.openWithSystemBrowser(
               url: Uri.parse("https://bulbandkey.com/privacy-policy"));
@@ -352,7 +378,10 @@ class _CustomDrawerState extends State<CustomDrawer> {
           },
           child: CustomDrawerItem(
             icon: Icons.logout,
-            label: "Logout".toUpperCase(),
+            label: AppLocalizations.of(context)
+                    ?.translate("logout")
+                    ?.toUpperCase() ??
+                "",
           ),
         ),
       ],
@@ -400,7 +429,9 @@ class CustomDrawerHeader extends StatelessWidget {
                           .copyWith(fontWeight: FontWeight.normal),
                     ),
                     Text(
-                      "My Profile",
+                      AppLocalizations.of(context)
+                              ?.translate("profile_header_name") ??
+                          "",
                       style: ThreeKmTextConstants.tk12PXPoppinsWhiteRegular
                           .copyWith(
                         color: Color(0xFFD5D5D5),

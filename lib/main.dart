@@ -13,6 +13,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:in_app_update/in_app_update.dart';
 import 'package:path_provider/path_provider.dart' as pathProvider;
 import 'package:provider/provider.dart';
+import 'package:threekm/providers/FCM/fcm_sendToken_Provider.dart';
 import 'package:threekm/providers/Location/locattion_Provider.dart';
 import 'package:threekm/providers/Notification/Notification_Provider.dart';
 import 'package:threekm/providers/ProfileInfo/ProfileInfo_Provider.dart';
@@ -74,6 +75,7 @@ late AndroidNotificationChannel channel;
 
 /// Initialize the [FlutterLocalNotificationsPlugin] package.
 late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
+String FcmToken = "";
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -83,7 +85,7 @@ void main() async {
     ..initFlutter()
     ..registerAdapter(CartHiveModelAdapter())
     ..registerAdapter(BusinesseswishListHiveModelAdapter());
-    
+
   runApp(MyApp(
     appLanguage: appLanguage,
   ));
@@ -143,11 +145,11 @@ void main() async {
     statusBarColor: Colors.transparent,
   ));
 
-  await FirebaseMessaging.instance.getToken().then((value) => log("$value"));
+  await FirebaseMessaging.instance.getToken().then((value) => value = FcmToken);
 
   //end fcm code------------------------------------------------------------
 
-  Directory directory = await pathProvider.getApplicationDocumentsDirectory();
+  // Directory directory = await pathProvider.getApplicationDocumentsDirectory();
   // Hive.init(directory.path);
 }
 
@@ -241,12 +243,18 @@ class MyApp extends StatelessWidget {
           ///Notification Provider
           ChangeNotifierProvider<NotificationProvider>(
               create: (context) => NotificationProvider()),
+          ChangeNotifierProvider<FCMProvider>(
+              create: (context) => FCMProvider()),
         ],
         child: Consumer<AppLanguage>(
-          builder: (context, controller, _) {
+          builder: (context, controller, child) {
             log("app lang is ${controller.appLocal}");
+            SystemChrome.setPreferredOrientations([
+              DeviceOrientation.portraitUp,
+              DeviceOrientation.portraitDown,
+            ]);
             return MaterialApp(
-              locale: controller.appLocal,
+              locale: controller.appLocal ?? appLanguage.appLocal,
               //controller.appLocal,
               localizationsDelegates: [
                 AppLocalizations.delegate,
@@ -262,16 +270,10 @@ class MyApp extends StatelessWidget {
               debugShowCheckedModeBanner: false,
               theme: lightTheme,
               themeMode: ThemeMode.light,
-              home: //SignUp(),
-                  //    SelectLanguage(),
-                  SplashScreen(),
+              home: SplashScreen(
+                fcmToken: FcmToken,
+              ),
               navigatorKey: navigatorKey,
-              // localeResolutionCallback: (
-              //   Locale? locale,
-              //   Iterable<Locale> supportedLocales,
-              // ) {
-              //   return locale;
-              // },
             );
           },
         ));

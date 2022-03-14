@@ -29,6 +29,7 @@ import 'package:threekm/localization/localize.dart';
 import 'package:threekm/networkservice/Api_Provider.dart';
 import 'package:threekm/providers/Global/logged_in_or_not.dart';
 import 'package:threekm/providers/Location/locattion_Provider.dart';
+import 'package:threekm/providers/localization_Provider/appLanguage_provider.dart';
 import 'package:threekm/providers/main/AddPost_Provider.dart';
 import 'package:threekm/providers/main/Quiz_Provider.dart';
 import 'package:threekm/providers/main/home1_provider.dart';
@@ -45,7 +46,8 @@ class NewsTab extends StatefulWidget {
   final String? deviceId;
   final bool? reload;
   final bool? isPostUploaded;
-  NewsTab({this.reload, this.deviceId, this.isPostUploaded});
+  final Locale? appLanguage;
+  NewsTab({this.reload, this.deviceId, this.isPostUploaded, this.appLanguage});
   @override
   _NewsTabState createState() => _NewsTabState();
 }
@@ -63,6 +65,7 @@ class _NewsTabState extends State<NewsTab>
     super.initState();
     _controller = AnimationController(vsync: this);
     Future.microtask(() => context.read<LocationProvider>().getLocation());
+    Future.microtask(() => context.read<AppLanguage>().fetchLocale());
     if (widget.reload != true) {
       Future.delayed(Duration.zero, () async {
         String? token = await ApiProvider().getToken() ?? "";
@@ -70,7 +73,12 @@ class _NewsTabState extends State<NewsTab>
           "lat": "",
           "lng": "",
           "ios": Platform.isAndroid ? false : true,
-          "lang": "en",
+          "lang": context.read<AppLanguage>().appLocal == Locale("mr")
+              ? "mr"
+              : context.read<AppLanguage>().appLocal == Locale("en")
+                  ? "en"
+                  : "hi",
+
           //"${appLanguage.appLocal}",
           "device": widget.deviceId ?? "",
           "token": token ?? ""
@@ -1221,7 +1229,8 @@ class NewsContainer extends StatelessWidget {
                                                 .toString(),
                                             overflow: TextOverflow.fade,
                                             style: ThreeKmTextConstants
-                                                .tk14PXPoppinsBlackSemiBold),
+                                                .tk12PXPoppinsBlackSemiBold
+                                                .copyWith(fontSize: 13)),
                                       ),
                                     ])),
                           ),

@@ -8,9 +8,14 @@ class VideoWidget extends StatefulWidget {
   final String url;
   final bool play;
   final String? thubnail;
+  final bool? fromSinglePage;
 
   const VideoWidget(
-      {Key? key, this.thubnail, required this.url, required this.play})
+      {Key? key,
+      this.fromSinglePage,
+      this.thubnail,
+      required this.url,
+      required this.play})
       : super(key: key);
   @override
   _VideoWidgetState createState() => _VideoWidgetState();
@@ -39,6 +44,9 @@ class _VideoWidgetState extends State<VideoWidget> {
       if (event.betterPlayerEventType == BetterPlayerEventType.initialized) {
         log("this is video height ${_betterPlayerController!.videoPlayerController!.value.size!.height}");
         log("and aspect Ratio is ${_betterPlayerController!.videoPlayerController!.value.aspectRatio}");
+        if (widget.fromSinglePage == true) {
+          setState(() {});
+        }
         //setState(() {});
         setState(() {
           _betterPlayerController!.setOverriddenAspectRatio(

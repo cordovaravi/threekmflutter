@@ -1,10 +1,14 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:developer';
+import 'dart:io';
+import 'package:device_info/device_info.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hive/hive.dart';
+import 'package:provider/src/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:threekm/UI/businesses/businesses_detail.dart';
 import 'package:threekm/UI/main/News/PostView.dart';
@@ -12,11 +16,14 @@ import 'package:threekm/UI/main/navigation.dart';
 import 'package:threekm/UI/Auth/signup/sign_up.dart';
 import 'package:threekm/UI/shop/product/product_details.dart';
 import 'package:threekm/main.dart';
+import 'package:threekm/providers/FCM/fcm_sendToken_Provider.dart';
 import 'package:threekm/providers/Global/logged_in_or_not.dart';
 import 'package:uni_links/uni_links.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class SplashScreen extends StatefulWidget {
+  final String? fcmToken;
+  SplashScreen({this.fcmToken});
   // final String? uri;
   // SplashScreen({this.uri});
   @override
@@ -27,8 +34,42 @@ class _SplashScreenState extends State<SplashScreen> {
   GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey();
 
   //ScreenshotController screenshotController = ScreenshotController();
+  getDeviceId() async {
+    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+    if (Platform.isAndroid) {
+      await deviceInfo.androidInfo.then((value) async {
+        String requestJson = json.encode({
+          "uuid": value.id,
+          "platform": "Android",
+          "token": await FirebaseMessaging.instance.getToken(),
+          "manufacturer": value.manufacturer,
+          "device_model": value.model,
+          "app_version": "3.2.1",
+          "version": "2.1.2"
+        });
+        context.read<FCMProvider>().sendToken(requestJson);
+      });
+    } else if (Platform.isIOS) {
+      await deviceInfo.iosInfo.then((value) async {
+        String requestJson = json.encode({
+          "uuid": "23423423423423423423",
+          "platform": "iOS",
+          "token": await FirebaseMessaging.instance.getToken(),
+          "manufacturer": value.identifierForVendor,
+          "device_model": value.model,
+          "app_version": "3.2.1",
+          "version": "2.1.2"
+        });
+        context.read<FCMProvider>().sendToken(requestJson);
+      });
+    }
+  }
+
   @override
   void initState() {
+    Future.microtask(() {
+      getDeviceId();
+    });
     super.initState();
     handleDeepLink();
     handleFcm();
