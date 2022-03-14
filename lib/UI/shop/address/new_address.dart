@@ -196,10 +196,7 @@ class _NewAddressState extends State<NewAddress> {
                               child: Text(
                                 '${_selecetedAddress ?? "Please Select Address"}',
                               )),
-                          InkWell(
-                              onTap: () {},
-                              child: Text('Change',
-                                  style: TextStyle(color: Colors.blue)))
+                          Text('Change', style: TextStyle(color: Colors.blue))
                           // Image(
                           //   image: AssetImage('assets/shopImg/googlemaps.png'),
                           //   width: 24,

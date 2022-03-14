@@ -13,6 +13,7 @@ import 'package:shimmer/shimmer.dart';
 import 'package:threekm/Custom_library/GooleMapsWidget/src/place_picker.dart';
 
 import 'package:threekm/Models/shopModel/restaurants_model.dart';
+import 'package:threekm/UI/shop/restaurants/cuisinesViewAll.dart';
 import 'package:threekm/UI/shop/restaurants/view_all_restaurant.dart';
 import 'package:threekm/commenwidgets/CustomSnakBar.dart';
 import 'package:threekm/localization/localize.dart';
@@ -211,8 +212,8 @@ class _RestaurantsHomeState extends State<RestaurantsHome> {
                           AppLocalizations.of(context)!
                                   .translate('change_location') ??
                               'Change Location',
-                          style:
-                              ThreeKmTextConstants.tk12PXPoppinsBlackSemiBold,
+                          style: ThreeKmTextConstants.tk12PXPoppinsBlackSemiBold
+                              .copyWith(color: Colors.blue),
                         ),
                       )
                     ],
@@ -433,9 +434,9 @@ class _RestaurantsHomeState extends State<RestaurantsHome> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Padding(
-                          padding: EdgeInsets.all(8.0),
+                          padding: EdgeInsets.only(top: 8, bottom: 8),
                           child: Text(
-                            'Categories',
+                            'Cuisines',
                             style: TextStyle(
                                 color: Color(0xFF0F0F2D),
                                 fontSize: 19,
@@ -444,12 +445,12 @@ class _RestaurantsHomeState extends State<RestaurantsHome> {
                         ),
                         Container(
                           width: MediaQuery.of(context).size.width,
-                          height: 400,
+                          height: 250,
                           child: GridView.builder(
                               //physics: const NeverScrollableScrollPhysics(),
                               gridDelegate:
                                   const SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 3,
+                                crossAxisCount: 2,
                                 crossAxisSpacing: 10,
                                 mainAxisSpacing: 10,
                               ),
@@ -459,36 +460,58 @@ class _RestaurantsHomeState extends State<RestaurantsHome> {
                               itemBuilder: (_, i) {
                                 var cuisinesdata =
                                     cuisinesData.data!.result.data[i];
-                                return Container(
-                                  // width: 150,
-                                  // height: 150,
-                                  padding: EdgeInsets.only(top: 15, bottom: 10),
-                                  decoration: BoxDecoration(
-                                      border:
-                                          Border.all(color: Color(0xFFE2E4E6)),
-                                      borderRadius: BorderRadius.circular(15)),
-                                  child: Column(
-                                    children: [
-                                      CachedNetworkImage(
-                                        alignment: Alignment.center,
-                                        placeholder: (context, url) =>
-                                            Transform.scale(
-                                          scale: 0.5,
-                                          child: CircularProgressIndicator(
-                                            color: Colors.grey[400],
+                                return InkWell(
+                                  onTap: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (_) => CuisinesViewAll(
+                                                  query: '${cuisinesdata.name}',
+                                                )));
+                                  },
+                                  child: Container(
+                                    // width: 150,
+                                    // height: 150,
+                                    padding: EdgeInsets.only(
+                                        top: 5, bottom: 10, left: 5, right: 5),
+                                    decoration: BoxDecoration(
+                                        border: Border.all(
+                                            color: Color(0xFFE2E4E6)),
+                                        borderRadius:
+                                            BorderRadius.circular(15)),
+                                    child: Column(
+                                      children: [
+                                        SizedBox(
+                                          height: 75,
+                                          width: double.infinity,
+                                          child: ClipRRect(
+                                            borderRadius:
+                                                BorderRadius.circular(15),
+                                            child: CachedNetworkImage(
+                                              alignment: Alignment.center,
+                                              placeholder: (context, url) =>
+                                                  Transform.scale(
+                                                scale: 0.3,
+                                                child:
+                                                    CircularProgressIndicator(
+                                                  color: Colors.grey[400],
+                                                ),
+                                              ),
+                                              imageUrl: '${cuisinesdata.photo}',
+                                              // height:
+                                              //     ThreeKmScreenUtil.screenHeightDp /
+                                              //         13,
+                                              // width: ThreeKmScreenUtil
+                                              //         .screenWidthDp /
+                                              //     6,
+                                              fit: BoxFit.cover,
+                                            ),
                                           ),
                                         ),
-                                        imageUrl: '${cuisinesdata.photo}',
-                                        // height:
-                                        //     ThreeKmScreenUtil.screenHeightDp /
-                                        //         13,
-                                        width:
-                                            ThreeKmScreenUtil.screenWidthDp / 6,
-                                        fit: BoxFit.fill,
-                                      ),
-                                      Spacer(),
-                                      Text('${cuisinesdata.name}')
-                                    ],
+                                        Spacer(),
+                                        Text('${cuisinesdata.name}')
+                                      ],
+                                    ),
                                   ),
                                 );
                               }),
@@ -559,7 +582,7 @@ class _RestaurantsHomeState extends State<RestaurantsHome> {
                                   context,
                                   MaterialPageRoute(
                                       builder: (_) => RestaurantMenu(
-                                            data: data?.creators?[i],
+                                            data: data!.creators![i],
                                           )));
                             },
                             child: Container(

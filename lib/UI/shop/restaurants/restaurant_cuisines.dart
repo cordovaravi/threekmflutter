@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/src/provider.dart';
+import 'package:threekm/Models/shopModel/cuisines_restaurants_list_model.dart';
 import 'package:threekm/Models/shopModel/restaurants_model.dart';
 import 'package:threekm/commenwidgets/CustomSnakBar.dart';
 import 'package:threekm/localization/localize.dart';
@@ -21,17 +22,17 @@ import '../../shop/restaurants/checkbox.dart';
 import '../../shop/restaurants/restaurant_details.dart';
 // import 'package:popover/popover.dart';
 
-final GlobalKey<_RestaurantMenuState> restaurantMenuKey = GlobalKey();
+final GlobalKey<_RestaurantCuisinesMenu> restaurantMenuKey = GlobalKey();
 
-class RestaurantMenu extends StatefulWidget {
-  RestaurantMenu({Key? key, required this.data}) : super(key: key);
-  Creators data;
+class RestaurantCuisinesMenu extends StatefulWidget {
+  RestaurantCuisinesMenu({Key? key, this.data}) : super(key: key);
+  CuisinesRestaurant? data;
 
   @override
-  State<RestaurantMenu> createState() => _RestaurantMenuState();
+  State<RestaurantCuisinesMenu> createState() => _RestaurantCuisinesMenu();
 }
 
-class _RestaurantMenuState extends State<RestaurantMenu> {
+class _RestaurantCuisinesMenu extends State<RestaurantCuisinesMenu> {
   late bool isVeg = true;
   late bool isEgg = true;
 
@@ -39,7 +40,7 @@ class _RestaurantMenuState extends State<RestaurantMenu> {
   void initState() {
     context
         .read<RestaurantMenuProvider>()
-        .menuDetailsData(mounted, widget.data.creatorId)
+        .menuDetailsData(mounted, widget.data?.creatorId)
         .whenComplete(() => filterSearchedItems(''));
 
     super.initState();
@@ -150,7 +151,7 @@ class _RestaurantMenuState extends State<RestaurantMenu> {
                         SizedBox(
                           width: ThreeKmScreenUtil.screenWidthDp / 2,
                           child: Text(
-                            '${widget.data.businessName}',
+                            '${widget.data?.businessName}',
                             style: const TextStyle(
                                 color: Color(0xFF0F0F2D),
                                 fontSize: 18,
@@ -163,7 +164,7 @@ class _RestaurantMenuState extends State<RestaurantMenu> {
                               maxWidth:
                                   MediaQuery.of(context).size.width / 1.7),
                           child: Text(
-                            '${widget.data.restaurant?.cuisines?.join(", ")}',
+                            '${widget.data?.cuisines.join(", ")}',
                             style: const TextStyle(
                                 color: Color(0xFF555C64),
                                 fontSize: 16,
@@ -171,7 +172,7 @@ class _RestaurantMenuState extends State<RestaurantMenu> {
                           ),
                         ),
                         Text(
-                            '${widget.data.address?.serviceArea}, ${widget.data.address?.city}')
+                            '${widget.data?.address.serviceArea}, ${widget.data?.address.city}')
                       ],
                     ),
                     Stack(children: [
@@ -181,7 +182,7 @@ class _RestaurantMenuState extends State<RestaurantMenu> {
                               MaterialPageRoute(builder: (_) {
                             return RestaurantDetails(
                               result: data.result,
-                              tags: widget.data.restaurant?.cuisines,
+                              tags: widget.data?.cuisines,
                             );
                           }));
                         },
