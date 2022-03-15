@@ -73,14 +73,23 @@ class _SplashScreenState extends State<SplashScreen> {
     super.initState();
     handleDeepLink();
     handleFcm();
+
     openBox();
   }
 
   openBox() async {
-    if (await getAuthStatus()) {
-      await Hive.openBox('restroCartBox');
-      await Hive.openBox('cartBox');
-    }
+    //if (await getAuthStatus()) {
+    await Hive.openBox('restroCartBox');
+    await Hive.openBox('cartBox');
+    await Hive.openBox('businessWishListBox');
+    await Hive.openBox('selectedAddress');
+    await Hive.openBox('creatorID');
+    await Hive.openBox('restrocreatorID');
+    await Hive.openBox('shopWishListBox');
+    await Hive.openBox('orderinfo');
+    await Hive.openBox('orderStatusBox');
+    await Hive.openBox('selectedAddress');
+    // }
   }
 
   void handleFcm() {
@@ -123,7 +132,7 @@ class _SplashScreenState extends State<SplashScreen> {
   Future<dynamic> handleDeepLink() async {
     try {
       final initialLink = await getInitialLink();
-      openBox();
+
       // Parse the link and warn the user, if it is not correct,
       // but keep in mind it could be `null`.
       log('this is deep link via 2 ${initialLink?.contains('/sell/')}');

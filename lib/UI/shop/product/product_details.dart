@@ -84,7 +84,7 @@ class _ProductDetailsState extends State<ProductDetails> {
   }
 
   openBox() async {
-    Box? _cartBox = await Hive.openBox('cartBox');
+    Box? _cartBox = await Hive.openBox('cartBox').whenComplete(() => setState((){}));
   }
 
   isProductExist(box, id, {variationId}) {
@@ -188,7 +188,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                       }),
                 ),
 
-                ValueListenableBuilder(
+               if(Hive.box('cartBox').isOpen) ValueListenableBuilder(
                     valueListenable: Hive.box('cartBox').listenable(),
                     builder: (context, Box box, snapshot) {
                       return Positioned(

@@ -60,16 +60,16 @@ class _RestaurantsHomeState extends State<RestaurantsHome> {
     getaddressFromCoordinates();
 
     Future.microtask(() {
-      openBox();
+     // openBox();
       context.read<LocationProvider>().getLocation();
       context.read<ShopHomeProvider>().getRestaurants(mounted, 1);
       context.read<RestaurantMenuProvider>().cuisinesList(mounted);
     });
   }
 
-  openBox() async {
-    await Hive.openBox('restroCartBox');
-  }
+  // openBox() async {
+  //   await Hive.openBox('restroCartBox');
+  // }
 
   @override
   void didChangeDependencies() {
