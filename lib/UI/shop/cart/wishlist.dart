@@ -27,14 +27,14 @@ class _WishListState extends State<WishList> {
 
   @override
   void initState() {
-    getWishBoxData();
+    //  getWishBoxData();
     super.initState();
   }
 
-  getWishBoxData() async {
-    await Hive.openBox('shopWishListBox');
-    await Hive.openBox('businessWishListBox');
-  }
+  // getWishBoxData() async {
+  //   await Hive.openBox('shopWishListBox');
+  //   await Hive.openBox('businessWishListBox');
+  // }
 
   isProductExist(box, id, {variationId}) {
     if (variationId != null && variationId != 0) {
@@ -60,7 +60,7 @@ class _WishListState extends State<WishList> {
 //businessWishListBox
   @override
   Widget build(BuildContext context) {
-    getWishBoxData();
+    // getWishBoxData();
     var wishbox = Hive.box('shopWishListBox');
     var businessWishbox = Hive.box('businessWishListBox');
     return Scaffold(

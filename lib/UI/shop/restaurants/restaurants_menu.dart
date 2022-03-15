@@ -256,15 +256,48 @@ class _RestaurantMenuState extends State<RestaurantMenu> {
               //       }),
               // ),
               Container(
-                padding: EdgeInsets.all(10),
+                padding: const EdgeInsets.only(
+                    top: 20, bottom: 20, left: 15, right: 15),
+                //width: ThreeKmScreenUtil.screenWidthDp / 1.2,
+                child: TextFormField(
+                  keyboardType: TextInputType.text,
+                  // controller: _firstName,
+
+                  onChanged: (val) {
+                    filterSearchedItems(val);
+                  },
+                  //maxLength: 16,
+                  decoration: InputDecoration(
+                    hintText: 'Search',
+                    hintStyle: const TextStyle(color: Color(0xFF0F0F2D)),
+                    counterText: '',
+                    filled: true,
+                    prefixIcon:
+                        const Icon(Icons.search, color: Color(0xFF0F0F2D)),
+                    fillColor: Colors.grey[200],
+                    //isDense: true,
+                    contentPadding: const EdgeInsets.fromLTRB(10, 13, 10, 13),
+
+                    border: const OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(20)),
+                        borderSide: BorderSide.none),
+                  ),
+                ),
+              ),
+              Container(
+                padding: EdgeInsets.all(15),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     CustomCheckBox(
+                      backgroundColor: Colors.green[100],
                       size: 6,
                       label: Text(
                         'VEG',
-                        style: TextStyle(fontSize: 12),
+                        style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.grey[700]),
                       ),
                       activeColor: Colors.green,
                       onClick: (status) {
@@ -274,11 +307,18 @@ class _RestaurantMenuState extends State<RestaurantMenu> {
                         });
                       },
                     ),
+                    SizedBox(
+                      width: 12,
+                    ),
                     CustomCheckBox(
+                      backgroundColor: Colors.red[100],
                       size: 6,
                       label: Text(
                         'NON-VEG',
-                        style: TextStyle(fontSize: 12),
+                        style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.grey[700]),
                       ),
                       activeColor: Colors.red,
                       onClick: (status) {
@@ -287,36 +327,6 @@ class _RestaurantMenuState extends State<RestaurantMenu> {
                           isVegFilter();
                         });
                       },
-                    ),
-                    Container(
-                      // padding: const EdgeInsets.only(left: 20),
-                      width: ThreeKmScreenUtil.screenWidthDp / 2.5,
-                      child: TextFormField(
-                        keyboardType: TextInputType.text,
-                        // controller: _firstName,
-
-                        onChanged: (val) {
-                          filterSearchedItems(val);
-                        },
-                        //maxLength: 16,
-                        decoration: InputDecoration(
-                          hintText: 'Search',
-                          hintStyle: const TextStyle(color: Color(0xFF0F0F2D)),
-                          counterText: '',
-                          filled: true,
-                          prefixIcon: const Icon(Icons.search,
-                              color: Color(0xFF0F0F2D)),
-                          fillColor: Colors.grey[200],
-                          //isDense: true,
-                          contentPadding:
-                              const EdgeInsets.fromLTRB(10, 13, 10, 13),
-
-                          border: const OutlineInputBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(20)),
-                              borderSide: BorderSide.none),
-                        ),
-                      ),
                     ),
                   ],
                 ),

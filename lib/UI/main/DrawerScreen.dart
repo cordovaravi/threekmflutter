@@ -46,16 +46,16 @@ class _DrawerScreenState extends State<DrawerScreen> {
     Future.delayed(Duration.zero, () {
       context.read<AutthorProfileProvider>().getSelfProfile();
     });
-    getWishBoxData();
+    //getWishBoxData();
     Future.microtask(
         () => context.read<ProfileInfoProvider>().getProfileBasicData());
     super.initState();
   }
 
-  getWishBoxData() async {
-    await Hive.openBox('shopWishListBox');
-    await Hive.openBox('businessWishListBox');
-  }
+  // getWishBoxData() async {
+  //   await Hive.openBox('shopWishListBox');
+  //   await Hive.openBox('businessWishListBox');
+  // }
 
   @override
   Widget build(BuildContext context) {

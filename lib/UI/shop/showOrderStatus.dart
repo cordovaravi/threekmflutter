@@ -67,7 +67,7 @@ class ShowOrderStaus {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              event.status ?? 'Food is being prepared',
+                            event.orderStatus == 'created' ? '' :  event.status ?? 'Food is being prepared',
                               style: TextStyle(color: Colors.black87),
                             ),
                             InkWell(
