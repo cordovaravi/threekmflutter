@@ -59,13 +59,13 @@ class _BusinessDetailState extends State<BusinessDetail> {
     context
         .read<BusinessDetailProvider>()
         .getBusinessesDetail(mounted, widget.id);
-    openBox();
+   // openBox();
   }
 
-  openBox() async {
-    await Hive.openBox('restroCartBox');
-    await Hive.openBox('cartBox');
-  }
+  // openBox() async {
+  //   await Hive.openBox('restroCartBox');
+  //   await Hive.openBox('cartBox');
+  // }
 
   @override
   Widget build(BuildContext context) {

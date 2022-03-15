@@ -6,12 +6,13 @@ import 'package:hive/hive.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:threekm/UI/Auth/signup/sign_up.dart';
 import 'package:threekm/UI/Search/SearchPage.dart';
+import 'package:threekm/UI/businesses/businesses_detail.dart';
 import 'package:threekm/UI/businesses/businesses_home.dart';
 import 'package:threekm/UI/main/navigation.dart';
 import 'package:threekm/UI/shop/cart/cart_item_list_modal.dart';
-import 'package:threekm/UI/shop/checkout/order_detail.dart';
+
 import 'package:threekm/localization/localize.dart';
-import 'package:threekm/networkservice/Api_Provider.dart';
+
 import 'package:threekm/providers/Location/locattion_Provider.dart';
 import 'package:threekm/providers/ProfileInfo/ProfileInfo_Provider.dart';
 import 'package:threekm/providers/shop/shop_home_provider.dart';
@@ -27,7 +28,7 @@ import '../shop/restaurants/restaurants_menu.dart';
 import '../shop/restaurants/view_all_restaurant.dart';
 
 import 'category_list_home.dart';
-import 'checkout/checkout_success.dart';
+
 import 'product_card_home.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -144,12 +145,19 @@ class _ShopHomeState extends State<ShopHome>
                     Container(
                       width: double.infinity,
                       child: ElevatedButton.icon(
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (_) => BusinessDetail(
+                                          id: data?.id,
+                                        )));
+                          },
                           icon: Icon(Icons.account_circle),
                           label: Text(
                             AppLocalizations.of(context)!
                                     .translate('view_profile') ??
-                                "",
+                                "View Profile",
                           )),
                     ),
                     Container(
@@ -186,13 +194,6 @@ class _ShopHomeState extends State<ShopHome>
   }
 
   @override
-  void didChangeDependencies() {
-    ThreeKmScreenUtil.getInstance();
-    ThreeKmScreenUtil.instance.init(context);
-    super.didChangeDependencies();
-  }
-
-  @override
   dispose() {
     _controller.dispose();
     super.dispose();
@@ -205,6 +206,8 @@ class _ShopHomeState extends State<ShopHome>
     _controller.repeat();
     var shopAdvData = widget.shopHomeProvider.shopHomeData!.result!.shopAdv;
     var shopsData = widget.shopHomeProvider.shopHomeData?.result?.shops;
+    var width = MediaQuery.of(context).size.width;
+    var height = MediaQuery.of(context).size.height;
 
     var restaurantData =
         widget.shopHomeProvider.restaurantData?.result.creators;
@@ -214,8 +217,8 @@ class _ShopHomeState extends State<ShopHome>
       child: Container(
         color: Color(0xFFF4F3F8),
         padding: EdgeInsets.zero,
-        width: ThreeKmScreenUtil.screenWidthDp,
-        height: ThreeKmScreenUtil.screenHeightDp,
+        width: width,
+        height: height,
         child: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -398,7 +401,7 @@ class _ShopHomeState extends State<ShopHome>
                     }),
               ),
               Container(
-                width: ThreeKmScreenUtil.screenWidthDp,
+                width: width,
                 decoration: const BoxDecoration(
                     color: Colors.white,
                     image: DecorationImage(
@@ -446,7 +449,7 @@ class _ShopHomeState extends State<ShopHome>
                               child: Image(
                                 image: const AssetImage(
                                     'assets/shopImg/biryani.png'),
-                                width: ThreeKmScreenUtil.screenWidthDp / 2.2,
+                                width: width / 2.2,
                               ),
                             ),
                           ),
@@ -506,7 +509,7 @@ class _ShopHomeState extends State<ShopHome>
                                 return Container(
                                   // color: Colors.red,
                                   padding: const EdgeInsets.all(10),
-                                  width: ThreeKmScreenUtil.screenWidthDp / 1.7,
+                                  width: width / 1.7,
                                   child: InkWell(
                                     onTap: () {
                                       Navigator.push(
@@ -616,11 +619,8 @@ class _ShopHomeState extends State<ShopHome>
                                     borderRadius: BorderRadius.circular(10),
                                     child: Image(
                                         image: AssetImage(widget.imgSrg[i]),
-                                        width: ThreeKmScreenUtil.screenWidthDp /
-                                            1.1888,
-                                        height:
-                                            ThreeKmScreenUtil.screenHeightDp /
-                                                5,
+                                        width: width / 1.1888,
+                                        height: height / 5,
                                         fit: BoxFit.fill)),
                               );
                             }),

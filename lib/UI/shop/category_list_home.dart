@@ -26,11 +26,12 @@ class CategoryListHome extends StatelessWidget {
                 shrinkWrap: true,
                 scrollDirection: Axis.horizontal,
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    //crossAxisSpacing: 32,
-                    // mainAxisExtent: 80,
-                    //mainAxisSpacing: 0,
-                    childAspectRatio: 1.1),
+                  crossAxisCount: 2,
+                  //crossAxisSpacing: 32,
+                  mainAxisExtent: 130,
+                  mainAxisSpacing: 10,
+                  // childAspectRatio: 1.1
+                ),
                 itemCount: category.length,
                 itemBuilder: (context, i) {
                   return Column(
