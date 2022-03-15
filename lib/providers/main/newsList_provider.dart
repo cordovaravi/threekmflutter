@@ -47,7 +47,7 @@ class NewsListProvider extends ChangeNotifier {
   NewsbyCategoryModel? get newsBycategory => _newsbyCategories;
 
   Future<Null> getNewsPost(title, mounted, int takeCOunt, int skipCount,
-      bool isNewCall, List? isfromBaner) async {
+      bool isNewCall, List? isfromBaner, String language) async {
     _gettingMorePost = true;
     notifyListeners();
     var tempList = _newsbyCategories?.data?.result?.posts;
@@ -70,7 +70,7 @@ class NewsListProvider extends ChangeNotifier {
     String platForm = Platform.isAndroid ? 'Android' : 'Ios';
     String requestJson = json.encode({
       "post_ids": postIds.skip(skipCount).take(takeCOunt).toList(),
-      "lang": "en",
+      "lang": language,
       "page": 1,
       "token": _token ?? "",
       "query": title,
@@ -144,9 +144,9 @@ class NewsListProvider extends ChangeNotifier {
   }
 
   Future<void> onRefresh(requestJson, title, mounted, int takeCOunt,
-      int skipCount, bool isNewCall) async {
-    featchPostIds(requestJson, mounted).whenComplete(() =>
-        getNewsPost(title, mounted, takeCOunt, skipCount, isNewCall, null));
+      int skipCount, bool isNewCall, language) async {
+    featchPostIds(requestJson, mounted).whenComplete(() => getNewsPost(
+        title, mounted, takeCOunt, skipCount, isNewCall, null, language));
   }
 
   Future<Null> followUser(int autherId) async {

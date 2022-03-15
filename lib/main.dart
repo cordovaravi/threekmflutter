@@ -145,7 +145,9 @@ void main() async {
     statusBarColor: Colors.transparent,
   ));
 
-  await FirebaseMessaging.instance.getToken().then((value) => value = FcmToken);
+  await FirebaseMessaging.instance
+      .getToken()
+      .then((value) => log(value.toString()));
 
   //end fcm code------------------------------------------------------------
 

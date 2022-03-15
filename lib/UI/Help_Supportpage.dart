@@ -170,7 +170,7 @@ class HelpAndSupport extends StatelessWidget {
                 onTap: () async {
                   var uri = Uri(
                     scheme: "tel",
-                    path: "+91 8805499774",
+                    path: "+91 7020627265",
                   );
                   bool willLaunch = await canLaunch(uri.toString());
                   if (willLaunch) {
@@ -179,7 +179,7 @@ class HelpAndSupport extends StatelessWidget {
                     Fluttertoast.showToast(msg: "Unable to launch");
                   }
                 },
-                text: "+91 8805499774",
+                text: "+91 7020627265",
                 child: Container(
                   height: 48,
                   width: 48,
@@ -201,7 +201,7 @@ class HelpAndSupport extends StatelessWidget {
                     path: "send",
                     queryParameters: {
                       "text": "",
-                      "phone": "8805499774",
+                      "phone": "+91 7020627265",
                     },
                   );
                   bool willLaunch = await canLaunch(uri.toString());
@@ -211,7 +211,7 @@ class HelpAndSupport extends StatelessWidget {
                     print("Uri for web");
                     var uriWeb = Uri(
                       scheme: "https",
-                      path: "wa.me/8805499774",
+                      path: "wa.me/+91 7020627265",
                       queryParameters: {"text": ""},
                     );
                     bool willLaunchWeb = await canLaunch(uriWeb.toString());
@@ -222,7 +222,7 @@ class HelpAndSupport extends StatelessWidget {
                     }
                   }
                 },
-                text: "+91 8805499774",
+                text: "+917020627265",
                 child: Image.asset(
                   "assets/whatsapp.png",
                   height: 48,

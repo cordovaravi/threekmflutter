@@ -15,6 +15,7 @@ import 'package:threekm/UI/main/Profile/AuthorProfile.dart';
 import 'package:threekm/commenwidgets/CustomSnakBar.dart';
 import 'package:threekm/commenwidgets/commenwidget.dart';
 import 'package:threekm/providers/Global/logged_in_or_not.dart';
+import 'package:threekm/providers/localization_Provider/appLanguage_provider.dart';
 import 'package:threekm/providers/main/LikeList_Provider.dart';
 import 'package:threekm/providers/main/comment_Provider.dart';
 import 'package:threekm/providers/main/singlePost_provider.dart';
@@ -44,7 +45,14 @@ class _PostviewState extends State<Postview> {
   @override
   void initState() {
     Future.delayed(Duration.zero, () {
-      context.read<SinglePostProvider>().getPostDetails(widget.postId, mounted);
+      context.read<SinglePostProvider>().getPostDetails(
+          widget.postId,
+          mounted,
+          context.read<AppLanguage>().appLocal == Locale("en")
+              ? "en"
+              : context.read<AppLanguage>().appLocal == Locale("mr")
+                  ? "mr"
+                  : "hi");
     });
     super.initState();
   }
@@ -203,8 +211,8 @@ class _PostviewState extends State<Postview> {
                                           ],
                                         ),
                                       ),
-                                      newsData.images != null &&
-                                              newsData.videos != null
+                                      newsData.images!.length > 1 ||
+                                              newsData.videos!.length > 1
                                           ?
                                           //video and image both
                                           Container(
@@ -266,7 +274,35 @@ class _PostviewState extends State<Postview> {
                                               ),
                                             )
                                           // image or video
-                                          : Container(),
+                                          : Container(
+                                              child: newsData.images!.length ==
+                                                      1
+                                                  ? CachedNetworkImage(
+                                                      height: 254,
+                                                      width:
+                                                          MediaQuery.of(context)
+                                                              .size
+                                                              .width,
+                                                      fit: BoxFit.fitWidth,
+                                                      imageUrl:
+                                                          '${newsData.images!.first}',
+                                                    )
+                                                  : VideoWidget(
+                                                      thubnail: newsData
+                                                                  .videos
+                                                                  ?.first
+                                                                  .thumbnail !=
+                                                              null
+                                                          ? newsData.videos!
+                                                              .first.thumbnail
+                                                              .toString()
+                                                          : '',
+                                                      url: newsData
+                                                          .videos!.first.src
+                                                          .toString(),
+                                                      fromSinglePage: true,
+                                                      play: false),
+                                            ),
                                       newsData.images != null &&
                                                   newsData.images!.length > 1 ||
                                               newsData.videos != null &&

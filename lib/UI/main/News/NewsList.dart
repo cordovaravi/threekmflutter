@@ -17,6 +17,7 @@ import 'package:threekm/UI/main/Profile/AuthorProfile.dart';
 import 'package:threekm/commenwidgets/CustomSnakBar.dart';
 import 'package:threekm/commenwidgets/commenwidget.dart';
 import 'package:threekm/providers/Global/logged_in_or_not.dart';
+import 'package:threekm/providers/localization_Provider/appLanguage_provider.dart';
 import 'package:threekm/providers/main/LikeList_Provider.dart';
 import 'package:threekm/providers/main/comment_Provider.dart';
 import 'package:threekm/providers/main/newsList_provider.dart';
@@ -143,14 +144,35 @@ class _NewsListPageState extends State<NewsListPage> {
             .read<NewsListProvider>()
             .featchPostIds(initJson, mounted)
             .whenComplete(() {
-          context
-              .read<NewsListProvider>()
-              .getNewsPost(widget.title, mounted, 10, 0, true, null);
+          context.read<NewsListProvider>().getNewsPost(
+                widget.title,
+                mounted,
+                10,
+                0,
+                true,
+                null,
+                context.read<AppLanguage>().appLocal == Locale("en")
+                    ? "en"
+                    : context.read<AppLanguage>().appLocal == Locale("mr")
+                        ? "mr"
+                        : "hi",
+              );
         });
       });
     } else {
       context.read<NewsListProvider>().getNewsPost(
-          widget.title, mounted, 10, 0, true, widget.hasPostfromBanner!);
+            widget.title,
+            mounted,
+            10,
+            0,
+            true,
+            widget.hasPostfromBanner!,
+            context.read<AppLanguage>().appLocal == Locale("en")
+                ? "en"
+                : context.read<AppLanguage>().appLocal == Locale("mr")
+                    ? "mr"
+                    : "hi",
+          );
     }
   }
 
@@ -184,9 +206,18 @@ class _NewsListPageState extends State<NewsListPage> {
           width: MediaQuery.of(context).size.width,
           child: RefreshIndicator(
             onRefresh: () {
-              return context
-                  .read<NewsListProvider>()
-                  .onRefresh(initJson, widget.title, mounted, 10, 0, true);
+              return context.read<NewsListProvider>().onRefresh(
+                  initJson,
+                  widget.title,
+                  mounted,
+                  10,
+                  0,
+                  true,
+                  context.read<AppLanguage>().appLocal == Locale("en")
+                      ? "en"
+                      : context.read<AppLanguage>().appLocal == Locale("mr")
+                          ? "mr"
+                          : "hi");
             },
             child: Builder(
               builder: (context) {
@@ -265,7 +296,17 @@ class _NewsPostCardState extends State<NewsPostCard>
             takeCount += 10;
             skipCount += 10;
             context.read<NewsListProvider>().getNewsPost(
-                widget.name, mounted, takeCount, skipCount, false, null);
+                widget.name,
+                mounted,
+                takeCount,
+                skipCount,
+                false,
+                null,
+                context.read<AppLanguage>().appLocal == Locale("en")
+                    ? "en"
+                    : context.read<AppLanguage>().appLocal == Locale("mr")
+                        ? "mr"
+                        : "hi");
           }
         }
       });
@@ -1070,7 +1111,9 @@ class _NewsPostCardState extends State<NewsPostCard>
                                   ],
                                 ),
                               ),
-                              newsData.images != null && newsData.videos != null
+                              //both pics and images is present
+                              newsData.images!.length > 1 ||
+                                      newsData.videos!.length > 1
                                   ?
                                   //video and image both
                                   Container(
@@ -1123,12 +1166,38 @@ class _NewsPostCardState extends State<NewsPostCard>
                                         },
                                       ),
                                     )
-                                  // image or video
-                                  : Container(),
+                                  // image or video single
+
+                                  : Container(
+                                      child: newsData.images!.length == 1
+                                          ? CachedNetworkImage(
+                                              height: 254,
+                                              width: MediaQuery.of(context)
+                                                  .size
+                                                  .width,
+                                              fit: BoxFit.fitWidth,
+                                              imageUrl:
+                                                  '${newsData.images!.first}',
+                                            )
+                                          : VideoWidget(
+                                              thubnail: newsData.videos?.first
+                                                          .thumbnail !=
+                                                      null
+                                                  ? newsData
+                                                      .videos!.first.thumbnail
+                                                      .toString()
+                                                  : '',
+                                              url: newsData.videos!.first.src
+                                                  .toString(),
+                                              fromSinglePage: true,
+                                              play: false),
+                                    ),
                               newsData.images != null &&
-                                          newsData.images!.length > 1 ||
+                                          newsData.images!.length > 1 &&
+                                          newsData.images!.length != 1 ||
                                       newsData.videos != null &&
-                                          newsData.videos!.length > 1
+                                          newsData.videos!.length > 1 &&
+                                          newsData.videos!.length != 1
                                   ? Container(
                                       height: 10,
                                       width: MediaQuery.of(context).size.width,
@@ -1156,6 +1225,16 @@ class _NewsPostCardState extends State<NewsPostCard>
                                               );
                                             }).toList());
                                       }),
+                                      // child: ListView.builder(
+                                      //     shrinkWrap: true,
+                                      //     scrollDirection: Axis.horizontal,
+                                      //     itemCount:
+                                      //         newsData.images!.length +
+                                      //             newsData.videos!.length,
+                                      //     itemBuilder: (context, index) {
+                                      //       return Center(
+                                      //           child: DotIndicator());
+                                      //     }),
                                     )
                                   : SizedBox.shrink(),
                               // if (newsData.images != null &&

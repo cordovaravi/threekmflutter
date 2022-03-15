@@ -13,6 +13,7 @@ import 'package:threekm/UI/shop/checkout/order_detail.dart';
 import 'package:threekm/localization/localize.dart';
 import 'package:threekm/networkservice/Api_Provider.dart';
 import 'package:threekm/providers/Location/locattion_Provider.dart';
+import 'package:threekm/providers/ProfileInfo/ProfileInfo_Provider.dart';
 import 'package:threekm/providers/shop/shop_home_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:threekm/Models/shopModel/shop_home_model.dart';
@@ -199,6 +200,7 @@ class _ShopHomeState extends State<ShopHome>
 
   @override
   Widget build(BuildContext context) {
+    final profileinfo = context.watch<ProfileInfoProvider>();
     super.build(context);
     _controller.repeat();
     var shopAdvData = widget.shopHomeProvider.shopHomeData!.result!.shopAdv;
@@ -324,8 +326,13 @@ class _ShopHomeState extends State<ShopHome>
                               height: 32,
                               width: 32,
                               decoration: BoxDecoration(
-                                image: DecorationImage(
-                                    image: AssetImage("assets/male-user.png")),
+                                image: profileinfo.Avatar != null
+                                    ? DecorationImage(
+                                        image: CachedNetworkImageProvider(
+                                            profileinfo.Avatar.toString()))
+                                    : DecorationImage(
+                                        image:
+                                            AssetImage("assets/male-user.png")),
                                 shape: BoxShape.circle,
                                 //color: Color(0xffFF464B)
                               )),

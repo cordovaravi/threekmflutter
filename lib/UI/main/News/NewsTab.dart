@@ -29,6 +29,7 @@ import 'package:threekm/localization/localize.dart';
 import 'package:threekm/networkservice/Api_Provider.dart';
 import 'package:threekm/providers/Global/logged_in_or_not.dart';
 import 'package:threekm/providers/Location/locattion_Provider.dart';
+import 'package:threekm/providers/ProfileInfo/ProfileInfo_Provider.dart';
 import 'package:threekm/providers/localization_Provider/appLanguage_provider.dart';
 import 'package:threekm/providers/main/AddPost_Provider.dart';
 import 'package:threekm/providers/main/Quiz_Provider.dart';
@@ -124,6 +125,7 @@ class _NewsTabState extends State<NewsTab>
     final locationProvider = context.watch<LocationProvider>();
     final newsFirstProvider = context.watch<HomefirstProvider>();
     final newsSecondProvider = context.watch<HomeSecondProvider>();
+    final profileProvider = context.watch<ProfileInfoProvider>();
     return RefreshIndicator(
       onRefresh: () {
         return context
@@ -282,8 +284,12 @@ class _NewsTabState extends State<NewsTab>
                           height: 32,
                           width: 32,
                           decoration: BoxDecoration(
-                            image: DecorationImage(
-                                image: AssetImage("assets/male-user.png")),
+                            image: profileProvider.Avatar != null
+                                ? DecorationImage(
+                                    image: CachedNetworkImageProvider(
+                                        profileProvider.Avatar.toString()))
+                                : DecorationImage(
+                                    image: AssetImage("assets/male-user.png")),
                             shape: BoxShape.circle,
                             //color: Color(0xffFF464B)
                           )),
@@ -292,12 +298,13 @@ class _NewsTabState extends State<NewsTab>
                 ],
               ),
             ),
-            // Banner
+            //Add baner lokamanya Banner
             if (newsFirstProvider.homeNewsFirst != null)
               ListView.builder(
                 physics: ScrollPhysics(),
                 shrinkWrap: true,
                 primary: true,
+                padding: EdgeInsets.zero,
                 itemCount: newsFirstProvider
                     .homeNewsFirst!.data!.result!.finalposts!.length,
                 itemBuilder: (context, index) {
@@ -313,56 +320,52 @@ class _NewsTabState extends State<NewsTab>
                       itemBuilder: (context, i) {
                         if (finalPost.banners![i].images!.length > 1 &&
                             finalPost.bannertype == "RWC") {
-                          return Padding(
-                            padding: EdgeInsets.zero,
-                            child: Container(
-                                child: CarouselSlider(
-                              options: CarouselOptions(
-                                aspectRatio: 0.8,
-                                enlargeCenterPage: true,
-                                scrollDirection: Axis.horizontal,
-                                autoPlay: true,
-                              ),
-                              items: finalPost.banners![i].imageswcta!
-                                  .map((items) => GestureDetector(
-                                        onTap: () => {
-                                          showDialog(
-                                            context: context,
-                                            builder: (_) => AdspopUp(
-                                              phoneNumber:
-                                                  items.phone.toString(),
-                                              url: items.website.toString(),
-                                            ),
-                                          )
-                                        },
-                                        child: Container(
-                                          child: CachedNetworkImage(
-                                            fit: BoxFit.contain,
-                                            imageUrl: items.image.toString(),
-                                            imageBuilder:
-                                                (context, imageProvider) =>
-                                                    Container(
-                                              decoration: BoxDecoration(
-                                                image: DecorationImage(
-                                                  image: imageProvider,
-                                                  fit: BoxFit.cover,
-                                                ),
+                          return Container(
+                              child: CarouselSlider(
+                            options: CarouselOptions(
+                              aspectRatio: 0.8,
+                              enlargeCenterPage: true,
+                              scrollDirection: Axis.horizontal,
+                              autoPlay: true,
+                            ),
+                            items: finalPost.banners![i].imageswcta!
+                                .map((items) => GestureDetector(
+                                      onTap: () => {
+                                        showDialog(
+                                          context: context,
+                                          builder: (_) => AdspopUp(
+                                            phoneNumber: items.phone.toString(),
+                                            url: items.website.toString(),
+                                          ),
+                                        )
+                                      },
+                                      child: Container(
+                                        child: CachedNetworkImage(
+                                          fit: BoxFit.contain,
+                                          imageUrl: items.image.toString(),
+                                          imageBuilder:
+                                              (context, imageProvider) =>
+                                                  Container(
+                                            decoration: BoxDecoration(
+                                              image: DecorationImage(
+                                                image: imageProvider,
+                                                fit: BoxFit.cover,
                                               ),
                                             ),
-                                            errorWidget:
-                                                (context, url, error) =>
-                                                    Icon(Icons.error),
                                           ),
+                                          errorWidget: (context, url, error) =>
+                                              Icon(Icons.error),
                                         ),
-                                      ))
-                                  .toList(),
-                            )),
-                          );
+                                      ),
+                                    ))
+                                .toList(),
+                          ));
 
-                          /// ads carousal
+                          /// ads carousal top
                         } else if (finalPost.bannertype == "BWC") {
                           return finalPost.banners?.length != null
                               ? Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     CarouselSlider.builder(
@@ -418,20 +421,20 @@ class _NewsTabState extends State<NewsTab>
                                               },
                                               child: Container(
                                                 margin: EdgeInsets.only(
-                                                    top: 4, bottom: 4),
+                                                    top: 0, bottom: 4),
                                                 decoration: BoxDecoration(
                                                     boxShadow: [
-                                                      BoxShadow(
-                                                          blurRadius: 10.0,
-                                                          color: Colors
-                                                              .grey.shade200)
+                                                      // BoxShadow(
+                                                      //     blurRadius: 10.0,
+                                                      //     color: Colors
+                                                      //         .grey.shade200)
                                                     ],
                                                     color: Colors.white,
                                                     borderRadius:
                                                         BorderRadius.circular(
                                                             15)),
                                                 child: CachedNetworkImage(
-                                                    fit: BoxFit.contain,
+                                                    fit: BoxFit.cover,
                                                     // width: 1000,
                                                     imageUrl: finalPost
                                                         .banners![bannerIndex]
@@ -442,7 +445,7 @@ class _NewsTabState extends State<NewsTab>
                                       options: CarouselOptions(
                                           viewportFraction:
                                               finalPost.banners!.length > 1
-                                                  ? 0.85
+                                                  ? 0.99
                                                   : 0.99,
                                           scrollPhysics: finalPost
                                                       .banners!.length >
@@ -453,7 +456,8 @@ class _NewsTabState extends State<NewsTab>
                                               const Duration(
                                                   microseconds: 1200),
                                           autoPlay: true,
-                                          enlargeCenterPage: true,
+                                          enlargeCenterPage: false,
+                                          aspectRatio: 2.3,
                                           initialPage: 0,
                                           autoPlayInterval:
                                               Duration(seconds: 15),
@@ -1048,59 +1052,53 @@ class NewsContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-        //margin: EdgeInsets.only(top: 5),
-        height: 280,
-
-        // width: double.infinity,
+        margin: EdgeInsets.only(top: 5),
+        height: 250,
         width: MediaQuery.of(context).size.width,
-        color: Colors.white,
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(
-              padding: EdgeInsets.zero,
-              child: Row(
-                children: [
-                  Padding(
-                    padding: EdgeInsets.only(left: 5),
-                    child: Container(
-                      height: 30,
-                      width: 30,
-                      decoration: BoxDecoration(
-                          image: DecorationImage(
-                              image: this.finalPost.category?.icon != null
-                                  ? NetworkImage(
-                                      this.finalPost.category!.icon.toString())
-                                  : NetworkImage(
-                                      "https://png.pngitem.com/pimgs/s/378-3788573_white-circle-fade-transparent-png-download-white-fade.png"))),
-                    ),
+            Row(
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(left: 5),
+                  child: Container(
+                    height: 30,
+                    width: 30,
+                    decoration: BoxDecoration(
+                        image: DecorationImage(
+                            image: this.finalPost.category?.icon != null
+                                ? NetworkImage(
+                                    this.finalPost.category!.icon.toString())
+                                : NetworkImage(
+                                    "https://png.pngitem.com/pimgs/s/378-3788573_white-circle-fade-transparent-png-download-white-fade.png"))),
                   ),
-                  Padding(
-                    padding: EdgeInsets.only(left: 5),
-                    child: finalPost.category?.name != null
-                        ? Text(finalPost.category!.name.toString(),
-                            style:
-                                ThreeKmTextConstants.tk16PXPoppinsBlackMedium)
-                        : Text(""),
-                  ),
-                  Spacer(),
-                  Padding(
-                    padding: EdgeInsets.only(right: 8),
-                    child: IconButton(
-                        padding: EdgeInsets.zero,
-                        onPressed: () {
-                          Navigator.of(context).push(NewsListRoute(
-                              title: finalPost.category!.name.toString()));
-                        },
-                        icon: Icon(
-                          Icons.arrow_forward,
-                          color: Colors.blue,
-                        )),
-                  )
-                ],
-              ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(left: 5),
+                  child: finalPost.category?.name != null
+                      ? Text(finalPost.category!.name.toString(),
+                          style: ThreeKmTextConstants.tk16PXPoppinsBlackMedium)
+                      : Text(""),
+                ),
+                Spacer(),
+                Padding(
+                  padding: EdgeInsets.only(right: 8),
+                  child: IconButton(
+                      padding: EdgeInsets.zero,
+                      onPressed: () {
+                        Navigator.of(context).push(NewsListRoute(
+                            title: finalPost.category!.name.toString()));
+                      },
+                      icon: Icon(
+                        Icons.arrow_forward,
+                        color: Colors.blue,
+                      )),
+                )
+              ],
             ),
             Container(
-              height: 220,
+              height: 200,
               width: double.infinity,
               color: Colors.white,
               child: finalPost.category?.posts != null
@@ -1128,7 +1126,6 @@ class NewsContainer extends StatelessWidget {
                           child: Padding(
                             padding: EdgeInsets.only(left: 13),
                             child: Container(
-                                height: 195,
                                 width: 147,
                                 margin: EdgeInsets.only(bottom: 10),
                                 decoration: BoxDecoration(
@@ -1140,7 +1137,7 @@ class NewsContainer extends StatelessWidget {
                                           blurRadius: 8)
                                     ]),
                                 child: Column(
-                                    mainAxisSize: MainAxisSize.min,
+                                    //mainAxisSize: MainAxisSize.min,
                                     children: [
                                       Container(
                                           height: 100,
@@ -1219,7 +1216,7 @@ class NewsContainer extends StatelessWidget {
                                         height: 10,
                                       ),
                                       Container(
-                                        height: 95,
+                                        height: 40,
                                         width: 150,
                                         padding:
                                             EdgeInsets.only(left: 8, right: 8),
@@ -1227,11 +1224,27 @@ class NewsContainer extends StatelessWidget {
                                             contentPost[postIndex]
                                                 .headline
                                                 .toString(),
-                                            overflow: TextOverflow.fade,
+                                            overflow: TextOverflow.ellipsis,
+                                            maxLines: 2,
                                             style: ThreeKmTextConstants
-                                                .tk12PXPoppinsBlackSemiBold
-                                                .copyWith(fontSize: 13)),
+                                                .tk12PXPoppinsBlackSemiBold),
                                       ),
+                                      Container(
+                                        height: 18,
+                                        width: 150,
+                                        padding:
+                                            EdgeInsets.only(left: 8, right: 8),
+                                        child: Text(
+                                          contentPost[postIndex]
+                                              .author!
+                                              .name
+                                              .toString(),
+                                          overflow: TextOverflow.ellipsis,
+                                          maxLines: 1,
+                                          style: TextStyle(
+                                              color: Colors.grey, fontSize: 12),
+                                        ),
+                                      )
                                     ])),
                           ),
                         );
