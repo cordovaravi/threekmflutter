@@ -26,7 +26,8 @@ class HomefirstProvider extends ChangeNotifier {
           hideLoading();
           _homeModel = NewsHomeModel.fromJson(response);
           _prefs.remove("homeModel");
-          _prefs.setString("homeModel", _homeModel.toString());
+          String offlineStringObj = json.encode(response);
+          _prefs.setString("homeModel", offlineStringObj);
           notifyListeners();
         }
       } on Exception catch (e) {
@@ -36,9 +37,7 @@ class HomefirstProvider extends ChangeNotifier {
       Fluttertoast.showToast(msg: "No InterNet connection");
       String? rawModel = _prefs.getString("homeModel");
       if (rawModel != null) {
-        log(rawModel.toString());
-        Map<String, dynamic> rawMap = json.decode(rawModel);
-        _homeModel = NewsHomeModel.fromJson(rawMap);
+        _homeModel = NewsHomeModel.fromJson(json.decode(rawModel));
         notifyListeners();
       }
     }

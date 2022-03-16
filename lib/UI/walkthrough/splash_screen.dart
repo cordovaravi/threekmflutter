@@ -135,9 +135,10 @@ class _SplashScreenState extends State<SplashScreen> {
 
       // Parse the link and warn the user, if it is not correct,
       // but keep in mind it could be `null`.
-      log('this is deep link via 2 ${initialLink?.contains('/sell/')}');
-      log('this is deep link via 2 ${initialLink?.split('?id=')[1]}');
-      log('this is deep link via console ${initialLink?.substring(30, 35)}');
+      //log('this is deep link via 2 ${initialLink?.contains('/sell/')}');
+      //log('this is deep link via 2 ${initialLink?.split('?id=')[1]}');
+      //log('this is deep link via console ${initialLink?.substring(30, 35)}');
+      log("deep link is ${initialLink}");
       if (initialLink != null) {
         if (initialLink.contains('/sell/')) {
           Navigator.push(context, MaterialPageRoute(builder: (_) {
@@ -158,7 +159,7 @@ class _SplashScreenState extends State<SplashScreen> {
               context,
               MaterialPageRoute(builder: (_) => TabBarNavigation()),
               (route) => false));
-        } else {
+        } else if (initialLink.contains("/post")) {
           Navigator.push(context,
               MaterialPageRoute(builder: (BuildContext context) {
             return Postview(
@@ -169,6 +170,11 @@ class _SplashScreenState extends State<SplashScreen> {
               context,
               MaterialPageRoute(builder: (_) => TabBarNavigation()),
               (route) => false));
+        } else {
+          Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (_) => TabBarNavigation()),
+              (route) => false);
         }
       } else {
         Future.delayed(Duration(seconds: 2), () {

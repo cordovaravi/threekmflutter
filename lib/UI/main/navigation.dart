@@ -9,6 +9,7 @@ import 'package:threekm/UI/main/News/NewsTab.dart';
 import 'package:threekm/UI/shop/home_3km.dart';
 import 'package:threekm/UI/shop/restaurants/restaurants_home_page.dart';
 import 'package:threekm/UI/shop/showOrderStatus.dart';
+import 'package:threekm/localization/localize.dart';
 import 'package:threekm/providers/localization_Provider/appLanguage_provider.dart';
 import 'package:threekm/providers/main/AthorProfile_Provider.dart';
 import 'package:threekm/utils/screen_util.dart';
@@ -443,7 +444,7 @@ class _TabBarNavigationState extends State<TabBarNavigation>
                   ),
                 ),
                 horizontalSpacing(width: 8),
-                Text("News"),
+                Text(AppLocalizations.of(context)?.translate("news") ?? ""),
               ],
             ),
           ),
@@ -459,7 +460,7 @@ class _TabBarNavigationState extends State<TabBarNavigation>
                   ),
                 ),
                 horizontalSpacing(width: 8),
-                Text("Food"),
+                Text(AppLocalizations.of(context)?.translate("food") ?? ""),
               ],
             ),
           ),
@@ -476,7 +477,7 @@ class _TabBarNavigationState extends State<TabBarNavigation>
                 ),
                 horizontalSpacing(width: 8),
                 Text(
-                  "Shop",
+                  AppLocalizations.of(context)?.translate("shop") ?? "",
                 ),
               ],
             ),

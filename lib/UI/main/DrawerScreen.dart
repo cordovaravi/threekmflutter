@@ -247,7 +247,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
         ),
         InkWell(
           onTap: () {
-            context.read<AddPostProvider>().deletImages();
+            //context.read<AddPostProvider>().deletImages();
             Navigator.push(
                 context,
                 MaterialPageRoute(

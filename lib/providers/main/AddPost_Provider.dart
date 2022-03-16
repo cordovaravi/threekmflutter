@@ -94,6 +94,7 @@ class AddPostProvider extends ChangeNotifier {
 
       _moreImages.forEach((element) async {
         print("uploading");
+        log("${element.path}");
         if (element.path.contains(".png") ||
             element.path.contains(".jpg") ||
             element.path.contains(".jpeg")) {

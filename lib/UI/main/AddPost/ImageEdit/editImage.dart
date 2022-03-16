@@ -41,10 +41,10 @@ class _EditImageState extends State<EditImage> {
     ImageEditingFile = File(widget.images.first.path);
     //imagesList = widget.images;
     Future.delayed(Duration.zero, () {
-      context.read<AddPostProvider>().asignImages(widget.images);
-      context
-          .read<LocalPlayerProvider>()
-          .pathChanged(path: widget.images.first.path);
+      //context.read<AddPostProvider>().asignImages(widget.images);
+      // context
+      //     .read<LocalPlayerProvider>()
+      //     .pathChanged(path: widget.images.first.path);
     });
     super.initState();
   }
@@ -61,53 +61,56 @@ class _EditImageState extends State<EditImage> {
           style: ThreeKmTextConstants.tk16PXPoppinsWhiteBold,
         ),
         actions: [
-          imageList.getMoreImages.length > 0
-              ? TextButton(
-                  onPressed: () async {
-                    editingIndex++;
-                    Uint8List? fileData;
-                    if (imageKey[imageselectedIndex]
-                            .currentState
-                            ?.rawImageData !=
-                        null) {
-                      fileData = await cropImageDataWithNativeLibrary(
-                          state: imageKey[imageselectedIndex].currentState!);
-                      final tempDir = await getTemporaryDirectory();
-                      File file =
-                          await File('${tempDir.path}/${editingIndex}image.png')
-                              .create();
-                      file.writeAsBytesSync(fileData!);
-                      print(file.path);
-                      //imagesList.removeAt(imageselectedIndex);
-                      //imageList.removeImages(XFile(file.path));
-                      context
+          TextButton(
+              onPressed: () async {
+                var key = UniqueKey();
+                Uint8List? fileData;
+                if (imageKey[imageselectedIndex].currentState?.rawImageData !=
+                    null) {
+                  fileData = await cropImageDataWithNativeLibrary(
+                      state: imageKey[imageselectedIndex].currentState!);
+                  final tempDir = await getTemporaryDirectory();
+                  File editedfile =
+                      await File('${tempDir.path}/${key}image.png').create();
+                  editedfile.writeAsBytesSync(fileData!);
+                  print(editedfile.path);
+                  //imagesList.removeAt(imageselectedIndex);
+                  //imageList.removeImages(XFile(file.path));
+                  // context
+                  //     .read<AddPostProvider>()
+                  //     .removeImages(imageselectedIndex);
+                  // setState(() {
+                  //   ImageEditingFile = editedfile;
+                  //   //imagesList.insert(imageselectedIndex, XFile(file.path));
+                  //   Future.microtask(() => context
+                  //           .read<AddPostProvider>()
+                  //           .insertImage(imageselectedIndex, editedfile))
+                  //       .then((value) => Navigator.pop(context));
+                  // });
+                  //ImageEditingFile = editedfile;
+                  //imagesList.insert(imageselectedIndex, XFile(file.path));
+                  Future.microtask(() => context
                           .read<AddPostProvider>()
-                          .removeImages(imageselectedIndex);
-                      setState(() {
-                        ImageEditingFile = file;
-                        //imagesList.insert(imageselectedIndex, XFile(file.path));
-                        context
-                            .read<AddPostProvider>()
-                            .insertImage(imageselectedIndex, file);
-                      });
-                      Navigator.pop(context);
-                      //await imageFile.writeAsBytesSync(bytes)
-                    } else {
-                      log("image UnitList is null");
-                    }
-                  },
-                  child: Container(
-                    margin: EdgeInsets.all(7),
-                    padding: EdgeInsets.only(left: 5, right: 5),
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(15),
-                        color: Color(0xff3E7EFF)),
-                    child: Text(
-                      "Save",
-                      style: ThreeKmTextConstants.tk14PXPoppinsWhiteMedium,
-                    ),
-                  ))
-              : Container(),
+                          .insertImage(imageselectedIndex, editedfile))
+                      .then((value) => Navigator.pop(context));
+
+                  //await imageFile.writeAsBytesSync(bytes)
+                } else {
+                  log("image UnitList is null");
+                }
+              },
+              child: Container(
+                margin: EdgeInsets.all(7),
+                padding: EdgeInsets.only(left: 5, right: 5),
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(15),
+                    color: Color(0xff3E7EFF)),
+                child: Text(
+                  "Save",
+                  style: ThreeKmTextConstants.tk14PXPoppinsWhiteMedium,
+                ),
+              ))
+          // : Container(),
         ],
       ),
       body: Container(
@@ -116,7 +119,7 @@ class _EditImageState extends State<EditImage> {
           children: [
             Spacer(),
             Spacer(),
-            imageList.getMoreImages.length > 0
+            ImageEditingFile != null
                 ? Container(
                     height: 300,
                     width: MediaQuery.of(context).size.width,
@@ -127,7 +130,7 @@ class _EditImageState extends State<EditImage> {
                       cacheRawData: true,
                       fit: BoxFit.contain,
                       clearMemoryCacheWhenDispose: true,
-                      // enableLoadState: true,
+                      enableLoadState: true,
                       mode: ExtendedImageMode.editor,
                       extendedImageEditorKey: imageKey[imageselectedIndex],
                       initEditorConfigHandler: (state) {

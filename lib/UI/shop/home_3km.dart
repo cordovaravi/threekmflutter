@@ -18,7 +18,6 @@ import 'package:threekm/providers/ProfileInfo/ProfileInfo_Provider.dart';
 import 'package:threekm/providers/shop/shop_home_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:threekm/Models/shopModel/shop_home_model.dart';
-import 'package:threekm/utils/screen_util.dart';
 import 'package:threekm/utils/threekm_textstyles.dart';
 import '../shop/product/product_details.dart';
 import '../shop/product_listing.dart';

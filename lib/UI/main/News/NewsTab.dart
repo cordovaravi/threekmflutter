@@ -143,22 +143,8 @@ class _NewsTabState extends State<NewsTab>
               height: 5,
             ),
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Padding(
-                  padding: EdgeInsets.only(left: 15),
-                  child: SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.6,
-                    child: Text(
-                      _selecetdAddress ??
-                          locationProvider.AddressFromCordinate ??
-                          "",
-                      style: ThreeKmTextConstants.tk12PXPoppinsBlackSemiBold,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                ),
-                TextButton(
+                IconButton(
                     onPressed: () {
                       Future.delayed(Duration.zero, () {
                         context
@@ -198,14 +184,66 @@ class _NewsTabState extends State<NewsTab>
                         });
                       });
                     },
-                    child: Text(
-                      AppLocalizations.of(context)
-                              ?.translate("change_location") ??
-                          "Change Location",
-                      style: TextStyle(
-                        color: Colors.blue,
-                      ),
-                    ))
+                    icon: Icon(
+                      Icons.location_on_outlined,
+                      color: Colors.redAccent,
+                    )),
+                Padding(
+                  padding: EdgeInsets.only(left: 0),
+                  child: SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.85,
+                    child: GestureDetector(
+                      onTap: () {
+                        Future.delayed(Duration.zero, () {
+                          context
+                              .read<LocationProvider>()
+                              .getLocation()
+                              .whenComplete(() {
+                            final _locationProvider = context
+                                .read<LocationProvider>()
+                                .getlocationData;
+                            final kInitialPosition = LatLng(
+                                _locationProvider!.latitude!,
+                                _locationProvider.longitude!);
+                            if (_locationProvider != null) {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => PlacePicker(
+                                      apiKey: GMap_Api_Key,
+                                      // initialMapType: MapType.satellite,
+                                      onPlacePicked: (result) {
+                                        //print(result.formattedAddress);
+                                        setState(() {
+                                          _selecetdAddress =
+                                              result.formattedAddress;
+                                          print(result.geometry!.toJson());
+                                          //  _geometry = result.geometry;
+                                        });
+                                        Navigator.of(context).pop();
+                                      },
+                                      initialPosition: kInitialPosition,
+                                      useCurrentLocation: true,
+                                      selectInitialPosition: true,
+                                      usePinPointingSearch: true,
+                                      usePlaceDetailSearch: true,
+                                    ),
+                                  ));
+                            }
+                          });
+                        });
+                      },
+                      child: Text(
+                          _selecetdAddress ??
+                              locationProvider.AddressFromCordinate ??
+                              "",
+                          style:
+                              ThreeKmTextConstants.tk12PXPoppinsBlackSemiBold,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis),
+                    ),
+                  ),
+                ),
               ],
             ),
             Container(
@@ -223,7 +261,7 @@ class _NewsTabState extends State<NewsTab>
                     },
                     child: Container(
                       height: 32,
-                      width: 250,
+                      width: MediaQuery.of(context).size.width * 0.7,
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(21),
                           border: Border.all(color: Color(0xffDFE5EE))),
@@ -239,7 +277,9 @@ class _NewsTabState extends State<NewsTab>
                           Padding(
                               padding: EdgeInsets.only(left: 11),
                               child: Text(
-                                "Search Hyperlocal News",
+                                AppLocalizations.of(context)
+                                        ?.translate("search_news") ??
+                                    "",
                                 style: ThreeKmTextConstants.tk12PXLatoBlackBold
                                     .copyWith(color: Colors.grey),
                               ))
@@ -1156,7 +1196,7 @@ class NewsContainer extends StatelessWidget {
                                                   topRight:
                                                       Radius.circular(10)),
                                               image: DecorationImage(
-                                                  fit: BoxFit.cover,
+                                                  fit: BoxFit.fill,
                                                   image:
                                                       CachedNetworkImageProvider(
                                                           contentPost![
