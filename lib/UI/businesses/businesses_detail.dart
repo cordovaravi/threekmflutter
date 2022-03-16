@@ -59,13 +59,13 @@ class _BusinessDetailState extends State<BusinessDetail> {
     context
         .read<BusinessDetailProvider>()
         .getBusinessesDetail(mounted, widget.id);
-   // openBox();
+    openBox();
   }
 
-  // openBox() async {
-  //   await Hive.openBox('restroCartBox');
-  //   await Hive.openBox('cartBox');
-  // }
+  openBox() async {
+    await Hive.openBox('restroCartBox');
+    await Hive.openBox('cartBox');
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -110,7 +110,7 @@ class _BusinessDetailState extends State<BusinessDetail> {
                 ),
                 onPressed: () {
                   var url =
-                      'https://3km.in/biz/${data?.creator.businessName}/?id=${data?.creator.creatorId}';
+                      'https://3km.in/biz/${data?.creator.businessName.replaceAll(" ", "")}/${data?.creator.creatorId}';
                   Share.share('${Uri.parse(url)}');
                 }),
           ),
@@ -197,7 +197,7 @@ class _BusinessDetailState extends State<BusinessDetail> {
                                           ? '${data.creator.coverImages[index]}'
                                           : data.creator.image,
                                     ),
-                                    fit: BoxFit.fill,
+                                    fit: BoxFit.fitHeight,
                                     // width: ThreeKmScreenUtil.screenWidthDp /
                                     //     1.1888,
                                     // height: ThreeKmScreenUtil.screenHeightDp /
@@ -568,30 +568,31 @@ class _BusinessDetailState extends State<BusinessDetail> {
                                               .tk16PXPoppinsBlackMedium),
                                     ),
                                   ),
-                               if (data.creator.email != "") Padding(
-                                  padding: const EdgeInsets.only(
-                                    top: 20,
-                                  ),
-                                  child: ListTile(
-                                    onTap: () async => await launch(
-                                        'mailto:${data.creator.email}?subject=Related To Business&body=Hello%20Sir'),
-                                    dense: true,
-                                    leading: Container(
-                                      decoration: const BoxDecoration(
-                                          color: Color(0xFFFF5858),
-                                          shape: BoxShape.circle),
-                                      width: 48,
-                                      height: 48,
-                                      child: const Icon(
-                                        Icons.email,
-                                        color: Colors.white,
-                                      ),
+                                if (data.creator.email != "")
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                      top: 20,
                                     ),
-                                    title: Text(data.creator.email,
-                                        style: ThreeKmTextConstants
-                                            .tk16PXPoppinsBlackMedium),
+                                    child: ListTile(
+                                      onTap: () async => await launch(
+                                          'mailto:${data.creator.email}?subject=Related To Business&body=Hello%20Sir'),
+                                      dense: true,
+                                      leading: Container(
+                                        decoration: const BoxDecoration(
+                                            color: Color(0xFFFF5858),
+                                            shape: BoxShape.circle),
+                                        width: 48,
+                                        height: 48,
+                                        child: const Icon(
+                                          Icons.email,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                      title: Text(data.creator.email,
+                                          style: ThreeKmTextConstants
+                                              .tk16PXPoppinsBlackMedium),
+                                    ),
                                   ),
-                                ),
                                 Padding(
                                   padding: const EdgeInsets.only(
                                     top: 20,

@@ -27,14 +27,14 @@ class _WishListState extends State<WishList> {
 
   @override
   void initState() {
-    //  getWishBoxData();
+    Future.microtask(() => getWishBoxData());
     super.initState();
   }
 
-  // getWishBoxData() async {
-  //   await Hive.openBox('shopWishListBox');
-  //   await Hive.openBox('businessWishListBox');
-  // }
+  getWishBoxData() async {
+    await Hive.openBox('shopWishListBox');
+    await Hive.openBox('businessWishListBox');
+  }
 
   isProductExist(box, id, {variationId}) {
     if (variationId != null && variationId != 0) {

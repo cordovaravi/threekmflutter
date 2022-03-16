@@ -163,12 +163,9 @@ class _AllCategoryWidgetState extends State<AllCategoryWidget> {
               decoration: const BoxDecoration(
                   color: Color(0xFFF4F3F8), shape: BoxShape.circle),
             ),
-            trailing: IconButton(
-              icon: const Icon(
-                Icons.arrow_forward_rounded,
-                color: Colors.black,
-              ),
-              onPressed: () {},
+            trailing: const Icon(
+              Icons.arrow_forward_rounded,
+              color: Colors.black,
             ),
             title: Text(
               '${widget.data?[i].name}',

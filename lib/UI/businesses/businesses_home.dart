@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/src/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shimmer/shimmer.dart';
@@ -110,7 +111,7 @@ class _HomeState extends State<Home> {
                 Container(
                   color: Colors.white,
                   child: Padding(
-                    padding: EdgeInsets.zero,
+                    padding: EdgeInsets.only(top: 10),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -153,21 +154,43 @@ class _HomeState extends State<Home> {
                             ),
                           ),
                         ),
-                        InkWell(
-                          onTap: () => viewCart(context, 'shop'),
-                          child: Padding(
-                            padding: EdgeInsets.only(left: 12),
-                            child: Container(
-                                height: 32,
-                                width: 32,
-                                decoration: BoxDecoration(
-                                  image: DecorationImage(
-                                      image: AssetImage(
-                                          "assets/shopImg/Group 40724.png")),
-                                  shape: BoxShape.circle,
-                                  //color: Color(0xff7572ED)
-                                )),
-                          ),
+                        Stack(
+                          clipBehavior: Clip.none,
+                          children: [
+                            InkWell(
+                              onTap: () => viewCart(context, 'shop'),
+                              child: Padding(
+                                padding: EdgeInsets.only(left: 12),
+                                child: Container(
+                                    height: 32,
+                                    width: 32,
+                                    decoration: BoxDecoration(
+                                      image: DecorationImage(
+                                          image: AssetImage(
+                                              "assets/shopImg/Group 40724.png")),
+                                      shape: BoxShape.circle,
+                                      //color: Color(0xff7572ED)
+                                    )),
+                              ),
+                            ),
+                            if (Hive.box('cartBox').length != 0)
+                              Positioned(
+                                  top: -12,
+                                  right: -6,
+                                  child: Container(
+                                      decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          color: Colors.red),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(4.0),
+                                        child: Text(
+                                          '${Hive.box('cartBox').length}',
+                                          style: TextStyle(
+                                              fontSize: 11,
+                                              color: Colors.white),
+                                        ),
+                                      )))
+                          ],
                         ),
                         // InkWell(
                         //   onTap: () async {

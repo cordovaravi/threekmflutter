@@ -49,12 +49,18 @@ class _Home3KMState extends State<Home3KM> {
   @override
   void initState() {
     Future.microtask(() {
+      openBox();
       context.read<ShopHomeProvider>().getShopHome(mounted);
       context.read<LocationProvider>().getLocation();
     });
     //context.read<ShopHomeProvider>().getShopHome(mounted);
     // context.read<ShopHomeProvider>().getRestaurants(initJson, mounted);
     super.initState();
+  }
+
+  openBox() async {
+    await Hive.openBox('restroCartBox');
+    await Hive.openBox('cartBox');
   }
 
   @override
@@ -125,13 +131,8 @@ class _ShopHomeState extends State<ShopHome>
     _scrollController?.addListener(_scrollListener);
     _controller = AnimationController(
         duration: Duration(milliseconds: 12000), vsync: this);
-    openBox();
-    super.initState();
-  }
 
-  openBox() async {
-    await Hive.openBox('restroCartBox');
-    await Hive.openBox('cartBox');
+    super.initState();
   }
 
   void showAlert(BuildContext context, ShopAdv? data) {
@@ -150,7 +151,7 @@ class _ShopHomeState extends State<ShopHome>
                                 context,
                                 MaterialPageRoute(
                                     builder: (_) => BusinessDetail(
-                                          id: data?.id,
+                                          id: data?.imageswcta![0].business,
                                         )));
                           },
                           icon: Icon(Icons.account_circle),
@@ -196,6 +197,7 @@ class _ShopHomeState extends State<ShopHome>
   @override
   dispose() {
     _controller.dispose();
+    _scrollController?.dispose();
     super.dispose();
   }
 
@@ -583,7 +585,7 @@ class _ShopHomeState extends State<ShopHome>
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(18.0),
                   child: const Image(
-                      image: AssetImage('assets/shopImg/pizzaFood.jpg')),
+                      image: AssetImage('assets/shopImg/pizzaFood.png')),
                 ),
               ),
               Container(
@@ -594,7 +596,7 @@ class _ShopHomeState extends State<ShopHome>
                     Padding(
                       padding: const EdgeInsets.only(left: 20, top: 30),
                       child: Text(
-                        'Puneri Lifestyle on 3km!',
+                        'Lifestyle on 3km!',
                         style: ThreeKmTextConstants.tk16PXPoppinsWhiteBold,
                       ),
                     ),
@@ -612,16 +614,27 @@ class _ShopHomeState extends State<ShopHome>
                             scrollDirection: Axis.horizontal,
                             itemCount: widget.imgSrg.length,
                             itemBuilder: (context, i) {
-                              return Padding(
-                                padding: const EdgeInsets.only(
-                                    left: 20, top: 10, bottom: 10),
-                                child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(10),
-                                    child: Image(
-                                        image: AssetImage(widget.imgSrg[i]),
-                                        width: width / 1.1888,
-                                        height: height / 5,
-                                        fit: BoxFit.fill)),
+                              return InkWell(
+                                onTap: () {
+                                  Navigator.push(context, PageRouteBuilder(
+                                      pageBuilder: (context, animaton,
+                                          secondaryAnimation) {
+                                    return ProductListing(
+                                      query: 'Fashion',
+                                    );
+                                  }));
+                                },
+                                child: Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 20, top: 10, bottom: 10),
+                                  child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(10),
+                                      child: Image(
+                                          image: AssetImage(widget.imgSrg[i]),
+                                          width: width / 1.1888,
+                                          height: height / 5,
+                                          fit: BoxFit.fill)),
+                                ),
                               );
                             }),
                         onNotification: (notification) {
@@ -645,71 +658,64 @@ class _ShopHomeState extends State<ShopHome>
                         semanticsLabel: 'Linear progress indicator',
                       ),
                     ),
-                    Container(
-                        margin: const EdgeInsets.only(top: 8, bottom: 10),
-                        padding: const EdgeInsets.only(top: 8, bottom: 8),
-                        //color: Colors.white70,
-                        //width: ThreeKmScreenUtil.screenWidthDp / 1.1,
-                        height: 190,
-                        child: ListView.builder(
-                            shrinkWrap: true,
-                            scrollDirection: Axis.horizontal,
-                            itemCount: shopsData?.length,
-                            itemBuilder: (context, i) {
-                              return Column(
-                                children: [
-                                  InkWell(
-                                    onTap: () {
-                                      Navigator.push(
-                                          context,
-                                          PageRouteBuilder(
-                                              pageBuilder: (context, animaton,
-                                                  secondaryAnimation) {
-                                                return ProductListing(
-                                                  query:
-                                                      '${shopsData?[i].name}',
-                                                );
-                                              },
-                                              transitionDuration:
-                                                  const Duration(
-                                                      milliseconds: 800),
-                                              transitionsBuilder: (context,
-                                                  animation,
-                                                  secondaryAnimation,
-                                                  child) {
-                                                animation = CurvedAnimation(
-                                                    parent: animation,
-                                                    curve: Curves.easeInOut);
-                                                return FadeTransition(
-                                                  opacity: animation,
-                                                  child: child,
-                                                );
-                                              }));
-                                    },
-                                    child: Container(
-                                      width: 80,
-                                      height: 80,
-                                      margin: const EdgeInsets.only(
-                                          left: 20, right: 20),
-                                      decoration: const BoxDecoration(
-                                          color: Color(0xFFFFFFFF),
-                                          shape: BoxShape.circle
-                                          // borderRadius:const BorderRadius.all(Radius.circular(50))
-                                          ),
-                                    ),
-                                  ),
-                                  Container(
-                                    margin: const EdgeInsets.only(
-                                        left: 10, right: 10, top: 5),
-                                    child: Text(
-                                      '${shopsData?[i].name}',
-                                      style: ThreeKmTextConstants
-                                          .tk12PXPoppinsWhiteRegular,
-                                    ),
-                                  ),
-                                ],
-                              );
-                            }))
+                    // Container(
+                    //     margin: const EdgeInsets.only(top: 8, bottom: 10),
+                    //     padding: const EdgeInsets.only(top: 8, bottom: 8),
+                    //     //color: Colors.white70,
+                    //     //width: ThreeKmScreenUtil.screenWidthDp / 1.1,
+                    //     height: 190,
+                    //     child: ListView.builder(
+                    //         shrinkWrap: true,
+                    //         scrollDirection: Axis.horizontal,
+                    //         itemCount: shopsData?.length,
+                    //         itemBuilder: (context, i) {
+                    //           return Column(
+                    //             children: [
+                    //               InkWell(
+                    //                   onTap: () {
+                    //                     Navigator.push(
+                    //                         context,
+                    //                         PageRouteBuilder(
+                    //                             pageBuilder: (context, animaton,
+                    //                                 secondaryAnimation) {
+                    //                               return ProductListing(
+                    //                                 query:
+                    //                                     '${shopsData?[i].name}',
+                    //                               );
+                    //                             },
+                    //                             transitionDuration:
+                    //                                 const Duration(
+                    //                                     milliseconds: 800),
+                    //                             transitionsBuilder: (context,
+                    //                                 animation,
+                    //                                 secondaryAnimation,
+                    //                                 child) {
+                    //                               animation = CurvedAnimation(
+                    //                                   parent: animation,
+                    //                                   curve: Curves.easeInOut);
+                    //                               return FadeTransition(
+                    //                                 opacity: animation,
+                    //                                 child: child,
+                    //                               );
+                    //                             }));
+                    //                   },
+                    //                   child: Image(
+                    //                       image: NetworkImage(
+                    //                           '${shopsData?[i].images?.first}'),
+                    //                       width: 80,
+                    //                       height: 80)),
+                    //               Container(
+                    //                 margin: const EdgeInsets.only(
+                    //                     left: 10, right: 10, top: 5),
+                    //                 child: Text(
+                    //                   '${shopsData?[i].name}',
+                    //                   style: ThreeKmTextConstants
+                    //                       .tk12PXPoppinsWhiteRegular,
+                    //                 ),
+                    //               ),
+                    //             ],
+                    //           );
+                    //         }))
                   ],
                 ),
               ),

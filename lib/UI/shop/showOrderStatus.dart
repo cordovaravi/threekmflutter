@@ -38,7 +38,8 @@ class ShowOrderStaus {
     Box orderStatusBox = await Hive.openBox('orderStatusBox');
     var orderId = orderStatusBox.get('orderId');
     var orderDate = orderStatusBox.get('orderDate');
-    if (formatDate(orderDate) == formatTodayDate(DateTime.now())) {
+    if (orderDate != null &&
+        formatDate(orderDate) == formatTodayDate(DateTime.now())) {
       if (orderId != null) {
         order = navigatorKey.currentContext!
             .read<OrderRealtimeDetailProvider>()
@@ -67,7 +68,9 @@ class ShowOrderStaus {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                            event.orderStatus == 'created' ? '' :  event.status ?? 'Food is being prepared',
+                              event.orderStatus == 'created'
+                                  ? ''
+                                  : event.status ?? 'Food is being prepared',
                               style: TextStyle(color: Colors.black87),
                             ),
                             InkWell(
@@ -140,9 +143,9 @@ class ShowOrderStaus {
         });
       }
     } else {
-      log('${formatDate(orderDate) == formatTodayDate(DateTime.now())}');
-      log('${formatDate(orderDate)}');
-      log('${formatTodayDate(DateTime.now())}');
+      // log('${formatDate(orderDate) == formatTodayDate(DateTime.now())}');
+      // log('${formatDate(orderDate)}');
+      // log('${formatTodayDate(DateTime.now())}');
     }
   }
 
