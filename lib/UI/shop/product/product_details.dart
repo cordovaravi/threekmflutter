@@ -69,6 +69,7 @@ class _ProductDetailsState extends State<ProductDetails> {
   void initState() {
     print('${widget.id}======================');
     context.read<ProductDetailsProvider>().productDetails(mounted, widget.id);
+    
     openBox();
     super.initState();
   }
@@ -83,8 +84,9 @@ class _ProductDetailsState extends State<ProductDetails> {
     return i;
   }
 
-  openBox() async {
-    Box? _cartBox = await Hive.openBox('cartBox').whenComplete(() => setState((){}));
+  openBox() {
+    Future.microtask(() async => await Hive.openBox('cartBox').whenComplete(() => setState(() {})));
+    
   }
 
   isProductExist(box, id, {variationId}) {
@@ -188,27 +190,28 @@ class _ProductDetailsState extends State<ProductDetails> {
                       }),
                 ),
 
-               if(Hive.box('cartBox').isOpen) ValueListenableBuilder(
-                    valueListenable: Hive.box('cartBox').listenable(),
-                    builder: (context, Box box, snapshot) {
-                      return Positioned(
-                          top: 0,
-                          right: 6,
-                          child: box.length != 0
-                              ? Container(
-                                  decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: Colors.red),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(4.0),
-                                    child: Text(
-                                      '${box.length}',
-                                      style: TextStyle(
-                                          fontSize: 11, color: Colors.white),
-                                    ),
-                                  ))
-                              : Container());
-                    }),
+                if (Hive.box('cartBox').isOpen)
+                  ValueListenableBuilder(
+                      valueListenable: Hive.box('cartBox').listenable(),
+                      builder: (context, Box box, snapshot) {
+                        return Positioned(
+                            top: 0,
+                            right: 6,
+                            child: box.length != 0
+                                ? Container(
+                                    decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: Colors.red),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(4.0),
+                                      child: Text(
+                                        '${box.length}',
+                                        style: TextStyle(
+                                            fontSize: 11, color: Colors.white),
+                                      ),
+                                    ))
+                                : Container());
+                      }),
                 // Positioned(
                 //     top: 0,
                 //     right: 6,
@@ -440,7 +443,11 @@ class _ProductDetailsState extends State<ProductDetails> {
                                   Row(
                                     children: [
                                       if (product!.hasDiscount)
-                                        Text('₹${product.strikePrice}',
+                                        Text(
+                                            product.hasVariations &&
+                                                    variation != null
+                                                ? '₹${variation.ogAmount}'
+                                                : '₹${product.strikePrice}',
                                             style: ThreeKmTextConstants
                                                 .tk14PXPoppinsBlackSemiBold
                                                 .copyWith(
@@ -1571,250 +1578,259 @@ class _ProductDetailsState extends State<ProductDetails> {
                                 style: ThreeKmTextConstants
                                     .tk14PXPoppinsBlackMedium,
                               )),
-                          ValueListenableBuilder(
-                            valueListenable: Hive.box('cartBox').listenable(),
-                            builder: (BuildContext context, Box<dynamic> box,
-                                Widget? child) {
-                              return ElevatedButton.icon(
-                                  onPressed: () async {
-                                    if (product!.hasVariations == false) {
-                                      if (product.isInStock) {
-                                        if (isProductExist(box, widget.id) ==
-                                            null) {
-                                          context
-                                              .read<CartProvider>()
-                                              .addItemToCart(
-                                                  context: context,
-                                                  creatorId: product.creatorId,
-                                                  image: product.image,
-                                                  name: product.name,
-                                                  price: price != 0
-                                                      ? price
-                                                      : product.price,
-                                                  quantity: 1,
-                                                  id: product.catalogId,
-                                                  variationId: variationid,
-                                                  variation_name:
-                                                      variationid != 0
-                                                          ? variation.options[
-                                                              'variation_name']
-                                                          : null,
-                                                  weight: weight != 0
-                                                      ? weight
-                                                      : product.weight,
-                                                  masterStock: variationid != 0
-                                                      ? data
-                                                          .result
-                                                          ?.variations![
-                                                              variationIndex!]
-                                                          .masterStock
-                                                      : product.masterStock,
-                                                  manageStock:
-                                                      product.manageStock,
-                                                  creatorName: product
-                                                      .creatorDetails
-                                                      .businessName);
-                                        } else {
-                                          viewCart(context, 'shop');
+                          if (Hive.box('cartBox').isOpen)
+                            ValueListenableBuilder(
+                              valueListenable: Hive.box('cartBox').listenable(),
+                              builder: (BuildContext context, Box<dynamic> box,
+                                  Widget? child) {
+                                return ElevatedButton.icon(
+                                    onPressed: () async {
+                                      if (product!.hasVariations == false) {
+                                        if (product.isInStock) {
+                                          if (isProductExist(box, widget.id) ==
+                                              null) {
+                                            context
+                                                .read<CartProvider>()
+                                                .addItemToCart(
+                                                    context: context,
+                                                    creatorId: product
+                                                        .creatorId,
+                                                    image: product.image,
+                                                    name: product.name,
+                                                    price: price != 0
+                                                        ? price
+                                                        : product.price,
+                                                    quantity: 1,
+                                                    id: product.catalogId,
+                                                    variationId: variationid,
+                                                    variation_name:
+                                                        variationid != 0
+                                                            ? variation.options[
+                                                                'variation_name']
+                                                            : null,
+                                                    weight: weight != 0
+                                                        ? weight
+                                                        : product.weight,
+                                                    masterStock: variationid !=
+                                                            0
+                                                        ? data
+                                                            .result
+                                                            ?.variations![
+                                                                variationIndex!]
+                                                            .masterStock
+                                                        : product.masterStock,
+                                                    manageStock:
+                                                        product.manageStock,
+                                                    creatorName: product
+                                                        .creatorDetails
+                                                        .businessName);
+                                          } else {
+                                            viewCart(context, 'shop');
 
-                                          // CustomSnackBar(
-                                          //     context,
-                                          //     Text(
-                                          //         "This product is already added to your cart"));
+                                            // CustomSnackBar(
+                                            //     context,
+                                            //     Text(
+                                            //         "This product is already added to your cart"));
+                                          }
+                                        } else {
+                                          CustomToast(
+                                              "Product is out of stock");
+                                          // CustomSnackBar(context,
+                                          //     Text("Product is out of stock"));
+                                        }
+                                      } else if (product.hasVariations &&
+                                          variationid != 0) {
+                                        if (variation.isInStock) {
+                                          if (isProductExist(box, widget.id,
+                                                  variationId: variationid) ==
+                                              null) {
+                                            context
+                                                .read<CartProvider>()
+                                                .addItemToCart(
+                                                    context: context,
+                                                    creatorId: product
+                                                        .creatorId,
+                                                    image: product.image,
+                                                    name: product.name,
+                                                    price: price != 0
+                                                        ? price
+                                                        : product.price,
+                                                    quantity: 1,
+                                                    id: product.catalogId,
+                                                    variationId: variationid,
+                                                    variation_name:
+                                                        variationid != 0
+                                                            ? variation.options[
+                                                                'variation_name']
+                                                            : null,
+                                                    weight: weight != 0
+                                                        ? weight
+                                                        : product.weight,
+                                                    masterStock: variationid !=
+                                                            0
+                                                        ? data
+                                                            .result
+                                                            ?.variations![
+                                                                variationIndex!]
+                                                            .masterStock
+                                                        : product.masterStock,
+                                                    manageStock:
+                                                        product.manageStock,
+                                                    creatorName: product
+                                                        .creatorDetails
+                                                        .businessName);
+                                          } else {
+                                            CustomSnackBar(
+                                                context,
+                                                Text(AppLocalizations.of(
+                                                            context)!
+                                                        .translate(
+                                                            'this_product_is_already_added_to_your_cart') ??
+                                                    "This product is already added to your cart"));
+                                          }
+                                        } else {
+                                          CustomSnackBar(context,
+                                              Text("Product is out of stock"));
                                         }
                                       } else {
-                                        CustomToast("Product is out of stock");
+                                        CustomToast(AppLocalizations.of(
+                                                    context)!
+                                                .translate(
+                                                    'please_select_variant') ??
+                                            "Please select variant");
                                         // CustomSnackBar(context,
-                                        //     Text("Product is out of stock"));
+                                        //     Text("Please select variant"));
                                       }
-                                    } else if (product.hasVariations &&
-                                        variationid != 0) {
-                                      if (variation.isInStock) {
-                                        if (isProductExist(box, widget.id,
-                                                variationId: variationid) ==
-                                            null) {
-                                          context
-                                              .read<CartProvider>()
-                                              .addItemToCart(
-                                                  context: context,
-                                                  creatorId: product.creatorId,
-                                                  image: product.image,
-                                                  name: product.name,
-                                                  price: price != 0
-                                                      ? price
-                                                      : product.price,
-                                                  quantity: 1,
-                                                  id: product.catalogId,
-                                                  variationId: variationid,
-                                                  variation_name:
-                                                      variationid != 0
-                                                          ? variation.options[
-                                                              'variation_name']
-                                                          : null,
-                                                  weight: weight != 0
-                                                      ? weight
-                                                      : product.weight,
-                                                  masterStock: variationid != 0
-                                                      ? data
-                                                          .result
-                                                          ?.variations![
-                                                              variationIndex!]
-                                                          .masterStock
-                                                      : product.masterStock,
-                                                  manageStock:
-                                                      product.manageStock,
-                                                  creatorName: product
-                                                      .creatorDetails
-                                                      .businessName);
-                                        } else {
-                                          CustomSnackBar(
-                                              context,
-                                              Text(AppLocalizations.of(context)!
+
+                                      // viewCart(context,
+                                      //     'shop');
+                                    },
+                                    style: ButtonStyle(
+                                        shape: MaterialStateProperty.all(
+                                            const StadiumBorder()),
+                                        backgroundColor:
+                                            MaterialStateProperty.all(
+                                                const Color(0xFFFF5858)),
+                                        foregroundColor:
+                                            MaterialStateProperty.all(
+                                                Colors.white),
+                                        elevation: MaterialStateProperty.all(5),
+                                        shadowColor: MaterialStateProperty.all(
+                                            Color(0xFFFC5E6A33)),
+                                        padding: MaterialStateProperty.all(
+                                            const EdgeInsets.only(
+                                                left: 30,
+                                                right: 30,
+                                                top: 15,
+                                                bottom: 15))),
+                                    icon:
+                                        const Icon(Icons.shopping_cart_rounded),
+                                    label: Text(
+                                      variation != null && variation.isInStock
+                                          ? isProductExist(box, widget.id,
+                                                      variationId:
+                                                          variationid) ==
+                                                  null
+                                              ? AppLocalizations.of(context)!.translate(
+                                                      'detail_add_cart') ??
+                                                  'Add to Cart'
+                                              : AppLocalizations.of(context)!
                                                       .translate(
-                                                          'this_product_is_already_added_to_your_cart') ??
-                                                  "This product is already added to your cart"));
-                                        }
-                                      } else {
-                                        CustomSnackBar(context,
-                                            Text("Product is out of stock"));
-                                      }
-                                    } else {
-                                      CustomToast(AppLocalizations.of(context)!
-                                              .translate(
-                                                  'please_select_variant') ??
-                                          "Please select variant");
-                                      // CustomSnackBar(context,
-                                      //     Text("Please select variant"));
-                                    }
+                                                          'added_to_cart') ??
+                                                  'Added to cart'
+                                          : variation == null &&
+                                                  product!.isInStock
+                                              ? isProductExist(box, widget.id) ==
+                                                      null
+                                                  ? AppLocalizations.of(context)!
+                                                          .translate(
+                                                              'detail_add_cart') ??
+                                                      'Add to Cart'
+                                                  : AppLocalizations.of(context)!
+                                                          .translate(
+                                                              'added_to_cart') ??
+                                                      'Added to cart'
+                                              : AppLocalizations.of(context)!
+                                                      .translate('out_of_stock') ??
+                                                  'Out of stock',
+                                      style: ThreeKmTextConstants
+                                          .tk14PXPoppinsWhiteMedium,
+                                    ));
+                                // : Container(
+                                //     decoration: BoxDecoration(
+                                //         border: Border.all(),
+                                //         borderRadius:
+                                //             BorderRadius.circular(40)),
+                                //     child: Row(
+                                //       mainAxisAlignment:
+                                //           MainAxisAlignment.spaceBetween,
+                                //       //mainAxisSize: MainAxisSize.min,
+                                //       children: [
+                                //         InkWell(
+                                //           onTap: () {
+                                //             if (isProductExist(box, widget.id)
+                                //                     .quantity <
+                                //                 2) {
+                                //               isProductExist(box, widget.id)
+                                //                   .delete();
+                                //             }
+                                //             if (isProductExist(
+                                //                     box, widget.id) !=
+                                //                 null) {
+                                //               isProductExist(box, widget.id)
+                                //                   .quantity = isProductExist(
+                                //                           box, widget.id)
+                                //                       .quantity -
+                                //                   1;
 
-                                    // viewCart(context,
-                                    //     'shop');
-                                  },
-                                  style: ButtonStyle(
-                                      shape: MaterialStateProperty.all(
-                                          const StadiumBorder()),
-                                      backgroundColor:
-                                          MaterialStateProperty.all(
-                                              const Color(0xFFFF5858)),
-                                      foregroundColor:
-                                          MaterialStateProperty.all(
-                                              Colors.white),
-                                      elevation: MaterialStateProperty.all(5),
-                                      shadowColor: MaterialStateProperty.all(
-                                          Color(0xFFFC5E6A33)),
-                                      padding: MaterialStateProperty.all(
-                                          const EdgeInsets.only(
-                                              left: 30,
-                                              right: 30,
-                                              top: 15,
-                                              bottom: 15))),
-                                  icon: const Icon(Icons.shopping_cart_rounded),
-                                  label: Text(
-                                    variation != null && variation.isInStock
-                                        ? isProductExist(box, widget.id,
-                                                    variationId: variationid) ==
-                                                null
-                                            ? AppLocalizations.of(context)!
-                                                    .translate(
-                                                        'detail_add_cart') ??
-                                                'Add to Cart'
-                                            : AppLocalizations.of(context)!
-                                                    .translate(
-                                                        'added_to_cart') ??
-                                                'Added to cart'
-                                        : variation == null &&
-                                                product!.isInStock
-                                            ? isProductExist(box, widget.id) ==
-                                                    null
-                                                ? AppLocalizations.of(context)!
-                                                        .translate(
-                                                            'detail_add_cart') ??
-                                                    'Add to Cart'
-                                                : AppLocalizations.of(context)!
-                                                        .translate(
-                                                            'added_to_cart') ??
-                                                    'Added to cart'
-                                            : AppLocalizations.of(context)!
-                                                    .translate('out_of_stock') ??
-                                                'Out of stock',
-                                    style: ThreeKmTextConstants
-                                        .tk14PXPoppinsWhiteMedium,
-                                  ));
-                              // : Container(
-                              //     decoration: BoxDecoration(
-                              //         border: Border.all(),
-                              //         borderRadius:
-                              //             BorderRadius.circular(40)),
-                              //     child: Row(
-                              //       mainAxisAlignment:
-                              //           MainAxisAlignment.spaceBetween,
-                              //       //mainAxisSize: MainAxisSize.min,
-                              //       children: [
-                              //         InkWell(
-                              //           onTap: () {
-                              //             if (isProductExist(box, widget.id)
-                              //                     .quantity <
-                              //                 2) {
-                              //               isProductExist(box, widget.id)
-                              //                   .delete();
-                              //             }
-                              //             if (isProductExist(
-                              //                     box, widget.id) !=
-                              //                 null) {
-                              //               isProductExist(box, widget.id)
-                              //                   .quantity = isProductExist(
-                              //                           box, widget.id)
-                              //                       .quantity -
-                              //                   1;
-
-                              //               if (isProductExist(
-                              //                       box, widget.id)
-                              //                   .isInBox) {
-                              //                 isProductExist(box, widget.id)
-                              //                     .save();
-                              //               }
-                              //             }
-                              //           },
-                              //           child: const Image(
-                              //             image: AssetImage(
-                              //                 'assets/shopImg/del.png'),
-                              //             width: 70,
-                              //             height: 30,
-                              //           ),
-                              //         ),
-                              //         Padding(
-                              //           padding: const EdgeInsets.only(
-                              //               top: 10, bottom: 10),
-                              //           child: Text(
-                              //             '${isProductExist(box, widget.id).quantity}',
-                              //             style: ThreeKmTextConstants
-                              //                 .tk20PXPoppinsRedBold
-                              //                 .copyWith(
-                              //                     color: Colors.black),
-                              //           ),
-                              //         ),
-                              //         InkWell(
-                              //           onTap: () {
-                              //             isProductExist(box, widget.id)
-                              //                     .quantity =
-                              //                 isProductExist(box, widget.id)
-                              //                         .quantity +
-                              //                     1;
-                              //             isProductExist(box, widget.id)
-                              //                 .save();
-                              //           },
-                              //           child: const Image(
-                              //             image: AssetImage(
-                              //                 'assets/shopImg/add.png'),
-                              //             width: 70,
-                              //             height: 30,
-                              //           ),
-                              //         ),
-                              //       ],
-                              //     ),
-                              //   );
-                            },
-                          ),
+                                //               if (isProductExist(
+                                //                       box, widget.id)
+                                //                   .isInBox) {
+                                //                 isProductExist(box, widget.id)
+                                //                     .save();
+                                //               }
+                                //             }
+                                //           },
+                                //           child: const Image(
+                                //             image: AssetImage(
+                                //                 'assets/shopImg/del.png'),
+                                //             width: 70,
+                                //             height: 30,
+                                //           ),
+                                //         ),
+                                //         Padding(
+                                //           padding: const EdgeInsets.only(
+                                //               top: 10, bottom: 10),
+                                //           child: Text(
+                                //             '${isProductExist(box, widget.id).quantity}',
+                                //             style: ThreeKmTextConstants
+                                //                 .tk20PXPoppinsRedBold
+                                //                 .copyWith(
+                                //                     color: Colors.black),
+                                //           ),
+                                //         ),
+                                //         InkWell(
+                                //           onTap: () {
+                                //             isProductExist(box, widget.id)
+                                //                     .quantity =
+                                //                 isProductExist(box, widget.id)
+                                //                         .quantity +
+                                //                     1;
+                                //             isProductExist(box, widget.id)
+                                //                 .save();
+                                //           },
+                                //           child: const Image(
+                                //             image: AssetImage(
+                                //                 'assets/shopImg/add.png'),
+                                //             width: 70,
+                                //             height: 30,
+                                //           ),
+                                //         ),
+                                //       ],
+                                //     ),
+                                //   );
+                              },
+                            ),
                         ],
                       ),
                     )),

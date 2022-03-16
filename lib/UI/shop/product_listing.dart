@@ -203,7 +203,10 @@ class _ProductListingState extends State<ProductListing> {
                             }),
                       )
                     : const Center(
-                        child: Text('No data Found'),
+                        child: Padding(
+                          padding: EdgeInsets.all(18.0),
+                          child: Text('No data Found'),
+                        ),
                       ),
               ],
             )
@@ -305,7 +308,9 @@ class _ItemBuilderWidgetState extends State<ItemBuilderWidget> {
                           decoration: BoxDecoration(
                               color: Colors.green,
                               borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(20))),
+                                topLeft: Radius.circular(20),
+                                bottomRight: Radius.circular(20),
+                              )),
                           child: Text(
                             '₹${(widget.data[widget.i].strikePrice! - widget.data[widget.i].price!).toStringAsFixed(2)} Off',
                             style:
