@@ -69,12 +69,11 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     Future.microtask(() {
       getDeviceId();
+      openBox();
     });
     super.initState();
     handleDeepLink();
     handleFcm();
-
-    openBox();
   }
 
   openBox() async {
@@ -140,20 +139,27 @@ class _SplashScreenState extends State<SplashScreen> {
       //log('this is deep link via console ${initialLink?.substring(30, 35)}');
       log("deep link is ${initialLink}");
       if (initialLink != null) {
+        // log('${initialLink}');
+        // log('this is deep link via 2 ${initialLink.contains('/sell/')}');
+        // log('this is deep link via 2 ${initialLink.split('/').last}');
+        // log('this is deep link via console ${initialLink.substring(30, 35)}');
         if (initialLink.contains('/sell/')) {
-          Navigator.push(context, MaterialPageRoute(builder: (_) {
-            var initLink = initialLink.split('/');
-            return ProductDetails(
-              id: num.parse(initLink.last),
-            );
-          })).then((value) => Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(builder: (_) => TabBarNavigation()),
-              (route) => false));
+          await Hive.openBox('cartBox').whenComplete(() {
+            Navigator.push(context, MaterialPageRoute(builder: (_) {
+              var initLink = initialLink.split('/');
+              log(initLink.last);
+              return ProductDetails(
+                id: num.parse(initLink.last),
+              );
+            })).then((value) => Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (_) => TabBarNavigation()),
+                (route) => false));
+          });
         } else if (initialLink.contains('/biz/')) {
           Navigator.push(context, MaterialPageRoute(builder: (_) {
             return BusinessDetail(
-              id: int.parse(initialLink.split('?id=')[1]),
+              id: int.parse(initialLink.split('/').last),
             );
           })).then((value) => Navigator.pushAndRemoveUntil(
               context,

@@ -81,7 +81,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   AppLanguage appLanguage = AppLanguage();
   await appLanguage.fetchLocale();
-  Hive
+ await Hive
     ..initFlutter()
     ..registerAdapter(CartHiveModelAdapter())
     ..registerAdapter(BusinesseswishListHiveModelAdapter());

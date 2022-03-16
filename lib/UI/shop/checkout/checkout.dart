@@ -160,7 +160,13 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
                                                   'error' &&
                                               isReadyForPay
                                           ? () {
-                                              _pageController.jumpToPage(2);
+                                              if (context
+                                                      .read<CheckoutProvider>()
+                                                      .getShippingRateData
+                                                      .deliveryRate !=
+                                                  null) {
+                                                _pageController.jumpToPage(2);
+                                              }
                                             }
                                           : null,
                                   child: Column(
@@ -504,6 +510,7 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
                                             });
                                           });
                                         }
+
                                         return box.length != 0
                                             ? Container(
                                                 // color: Colors.red,
@@ -636,7 +643,6 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
                                                                     InkWell(
                                                                       onTap:
                                                                           () {
-                                                                        
                                                                         if (cartItem.quantity <
                                                                             2) {
                                                                           return;
@@ -682,12 +688,11 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
                                                                           () {
                                                                         if (cartItem.manageStock! ==
                                                                             false) {
-                                                                          
                                                                           cartItem.quantity =
                                                                               cartItem.quantity + 1;
                                                                           cartItem
                                                                               .save();
-                                                                              var weight = context
+                                                                          var weight = context
                                                                               .read<CartProvider>()
                                                                               .getBoxWeightTotal(Hive.box('cartBox'));
                                                                           context.read<CheckoutProvider>().getShippingRate(
@@ -700,12 +705,12 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
                                                                               'shop');
                                                                         } else if (cartItem.quantity <
                                                                             cartItem.masterStock!) {
-                                                                              cartItem.quantity =
+                                                                          cartItem.quantity =
                                                                               cartItem.quantity + 1;
-                                                                         
+
                                                                           cartItem
                                                                               .save();
-                                                                               var weight = context
+                                                                          var weight = context
                                                                               .read<CartProvider>()
                                                                               .getBoxWeightTotal(Hive.box('cartBox'));
                                                                           context.read<CheckoutProvider>().getShippingRate(
@@ -716,7 +721,6 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
                                                                               deliveryAddressdata?.pincode,
                                                                               weight,
                                                                               'shop');
-                                                                          
                                                                         } else {
                                                                           CustomToast(
                                                                               'This Product is now out of stock');
@@ -771,34 +775,40 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
                                                       thickness: 1,
                                                       height: 35,
                                                     ),
-                                                    Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .spaceBetween,
-                                                      children: [
-                                                        Text(
-                                                          AppLocalizations.of(
-                                                                      context)!
-                                                                  .translate(
-                                                                      'Delivery_Charges') ??
-                                                              'Delivery Charges',
-                                                          style: ThreeKmTextConstants
-                                                              .tk12PXPoppinsBlackSemiBold
-                                                              .copyWith(
-                                                                  color: const Color(
-                                                                      0xFF979EA4)),
-                                                        ),
-                                                        Text(
-                                                          '₹${context.read<CheckoutProvider>().getShippingRateData.deliveryRate}',
-                                                          style: ThreeKmTextConstants
-                                                              .tk14PXLatoGreyRegular
-                                                              .copyWith(
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold),
-                                                        ),
-                                                      ],
-                                                    ),
+                                                    if (context
+                                                            .read<
+                                                                CheckoutProvider>()
+                                                            .getShippingRateData
+                                                            .deliveryRate !=
+                                                        null)
+                                                      Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceBetween,
+                                                        children: [
+                                                          Text(
+                                                            AppLocalizations.of(
+                                                                        context)!
+                                                                    .translate(
+                                                                        'Delivery_Charges') ??
+                                                                'Delivery Charges',
+                                                            style: ThreeKmTextConstants
+                                                                .tk12PXPoppinsBlackSemiBold
+                                                                .copyWith(
+                                                                    color: const Color(
+                                                                        0xFF979EA4)),
+                                                          ),
+                                                          Text(
+                                                            '₹${context.read<CheckoutProvider>().getShippingRateData.deliveryRate}',
+                                                            style: ThreeKmTextConstants
+                                                                .tk14PXLatoGreyRegular
+                                                                .copyWith(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold),
+                                                          ),
+                                                        ],
+                                                      ),
                                                     const Divider(
                                                       color: Color(0xFFF4F3F8),
                                                       thickness: 1,
@@ -833,39 +843,45 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
                                                     //   thickness: 1,
                                                     //   height: 35,
                                                     // ),
-                                                    Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .spaceBetween,
-                                                      children: [
-                                                        Text(
-                                                          AppLocalizations.of(
-                                                                      context)!
-                                                                  .translate(
-                                                                      'Cart_Total') ??
-                                                              'Cart Total',
-                                                          style: ThreeKmTextConstants
-                                                              .tk18PXPoppinsBlackMedium
-                                                              .copyWith(
-                                                                  color: const Color(
-                                                                      0xFF979EA4)),
-                                                        ),
-                                                        context
-                                                                    .read<
-                                                                        CheckoutProvider>()
-                                                                    .state !=
-                                                                'error'
-                                                            ? Text(
-                                                                '₹${context.read<CartProvider>().getBoxTotal(box) + context.read<CheckoutProvider>().getShippingRateData.deliveryRate?.toInt()}',
-                                                                style: ThreeKmTextConstants
-                                                                    .tk18PXLatoBlackMedium
-                                                                    .copyWith(
-                                                                        fontWeight:
-                                                                            FontWeight.bold),
-                                                              )
-                                                            : Text(''),
-                                                      ],
-                                                    ),
+                                                    if (context
+                                                            .read<
+                                                                CheckoutProvider>()
+                                                            .getShippingRateData
+                                                            .deliveryRate !=
+                                                        null)
+                                                      Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceBetween,
+                                                        children: [
+                                                          Text(
+                                                            AppLocalizations.of(
+                                                                        context)!
+                                                                    .translate(
+                                                                        'Cart_Total') ??
+                                                                'Cart Total',
+                                                            style: ThreeKmTextConstants
+                                                                .tk18PXPoppinsBlackMedium
+                                                                .copyWith(
+                                                                    color: const Color(
+                                                                        0xFF979EA4)),
+                                                          ),
+                                                          context
+                                                                      .read<
+                                                                          CheckoutProvider>()
+                                                                      .state !=
+                                                                  'error'
+                                                              ? Text(
+                                                                  '₹${context.read<CartProvider>().getBoxTotal(box) + context.read<CheckoutProvider>().getShippingRateData.deliveryRate?.toInt()}',
+                                                                  style: ThreeKmTextConstants
+                                                                      .tk18PXLatoBlackMedium
+                                                                      .copyWith(
+                                                                          fontWeight:
+                                                                              FontWeight.bold),
+                                                                )
+                                                              : Text(''),
+                                                        ],
+                                                      ),
                                                     SizedBox(
                                                       height: 35,
                                                     )
@@ -930,12 +946,19 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
                     onPressed:
                         // context.read<CheckoutProvider>().state != 'error'
                         //     ?
+
                         () {
                       if (currentPage == 0 &&
                           deliveryAddressdata?.addressId != 0) {
                         _pageController.jumpToPage(1);
                       } else if (currentPage == 1) {
-                        _pageController.jumpToPage(2);
+                        if (context
+                                .read<CheckoutProvider>()
+                                .getShippingRateData
+                                .deliveryRate !=
+                            null) {
+                          _pageController.jumpToPage(2);
+                        }
                       } else if (currentPage == 2 &&
                           context
                                   .read<CheckoutProvider>()

@@ -1,6 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:threekm/utils/screen_util.dart';
+
 import 'package:threekm/utils/threekm_textstyles.dart';
 
 class BuildCard extends StatelessWidget {
@@ -71,7 +71,9 @@ class BuildCard extends StatelessWidget {
                       decoration: BoxDecoration(
                           color: Colors.green,
                           borderRadius:
-                              BorderRadius.only(topLeft: Radius.circular(20))),
+                              BorderRadius.only(topLeft: Radius.circular(20),
+                              bottomRight: Radius.circular(20)
+                              )),
                       child: Text(
                         '${discountType == 'percentage' || discountType == "percent" ? "" : "₹"}${discountValue}${discountType == 'percentage' || discountType == "percent" ? '%' : ''} Off',
                         style: ThreeKmTextConstants.tk12PXPoppinsWhiteRegular,

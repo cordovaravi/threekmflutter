@@ -344,6 +344,19 @@ class _RestaurantMenuState extends State<RestaurantMenu> {
                                 status:
                                     data.result!.creator.restaurant!.status))
                             .toList(),
+                        if (categoriesToShow.length == 0)
+                          Column(
+                            children: [
+                              Image(
+                                  image: AssetImage(
+                                      'assets/shopImg/search-not-found.gif')),
+                              Text(
+                                'No Food Found',
+                                style:
+                                    ThreeKmTextConstants.tk14PXLatoGreyRegular,
+                              )
+                            ],
+                          )
                       ]),
                     )
                   : Container(),
