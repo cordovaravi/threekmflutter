@@ -58,6 +58,7 @@ class LocationProvider extends ChangeNotifier {
           _locationData.longitude ?? 73.897530);
       notifyListeners();
     } on Exception catch (e) {
+      print('----------------${e}');
       print(e);
     }
   }

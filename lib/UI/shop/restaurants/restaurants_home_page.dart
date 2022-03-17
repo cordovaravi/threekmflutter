@@ -13,9 +13,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:threekm/Custom_library/GooleMapsWidget/src/place_picker.dart';
 
-import 'package:threekm/Models/shopModel/restaurants_model.dart';
 import 'package:threekm/UI/Auth/signup/sign_up.dart';
-import 'package:threekm/UI/Search/SearchPage.dart';
+
 import 'package:threekm/UI/main/navigation.dart';
 import 'package:threekm/UI/shop/restaurants/cuisinesViewAll.dart';
 import 'package:threekm/UI/shop/restaurants/view_all_restaurant.dart';
@@ -23,11 +22,12 @@ import 'package:threekm/commenwidgets/CustomSnakBar.dart';
 import 'package:threekm/localization/localize.dart';
 import 'package:threekm/main.dart';
 import 'package:threekm/providers/Location/locattion_Provider.dart';
+import 'package:threekm/providers/ProfileInfo/ProfileInfo_Provider.dart';
 import 'package:threekm/providers/shop/cart_provider.dart';
 import 'package:threekm/providers/shop/restaurant_menu_provider.dart';
 import 'package:threekm/providers/shop/shop_home_provider.dart';
 import 'package:threekm/utils/api_paths.dart';
-import 'package:threekm/utils/screen_util.dart';
+
 import 'package:threekm/utils/threekm_textstyles.dart';
 import '../../shop/cart/cart_item_list_modal.dart';
 import '../../shop/restaurants/restaurants_menu.dart';
@@ -40,13 +40,14 @@ class RestaurantsHome extends StatefulWidget {
   State<RestaurantsHome> createState() => _RestaurantsHomeState();
 }
 
-class _RestaurantsHomeState extends State<RestaurantsHome> {
+class _RestaurantsHomeState extends State<RestaurantsHome>
+    with AutomaticKeepAliveClientMixin {
   //  data:  shopHomeProvider.restaurantData?.result,
   Offset position = Offset(20.0, 20.0);
   String? _selecetedAddress;
   TextEditingController SearchController = TextEditingController();
   getaddressFromCoordinates() async {
-    final _locationProvider = await context.read<LocationProvider>();
+    final _locationProvider = context.read<LocationProvider>();
 
     if (_locationProvider != null) {
       List<Placemark> placemarks = await placemarkFromCoordinates(
@@ -60,24 +61,20 @@ class _RestaurantsHomeState extends State<RestaurantsHome> {
 
   @override
   void initState() {
-    Future.microtask(() {
-      openBox();
-      getaddressFromCoordinates();
-      context.read<LocationProvider>().getLocation();
-      context.read<ShopHomeProvider>().getRestaurants(mounted, 1);
-      context.read<RestaurantMenuProvider>().cuisinesList(mounted);
-    });
+    // Future.microtask(() {
+    getaddressFromCoordinates();
+    // context.read<LocationProvider>().getLocation();
+    // context.read<ShopHomeProvider>().getShopHome(mounted);
+    context.read<ShopHomeProvider>().getRestaurants(mounted, 1);
+    context.read<RestaurantMenuProvider>().cuisinesList(mounted);
+    openBox();
+    //  });
     super.initState();
   }
 
   openBox() async {
     await Hive.openBox('restroCartBox');
-  }
-
-  @override
-  void didChangeDependencies() {
-    ThreeKmScreenUtil().init(context);
-    super.didChangeDependencies();
+    await Hive.openBox('cartBox');
   }
 
   @override
@@ -93,6 +90,7 @@ class _RestaurantsHomeState extends State<RestaurantsHome> {
     var state = context.watch<ShopHomeProvider>().state;
     var cuisinesData = context.watch<RestaurantMenuProvider>().cuisinesListdata;
     final locationProvider = context.watch<LocationProvider>();
+    final profileProvider = context.watch<ProfileInfoProvider>();
     return Scaffold(
         backgroundColor: Color(0xFFF4F3F8),
         // appBar: AppBar(
@@ -102,7 +100,7 @@ class _RestaurantsHomeState extends State<RestaurantsHome> {
         //   centerTitle: true,
         //   title: Container(
         //     //margin: EdgeInsets.only(right: 30),
-        //     width: ThreeKmScreenUtil.screenWidthDp / 1.3,
+        //     width: MediaQuery.of(context).size.width / 1.3,
         //     child: TextFormField(
         //       autocorrect: false, autofocus: false,
 
@@ -171,7 +169,8 @@ class _RestaurantsHomeState extends State<RestaurantsHome> {
                                     log('${result.geometry?.location.lat} ${result.geometry?.location.lng}');
 
                                     setState(() {
-                                      _selecetedAddress = result.vicinity;
+                                      _selecetedAddress =
+                                          result.formattedAddress;
                                       context
                                           .read<ShopHomeProvider>()
                                           .getRestaurants(mounted, 1,
@@ -197,7 +196,7 @@ class _RestaurantsHomeState extends State<RestaurantsHome> {
                   child: Container(
                     color: Colors.white,
                     padding:
-                        const EdgeInsets.only(top: 30, left: 20, right: 20),
+                        const EdgeInsets.only(top: 10, left: 15, right: 20),
                     child: Row(
                       //mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -214,88 +213,34 @@ class _RestaurantsHomeState extends State<RestaurantsHome> {
                               minWidth: 40,
                               maxWidth: MediaQuery.of(context).size.width / 2),
                           child: Text(
-                            _selecetedAddress ??
-                                locationProvider.AddressFromCordinate ??
+                            locationProvider.AddressFromCordinate ??
+                                _selecetedAddress ??
                                 "",
                             style:
                                 ThreeKmTextConstants.tk12PXPoppinsBlackSemiBold,
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
-                        // InkWell(
-                        //   onTap: () {
-                        //     Future.delayed(Duration.zero, () {
-                        //       context
-                        //           .read<LocationProvider>()
-                        //           .getLocation()
-                        //           .whenComplete(() {
-                        //         final _locationProvider = context
-                        //             .read<LocationProvider>()
-                        //             .getlocationData;
-                        //         final kInitialPosition = LatLng(
-                        //             _locationProvider!.latitude!,
-                        //             _locationProvider.longitude!);
-                        //         if (_locationProvider != null) {
-                        //           Navigator.push(
-                        //               context,
-                        //               MaterialPageRoute(
-                        //                 builder: (context) => PlacePicker(
-                        //                   apiKey: GMap_Api_Key,
-                        //                   // initialMapType: MapType.satellite,
-                        //                   onPlacePicked: (result) {
-                        //                     //print(result.formattedAddress);
-                        //                     log(result.toString());
-                        //                     log('${result.geometry?.location.lat} ${result.geometry?.location.lng}');
-
-                        //                     setState(() {
-                        //                       _selecetedAddress = result.vicinity;
-                        //                       context
-                        //                           .read<ShopHomeProvider>()
-                        //                           .getRestaurants(mounted, 1,
-                        //                               lat: result
-                        //                                   .geometry?.location.lat,
-                        //                               lng: result.geometry
-                        //                                   ?.location.lng);
-                        //                       print(result.geometry!.toJson());
-                        //                     });
-                        //                     Navigator.of(context).pop();
-                        //                   },
-                        //                   initialPosition: kInitialPosition,
-                        //                   useCurrentLocation: true,
-                        //                   selectInitialPosition: true,
-                        //                   usePinPointingSearch: true,
-                        //                   usePlaceDetailSearch: true,
-                        //                 ),
-                        //               ));
-                        //         }
-                        //       });
-                        //     });
-                        //   },
-                        //   child: Text(
-                        //     AppLocalizations.of(context)!
-                        //             .translate('change_location') ??
-                        //         'Change Location',
-                        //     style: ThreeKmTextConstants.tk12PXPoppinsBlackSemiBold
-                        //         .copyWith(color: Colors.blue),
-                        //   ),
-                        // )
                       ],
                     ),
                   ),
                 ),
                 Container(
                   color: Colors.white,
-                  padding: EdgeInsets.only(left: 15, right: 15, bottom: 10),
+                  padding: EdgeInsets.only(
+                    left: 15,
+                    right: 15,
+                  ),
                   child: Padding(
                     padding: EdgeInsets.only(
-                      top: 18,
-                    ),
+                        // top: 18,
+                        ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Container(
                           //margin: EdgeInsets.only(right: 30),
-                          width: ThreeKmScreenUtil.screenWidthDp / 1.5,
+                          width: MediaQuery.of(context).size.width / 1.5,
                           height: 32,
                           child: TextFormField(
                             autocorrect: false, autofocus: false,
@@ -395,9 +340,14 @@ class _RestaurantsHomeState extends State<RestaurantsHome> {
                                 height: 32,
                                 width: 32,
                                 decoration: BoxDecoration(
-                                  image: DecorationImage(
-                                      image:
-                                          AssetImage("assets/male-user.png")),
+                                  image: profileProvider.Avatar != null
+                                      ? DecorationImage(
+                                          image: CachedNetworkImageProvider(
+                                              profileProvider.Avatar
+                                                  .toString()))
+                                      : DecorationImage(
+                                          image: AssetImage(
+                                              "assets/male-user.png")),
                                   shape: BoxShape.circle,
                                   //color: Color(0xffFF464B)
                                 )),
@@ -420,8 +370,8 @@ class _RestaurantsHomeState extends State<RestaurantsHome> {
                 //                         borderRadius: BorderRadius.circular(10),
                 //                         child: Image(
                 //                             image: NetworkImage(data?.advertisements?[i].images),
-                //                             width: ThreeKmScreenUtil.screenWidthDp / 1.1888,
-                //                             height: ThreeKmScreenUtil.screenHeightDp / 5,
+                //                             width: MediaQuery.of(context).size.width / 1.1888,
+                //                             height: MediaQuery.of(context).size.height / 5,
                 //                             fit: BoxFit.fill)),
                 //                   );
                 //                 }),,)
@@ -453,7 +403,7 @@ class _RestaurantsHomeState extends State<RestaurantsHome> {
                 //       return Container(
                 //           // color: Colors.red,
                 //           padding: const EdgeInsets.all(10),
-                //           width: ThreeKmScreenUtil.screenWidthDp / 1.45,
+                //           width: MediaQuery.of(context).size.width / 1.45,
                 //           child: Material(
                 //             elevation: 4,
                 //             borderRadius:
@@ -487,10 +437,10 @@ class _RestaurantsHomeState extends State<RestaurantsHome> {
                 //                           imageUrl:
                 //                               '${data?.creators?[i].cover}',
                 //                           height:
-                //                               ThreeKmScreenUtil.screenHeightDp /
+                //                               MediaQuery.of(context).size.height /
                 //                                   1.8,
                 //                           width:
-                //                               ThreeKmScreenUtil.screenWidthDp,
+                //                               MediaQuery.of(context).size.width,
                 //                           fit: BoxFit.fill,
                 //                         ),
                 //                       ),
@@ -541,7 +491,7 @@ class _RestaurantsHomeState extends State<RestaurantsHome> {
                 //       return Container(
                 //           // color: Colors.red,
                 //           padding: const EdgeInsets.all(10),
-                //           width: ThreeKmScreenUtil.screenWidthDp / 1.45,
+                //           width: MediaQuery.of(context).size.width / 1.45,
                 //           child: Material(
                 //             elevation: 4,
                 //             borderRadius:
@@ -575,10 +525,10 @@ class _RestaurantsHomeState extends State<RestaurantsHome> {
                 //                           imageUrl:
                 //                               '${data?.creators?[i].cover}',
                 //                           height:
-                //                               ThreeKmScreenUtil.screenHeightDp /
+                //                               MediaQuery.of(context).size.height /
                 //                                   1.8,
                 //                           width:
-                //                               ThreeKmScreenUtil.screenWidthDp,
+                //                               MediaQuery.of(context).size.width,
                 //                           fit: BoxFit.fill,
                 //                         ),
                 //                       ),
@@ -687,7 +637,7 @@ class _RestaurantsHomeState extends State<RestaurantsHome> {
                                               ),
                                               imageUrl: '${cuisinesdata.photo}',
                                               // height:
-                                              //     ThreeKmScreenUtil.screenHeightDp /
+                                              //     MediaQuery.of(context).size.height /
                                               //         13,
                                               // width: ThreeKmScreenUtil
                                               //         .screenWidthDp /
@@ -786,7 +736,7 @@ class _RestaurantsHomeState extends State<RestaurantsHome> {
                                 children: [
                                   SizedBox(
                                     height:
-                                        ThreeKmScreenUtil.screenHeightDp / 4,
+                                        MediaQuery.of(context).size.height / 4,
                                     child: Stack(
                                       fit: StackFit.loose,
                                       children: [
@@ -813,9 +763,10 @@ class _RestaurantsHomeState extends State<RestaurantsHome> {
                                               // ),
                                               imageUrl:
                                                   '${data?.creators?[i].cover}',
-                                              //height: ThreeKmScreenUtil.screenHeightDp / 5,
-                                              width: ThreeKmScreenUtil
-                                                  .screenWidthDp,
+                                              //height: MediaQuery.of(context).size.height / 5,
+                                              width: MediaQuery.of(context)
+                                                  .size
+                                                  .width,
                                               fit: BoxFit.fill,
                                             ),
                                           ),
@@ -871,8 +822,9 @@ class _RestaurantsHomeState extends State<RestaurantsHome> {
                                         MainAxisAlignment.spaceBetween,
                                     children: [
                                       Container(
-                                        width: ThreeKmScreenUtil.screenWidthDp /
-                                            1.9,
+                                        width:
+                                            MediaQuery.of(context).size.width /
+                                                1.9,
                                         padding: EdgeInsets.all(8.0),
                                         child: Text(
                                           '${data?.creators?[i].restaurant!.cuisines?.join(", ")}',
@@ -914,7 +866,7 @@ class _RestaurantsHomeState extends State<RestaurantsHome> {
                               highlightColor: Colors.white38,
                               child: Container(
                                 margin: EdgeInsets.only(bottom: 10),
-                                height: ThreeKmScreenUtil.screenHeightDp / 4,
+                                height: MediaQuery.of(context).size.height / 4,
                                 color: Colors.grey,
                               ),
                             ),
@@ -934,8 +886,8 @@ class _RestaurantsHomeState extends State<RestaurantsHome> {
                                   baseColor: Colors.grey[200]!,
                                   highlightColor: Colors.white38,
                                   child: Container(
-                                      width:
-                                          ThreeKmScreenUtil.screenWidthDp / 1.9,
+                                      width: MediaQuery.of(context).size.width /
+                                          1.9,
                                       height: 15,
                                       margin: EdgeInsets.all(18.0),
                                       color: Colors.grey),
@@ -1036,4 +988,7 @@ class _RestaurantsHomeState extends State<RestaurantsHome> {
           ],
         ));
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

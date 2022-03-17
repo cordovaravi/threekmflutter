@@ -1,9 +1,12 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:hive/hive.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:threekm/Custom_library/GooleMapsWidget/src/place_picker.dart';
 import 'package:threekm/UI/Auth/signup/sign_up.dart';
 import 'package:threekm/UI/Search/SearchPage.dart';
 import 'package:threekm/UI/businesses/businesses_detail.dart';
@@ -18,6 +21,7 @@ import 'package:threekm/providers/ProfileInfo/ProfileInfo_Provider.dart';
 import 'package:threekm/providers/shop/shop_home_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:threekm/Models/shopModel/shop_home_model.dart';
+import 'package:threekm/utils/api_paths.dart';
 import 'package:threekm/utils/screen_util.dart';
 import 'package:threekm/utils/threekm_textstyles.dart';
 import '../shop/product/product_details.dart';
@@ -48,10 +52,10 @@ class _Home3KMState extends State<Home3KM> {
 
   @override
   void initState() {
+    context.read<ShopHomeProvider>().getShopHome(mounted);
+    context.read<LocationProvider>().getLocation();
     Future.microtask(() {
       openBox();
-      context.read<ShopHomeProvider>().getShopHome(mounted);
-      context.read<LocationProvider>().getLocation();
     });
     //context.read<ShopHomeProvider>().getShopHome(mounted);
     // context.read<ShopHomeProvider>().getRestaurants(initJson, mounted);
@@ -116,6 +120,7 @@ class ShopHome extends StatefulWidget {
 class _ShopHomeState extends State<ShopHome>
     with TickerProviderStateMixin, AutomaticKeepAliveClientMixin {
   ScrollController? _scrollController;
+  String? _selecetedAddress;
   double? _scrollPosition = 0.0;
   late AnimationController _controller;
 
@@ -210,7 +215,7 @@ class _ShopHomeState extends State<ShopHome>
     var shopsData = widget.shopHomeProvider.shopHomeData?.result?.shops;
     var width = MediaQuery.of(context).size.width;
     var height = MediaQuery.of(context).size.height;
-
+    final locationProvider = context.watch<LocationProvider>();
     var restaurantData =
         widget.shopHomeProvider.restaurantData?.result.creators;
 
@@ -225,10 +230,87 @@ class _ShopHomeState extends State<ShopHome>
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
+              InkWell(
+                onTap: () {
+                  Future.delayed(Duration.zero, () {
+                    context
+                        .read<LocationProvider>()
+                        .getLocation()
+                        .whenComplete(() {
+                      final _locationProvider =
+                          context.read<LocationProvider>().getlocationData;
+                      final kInitialPosition = LatLng(
+                          _locationProvider!.latitude!,
+                          _locationProvider.longitude!);
+                      if (_locationProvider != null) {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => PlacePicker(
+                                apiKey: GMap_Api_Key,
+                                // initialMapType: MapType.satellite,
+                                onPlacePicked: (result) {
+                                  //print(result.formattedAddress);
+                                  log(result.toString());
+                                  log('${result.geometry?.location.lat} ${result.geometry?.location.lng}');
+
+                                  setState(() {
+                                    _selecetedAddress = result.vicinity;
+                                    context
+                                        .read<ShopHomeProvider>()
+                                        .getRestaurants(mounted, 1,
+                                            lat: result.geometry?.location.lat,
+                                            lng: result.geometry?.location.lng);
+                                    print(result.geometry!.toJson());
+                                  });
+                                  Navigator.of(context).pop();
+                                },
+                                initialPosition: kInitialPosition,
+                                useCurrentLocation: true,
+                                selectInitialPosition: true,
+                                usePinPointingSearch: true,
+                                usePlaceDetailSearch: true,
+                              ),
+                            ));
+                      }
+                    });
+                  });
+                },
+                child: Container(
+                  color: Colors.white,
+                  padding: const EdgeInsets.only(top: 10, left: 15, right: 20),
+                  child: Row(
+                    //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      IconButton(
+                        icon: Icon(
+                          Icons.location_on_outlined,
+                          color: Colors.red,
+                          size: 24,
+                        ),
+                        onPressed: () {},
+                      ),
+                      Container(
+                        constraints: BoxConstraints(
+                            minWidth: 40,
+                            maxWidth: MediaQuery.of(context).size.width / 2),
+                        child: Text(
+                          locationProvider.AddressFromCordinate ??
+                              _selecetedAddress ??
+                              "",
+                          style:
+                              ThreeKmTextConstants.tk12PXPoppinsBlackSemiBold,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
               Container(
                 color: Colors.white,
                 child: Padding(
-                  padding: EdgeInsets.only(top: 18, bottom: 18),
+                  padding: EdgeInsets.only(bottom: 18),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [

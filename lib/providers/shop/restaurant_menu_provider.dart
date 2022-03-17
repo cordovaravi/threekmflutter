@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter/cupertino.dart';
 import 'package:threekm/Models/shopModel/cuisinesListModel.dart';
@@ -37,6 +38,7 @@ class RestaurantMenuProvider extends ChangeNotifier {
           notifyListeners();
         }
       } catch (e) {
+        log('======1111${e}');
         hideLoading();
         _state = 'error';
         notifyListeners();
@@ -60,6 +62,7 @@ class RestaurantMenuProvider extends ChangeNotifier {
           notifyListeners();
         }
       } catch (e) {
+        log('======${e}');
         hideLoading();
         _state = 'error';
         notifyListeners();
