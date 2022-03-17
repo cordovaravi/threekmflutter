@@ -170,69 +170,73 @@ Future viewCart(BuildContext context, mode) async {
                                                         ),
                                                       ],
                                                     ),
-                                                    leading: Stack(
-                                                      fit: StackFit.loose,
-                                                      clipBehavior: Clip.none,
-                                                      children: [
-                                                        ClipRRect(
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(20),
-                                                          child: Image(
-                                                            image: NetworkImage(
-                                                                '${cartItem.image}'),
-                                                            width: 60,
-                                                            height: 45,
-                                                            errorBuilder: (context,
-                                                                    error,
-                                                                    stackTrace) =>
-                                                                Container(
+                                                    leading: SizedBox(
+                                                      width: 60,
+                                                      height: 45,
+                                                      child: Stack(
+                                                        fit: StackFit.loose,
+                                                        clipBehavior: Clip.none,
+                                                        children: [
+                                                          ClipRRect(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(20),
+                                                            child: Image(
+                                                              image: NetworkImage(
+                                                                  '${cartItem.image}'),
                                                               width: 60,
                                                               height: 45,
-                                                              color: Colors
-                                                                  .grey[350],
-                                                            ),
-                                                            loadingBuilder: (_,
-                                                                widget,
-                                                                loadingProgress) {
-                                                              if (loadingProgress ==
-                                                                  null) {
-                                                                return widget;
-                                                              }
-                                                              return Center(
-                                                                child: SizedBox(
-                                                                  width: 24,
-                                                                  height: 24,
-                                                                  child:
-                                                                      CircularProgressIndicator(
-                                                                    color: Color(
-                                                                        0xFF979EA4),
-                                                                    value: loadingProgress.expectedTotalBytes !=
-                                                                            null
-                                                                        ? loadingProgress.cumulativeBytesLoaded /
-                                                                            loadingProgress.expectedTotalBytes!
-                                                                        : null,
+                                                              errorBuilder: (context,
+                                                                      error,
+                                                                      stackTrace) =>
+                                                                  Container(
+                                                                width: 60,
+                                                                height: 45,
+                                                                color: Colors
+                                                                    .grey[350],
+                                                              ),
+                                                              loadingBuilder: (_,
+                                                                  widget,
+                                                                  loadingProgress) {
+                                                                if (loadingProgress ==
+                                                                    null) {
+                                                                  return widget;
+                                                                }
+                                                                return Center(
+                                                                  child: SizedBox(
+                                                                    width: 24,
+                                                                    height: 24,
+                                                                    child:
+                                                                        CircularProgressIndicator(
+                                                                      color: Color(
+                                                                          0xFF979EA4),
+                                                                      value: loadingProgress.expectedTotalBytes !=
+                                                                              null
+                                                                          ? loadingProgress.cumulativeBytesLoaded /
+                                                                              loadingProgress.expectedTotalBytes!
+                                                                          : null,
+                                                                    ),
                                                                   ),
-                                                                ),
-                                                              );
-                                                            },
-                                                          ),
-                                                        ),
-                                                        Positioned(
-                                                          top: -10,
-                                                          left: -5,
-                                                          child: InkWell(
-                                                            onTap: () {
-                                                              cartItem.delete();
-                                                            },
-                                                            child: const Image(
-                                                              image: AssetImage(
-                                                                  'assets/shopImg/closeRed.png'),
-                                                              width: 24,
+                                                                );
+                                                              },
                                                             ),
                                                           ),
-                                                        )
-                                                      ],
+                                                          Positioned(
+                                                            top: -10,
+                                                            left: -5,
+                                                            child: InkWell(
+                                                              onTap: () {
+                                                                cartItem.delete();
+                                                              },
+                                                              child: const Image(
+                                                                image: AssetImage(
+                                                                    'assets/shopImg/closeRed.png'),
+                                                                width: 24,
+                                                              ),
+                                                            ),
+                                                          )
+                                                        ],
+                                                      ),
                                                     ),
                                                     trailing: Container(
                                                       padding:

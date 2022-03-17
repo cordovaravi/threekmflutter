@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
@@ -55,6 +57,11 @@ class _RestaurantsCheckOutScreenState extends State<RestaurantsCheckOutScreen> {
     var addressdata = context.read<AddressListProvider>().getAddressListData;
     var selectedAddress = await Hive.openBox('selectedAddress');
     var id = selectedAddress.get('address');
+    if (context.read<CheckoutProvider>().state == 'error' &&
+        context.read<CheckoutProvider>().getShippingRateData.deliveryRate ==
+            null) {
+      _pageController.jumpToPage(0);
+    }
     var deliver = addressdata.addresses?.firstWhere(
         (element) => element.addressId == id,
         orElse: () => Addresses(
@@ -193,17 +200,9 @@ class _RestaurantsCheckOutScreenState extends State<RestaurantsCheckOutScreen> {
                             child: PageView(
                               physics: const NeverScrollableScrollPhysics(),
                               controller: _pageController,
-                              onPageChanged: (i) async {
-                                if (deliveryAddressdata?.addressId == 0) {
-                                  setState(() {
-                                    currentPage = 0;
-                                  });
-                                  _pageController.jumpToPage(0);
-                                }
-                                setState(() {
-                                  currentPage = i;
-                                });
-                                if (currentPage == 1) {
+                              onPageChanged: (i) {
+                                log('==${i}');
+                                if (i == 1) {
                                   context
                                       .read<CheckoutProvider>()
                                       .getShippingRate(
@@ -216,14 +215,19 @@ class _RestaurantsCheckOutScreenState extends State<RestaurantsCheckOutScreen> {
                                               .read<CartProvider>()
                                               .getBoxWeightTotal(
                                                   Hive.box('restroCartBox')),
-                                          'restro');
+                                          'restro')
+                                      .then((value) {
+                                    setState(() {});
+                                    // if (context
+                                    //         .read<CheckoutProvider>()
+                                    //         .getShippingRateData
+                                    //         .deliveryRate !=
+                                    //     null) {
+                                    //   _pageController.jumpToPage(0);
+                                    // }
+                                  });
                                 }
-                                if (currentPage == 2 &&
-                                    context
-                                            .read<CheckoutProvider>()
-                                            .getShippingRateData
-                                            .deliveryRate !=
-                                        null &&
+                                if (i == 2 &&
                                     context
                                             .read<CheckoutProvider>()
                                             .getShippingRateData
@@ -257,9 +261,10 @@ class _RestaurantsCheckOutScreenState extends State<RestaurantsCheckOutScreen> {
                                                     .distance!,
                                                 mode: 'restro',
                                               )));
-                                } else {
-                                  _pageController.jumpToPage(0);
                                 }
+                                setState(() {
+                                  currentPage = i;
+                                });
                               },
                               children: [
                                 SingleChildScrollView(
@@ -955,11 +960,6 @@ class _RestaurantsCheckOutScreenState extends State<RestaurantsCheckOutScreen> {
                     } else if (currentPage == 1) {
                       _pageController.jumpToPage(2);
                     } else if (currentPage == 2 &&
-                        context
-                                .read<CheckoutProvider>()
-                                .getShippingRateData
-                                .deliveryRate !=
-                            null &&
                         context
                                 .read<CheckoutProvider>()
                                 .getShippingRateData

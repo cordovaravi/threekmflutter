@@ -205,6 +205,8 @@ class CheckoutProvider extends ChangeNotifier {
     orderbox.clear();
     navigatorKey.currentState?.pop();
     navigatorKey.currentState?.pop();
+    var message = jsonDecode('${response.message}');
+    showMessage('${message['description']}');
     // Fluttertoast.showToast(
     //     msg: "ERROR: " + response.code.toString() + " - " + response.message!,
     //     toastLength: Toast.LENGTH_SHORT);
