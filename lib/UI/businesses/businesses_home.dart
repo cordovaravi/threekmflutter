@@ -6,13 +6,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/src/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+
 import 'package:shimmer/shimmer.dart';
-import 'package:threekm/UI/Auth/signup/sign_up.dart';
+
 import 'package:threekm/UI/Search/SearchPage.dart';
 import 'package:threekm/UI/businesses/businesses_detail.dart';
 import 'package:threekm/UI/businesses/view_all_category_biz.dart';
-import 'package:threekm/UI/main/navigation.dart';
+
 import 'package:threekm/UI/shop/cart/cart_item_list_modal.dart';
 import 'package:threekm/localization/localize.dart';
 import 'package:threekm/providers/Location/locattion_Provider.dart';

@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
@@ -160,7 +161,9 @@ class _BusinessDetailState extends State<BusinessDetail> {
                 child: Column(
                   children: [
                     Container(
-                        height: 500,
+                        //height: 500,
+                        constraints:
+                            BoxConstraints(maxHeight: 500, minHeight: 300),
                         width: double.infinity,
                         child: PageView.builder(
                             physics: const BouncingScrollPhysics(),
@@ -176,61 +179,81 @@ class _BusinessDetailState extends State<BusinessDetail> {
                                 ? data.creator.coverImages.length
                                 : [data.creator.image].length,
                             itemBuilder: (context, index) {
-                              return InkWell(
-                                onTap: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (_) => showFullImage(
-                                                images: data.creator.coverImages
-                                                            .length !=
-                                                        0
-                                                    ? data.creator.coverImages
-                                                    : [data.creator.image],
-                                              )));
-                                },
-                                child: Hero(
-                                  tag: 'hero2',
-                                  child: Image(
-                                    image: NetworkImage(
-                                      data.creator.coverImages.length != 0
-                                          ? '${data.creator.coverImages[index]}'
-                                          : data.creator.image,
-                                    ),
-                                    fit: BoxFit.fitHeight,
-                                    // width: ThreeKmScreenUtil.screenWidthDp /
-                                    //     1.1888,
-                                    // height: ThreeKmScreenUtil.screenHeightDp /
-                                    //     4.7,
-                                    errorBuilder:
-                                        (context, error, stackTrace) =>
-                                            Container(
-                                      width: 110,
-                                      height: 80,
-                                      color: Colors.grey[350],
-                                    ),
-                                    loadingBuilder:
-                                        (_, widget, loadingProgress) {
-                                      if (loadingProgress == null) {
-                                        return widget;
-                                      }
-                                      return Center(
-                                        child: CircularProgressIndicator(
-                                          color: Color(0xFF979EA4),
-                                          value: loadingProgress
-                                                      .expectedTotalBytes !=
-                                                  null
-                                              ? loadingProgress
-                                                      .cumulativeBytesLoaded /
-                                                  loadingProgress
-                                                      .expectedTotalBytes!
-                                              : null,
+                              return Container(
+                                  width: double.infinity,
+                                  height: 500,
+                                  decoration: BoxDecoration(
+                                    image: DecorationImage(
+                                        image: NetworkImage(
+                                          data.creator.coverImages.length != 0
+                                              ? '${data.creator.coverImages[index]}'
+                                              : data.creator.image,
                                         ),
-                                      );
-                                    },
+                                        fit: BoxFit.cover),
                                   ),
-                                ),
-                              );
+                                  child: BackdropFilter(
+                                    filter: new ImageFilter.blur(
+                                        sigmaX: 10.0, sigmaY: 10.0),
+                                    child: new Container(
+                                      decoration: new BoxDecoration(
+                                          color: Colors.white.withOpacity(0.0)),
+                                      child: InkWell(
+                                        onTap: () {
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (_) => showFullImage(
+                                                        images: data
+                                                                    .creator
+                                                                    .coverImages
+                                                                    .length !=
+                                                                0
+                                                            ? data.creator
+                                                                .coverImages
+                                                            : [
+                                                                data.creator
+                                                                    .image
+                                                              ],
+                                                      )));
+                                        },
+                                        child: Image(
+                                          image: NetworkImage(
+                                            data.creator.coverImages.length != 0
+                                                ? '${data.creator.coverImages[index]}'
+                                                : data.creator.image,
+                                          ),
+                                          // fit: BoxFit.fitHeight,
+
+                                          errorBuilder:
+                                              (context, error, stackTrace) =>
+                                                  Container(
+                                            width: 110,
+                                            height: 80,
+                                            color: Colors.grey[350],
+                                          ),
+                                          loadingBuilder:
+                                              (_, widget, loadingProgress) {
+                                            if (loadingProgress == null) {
+                                              return widget;
+                                            }
+                                            return Center(
+                                              child: CircularProgressIndicator(
+                                                color: Color(0xFF979EA4),
+                                                value: loadingProgress
+                                                            .expectedTotalBytes !=
+                                                        null
+                                                    ? loadingProgress
+                                                            .cumulativeBytesLoaded /
+                                                        loadingProgress
+                                                            .expectedTotalBytes!
+                                                    : null,
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                      ),
+                                    ),
+                                  ));
                             })
                         // : Image(
                         //     image: NetworkImage(data.creator.image),

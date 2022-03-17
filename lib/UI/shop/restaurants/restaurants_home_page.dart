@@ -299,23 +299,33 @@ class _RestaurantsHomeState extends State<RestaurantsHome>
                                       shape: BoxShape.circle,
                                       //color: Color(0xff7572ED)
                                     )),
-                                if (Hive.box('cartBox').length != 0)
-                                  Positioned(
-                                      top: -10,
-                                      right: -8,
-                                      child: Container(
-                                          decoration: BoxDecoration(
-                                              shape: BoxShape.circle,
-                                              color: Colors.red),
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(4.0),
-                                            child: Text(
-                                              '${Hive.box('cartBox').length}',
-                                              style: TextStyle(
-                                                  fontSize: 11,
-                                                  color: Colors.white),
-                                            ),
-                                          )))
+                                if (Hive.box('restroCartBox').length != 0)
+                                  ValueListenableBuilder(
+                                      valueListenable: Hive.box('restroCartBox')
+                                          .listenable(),
+                                      builder: (context, Box box, snapshot) {
+                                        return Positioned(
+                                            top: -10,
+                                            right: -5,
+                                            child: box.length != 0
+                                                ? Container(
+                                                    decoration: BoxDecoration(
+                                                        shape: BoxShape.circle,
+                                                        color: Colors.red),
+                                                    child: Padding(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              4.0),
+                                                      child: Text(
+                                                        '${box.length}',
+                                                        style: TextStyle(
+                                                            fontSize: 11,
+                                                            color:
+                                                                Colors.white),
+                                                      ),
+                                                    ))
+                                                : Container());
+                                      }),
                               ],
                             ),
                           ),

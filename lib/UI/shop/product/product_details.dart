@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:developer';
 
-import 'package:cached_network_image/cached_network_image.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
@@ -15,17 +15,17 @@ import 'package:threekm/UI/businesses/businesses_detail.dart';
 import 'package:threekm/UI/shop/indicator.dart';
 import 'package:threekm/commenwidgets/CustomSnakBar.dart';
 import 'package:threekm/localization/localize.dart';
-import 'package:threekm/main.dart';
+
 import 'package:threekm/providers/shop/cart_provider.dart';
 import 'package:threekm/providers/shop/product_details_provider.dart';
 import 'package:threekm/providers/shop/wish_list_provide.dart';
 import 'package:threekm/utils/screen_util.dart';
 import 'package:threekm/utils/threekm_textstyles.dart';
 import '../../shop/cart/cart_item_list_modal.dart';
-import '../../shop/cart/clear_and_add_to_cart.dart';
+
 import '../../shop/product/full_image.dart';
 import '../../shop/product/post_review_form.dart';
-import 'dart:ui' as ui;
+
 import 'package:visibility_detector/visibility_detector.dart';
 
 class ProductDetails extends StatefulWidget {
@@ -69,7 +69,7 @@ class _ProductDetailsState extends State<ProductDetails> {
   void initState() {
     print('${widget.id}======================');
     context.read<ProductDetailsProvider>().productDetails(mounted, widget.id);
-    
+
     openBox();
     super.initState();
   }
@@ -85,8 +85,8 @@ class _ProductDetailsState extends State<ProductDetails> {
   }
 
   openBox() {
-    Future.microtask(() async => await Hive.openBox('cartBox').whenComplete(() => setState(() {})));
-    
+    Future.microtask(() async =>
+        await Hive.openBox('cartBox').whenComplete(() => setState(() {})));
   }
 
   isProductExist(box, id, {variationId}) {
@@ -286,50 +286,46 @@ class _ProductDetailsState extends State<ProductDetails> {
                                                           : '${data.result?.product.image}',
                                                 )));
                                   },
-                                  child: Hero(
-                                    tag: 'hero1',
-                                    child: Image(
-                                      image: NetworkImage(variationid == 0
-                                          ? data.result?.product.images
-                                                      .length !=
-                                                  0
-                                              ? '${data.result?.product.images[index]}'
-                                              : '${data.result?.product.image}'
-                                          : variation.imagesLinks.length != 0
-                                              ? variation.imagesLinks[index]
-                                              : data.result?.product.image),
-                                      fit: BoxFit.contain,
-                                      // width: ThreeKmScreenUtil.screenWidthDp /
-                                      //     1.1888,
-                                      // height: ThreeKmScreenUtil.screenHeightDp /
-                                      //     4.7,
-                                      errorBuilder:
-                                          (context, error, stackTrace) =>
-                                              Container(
-                                        width: 110,
-                                        height: 80,
-                                        color: Colors.grey[350],
-                                      ),
-                                      loadingBuilder:
-                                          (_, widget, loadingProgress) {
-                                        if (loadingProgress == null) {
-                                          return widget;
-                                        }
-                                        return Center(
-                                          child: CircularProgressIndicator(
-                                            color: const Color(0xFF979EA4),
-                                            value: loadingProgress
-                                                        .expectedTotalBytes !=
-                                                    null
-                                                ? loadingProgress
-                                                        .cumulativeBytesLoaded /
-                                                    loadingProgress
-                                                        .expectedTotalBytes!
-                                                : null,
-                                          ),
-                                        );
-                                      },
+                                  child: Image(
+                                    image: NetworkImage(variationid == 0
+                                        ? data.result?.product.images.length !=
+                                                0
+                                            ? '${data.result?.product.images[index]}'
+                                            : '${data.result?.product.image}'
+                                        : variation.imagesLinks.length != 0
+                                            ? variation.imagesLinks[index]
+                                            : data.result?.product.image),
+                                    fit: BoxFit.contain,
+                                    // width: ThreeKmScreenUtil.screenWidthDp /
+                                    //     1.1888,
+                                    // height: ThreeKmScreenUtil.screenHeightDp /
+                                    //     4.7,
+                                    errorBuilder:
+                                        (context, error, stackTrace) =>
+                                            Container(
+                                      width: 110,
+                                      height: 80,
+                                      color: Colors.grey[350],
                                     ),
+                                    loadingBuilder:
+                                        (_, widget, loadingProgress) {
+                                      if (loadingProgress == null) {
+                                        return widget;
+                                      }
+                                      return Center(
+                                        child: CircularProgressIndicator(
+                                          color: const Color(0xFF979EA4),
+                                          value: loadingProgress
+                                                      .expectedTotalBytes !=
+                                                  null
+                                              ? loadingProgress
+                                                      .cumulativeBytesLoaded /
+                                                  loadingProgress
+                                                      .expectedTotalBytes!
+                                              : null,
+                                        ),
+                                      );
+                                    },
                                   ),
                                 ),
                               )

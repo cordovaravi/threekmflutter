@@ -11,15 +11,9 @@ class FullImage extends StatelessWidget {
           boundaryMargin: const EdgeInsets.all(100),
           //minScale: 0.5,
           //maxScale: 2,
-          child: Hero(
-            tag: 'hero1',
-            child: Image(
-              image: NetworkImage(imageurl),
-            ),
+          child: Image(
+            image: NetworkImage(imageurl),
           )),
     );
   }
 }
-
-        
-        

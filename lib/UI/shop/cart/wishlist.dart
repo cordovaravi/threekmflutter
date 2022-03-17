@@ -9,10 +9,9 @@ import 'package:threekm/Models/shopModel/cart_hive_model.dart';
 import 'package:threekm/UI/businesses/businesses_detail.dart';
 import 'package:threekm/UI/shop/cart/cart_item_list_modal.dart';
 import 'package:threekm/UI/shop/product/product_details.dart';
-import 'package:threekm/commenwidgets/CustomSnakBar.dart';
+
 import 'package:threekm/localization/localize.dart';
-import 'package:threekm/providers/shop/cart_provider.dart';
-import 'package:threekm/utils/screen_util.dart';
+
 import 'package:threekm/utils/threekm_textstyles.dart';
 
 class WishList extends StatefulWidget {
@@ -27,98 +26,91 @@ class _WishListState extends State<WishList> {
 
   @override
   void initState() {
-    Future.microtask(() => getWishBoxData());
+    getWishBoxData();
     super.initState();
   }
 
   getWishBoxData() async {
+    await Hive.openBox('cartBox');
     await Hive.openBox('shopWishListBox');
     await Hive.openBox('businessWishListBox');
+    setState(() {});
   }
 
-  isProductExist(box, id, {variationId}) {
-    if (variationId != null && variationId != 0) {
-      var existingItem = box.values.toList().firstWhere(
-          (dd) => dd.variation_id == variationId,
-          orElse: () => null);
-      return existingItem;
-    } else {
-      var existingItem = box.values
-          .toList()
-          .firstWhere((dd) => dd.id == id, orElse: () => null);
-      return existingItem;
-    }
-  }
-
-  @override
-  void didChangeDependencies() {
-    ThreeKmScreenUtil.getInstance();
-    ThreeKmScreenUtil.instance.init(context);
-    super.didChangeDependencies();
-  }
+  // isProductExist(box, id, {variationId}) {
+  //   if (variationId != null && variationId != 0) {
+  //     var existingItem = box.values.toList().firstWhere(
+  //         (dd) => dd.variation_id == variationId,
+  //         orElse: () => null);
+  //     return existingItem;
+  //   } else {
+  //     var existingItem = box.values
+  //         .toList()
+  //         .firstWhere((dd) => dd.id == id, orElse: () => null);
+  //     return existingItem;
+  //   }
+  // }
 
 //businessWishListBox
   @override
   Widget build(BuildContext context) {
     // getWishBoxData();
+    log('wish list page');
     var wishbox = Hive.box('shopWishListBox');
     var businessWishbox = Hive.box('businessWishListBox');
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(60),
-        child: AppBar(
-          elevation: 1,
-          backgroundColor: Colors.white,
-          iconTheme: const IconThemeData(color: Colors.black),
-          title: Text(
-            'MY WISHLIST',
-          ),
-          titleTextStyle: const TextStyle(
-              color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold),
-          actions: [
-            Stack(
-              clipBehavior: Clip.none,
-              children: [
-                Container(
-                    margin: const EdgeInsets.only(right: 16),
-                    decoration: BoxDecoration(
-                        color: Colors.grey[200], shape: BoxShape.circle),
-                    child: IconButton(
-                        onPressed: () {
-                          viewCart(context, 'shop');
-                        },
-                        icon: const Icon(
-                          Icons.shopping_cart_rounded,
-                          size: 30,
-                        ))),
-                ValueListenableBuilder(
-                    valueListenable: Hive.box('cartBox').listenable(),
-                    builder: (context, Box box, snapshot) {
-                      return Positioned(
-                          top: 0,
-                          right: 6,
-                          child: box.length != 0
-                              ? Container(
-                                  decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: Colors.red),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(4.0),
-                                    child: Text(
-                                      '${box.length}',
-                                      style: TextStyle(
-                                          fontSize: 11, color: Colors.white),
-                                    ),
-                                  ))
-                              : Container());
-                    }),
-              ],
-            )
-          ],
+      appBar: AppBar(
+        elevation: 1,
+        backgroundColor: Colors.white,
+        iconTheme: const IconThemeData(color: Colors.black),
+        title: Text(
+          'MY WISHLIST',
         ),
+        titleTextStyle: const TextStyle(
+            color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold),
+        actions: [
+          Stack(
+            clipBehavior: Clip.none,
+            children: [
+              Container(
+                  margin: const EdgeInsets.only(right: 16),
+                  decoration: BoxDecoration(
+                      color: Colors.grey[200], shape: BoxShape.circle),
+                  child: IconButton(
+                      onPressed: () {
+                        viewCart(context, 'shop');
+                      },
+                      icon: const Icon(
+                        Icons.shopping_cart_rounded,
+                        size: 30,
+                      ))),
+              ValueListenableBuilder(
+                  valueListenable: Hive.box('cartBox').listenable(),
+                  builder: (context, Box box, snapshot) {
+                    return Positioned(
+                        top: 0,
+                        right: 6,
+                        child: box.length != 0
+                            ? Container(
+                                decoration: BoxDecoration(
+                                    shape: BoxShape.circle, color: Colors.red),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(4.0),
+                                  child: Text(
+                                    '${box.length}',
+                                    style: TextStyle(
+                                        fontSize: 11, color: Colors.white),
+                                  ),
+                                ))
+                            : Container());
+                  }),
+            ],
+          )
+        ],
       ),
       body: Container(
+        height: MediaQuery.of(context).size.height,
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -138,7 +130,7 @@ class _WishListState extends State<WishList> {
               ),
               FittedBox(
                 child: Container(
-                  width: ThreeKmScreenUtil.screenWidthDp / 1.2,
+                  width: MediaQuery.of(context).size.width / 1.2,
                   child: Stack(
                     alignment: Alignment.center,
                     children: [
@@ -290,8 +282,6 @@ class _WishListState extends State<WishList> {
                                                     ),
                                                   ),
                                                   imageUrl: '${data.image}',
-                                                  // height: ThreeKmScreenUtil.screenHeightDp / 3,
-                                                  // width: ThreeKmScreenUtil.screenWidthDp,
                                                   fit: BoxFit.contain,
                                                 ),
                                               ),
