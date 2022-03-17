@@ -222,6 +222,11 @@ class _RestaurantsCheckOutScreenState extends State<RestaurantsCheckOutScreen> {
                                     context
                                             .read<CheckoutProvider>()
                                             .getShippingRateData
+                                            .deliveryRate !=
+                                        null &&
+                                    context
+                                            .read<CheckoutProvider>()
+                                            .getShippingRateData
                                             .deliveryRate! !=
                                         0) {
                                   //_pageController.jumpToPage(2);
@@ -252,6 +257,8 @@ class _RestaurantsCheckOutScreenState extends State<RestaurantsCheckOutScreen> {
                                                     .distance!,
                                                 mode: 'restro',
                                               )));
+                                } else {
+                                  _pageController.jumpToPage(0);
                                 }
                               },
                               children: [
@@ -517,15 +524,21 @@ class _RestaurantsCheckOutScreenState extends State<RestaurantsCheckOutScreen> {
                                               .toStringAsFixed(2))
                                           : 0.0;
                                       var totalRate = context
-                                              .read<CartProvider>()
-                                              .getBoxTotal(box) +
-                                          context
-                                              .read<CheckoutProvider>()
-                                              .getShippingRateData
-                                              .deliveryRate
-                                              ?.toInt() +
-                                          taxes +
-                                          10;
+                                                  .read<CheckoutProvider>()
+                                                  .getShippingRateData
+                                                  .deliveryRate !=
+                                              null
+                                          ? context
+                                                  .read<CartProvider>()
+                                                  .getBoxTotal(box) +
+                                              context
+                                                  .read<CheckoutProvider>()
+                                                  .getShippingRateData
+                                                  .deliveryRate
+                                                  ?.toInt() +
+                                              taxes +
+                                              10
+                                          : 0;
                                       return box.length == 0
                                           ? Container(
                                               child: Center(
@@ -646,7 +659,6 @@ class _RestaurantsCheckOutScreenState extends State<RestaurantsCheckOutScreen> {
                                                                         InkWell(
                                                                           onTap:
                                                                               () {
-                                                                           
                                                                             if (cartItem.quantity <
                                                                                 2) {
                                                                               cartItem.delete();
@@ -656,7 +668,7 @@ class _RestaurantsCheckOutScreenState extends State<RestaurantsCheckOutScreen> {
                                                                             if (cartItem.isInBox) {
                                                                               cartItem.save();
                                                                             }
-                                                                             context.read<CheckoutProvider>().getShippingRate(
+                                                                            context.read<CheckoutProvider>().getShippingRate(
                                                                                 mounted,
                                                                                 context,
                                                                                 deliveryAddressdata?.latitude,
@@ -683,11 +695,10 @@ class _RestaurantsCheckOutScreenState extends State<RestaurantsCheckOutScreen> {
                                                                         InkWell(
                                                                           onTap:
                                                                               () {
-                                                                           
                                                                             cartItem.quantity =
                                                                                 cartItem.quantity + 1;
                                                                             cartItem.save();
-                                                                             context.read<CheckoutProvider>().getShippingRate(
+                                                                            context.read<CheckoutProvider>().getShippingRate(
                                                                                 mounted,
                                                                                 context,
                                                                                 deliveryAddressdata?.latitude,
@@ -947,7 +958,12 @@ class _RestaurantsCheckOutScreenState extends State<RestaurantsCheckOutScreen> {
                         context
                                 .read<CheckoutProvider>()
                                 .getShippingRateData
-                                .deliveryRate! !=
+                                .deliveryRate !=
+                            null &&
+                        context
+                                .read<CheckoutProvider>()
+                                .getShippingRateData
+                                .deliveryRate !=
                             0) {
                       _pageController.jumpToPage(3);
                       var box = Hive.box<List<CartHiveModel>>('restroCartBox')
@@ -974,6 +990,8 @@ class _RestaurantsCheckOutScreenState extends State<RestaurantsCheckOutScreen> {
                                         .distance!,
                                     mode: 'restro',
                                   )));
+                    } else {
+                      _pageController.jumpToPage(1);
                     }
                     if (deliveryAddressdata?.addressId == 0) {
                       CustomToast(AppLocalizations.of(context)!

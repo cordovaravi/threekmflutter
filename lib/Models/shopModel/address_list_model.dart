@@ -72,7 +72,7 @@ class Addresses {
     landmark = json['landmark'];
     country = json['country'];
     phoneNo = json['phone_no'] ?? 0;
-    pincode = json['pincode'];
+    pincode = json['pincode'] ?? 0;
     latitude = json['latitude'];
     longitude = json['longitude'];
     addressType = json['address_type'] ?? "home";

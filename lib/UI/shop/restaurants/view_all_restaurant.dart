@@ -3,6 +3,7 @@ import 'dart:developer';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:provider/src/provider.dart';
 import 'package:threekm/UI/shop/cart/cart_item_list_modal.dart';
 import 'package:threekm/localization/localize.dart';
@@ -102,18 +103,37 @@ class _AllRestaurantListState extends State<AllRestaurantList> {
                       isSearch ? Icons.close : Icons.search_rounded,
                       size: 30,
                     ))),
-            Container(
-                margin: const EdgeInsets.only(right: 16),
-                decoration: BoxDecoration(
-                    color: Colors.grey[200], shape: BoxShape.circle),
-                child: IconButton(
-                    onPressed: () {
-                      viewCart(context, 'restro');
-                    },
-                    icon: const Icon(
-                      Icons.shopping_cart_rounded,
-                      size: 30,
-                    )))
+            Stack(
+              children: [
+                Container(
+                    margin: const EdgeInsets.only(right: 16),
+                    decoration: BoxDecoration(
+                        color: Colors.grey[200], shape: BoxShape.circle),
+                    child: IconButton(
+                        onPressed: () {
+                          viewCart(context, 'restro');
+                        },
+                        icon: const Icon(
+                          Icons.shopping_cart_rounded,
+                          size: 30,
+                        ))),
+                if (Hive.box('restroCartBox').length != 0)
+                  Positioned(
+                      top: 0,
+                      right: 9,
+                      child: Container(
+                          decoration: BoxDecoration(
+                              shape: BoxShape.circle, color: Colors.red),
+                          child: Padding(
+                            padding: const EdgeInsets.all(4.0),
+                            child: Text(
+                              '${Hive.box('restroCartBox').length}',
+                              style:
+                                  TextStyle(fontSize: 11, color: Colors.white),
+                            ),
+                          )))
+              ],
+            )
           ],
         ),
       ),
@@ -137,7 +157,7 @@ class _AllRestaurantListState extends State<AllRestaurantList> {
                             MaterialPageRoute(
                                 builder: (_) => RestaurantMenu(
                                       data: restaurantdata[i],
-                                    )));
+                                    ))).then((value) => setState(() {}));
                       },
                       child: Container(
                         // padding: EdgeInsets.all(20),

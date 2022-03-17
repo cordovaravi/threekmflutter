@@ -157,15 +157,17 @@ class _SplashScreenState extends State<SplashScreen> {
                 (route) => false));
           });
         } else if (initialLink.contains('/biz/')) {
-          Navigator.push(context, MaterialPageRoute(builder: (_) {
-            return BusinessDetail(
-              id: int.parse(initialLink.split('/').last),
-            );
-          })).then((value) => Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(builder: (_) => TabBarNavigation()),
-              (route) => false));
-        } else if (initialLink.contains("/post")) {
+          await Hive.openBox('cartBox').whenComplete(() {
+            Navigator.push(context, MaterialPageRoute(builder: (_) {
+              return BusinessDetail(
+                id: int.parse(initialLink.split('/').last),
+              );
+            })).then((value) => Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (_) => TabBarNavigation()),
+                (route) => false));
+          });
+        } else {
           Navigator.push(context,
               MaterialPageRoute(builder: (BuildContext context) {
             return Postview(
@@ -176,11 +178,6 @@ class _SplashScreenState extends State<SplashScreen> {
               context,
               MaterialPageRoute(builder: (_) => TabBarNavigation()),
               (route) => false));
-        } else {
-          Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(builder: (_) => TabBarNavigation()),
-              (route) => false);
         }
       } else {
         Future.delayed(Duration(seconds: 2), () {
