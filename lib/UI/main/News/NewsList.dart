@@ -435,7 +435,7 @@ class _NewsPostCardState extends State<NewsPostCard>
                                               width: MediaQuery.of(context)
                                                       .size
                                                       .width *
-                                                  0.35,
+                                                  0.55,
                                               child: Text(
                                                 newsData.author!.name
                                                     .toString(),
@@ -444,55 +444,68 @@ class _NewsPostCardState extends State<NewsPostCard>
                                                 overflow: TextOverflow.ellipsis,
                                               ),
                                             ),
-                                            Text(
-                                                newsData.createdDate.toString())
+                                            Row(
+                                              children: [
+                                                Text(newsData.createdDate
+                                                    .toString()),
+                                                SizedBox(
+                                                  width: 8,
+                                                ),
+                                                Consumer<NewsListProvider>(
+                                                    builder: (context,
+                                                        newsProvider, _) {
+                                                  return GestureDetector(
+                                                      onTap: () {
+                                                        print(
+                                                            "is foloowed:${newsData.author!.isFollowed}---------------------");
+                                                        print(
+                                                            "post id is: ${newsData.postId}");
+                                                        if (newsData.author!
+                                                                .isFollowed ==
+                                                            true) {
+                                                          print(
+                                                              "is followed: true");
+                                                          context
+                                                              .read<
+                                                                  NewsListProvider>()
+                                                              .unfollowUser(
+                                                                  newsData
+                                                                      .author!
+                                                                      .id!
+                                                                      .toInt());
+                                                        } else if (newsData
+                                                                    .author!
+                                                                    .isFollowed ==
+                                                                false ||
+                                                            newsData.author!
+                                                                    .isFollowed ==
+                                                                null) {
+                                                          print(
+                                                              "is followed: false");
+                                                          context
+                                                              .read<
+                                                                  NewsListProvider>()
+                                                              .followUser(
+                                                                newsData
+                                                                    .author!.id!
+                                                                    .toInt(),
+                                                              );
+                                                        }
+                                                      },
+                                                      child: newsData.author!
+                                                                  .isFollowed ==
+                                                              true
+                                                          ? Text("Following",
+                                                              style: ThreeKmTextConstants
+                                                                  .tk11PXLatoGreyBold)
+                                                          : Text("Follow",
+                                                              style: ThreeKmTextConstants
+                                                                  .tk14PXPoppinsBlueMedium));
+                                                }),
+                                              ],
+                                            )
                                           ],
                                         ),
-                                        SizedBox(
-                                          width: 10,
-                                        ),
-                                        Consumer<NewsListProvider>(builder:
-                                            (context, newsProvider, _) {
-                                          return TextButton(
-                                              onPressed: () {
-                                                print(
-                                                    "is foloowed:${newsData.author!.isFollowed}---------------------");
-                                                print(
-                                                    "post id is: ${newsData.postId}");
-                                                if (newsData
-                                                        .author!.isFollowed ==
-                                                    true) {
-                                                  print("is followed: true");
-                                                  context
-                                                      .read<NewsListProvider>()
-                                                      .unfollowUser(newsData
-                                                          .author!.id!
-                                                          .toInt());
-                                                } else if (newsData.author!
-                                                            .isFollowed ==
-                                                        false ||
-                                                    newsData.author!
-                                                            .isFollowed ==
-                                                        null) {
-                                                  print("is followed: false");
-                                                  context
-                                                      .read<NewsListProvider>()
-                                                      .followUser(
-                                                        newsData.author!.id!
-                                                            .toInt(),
-                                                      );
-                                                }
-                                              },
-                                              child: newsData
-                                                          .author!.isFollowed ==
-                                                      true
-                                                  ? Text("Following",
-                                                      style: ThreeKmTextConstants
-                                                          .tk11PXLatoGreyBold)
-                                                  : Text("Follow",
-                                                      style: ThreeKmTextConstants
-                                                          .tk14PXPoppinsBlueMedium));
-                                        }),
                                         Spacer(),
                                         showPopMenu(newsData.postId.toString(),
                                             newsData)
@@ -733,7 +746,7 @@ class _NewsPostCardState extends State<NewsPostCard>
                                             ' Views'))
                                   ]),
                                   Text(
-                                    newsData.submittedHeadline.toString(),
+                                    newsData.headline.toString(),
                                     style: ThreeKmTextConstants
                                         .tk14PXLatoBlackMedium,
                                     textAlign: TextAlign.center,
@@ -838,8 +851,7 @@ class _NewsPostCardState extends State<NewsPostCard>
                                         handleShare(
                                             newsData.author!.name.toString(),
                                             newsData.author!.image.toString(),
-                                            newsData.submittedHeadline
-                                                .toString(),
+                                            newsData.headline.toString(),
                                             imgUrl,
                                             newsData.createdDate,
                                             newsData.postId.toString());
@@ -1308,7 +1320,7 @@ class _NewsPostCardState extends State<NewsPostCard>
                               ]),
                               SizedBox(height: 20),
                               Text(
-                                newsData.submittedHeadline.toString(),
+                                newsData.headline.toString(),
                                 style:
                                     ThreeKmTextConstants.tk14PXLatoBlackMedium,
                                 textAlign: TextAlign.center,
@@ -1420,7 +1432,7 @@ class _NewsPostCardState extends State<NewsPostCard>
                             handleShare(
                                 newsData.author!.name.toString(),
                                 newsData.author!.image.toString(),
-                                newsData.submittedHeadline.toString(),
+                                newsData.headline.toString(),
                                 imgUrl,
                                 newsData.createdDate,
                                 newsData.postId.toString());
