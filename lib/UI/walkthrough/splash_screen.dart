@@ -44,7 +44,7 @@ class _SplashScreenState extends State<SplashScreen> {
           "token": await FirebaseMessaging.instance.getToken(),
           "manufacturer": value.manufacturer,
           "device_model": value.model,
-          "app_version": "3.2.1",
+          "app_version": "5.0.0",
           "version": "2.1.2"
         });
         context.read<FCMProvider>().sendToken(requestJson);
@@ -57,7 +57,7 @@ class _SplashScreenState extends State<SplashScreen> {
           "token": await FirebaseMessaging.instance.getToken(),
           "manufacturer": value.identifierForVendor,
           "device_model": value.model,
-          "app_version": "3.2.1",
+          "app_version": "5.0.0",
           "version": "2.1.2"
         });
         context.read<FCMProvider>().sendToken(requestJson);
