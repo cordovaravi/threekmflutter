@@ -90,7 +90,7 @@ class SubCategoryList extends StatelessWidget {
                           );
                         }));
               },
-              minVerticalPadding: 30.0,
+              contentPadding: EdgeInsets.all(20),
               dense: true,
               leading: Container(
                 width: 90,

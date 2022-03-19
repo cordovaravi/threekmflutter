@@ -7,9 +7,9 @@ import 'package:threekm/Models/shopModel/cart_hive_model.dart';
 import 'package:threekm/UI/Auth/signup/sign_up.dart';
 import 'package:threekm/commenwidgets/CustomSnakBar.dart';
 import 'package:threekm/localization/localize.dart';
-import 'package:threekm/main.dart';
+
 import 'package:threekm/providers/shop/cart_provider.dart';
-import 'package:threekm/utils/screen_util.dart';
+
 import 'package:threekm/utils/threekm_textstyles.dart';
 import '../../shop/checkout/checkout.dart';
 import '../../shop/checkout/restraurant_checkout.dart';
@@ -122,7 +122,7 @@ Future viewCart(BuildContext context, mode) async {
                                     ),
                                     Container(
                                       // margin: const EdgeInsets.only(left: 20, right: 20),
-                                      height: ThreeKmScreenUtil.screenHeightDp /
+                                      height: MediaQuery.of(context).size.height /
                                           2.3,
                                       child: mode == 'shop'
                                           ? ListView.builder(

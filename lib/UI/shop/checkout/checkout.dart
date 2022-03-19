@@ -25,7 +25,7 @@ class CheckOutScreen extends StatefulWidget {
 }
 
 class _CheckOutScreenState extends State<CheckOutScreen> {
-  late Addresses? deliveryAddressdata;
+  Addresses? deliveryAddressdata;
   int selsectedId = 0;
   int currentPage = 0;
   bool isReadyForPay = true;

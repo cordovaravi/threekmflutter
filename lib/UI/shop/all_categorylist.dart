@@ -51,7 +51,7 @@ class _AllCategoryListState extends State<AllCategoryList> {
                         },
                         icon: const Icon(
                           Icons.shopping_cart_rounded,
-                          size: 30,
+                          size: 28,
                         ))),
                 ValueListenableBuilder(
                     valueListenable: Hive.box('cartBox').listenable(),
@@ -155,7 +155,8 @@ class _AllCategoryWidgetState extends State<AllCategoryWidget> {
               // subCategoryData =data?[i].childs;
               // widget.setsubcat(widget.data?[i].childs, true);
             },
-            minVerticalPadding: 30.0,
+            // minVerticalPadding: 30.0,
+            contentPadding: EdgeInsets.all(20),
             dense: true,
             leading: Container(
               width: 90,

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer';
 
 import 'package:flutter/cupertino.dart';
@@ -28,24 +29,34 @@ class RestaurantsCheckOutScreen extends StatefulWidget {
 }
 
 class _RestaurantsCheckOutScreenState extends State<RestaurantsCheckOutScreen> {
-  late Addresses? deliveryAddressdata;
+  Addresses? deliveryAddressdata;
   int selsectedId = 0;
   int currentPage = 0;
   Box? restrobox;
   ShippingRateModel rate = ShippingRateModel();
+  double padValue = 3;
 
   final PageController _pageController = PageController();
-
+  Timer? timer;
   @override
   void initState() {
     openBox();
     super.initState();
     context.read<AddressListProvider>().getAddressList(mounted);
+    timer = Timer.periodic(new Duration(seconds: 5), (timer) {
+      //debugPrint(timer.tick.toString());
+      if (mounted) {
+        setState(() {
+          padValue = padValue == 3 ? 8 : 3;
+        });
+      }
+    });
   }
 
   @override
   void dispose() {
     _pageController.dispose();
+    timer?.cancel();
     super.dispose();
   }
 
@@ -935,13 +946,16 @@ class _RestaurantsCheckOutScreenState extends State<RestaurantsCheckOutScreen> {
                       padding: MaterialStateProperty.all(const EdgeInsets.only(
                           left: 30, right: 30, top: 15, bottom: 15))),
                   icon: Container(
-                    padding: const EdgeInsets.all(5),
                     decoration: const BoxDecoration(
                         color: Color(0x80FFFFFF), shape: BoxShape.circle),
-                    child: Container(
-                      padding: const EdgeInsets.all(5),
-                      decoration: const BoxDecoration(
-                          color: Color(0xFFFFFFFF), shape: BoxShape.circle),
+                    child: AnimatedPadding(
+                      padding: EdgeInsets.all(padValue),
+                      duration: Duration(seconds: 5),
+                      child: Container(
+                        padding: const EdgeInsets.all(5),
+                        decoration: const BoxDecoration(
+                            color: Color(0xFFFFFFFF), shape: BoxShape.circle),
+                      ),
                     ),
                   ),
                   label: Text(

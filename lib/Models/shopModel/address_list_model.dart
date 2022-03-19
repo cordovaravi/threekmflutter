@@ -26,38 +26,38 @@ class AddressListModel {
 
 class Addresses {
   Addresses({
-    required this.addressId,
-    required this.flatNo,
-    required this.firstname,
-    required this.lastname,
-    required this.street,
-    required this.area,
-    required this.city,
-    required this.state,
-    required this.landmark,
-    required this.country,
-    required this.phoneNo,
-    required this.pincode,
-    required this.latitude,
-    required this.longitude,
-    required this.addressType,
+    this.addressId,
+    this.flatNo,
+    this.firstname,
+    this.lastname,
+    this.street,
+    this.area,
+    this.city,
+    this.state,
+    this.landmark,
+    this.country,
+    this.phoneNo,
+    this.pincode,
+    this.latitude,
+    this.longitude,
+    this.addressType,
     this.id,
   });
-  late final int addressId;
-  late final String flatNo;
-  late final String firstname;
-  late final String lastname;
-  late final String street;
-  late final String area;
-  late final String city;
-  late final String state;
-  late final String landmark;
-  late final String country;
-  late final int phoneNo;
-  late final int pincode;
-  late final double latitude;
-  late final double longitude;
-  late final String addressType;
+  late final int? addressId;
+  late final String? flatNo;
+  late final String? firstname;
+  late final String? lastname;
+  late final String? street;
+  late final String? area;
+  late final String? city;
+  late final String? state;
+  late final String? landmark;
+  late final String? country;
+  late final int? phoneNo;
+  late final int? pincode;
+  late final double? latitude;
+  late final double? longitude;
+  late final String? addressType;
   late var id;
 
   Addresses.fromJson(Map<String, dynamic> json) {
