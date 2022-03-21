@@ -238,49 +238,88 @@ class _RestaurantsHomeState extends State<RestaurantsHome>
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Container(
-                          //margin: EdgeInsets.only(right: 30),
-                          width: MediaQuery.of(context).size.width / 1.5,
+                        // Container(
+                        //   //margin: EdgeInsets.only(right: 30),
+                        //   width: MediaQuery.of(context).size.width / 1.5,
+                        //   height: 32,
+                        //   child: TextFormField(
+                        //     autocorrect: false, autofocus: false,
+
+                        //     keyboardType: TextInputType.text,
+                        //     controller: SearchController,
+                        //     // controller: _firstName,
+                        //     onChanged: (val) {
+                        //       context
+                        //           .read<ShopHomeProvider>()
+                        //           .getRestaurants(mounted, 1, query: val);
+                        //       setState(() {});
+                        //     },
+
+                        //     decoration: InputDecoration(
+                        //       //isDense: true,
+                        //       hintText: AppLocalizations.of(context)!.translate(
+                        //               'Search_Restaurant_or_Cusines') ??
+                        //           'Search Restaurant or Cusines',
+                        //       hintStyle: ThreeKmTextConstants
+                        //           .tk12PXLatoBlackBold
+                        //           .copyWith(
+                        //         color: Colors.grey,
+                        //       ),
+
+                        //       counterText: '',
+                        //       filled: true,
+                        //       prefixIcon: Icon(
+                        //         Icons.search,
+                        //         color: Colors.grey,
+                        //       ),
+                        //       fillColor: Colors.white,
+                        //       contentPadding: EdgeInsets.all(5.0),
+                        //       border: OutlineInputBorder(
+                        //           borderRadius:
+                        //               BorderRadius.all(Radius.circular(25)),
+                        //           borderSide: BorderSide()),
+                        //     ),
+                        //   ),
+                        // ),
+
+                         InkWell(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => AllRestaurantList(isSearchActive:true)));
+                        },
+                        child: Container(
                           height: 32,
-                          child: TextFormField(
-                            autocorrect: false, autofocus: false,
-
-                            keyboardType: TextInputType.text,
-                            controller: SearchController,
-                            // controller: _firstName,
-                            onChanged: (val) {
-                              context
-                                  .read<ShopHomeProvider>()
-                                  .getRestaurants(mounted, 1, query: val);
-                              setState(() {});
-                            },
-
-                            decoration: InputDecoration(
-                              //isDense: true,
-                              hintText: AppLocalizations.of(context)!.translate(
-                                      'Search_Restaurant_or_Cusines') ??
-                                  'Search Restaurant or Cusines',
-                              hintStyle: ThreeKmTextConstants
-                                  .tk12PXLatoBlackBold
-                                  .copyWith(
-                                color: Colors.grey,
+                          width: 250,
+                          decoration: BoxDecoration(
+                              //color: Colors.white,
+                              borderRadius: BorderRadius.circular(21),
+                              border: Border.all(color: Color(0xffDFE5EE))),
+                          child: Row(
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.only(left: 15),
+                                child: Icon(
+                                  Icons.search_rounded,
+                                  color: Colors.grey,
+                                ),
                               ),
-
-                              counterText: '',
-                              filled: true,
-                              prefixIcon: Icon(
-                                Icons.search,
-                                color: Colors.grey,
-                              ),
-                              fillColor: Colors.white,
-                              contentPadding: EdgeInsets.all(5.0),
-                              border: OutlineInputBorder(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(25)),
-                                  borderSide: BorderSide()),
-                            ),
+                              Padding(
+                                  padding: EdgeInsets.only(left: 11),
+                                  child: Text(
+                                    AppLocalizations.of(context)!.translate(
+                                            'search_hyperlocal_product') ??
+                                        "Search Hyperlocal Products",
+                                    //"Search Hyperlocal Products",
+                                    style: ThreeKmTextConstants
+                                        .tk12PXLatoBlackBold
+                                        .copyWith(color: Colors.grey),
+                                  ))
+                            ],
                           ),
                         ),
+                      ),
                         InkWell(
                           onTap: () => viewCart(context, 'restro')
                               .whenComplete(() => setState(() {})),
@@ -687,7 +726,7 @@ class _RestaurantsHomeState extends State<RestaurantsHome>
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (_) => AllRestaurantList()));
+                                  builder: (_) => AllRestaurantList(isSearchActive: false,)));
                         },
                         child: Row(
                           children: [

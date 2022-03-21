@@ -3,6 +3,7 @@ import 'dart:developer';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_webservice/src/core.dart';
 import 'package:provider/src/provider.dart';
@@ -226,6 +227,9 @@ class _NewAddressState extends State<NewAddress> {
                         return 'First name is required';
                       }
                     },
+                    inputFormatters: [
+                    FilteringTextInputFormatter.deny(RegExp('[ ]')),
+                  ],
                     autofocus: false,
                     decoration: InputDecoration(
                       hintText: 'First Name',
@@ -257,6 +261,9 @@ class _NewAddressState extends State<NewAddress> {
                         return 'Last Name is required';
                       }
                     },
+                     inputFormatters: [
+                    FilteringTextInputFormatter.deny(RegExp('[ ]')),
+                  ],
                     autofocus: false,
                     decoration: InputDecoration(
                       hintText: 'Last Name',
@@ -299,6 +306,9 @@ class _NewAddressState extends State<NewAddress> {
                       //   return 'Phone no. must be of 10 digit';
                       // }
                     },
+                     inputFormatters: [
+                    FilteringTextInputFormatter.deny(RegExp('[ ]')),
+                  ],
                     autofocus: false,
                     decoration: InputDecoration(
                       hintText: 'Phone number',
@@ -330,6 +340,9 @@ class _NewAddressState extends State<NewAddress> {
                         return 'Flat No./House/Society/Building/Street Name is required';
                       }
                     },
+                     inputFormatters: [
+                    FilteringTextInputFormatter.deny(RegExp('[ ]')),
+                  ],
                     autofocus: false,
                     decoration: InputDecoration(
                       hintText:

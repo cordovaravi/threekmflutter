@@ -276,40 +276,35 @@ class _HomeState extends State<Home> {
               thickness: 8,
             ),
             Container(
-              height: 250,
+              height: MediaQuery.of(context).size.height / 3,
               child: ListView.builder(
                   padding: EdgeInsets.all(20),
                   scrollDirection: Axis.horizontal,
                   shrinkWrap: true,
-                  itemCount: data?.result?.advertisements?.length,
+                  itemCount: data?.result?.slider?.result?.length,
                   itemBuilder: (context, i) {
-                    var advData = data?.result?.advertisements?[i];
-                    return Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: InkWell(
-                        onTap: () {
-                          log('${advData?.imagesWcta?[0].business}');
-                          log('${advData?.imagesWcta?[0].product}');
-                          log('${advData?.imagesWcta?[0].website}');
-                          log('${advData?.imagesWcta?[0].phone}');
-                        },
-                        child: Material(
-                          borderRadius: BorderRadius.circular(10),
-                          elevation: 1,
-                          child: ClipRRect(
-                              borderRadius: BorderRadius.circular(10),
-                              child: CachedNetworkImage(
-                                  imageUrl: '${advData?.images.first}',
-                                  width: MediaQuery.of(context).size.width /
-                                      1.1888,
-                                  // height: ThreeKmScreenUtil.screenHeightDp / 19,
-                                  fit: BoxFit.fill,
-                                  placeholder: (context, url) =>
-                                      Shimmer.fromColors(
-                                          baseColor: Colors.grey[700]!,
-                                          highlightColor: Colors.grey[100]!,
-                                          child: Container()))),
-                        ),
+                    var advData = data?.result?.slider?.result?[i];
+                    return InkWell(
+                      onTap: () {
+                        advData?.imagesWcta?[0].website != null
+                            ? launch('${advData?.imagesWcta?[0].website}')
+                            : null;
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: ClipRRect(
+                            borderRadius: BorderRadius.circular(10),
+                            child: CachedNetworkImage(
+                                imageUrl: '${advData?.images[0]}',
+                                width: MediaQuery.of(context).size.width / 1.14,
+                                // height:
+                                //     MediaQuery.of(context).size.height / 2,
+                                fit: BoxFit.contain,
+                                placeholder: (context, url) =>
+                                    Shimmer.fromColors(
+                                        baseColor: Colors.grey[700]!,
+                                        highlightColor: Colors.grey[100]!,
+                                        child: Container()))),
                       ),
                     );
                   }),
@@ -441,33 +436,34 @@ class _HomeState extends State<Home> {
               thickness: 8,
             ),
             Container(
-              height: 250,
+              height: MediaQuery.of(context).size.height / 3,
               child: ListView.builder(
                   padding: EdgeInsets.all(20),
                   scrollDirection: Axis.horizontal,
                   shrinkWrap: true,
-                  itemCount: data?.result?.slider?.result?.length,
+                  itemCount: data?.result?.advertisements?.length,
                   itemBuilder: (context, i) {
-                    var advData = data?.result?.slider?.result?[i];
-                    return InkWell(
-                      onTap: () {
-                        advData?.imagesWcta?[0].website != null
-                            ? launch('${advData?.imagesWcta?[0].website}')
-                            : null;
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
+                    var advData = data?.result?.advertisements?[i];
+                    return Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: InkWell(
+                        onTap: () {
+                          log('${advData?.imagesWcta?[0].business}');
+                          log('${advData?.imagesWcta?[0].product}');
+                          log('${advData?.imagesWcta?[0].website}');
+                          log('${advData?.imagesWcta?[0].phone}');
+                        },
                         child: Material(
                           borderRadius: BorderRadius.circular(10),
                           elevation: 1,
                           child: ClipRRect(
                               borderRadius: BorderRadius.circular(10),
                               child: CachedNetworkImage(
-                                  imageUrl: '${advData?.images[0]}',
-                                  width: MediaQuery.of(context).size.width /
-                                      1.1888,
+                                  imageUrl: '${advData?.images.first}',
+                                  // width: MediaQuery.of(context).size.width /
+                                  //     1.1888,
                                   // height: ThreeKmScreenUtil.screenHeightDp / 19,
-                                  fit: BoxFit.fill,
+                                  fit: BoxFit.contain,
                                   placeholder: (context, url) =>
                                       Shimmer.fromColors(
                                           baseColor: Colors.grey[700]!,
@@ -478,6 +474,8 @@ class _HomeState extends State<Home> {
                     );
                   }),
             ),
+            //
+
             const Image(
               image: AssetImage('assets/BusinessesImg/giveaway@3x.png'),
             )

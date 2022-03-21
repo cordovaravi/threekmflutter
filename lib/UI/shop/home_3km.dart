@@ -52,8 +52,11 @@ class _Home3KMState extends State<Home3KM> {
 
   @override
   void initState() {
-    context.read<ShopHomeProvider>().getShopHome(mounted);
-    context.read<LocationProvider>().getLocation();
+    Future.delayed(Duration.zero, () {
+      context.read<ShopHomeProvider>().getShopHome(mounted);
+      context.read<LocationProvider>().getLocation();
+    });
+
     Future.microtask(() {
       openBox();
     });
@@ -140,6 +143,14 @@ class _ShopHomeState extends State<ShopHome>
     super.initState();
   }
 
+  @override
+  dispose() {
+    _controller.dispose();
+    _scrollController?.dispose();
+
+    super.dispose();
+  }
+
   void showAlert(BuildContext context, ShopAdv? data) {
     showDialog(
         context: context,
@@ -197,13 +208,6 @@ class _ShopHomeState extends State<ShopHome>
                 ),
               ),
             ));
-  }
-
-  @override
-  dispose() {
-    _controller.dispose();
-    _scrollController?.dispose();
-    super.dispose();
   }
 
   @override
@@ -644,7 +648,9 @@ class _ShopHomeState extends State<ShopHome>
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (_) => AllRestaurantList()));
+                                    builder: (_) => AllRestaurantList(
+                                          isSearchActive: false,
+                                        )));
                           },
                           style: ButtonStyle(
                               elevation: MaterialStateProperty.all<double>(0),

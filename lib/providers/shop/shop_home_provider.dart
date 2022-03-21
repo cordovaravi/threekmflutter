@@ -56,6 +56,7 @@ class ShopHomeProvider extends ChangeNotifier {
   RestaurantsModel? _restaurantData;
   RestaurantsModel? get restaurantData => _restaurantData;
   Future<Null> getRestaurants(mounted, page, {query, lat, lng}) async {
+    _state = 'loading';
     final _location =
         navigatorKey.currentContext!.read<LocationProvider>().getlocationData;
     // final _location = _locationProvider.getlocationData;
