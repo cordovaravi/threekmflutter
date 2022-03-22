@@ -40,7 +40,9 @@ class _AllRestaurantListState extends State<AllRestaurantList> {
     }
 
     // var initJson = json.encode({"lat": '', "lng": '', "page": 1});
-    context.read<ShopHomeProvider>().getRestaurants(mounted, 1);
+    if (widget.isSearchActive == false) {
+      context.read<ShopHomeProvider>().getRestaurants(mounted, 1);
+    }
     super.initState();
   }
 
@@ -49,7 +51,7 @@ class _AllRestaurantListState extends State<AllRestaurantList> {
     // TODO: implement deactivate
 
     context.read<ShopHomeProvider>().clearrestaurantListState(mounted);
-    context.read<ShopHomeProvider>().getRestaurants(mounted, 1);
+    // context.read<ShopHomeProvider>().getRestaurants(mounted, 1);
     super.deactivate();
   }
 
@@ -68,9 +70,6 @@ class _AllRestaurantListState extends State<AllRestaurantList> {
           title: isSearch
               ? TextFormField(
                   autofocus: false,
-                  inputFormatters: [
-                    FilteringTextInputFormatter.deny(RegExp('[ ]')),
-                  ],
                   focusNode: _focusNode,
                   decoration: InputDecoration(
                       hintText: AppLocalizations.of(context)!
