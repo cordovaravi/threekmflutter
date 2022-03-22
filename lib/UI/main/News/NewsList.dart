@@ -11,8 +11,10 @@ import 'package:path_provider/path_provider.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:threekm/Custom_library/flutter_reaction_button.dart';
+import 'package:threekm/Models/newsByCategories_model.dart';
 import 'package:threekm/UI/main/News/Widgets/comment_Loading.dart';
 import 'package:threekm/UI/main/News/Widgets/likes_Loading.dart';
+import 'package:threekm/UI/main/News/Widgets/singlePost_Loading.dart';
 import 'package:threekm/UI/main/Profile/AuthorProfile.dart';
 import 'package:threekm/commenwidgets/CustomSnakBar.dart';
 import 'package:threekm/commenwidgets/commenwidget.dart';
@@ -28,6 +30,8 @@ import 'package:threekm/widgets/video_widget.dart';
 
 import 'package:threekm/widgets/reactions_assets.dart' as reactionAssets;
 import 'package:timelines/timelines.dart';
+
+import 'Widgets/newsListLoading.dart';
 
 class NewsListPage extends StatefulWidget {
   final String title;
@@ -284,6 +288,9 @@ class _NewsPostCardState extends State<NewsPostCard>
   ScrollController _scrollController = ScrollController();
   int takeCount = 10;
   int skipCount = 0;
+
+  final List<GlobalKey> imgkey = List.generate(500, (index) => GlobalKey());
+
   @override
   bool get wantKeepAlive => true;
   @override
@@ -341,6 +348,14 @@ class _NewsPostCardState extends State<NewsPostCard>
               itemBuilder: (context, postIndex) {
                 final newsData = widget.newsListProvider.newsBycategory!.data!
                     .result!.posts![postIndex];
+
+                if (widget.newsListProvider.getttingMorePosts == true) {
+                  return Container(
+                      height: 350,
+                      width: MediaQuery.of(context).size.width,
+                      child: NewsListLoading());
+                }
+
                 if (newsData.postId != null) {
                   return Stack(
                       alignment: AlignmentDirectional.center,
@@ -515,6 +530,7 @@ class _NewsPostCardState extends State<NewsPostCard>
                                     ),
                                   ),
                                   //both pics and images is present
+
                                   newsData.images!.length > 1 ||
                                           newsData.videos!.length > 1
                                       ?
@@ -522,6 +538,8 @@ class _NewsPostCardState extends State<NewsPostCard>
                                       Container(
                                           height: 400,
                                           width: 400,
+                                          decoration: BoxDecoration(
+                                              color: Colors.black26),
                                           child: PageView.builder(
                                             itemCount: newsData.images!.length +
                                                 newsData.videos!.length,
@@ -533,12 +551,14 @@ class _NewsPostCardState extends State<NewsPostCard>
                                               context,
                                               index,
                                             ) {
-                                              List videoUrls = newsData.videos!
+                                              List<String?> videoUrls = newsData
+                                                  .videos!
                                                   .map((e) => e.src)
                                                   .toList();
-                                              List templist = List.from(
-                                                  newsData.images!.toList())
-                                                ..addAll(videoUrls);
+                                              List<String?> imgList = List.from(
+                                                  newsData.images!.toList());
+                                              List<String?> templist =
+                                                  videoUrls + imgList;
                                               return templist != null
                                                   ? templist[index]
                                                           .toString()
@@ -564,7 +584,8 @@ class _NewsPostCardState extends State<NewsPostCard>
                                                               .width,
                                                           fit: BoxFit.contain,
                                                           imageUrl:
-                                                              templist[index])
+                                                              templist[index]
+                                                                  .toString())
                                                   : SizedBox(
                                                       child: Text("null"),
                                                     );
@@ -573,33 +594,49 @@ class _NewsPostCardState extends State<NewsPostCard>
                                         )
                                       // image or video single
 
-                                      : Container(
-                                          child: newsData.images!.length == 1
-                                              ? CachedNetworkImage(
-                                                  height: 254,
-                                                  width: MediaQuery.of(context)
-                                                      .size
-                                                      .width,
-                                                  fit: BoxFit.fitWidth,
-                                                  imageUrl:
-                                                      '${newsData.images!.first}',
-                                                )
-                                              : VideoWidget(
-                                                  thubnail: newsData
-                                                              .videos
-                                                              ?.first
-                                                              .thumbnail !=
-                                                          null
-                                                      ? newsData.videos!.first
-                                                          .thumbnail
-                                                          .toString()
-                                                      : '',
-                                                  url: newsData
-                                                      .videos!.first.src
-                                                      .toString(),
-                                                  fromSinglePage: true,
-                                                  play: false),
-                                        ),
+                                      : newsData.images != null &&
+                                              newsData.videos != null
+                                          ? Container(
+                                              child: newsData.images!.length ==
+                                                      1
+                                                  ? CachedNetworkImage(
+                                                      key: imgkey[postIndex],
+                                                      height: imgkey[postIndex]
+                                                          .currentContext
+                                                          ?.size
+                                                          ?.height,
+                                                      width:
+                                                          MediaQuery.of(context)
+                                                              .size
+                                                              .width,
+                                                      fit: BoxFit.fitWidth,
+                                                      imageUrl:
+                                                          '${newsData.images!.first}',
+                                                    )
+                                                  : newsData.videos!.length > 0
+                                                      ? VideoWidget(
+                                                          thubnail: newsData
+                                                                      .videos
+                                                                      ?.first
+                                                                      .thumbnail !=
+                                                                  null
+                                                              ? newsData
+                                                                  .videos!
+                                                                  .first
+                                                                  .thumbnail
+                                                                  .toString()
+                                                              : '',
+                                                          url: newsData
+                                                              .videos!.first.src
+                                                              .toString(),
+                                                          fromSinglePage: true,
+                                                          play: false)
+                                                      : Container(),
+                                            )
+                                          : SizedBox.shrink(),
+                                  SizedBox(
+                                    height: 5,
+                                  ),
                                   newsData.images != null &&
                                               newsData.images!.length > 1 &&
                                               newsData.images!.length != 1 ||
@@ -726,17 +763,19 @@ class _NewsPostCardState extends State<NewsPostCard>
                                                 newsData.postId!.toInt(),
                                                 newsData.likes);
                                           },
-                                          child: Row(
-                                            children: [
-                                              Text('👍❤️😩'),
-                                              Container(
-                                                child: Center(
-                                                    child: Text('+' +
-                                                        newsData.likes
-                                                            .toString())),
-                                              )
-                                            ],
-                                          ),
+                                          child: newsData.likes != 0
+                                              ? Row(
+                                                  children: [
+                                                    Text('👍❤️😩'),
+                                                    Container(
+                                                      child: Center(
+                                                          child: Text('+' +
+                                                              newsData.likes
+                                                                  .toString())),
+                                                    )
+                                                  ],
+                                                )
+                                              : SizedBox.shrink(),
                                         )),
                                     Spacer(),
                                     Padding(
@@ -984,7 +1023,8 @@ class _NewsPostCardState extends State<NewsPostCard>
     });
   }
 
-  Widget newsDetails(newsData, context) {
+  Widget newsDetails(Post newsData, context) {
+    final _imagKey = GlobalKey();
     return Material(
       //color: Colors.black.withOpacity(0.1),
       child: Container(
@@ -1131,6 +1171,8 @@ class _NewsPostCardState extends State<NewsPostCard>
                                   Container(
                                       height: 400,
                                       width: 400,
+                                      decoration:
+                                          BoxDecoration(color: Colors.black26),
                                       child: PageView.builder(
                                         itemCount: newsData.images!.length +
                                             newsData.videos!.length,
@@ -1142,12 +1184,15 @@ class _NewsPostCardState extends State<NewsPostCard>
                                           context,
                                           index,
                                         ) {
-                                          List videoUrls = newsData.videos!
+                                          List<String?> videoUrls = newsData
+                                              .videos!
                                               .map((e) => e.src)
                                               .toList();
-                                          List templist = List.from(
-                                              newsData.images!.toList())
-                                            ..addAll(videoUrls);
+                                          List<String?> imglist = List.from(
+                                              newsData.images!.toList());
+                                          List<String?> templist =
+                                              videoUrls + imglist;
+
                                           return templist != null
                                               ? templist[index]
                                                       .toString()
@@ -1164,14 +1209,18 @@ class _NewsPostCardState extends State<NewsPostCard>
                                                               .toString(),
                                                           play: false),
                                                     )
-                                                  : CachedNetworkImage(
-                                                      height: 254,
-                                                      width:
-                                                          MediaQuery.of(context)
+                                                  : newsData.images!.length > 0
+                                                      ? CachedNetworkImage(
+                                                          height: 254,
+                                                          width: MediaQuery.of(
+                                                                  context)
                                                               .size
                                                               .width,
-                                                      fit: BoxFit.contain,
-                                                      imageUrl: templist[index])
+                                                          fit: BoxFit.contain,
+                                                          imageUrl:
+                                                              templist[index]
+                                                                  .toString())
+                                                      : SizedBox.shrink()
                                               : SizedBox(
                                                   child: Text("null"),
                                                 );
@@ -1183,7 +1232,9 @@ class _NewsPostCardState extends State<NewsPostCard>
                                   : Container(
                                       child: newsData.images!.length == 1
                                           ? CachedNetworkImage(
-                                              height: 254,
+                                              key: _imagKey,
+                                              height: _imagKey
+                                                  .currentContext?.size?.height,
                                               width: MediaQuery.of(context)
                                                   .size
                                                   .width,
@@ -1191,19 +1242,27 @@ class _NewsPostCardState extends State<NewsPostCard>
                                               imageUrl:
                                                   '${newsData.images!.first}',
                                             )
-                                          : VideoWidget(
-                                              thubnail: newsData.videos?.first
-                                                          .thumbnail !=
-                                                      null
-                                                  ? newsData
-                                                      .videos!.first.thumbnail
-                                                      .toString()
-                                                  : '',
-                                              url: newsData.videos!.first.src
-                                                  .toString(),
-                                              fromSinglePage: true,
-                                              play: false),
+                                          : newsData.videos!.length > 0
+                                              ? VideoWidget(
+                                                  thubnail: newsData
+                                                              .videos
+                                                              ?.first
+                                                              .thumbnail !=
+                                                          null
+                                                      ? newsData.videos!.first
+                                                          .thumbnail
+                                                          .toString()
+                                                      : '',
+                                                  url: newsData
+                                                      .videos!.first.src
+                                                      .toString(),
+                                                  fromSinglePage: true,
+                                                  play: false)
+                                              : SizedBox.shrink(),
                                     ),
+                              SizedBox(
+                                height: 5,
+                              ),
                               newsData.images != null &&
                                           newsData.images!.length > 1 &&
                                           newsData.images!.length != 1 ||
@@ -1214,10 +1273,11 @@ class _NewsPostCardState extends State<NewsPostCard>
                                       height: 10,
                                       width: MediaQuery.of(context).size.width,
                                       child: Builder(builder: (context) {
-                                        List videoUrls = newsData.videos!
+                                        List<String?> videoUrls = newsData
+                                            .videos!
                                             .map((e) => e.src)
                                             .toList();
-                                        List templist =
+                                        List<String?> templist =
                                             List.from(newsData.images!.toList())
                                               ..addAll(videoUrls);
                                         return Row(
@@ -1305,9 +1365,11 @@ class _NewsPostCardState extends State<NewsPostCard>
                                                 newsData.postId!.toInt(),
                                                 newsData.likes);
                                           },
-                                          child: Text("👍❤️😩 " +
-                                              newsData.likes.toString() +
-                                              ' Likes'),
+                                          child: newsData.likes != 0
+                                              ? Text("👍❤️😩 " +
+                                                  newsData.likes.toString() +
+                                                  ' Likes')
+                                              : SizedBox.shrink(),
                                         );
                                       },
                                     )),
@@ -1403,7 +1465,7 @@ class _NewsPostCardState extends State<NewsPostCard>
                           onPressed: () async {
                             if (await getAuthStatus()) {
                               _showCommentsBottomModalSheet(
-                                  context, newsData.postId);
+                                  context, newsData.postId!);
                             } else {
                               NaviagateToLogin(context);
                             }
