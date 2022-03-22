@@ -64,6 +64,8 @@ class _PostviewState extends State<Postview> {
     super.dispose();
   }
 
+  final _imagKey = GlobalKey();
+
   @override
   Widget build(BuildContext context) {
     final postData = context.watch<SinglePostProvider>();
@@ -256,7 +258,11 @@ class _PostviewState extends State<Postview> {
                                                                   play: false),
                                                             )
                                                           : CachedNetworkImage(
-                                                              height: 254,
+                                                              key: _imagKey,
+                                                              height: _imagKey
+                                                                  .currentContext
+                                                                  ?.size
+                                                                  ?.height,
                                                               width:
                                                                   MediaQuery.of(
                                                                           context)
@@ -278,7 +284,10 @@ class _PostviewState extends State<Postview> {
                                               child: newsData.images!.length ==
                                                       1
                                                   ? CachedNetworkImage(
-                                                      height: 254,
+                                                      height: _imagKey
+                                                          .currentContext
+                                                          ?.size
+                                                          ?.height,
                                                       width:
                                                           MediaQuery.of(context)
                                                               .size
