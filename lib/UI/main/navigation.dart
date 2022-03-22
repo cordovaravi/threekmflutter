@@ -90,6 +90,7 @@ class _TabBarNavigationState extends State<TabBarNavigation>
       context.read<AutthorProfileProvider>().getSelfProfile();
       context.read<AppLanguage>().fetchLocale();
     });
+
     //initAnimation();
     //getDeviceId();
     _animationController1 =

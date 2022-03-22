@@ -6,6 +6,7 @@ import 'package:animated_widgets/animated_widgets.dart';
 import 'package:animated_widgets/widgets/shake_animated_widget.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -103,6 +104,19 @@ class _NewsTabState extends State<NewsTab>
       Fluttertoast.showToast(
           msg: "Post has been Submitted", backgroundColor: Color(0xFF0044CE));
     }
+
+    ///fcm call back
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      log('A new onMessageOpenedApp event ${message.notification?.body}');
+    }).onData((data) {
+      log(data.notification?.title.toString() ?? "");
+      Future.delayed(Duration(seconds: 1), () {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => Postview(postId: data.data["post_id"])));
+      });
+    });
   }
 
   @override

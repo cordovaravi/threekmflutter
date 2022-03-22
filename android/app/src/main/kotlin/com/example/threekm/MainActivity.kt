@@ -7,11 +7,18 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import io.flutter.embedding.android.FlutterActivity
+//new imports
+
+import io.flutter.Log
+import io.flutter.plugins.GeneratedPluginRegistrant
+import io.flutter.embedding.engine.FlutterEngine
+
 
 
 class MainActivity: FlutterActivity() {
 override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
+     GeneratedPluginRegistrant.registerWith(FlutterEngine(this))
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 
         val soundUri: Uri = Uri.parse(

@@ -17,7 +17,6 @@ import 'package:threekm/UI/Auth/signup/sign_up.dart';
 import 'package:threekm/UI/shop/product/product_details.dart';
 import 'package:threekm/main.dart';
 import 'package:threekm/providers/FCM/fcm_sendToken_Provider.dart';
-import 'package:threekm/providers/Global/logged_in_or_not.dart';
 import 'package:uni_links/uni_links.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
@@ -72,7 +71,6 @@ class _SplashScreenState extends State<SplashScreen> {
       openBox();
     });
     super.initState();
-    handleDeepLink();
     handleFcm();
   }
 
@@ -96,7 +94,21 @@ class _SplashScreenState extends State<SplashScreen> {
         .getInitialMessage()
         .then((RemoteMessage? message) {
       if (message != null) {
-        log("message from firebase is $message");
+        if (message.data["type"] == "post" && mounted) {
+          Future.delayed(Duration(seconds: 1), () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) =>
+                        Postview(postId: message.data["post_id"]))).then(
+                (value) => Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(builder: (context) => TabBarNavigation()),
+                    (route) => false));
+          });
+        }
+      } else {
+        handleDeepLink();
       }
     });
 
@@ -120,6 +132,17 @@ class _SplashScreenState extends State<SplashScreen> {
 
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
       log('A new onMessageOpenedApp event ${message.notification?.title}');
+      log(message.data.toString());
+      if (message.data["type"] == "post" && mounted) {
+        Future.delayed(Duration(seconds: 1), () {
+          Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          Postview(postId: message.data["post_id"])))
+              .then((value) => handleDeepLink());
+        });
+      }
     });
   }
 

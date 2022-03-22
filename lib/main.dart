@@ -11,7 +11,6 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:in_app_update/in_app_update.dart';
-import 'package:path_provider/path_provider.dart' as pathProvider;
 import 'package:provider/provider.dart';
 import 'package:threekm/providers/FCM/fcm_sendToken_Provider.dart';
 import 'package:threekm/providers/Location/locattion_Provider.dart';
@@ -68,6 +67,7 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   // make sure you call `initializeApp` before using other Firebase services.
   await Firebase.initializeApp();
   print('Handling a background message ${message.messageId}');
+  log("handling data ${message.notification?.title}");
 }
 
 /// Create a [AndroidNotificationChannel] for heads up notifications
@@ -75,13 +75,12 @@ late AndroidNotificationChannel channel;
 
 /// Initialize the [FlutterLocalNotificationsPlugin] package.
 late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
-String FcmToken = "";
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   AppLanguage appLanguage = AppLanguage();
   await appLanguage.fetchLocale();
- await Hive
+  await Hive
     ..initFlutter()
     ..registerAdapter(CartHiveModelAdapter())
     ..registerAdapter(BusinesseswishListHiveModelAdapter());
@@ -272,9 +271,7 @@ class MyApp extends StatelessWidget {
               debugShowCheckedModeBanner: false,
               theme: lightTheme,
               themeMode: ThemeMode.light,
-              home: SplashScreen(
-                fcmToken: FcmToken,
-              ),
+              home: SplashScreen(),
               navigatorKey: navigatorKey,
             );
           },
