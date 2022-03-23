@@ -76,7 +76,7 @@ class ShopHomeProvider extends ChangeNotifier {
     if (mounted) {
       try {
         final response = await _apiProvider.post(restaurants, requestJson);
-        if (response != null) {
+        if (response != null && query == null) {
           _restaurantData = RestaurantsModel.fromJson(response);
           _allCreators = page == _prepageno
               ? _allCreators
@@ -84,6 +84,13 @@ class ShopHomeProvider extends ChangeNotifier {
           print(response);
           _state = 'loaded';
           _prepageno = page;
+          notifyListeners();
+        } else if (response != null && query != null) {
+          _restaurantData = RestaurantsModel.fromJson(response);
+          clearrestaurantListState(mounted, isPagechange: false);
+          _allCreators = _restaurantData!.result.creators;
+          log('${_allCreators?.length}');
+          _state = 'loaded';
           notifyListeners();
         }
       } on Exception catch (e) {
