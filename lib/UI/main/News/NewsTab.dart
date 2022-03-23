@@ -13,6 +13,7 @@ import 'package:flutter/rendering.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:in_app_update/in_app_update.dart';
 import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:threekm/Custom_library/GooleMapsWidget/google_maps_place_picker.dart';
@@ -91,7 +92,7 @@ class _NewsTabState extends State<NewsTab>
             .then((value) {
           Future.delayed(Duration(milliseconds: 100), () {
             context.read<HomeSecondProvider>().getNewsSecond(requestJson);
-          });
+          }).whenComplete(() => checkUpdate());
         });
         //context.read<HomeSecondProvider>().getNewsSecond(requestJson);
         context.read<AddPostProvider>();
@@ -117,6 +118,33 @@ class _NewsTabState extends State<NewsTab>
                 builder: (context) => Postview(postId: data.data["post_id"])));
       });
     });
+  }
+
+  void checkUpdate() {
+    if (Platform.isAndroid) {
+      Future.delayed(Duration(seconds: 2), () {
+        InAppUpdate.checkForUpdate().then((info) async {
+          if (info.updateAvailability == UpdateAvailability.updateAvailable) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('New Version is deteted.!'),
+                action: SnackBarAction(
+                    label: "Update",
+                    onPressed: () async {
+                      log("update call");
+                      await InAppUpdate.performImmediateUpdate()
+                          .catchError((e) => log(e.toString()));
+                    }),
+              ),
+            );
+            // await InAppUpdate.performImmediateUpdate()
+            //     .catchError((e) => log(e.toString()));
+          }
+        }).catchError((e) {
+          log(e.toString());
+        });
+      });
+    }
   }
 
   @override

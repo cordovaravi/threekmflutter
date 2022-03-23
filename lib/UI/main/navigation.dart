@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:device_info/device_info.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
+import 'package:hive/hive.dart';
 import 'package:provider/src/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:threekm/UI/main/DrawerScreen.dart';
@@ -10,6 +11,7 @@ import 'package:threekm/UI/shop/home_3km.dart';
 import 'package:threekm/UI/shop/restaurants/restaurants_home_page.dart';
 import 'package:threekm/UI/shop/showOrderStatus.dart';
 import 'package:threekm/localization/localize.dart';
+import 'package:threekm/providers/Global/logged_in_or_not.dart';
 import 'package:threekm/providers/localization_Provider/appLanguage_provider.dart';
 import 'package:threekm/providers/main/AthorProfile_Provider.dart';
 import 'package:threekm/utils/screen_util.dart';
@@ -83,12 +85,28 @@ class _TabBarNavigationState extends State<TabBarNavigation>
     super.didChangeDependencies();
   }
 
+  openBox() async {
+    if (await getAuthStatus()) {
+      await Hive.openBox('restroCartBox');
+      await Hive.openBox('cartBox');
+      await Hive.openBox('businessWishListBox');
+      await Hive.openBox('selectedAddress');
+      await Hive.openBox('creatorID');
+      await Hive.openBox('restrocreatorID');
+      await Hive.openBox('shopWishListBox');
+      await Hive.openBox('orderinfo');
+      await Hive.openBox('orderStatusBox');
+      await Hive.openBox('selectedAddress');
+    }
+  }
+
   @override
   void initState() {
     _getConstants();
     Future.delayed(Duration.zero, () {
       context.read<AutthorProfileProvider>().getSelfProfile();
       context.read<AppLanguage>().fetchLocale();
+      openBox();
     });
 
     //initAnimation();

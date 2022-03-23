@@ -8,6 +8,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hive/hive.dart';
+import 'package:in_app_update/in_app_update.dart';
 import 'package:provider/src/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:threekm/UI/businesses/businesses_detail.dart';
@@ -17,6 +18,7 @@ import 'package:threekm/UI/Auth/signup/sign_up.dart';
 import 'package:threekm/UI/shop/product/product_details.dart';
 import 'package:threekm/main.dart';
 import 'package:threekm/providers/FCM/fcm_sendToken_Provider.dart';
+import 'package:threekm/providers/Global/logged_in_or_not.dart';
 import 'package:uni_links/uni_links.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
@@ -66,27 +68,8 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   void initState() {
-    Future.microtask(() {
-      getDeviceId();
-      openBox();
-    });
     super.initState();
-    handleFcm();
-  }
-
-  openBox() async {
-    //if (await getAuthStatus()) {
-    await Hive.openBox('restroCartBox');
-    await Hive.openBox('cartBox');
-    await Hive.openBox('businessWishListBox');
-    await Hive.openBox('selectedAddress');
-    await Hive.openBox('creatorID');
-    await Hive.openBox('restrocreatorID');
-    await Hive.openBox('shopWishListBox');
-    await Hive.openBox('orderinfo');
-    await Hive.openBox('orderStatusBox');
-    await Hive.openBox('selectedAddress');
-    // }
+    handleDeepLink();
   }
 
   void handleFcm() {
@@ -107,8 +90,6 @@ class _SplashScreenState extends State<SplashScreen> {
                     (route) => false));
           });
         }
-      } else {
-        handleDeepLink();
       }
     });
 
@@ -152,6 +133,9 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Future<dynamic> handleDeepLink() async {
+    getDeviceId();
+    // openBox();
+    handleFcm();
     try {
       final initialLink = await getInitialLink();
 

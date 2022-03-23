@@ -11,6 +11,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:in_app_update/in_app_update.dart';
+import 'package:path_provider/path_provider.dart' as pathProvider;
 import 'package:provider/provider.dart';
 import 'package:threekm/providers/FCM/fcm_sendToken_Provider.dart';
 import 'package:threekm/providers/Location/locattion_Provider.dart';
@@ -67,7 +68,6 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   // make sure you call `initializeApp` before using other Firebase services.
   await Firebase.initializeApp();
   print('Handling a background message ${message.messageId}');
-  log("handling data ${message.notification?.title}");
 }
 
 /// Create a [AndroidNotificationChannel] for heads up notifications
@@ -75,12 +75,13 @@ late AndroidNotificationChannel channel;
 
 /// Initialize the [FlutterLocalNotificationsPlugin] package.
 late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
+String FcmToken = "";
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   AppLanguage appLanguage = AppLanguage();
   await appLanguage.fetchLocale();
-  await Hive
+  Hive
     ..initFlutter()
     ..registerAdapter(CartHiveModelAdapter())
     ..registerAdapter(BusinesseswishListHiveModelAdapter());
@@ -124,20 +125,20 @@ void main() async {
 
   //end fcm code----------------------------
 
-  if (kReleaseMode) {
-    if (Platform.isAndroid) {
-      Future.delayed(Duration.zero, () {
-        InAppUpdate.checkForUpdate().then((info) async {
-          if (info.updateAvailability == UpdateAvailability.updateAvailable) {
-            await InAppUpdate.performImmediateUpdate()
-                .catchError((e) => log(e.toString()));
-          }
-        }).catchError((e) {
-          log(e.toString());
-        });
-      });
-    }
-  }
+  // if (kReleaseMode) {
+  //   if (Platform.isAndroid) {
+  //     Future.delayed(Duration.zero, () {
+  //       InAppUpdate.checkForUpdate().then((info) async {
+  //         if (info.updateAvailability == UpdateAvailability.updateAvailable) {
+  //           await InAppUpdate.performImmediateUpdate()
+  //               .catchError((e) => log(e.toString()));
+  //         }
+  //       }).catchError((e) {
+  //         log(e.toString());
+  //       });
+  //     });
+  //   }
+  // }
 
   await Firebase.initializeApp();
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
@@ -271,7 +272,9 @@ class MyApp extends StatelessWidget {
               debugShowCheckedModeBanner: false,
               theme: lightTheme,
               themeMode: ThemeMode.light,
-              home: SplashScreen(),
+              home: SplashScreen(
+                fcmToken: FcmToken,
+              ),
               navigatorKey: navigatorKey,
             );
           },
