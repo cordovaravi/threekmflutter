@@ -8,7 +8,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hive/hive.dart';
-import 'package:in_app_update/in_app_update.dart';
 import 'package:provider/src/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:threekm/UI/businesses/businesses_detail.dart';
@@ -68,8 +67,28 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   void initState() {
+    Future.microtask(() {
+      getDeviceId();
+      openBox();
+    });
     super.initState();
     handleDeepLink();
+    handleFcm();
+  }
+
+  openBox() async {
+    //if (await getAuthStatus()) {
+    await Hive.openBox('restroCartBox');
+    await Hive.openBox('cartBox');
+    await Hive.openBox('businessWishListBox');
+    await Hive.openBox('selectedAddress');
+    await Hive.openBox('creatorID');
+    await Hive.openBox('restrocreatorID');
+    await Hive.openBox('shopWishListBox');
+    await Hive.openBox('orderinfo');
+    await Hive.openBox('orderStatusBox');
+    await Hive.openBox('selectedAddress');
+    // }
   }
 
   void handleFcm() {
@@ -77,19 +96,7 @@ class _SplashScreenState extends State<SplashScreen> {
         .getInitialMessage()
         .then((RemoteMessage? message) {
       if (message != null) {
-        if (message.data["type"] == "post" && mounted) {
-          Future.delayed(Duration(seconds: 1), () {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) =>
-                        Postview(postId: message.data["post_id"]))).then(
-                (value) => Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(builder: (context) => TabBarNavigation()),
-                    (route) => false));
-          });
-        }
+        log("message from firebase is $message");
       }
     });
 
@@ -113,17 +120,6 @@ class _SplashScreenState extends State<SplashScreen> {
 
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
       log('A new onMessageOpenedApp event ${message.notification?.title}');
-      log(message.data.toString());
-      if (message.data["type"] == "post" && mounted) {
-        Future.delayed(Duration(seconds: 1), () {
-          Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          Postview(postId: message.data["post_id"])))
-              .then((value) => handleDeepLink());
-        });
-      }
     });
   }
 
@@ -133,9 +129,6 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Future<dynamic> handleDeepLink() async {
-    getDeviceId();
-    // openBox();
-    handleFcm();
     try {
       final initialLink = await getInitialLink();
 

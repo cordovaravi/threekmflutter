@@ -85,28 +85,12 @@ class _TabBarNavigationState extends State<TabBarNavigation>
     super.didChangeDependencies();
   }
 
-  openBox() async {
-    if (await getAuthStatus()) {
-      await Hive.openBox('restroCartBox');
-      await Hive.openBox('cartBox');
-      await Hive.openBox('businessWishListBox');
-      await Hive.openBox('selectedAddress');
-      await Hive.openBox('creatorID');
-      await Hive.openBox('restrocreatorID');
-      await Hive.openBox('shopWishListBox');
-      await Hive.openBox('orderinfo');
-      await Hive.openBox('orderStatusBox');
-      await Hive.openBox('selectedAddress');
-    }
-  }
-
   @override
   void initState() {
     _getConstants();
     Future.delayed(Duration.zero, () {
       context.read<AutthorProfileProvider>().getSelfProfile();
       context.read<AppLanguage>().fetchLocale();
-      openBox();
     });
 
     //initAnimation();
