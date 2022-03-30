@@ -51,17 +51,35 @@ class ShowOrderStaus {
                 event.orderStatus != 'delivered') {
               log('from snack bar 1');
               final snackBar = SnackBar(
+                  elevation: 18,
+                  padding: EdgeInsets.only(top: 3),
                   behavior: SnackBarBehavior.fixed,
-                  content: SizedBox(
+                  content: Container(
+                    padding: EdgeInsets.only(left: 15, right: 15),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      // border: Border(top: BorderSide(color: Colors.grey)),
+                      borderRadius: BorderRadius.only(
+                        topRight: Radius.circular(20),
+                        topLeft: Radius.circular(20),
+                      ),
+                    ),
                     height: 66,
                     child: Row(
                       children: [
                         Padding(
                           padding: const EdgeInsets.only(right: 10),
-                          child: Image(
-                              image: NetworkImage('${event.restaurantCover}'),
-                              width: 34,
-                              height: 45),
+                          child: SizedBox(
+                            width: 55,
+                            height: 45,
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(20),
+                              child: Image(
+                                image: NetworkImage('${event.restaurantCover}'),
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
                         ),
                         Column(
                           mainAxisSize: MainAxisSize.min,
@@ -69,7 +87,7 @@ class ShowOrderStaus {
                           children: [
                             Text(
                               event.orderStatus == 'created'
-                                  ? ''
+                                  ? 'Waiting for Restaurant to accept the order'
                                   : event.status ?? 'Food is being prepared',
                               style: TextStyle(color: Colors.black87),
                             ),
@@ -119,7 +137,7 @@ class ShowOrderStaus {
                       borderRadius: BorderRadius.only(
                           topLeft: Radius.circular(22),
                           topRight: Radius.circular(22))),
-                  backgroundColor: Colors.white,
+                  backgroundColor: Colors.grey[350],
                   // action: SnackBarAction(
                   //   textColor: Colors.black38,
                   //   label: "View Detail",

@@ -13,6 +13,7 @@ class ProductDetailsProvider extends ChangeNotifier {
   ProductDetailsModel get ProductDetailsData => _productDetails;
 
   Future<void> productDetails(mounted, id) async {
+    _productDetails = ProductDetailsModel();
     if (mounted) {
       // showLoading();
       _state = 'loading';
