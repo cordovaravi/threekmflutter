@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:developer';
 
-
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
@@ -51,6 +50,12 @@ class _ProductDetailsState extends State<ProductDetails> {
 
   List<String> wordList = [];
   bool isReadMore = true;
+
+  var keys = [];
+  var variation_name = [];
+
+  Map<String, dynamic> Variantdata = <String, dynamic>{};
+
   String getReadMoreWord(inputString) {
     if (inputString != null) {
       wordList = inputString.split(" ");
@@ -67,11 +72,76 @@ class _ProductDetailsState extends State<ProductDetails> {
 
   @override
   void initState() {
+    removeVariableData();
     print('${widget.id}======================');
-    context.read<ProductDetailsProvider>().productDetails(mounted, widget.id);
-
+    context
+        .read<ProductDetailsProvider>()
+        .productDetails(mounted, widget.id)
+        .then((value) => variateSplit());
+    variateSplit();
     openBox();
     super.initState();
+  }
+
+  variateSplit() {
+    var data = context.read<ProductDetailsProvider>().ProductDetailsData;
+    if (data.result != null) {
+      var vdata = data.result!.variations;
+      if (data.result!.product.hasVariations) {
+        // var vdata = data.result!.variations;
+
+        var variationOption = vdata![0].options;
+
+        for (var key in variationOption.keys) {
+          //log(key);
+          if (key != 'variation_name') {
+            keys.add(key); // prints 1-0001
+            Variantdata[key] = [];
+          }
+        }
+        //final _keyValue = <String, dynamic>{};
+        data.result!.variations?.forEach((element) {
+          element.options.forEach((key, value) {
+            keys.forEach((element) {
+              if (element == key) {
+                if (!Variantdata[element].contains(value))
+                  Variantdata[element].add(value);
+                log("======${Variantdata.toString()}");
+              }
+            });
+          });
+        });
+
+        log(Variantdata.toString());
+        // for (var i = 0; i < vdata.length; i++) {
+        //   var data = vdata[i].options;
+        //   for (var i = 0; i < data.length; i++) {
+        //     log(data[keys[0]]);
+
+        //   }
+        // }
+        ;
+      }
+    }
+  }
+
+  variationSelect() {
+    var data = context.read<ProductDetailsProvider>().ProductDetailsData;
+    log('00 ${variation_name.join()}');
+    data.result!.variations?.forEach((element) {
+      log('// ${element.options['variation_name']}'
+          .replaceAll(RegExp('[, ]+'), ''));
+      if ('${element.options['variation_name']}'
+              .replaceAll(RegExp('[, ]+'), '') ==
+          variation_name.join().replaceAll(RegExp('[, ]+'), '')) {
+        setState(() {
+          variation = element;
+          price = element.price;
+          weight = element.weight;
+          variationid = element.variationId;
+        });
+      }
+    });
   }
 
   int listLength(l) {
@@ -103,6 +173,18 @@ class _ProductDetailsState extends State<ProductDetails> {
     }
   }
 
+  removeVariableData() {
+    wordList = [];
+    price = 0;
+    weight = 0;
+    variationid = 0;
+    variationIndex = 0;
+    variation = null;
+    Variantdata = <String, dynamic>{};
+    keys = [];
+    variation_name = [];
+  }
+
   @override
   void didChangeDependencies() {
     ThreeKmScreenUtil.getInstance();
@@ -111,11 +193,16 @@ class _ProductDetailsState extends State<ProductDetails> {
   }
 
   @override
+  void deactivate() {
+    log('deactivate');
+    removeVariableData();
+    // TODO: implement deactivate
+    super.deactivate();
+  }
+
+  @override
   void dispose() {
-    int? price = 0;
-    int? weight = 0;
-    int? variationid = 0;
-    int? variationIndex = 0;
+    removeVariableData();
     // TODO: implement dispose
     super.dispose();
   }
@@ -250,11 +337,8 @@ class _ProductDetailsState extends State<ProductDetails> {
                           ? data.result?.product.images.length != 0
                               ? data.result?.product.images.length
                               : [data.result?.product.image].length
-                          : data.result?.variations?[variationIndex!]
-                                      .imagesLinks.length !=
-                                  0
-                              ? data.result?.variations![variationIndex!]
-                                  .imagesLinks.length
+                          : variation.imagesLinks.length != 0
+                              ? variation.imagesLinks.length
                               : [data.result?.product.image].length,
                       itemBuilder: (context, index) {
                         return statusData == 'loaded'
@@ -346,14 +430,8 @@ class _ProductDetailsState extends State<ProductDetails> {
                                     ? data.result!.product.images.length != 0
                                         ? data.result!.product.images.length
                                         : [data.result?.product.image].length
-                                    : data.result?.variations?[variationIndex!]
-                                                .imagesLinks.length !=
-                                            0
-                                        ? data
-                                            .result!
-                                            .variations![variationIndex!]
-                                            .imagesLinks
-                                            .length
+                                    : variation.imagesLinks.length != 0
+                                        ? variation.imagesLinks.length
                                         : [data.result?.product.image].length);
                             i++)
                           i == selectedindex
@@ -550,97 +628,180 @@ class _ProductDetailsState extends State<ProductDetails> {
                                           .copyWith(height: 3),
                                     ),
                                   if (data.result!.variations!.length > 0)
-                                    Container(
-                                        height: 60,
-                                        padding: EdgeInsets.only(
-                                            top: 10, bottom: 10),
-                                        child: ListView.builder(
-                                            shrinkWrap: true,
-                                            scrollDirection: Axis.horizontal,
-                                            itemCount:
-                                                data.result!.variations!.length,
-                                            itemBuilder: (_, i) {
-                                              var vdata =
-                                                  data.result!.variations?[i];
-                                              return Padding(
-                                                padding: const EdgeInsets.only(
-                                                    right: 10),
-                                                child: ChoiceChip(
-                                                  label: Text(
-                                                      '${vdata!.options['variation_name']}'),
-                                                  selected: vdata.variationId ==
-                                                          variationid
-                                                      ? true
-                                                      : false,
-                                                  onSelected: (p) {
-                                                    setState(() {
-                                                      price = vdata.price;
-                                                      weight = vdata.weight;
-                                                      variationid =
-                                                          vdata.variationId;
-                                                      variationIndex = i;
-                                                      variation = vdata;
-                                                    });
-                                                  },
-                                                  selectedColor:
-                                                      Colors.green[300],
-                                                  labelStyle: TextStyle(
-                                                      color:
-                                                          vdata.variationId ==
-                                                                  variationid
-                                                              ? Colors.white
-                                                              : Colors.black87),
-                                                ),
-                                              );
+                                    ListView.builder(
+                                        physics: NeverScrollableScrollPhysics(),
+                                        padding: EdgeInsets.zero,
+                                        shrinkWrap: true,
+                                        itemCount: Variantdata.length,
+                                        itemBuilder: (_, i) {
+                                          String key =
+                                              Variantdata.keys.elementAt(i);
+                                          return Container(
+                                            width: MediaQuery.of(context)
+                                                .size
+                                                .width,
+                                            constraints: BoxConstraints(
+                                                maxHeight: 240, minHeight: 40),
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Text('${key}'.toUpperCase()),
+                                                SizedBox(
+                                                  height: 60,
+                                                  width: MediaQuery.of(context)
+                                                      .size
+                                                      .width,
+                                                  child: ListView.builder(
+                                                      shrinkWrap: true,
+                                                      scrollDirection:
+                                                          Axis.horizontal,
+                                                      itemCount:
+                                                          Variantdata[key]
+                                                              .length,
+                                                      itemBuilder: (_, ii) {
+                                                        return Padding(
+                                                          padding:
+                                                              EdgeInsets.only(
+                                                                  right: 10),
+                                                          child: ChoiceChip(
+                                                            label: Text(
+                                                                '${Variantdata[key][ii]}'),
+                                                            selected: variation_name
+                                                                .contains(
+                                                                    Variantdata[
+                                                                            key]
+                                                                        [ii]),
+                                                            onSelected: (p) {
+                                                              if (variation_name
+                                                                      .length >
+                                                                  i)
+                                                                variation_name
+                                                                    .removeAt(
+                                                                        i);
+                                                              variation_name.insert(
+                                                                  i,
+                                                                  Variantdata[
+                                                                      key][ii]);
+                                                              variationSelect();
+                                                              log(variation_name
+                                                                  .toString());
+                                                              setState(() {});
+                                                            },
+                                                            selectedColor:
+                                                                Colors
+                                                                    .green[300],
+                                                            labelStyle:
+                                                                TextStyle(
+                                                              color: variation_name
+                                                                      .contains(
+                                                                          Variantdata[key]
+                                                                              [
+                                                                              ii])
+                                                                  ? Colors.white
+                                                                  : Colors
+                                                                      .black87,
+                                                            ),
+                                                          ),
+                                                        );
+                                                      }),
+                                                )
+                                              ],
+                                            ),
+                                          );
+                                        }),
+                                  // Container(
+                                  //     height: 60,
+                                  //     padding: EdgeInsets.only(
+                                  //         top: 10, bottom: 10),
+                                  //     child: ListView.builder(
+                                  //         shrinkWrap: true,
+                                  //         scrollDirection: Axis.horizontal,
+                                  //         itemCount:
+                                  //             data.result!.variations!.length,
+                                  //         itemBuilder: (_, i) {
+                                  //           var vdata =
+                                  //               data.result!.variations?[i];
+                                  //           return Padding(
+                                  //             padding: const EdgeInsets.only(
+                                  //                 right: 10),
+                                  //             child: ChoiceChip(
+                                  //               label: Text(
+                                  //                   '${vdata!.options['variation_name']}'),
+                                  //               selected: vdata.variationId ==
+                                  //                       variationid
+                                  //                   ? true
+                                  //                   : false,
+                                  //               onSelected: (p) {
+                                  //                 setState(() {
+                                  //                   price = vdata.price;
+                                  //                   weight = vdata.weight;
+                                  //                   variationid =
+                                  //                       vdata.variationId;
+                                  //                   variationIndex = i;
+                                  //                   variation = vdata;
+                                  //                 });
+                                  //               },
+                                  //               selectedColor:
+                                  //                   Colors.green[300],
+                                  //               labelStyle: TextStyle(
+                                  //                   color:
+                                  //                       vdata.variationId ==
+                                  //                               variationid
+                                  //                           ? Colors.white
+                                  //                           : Colors.black87),
+                                  //             ),
+                                  //           );
 
-                                              // InkWell(
-                                              //   onTap: () {
-                                              //     setState(() {
-                                              //       price = vdata?.price;
-                                              //       weight = vdata?.weight;
-                                              //       variationid =
-                                              //           vdata?.variationId;
-                                              //       variationIndex = i;
-                                              //       variation = vdata;
-                                              //     });
-                                              //   },
-                                              //   child: Container(
-                                              //     padding:
-                                              //         const EdgeInsets.only(
-                                              //             right: 20, left: 20),
-                                              //     margin: const EdgeInsets.only(
-                                              //         right: 20),
-                                              //     decoration: BoxDecoration(
-                                              //         color: Color(
-                                              //             vdata?.variationId ==
-                                              //                     variationid
-                                              //                 ? 0xFF43B97834
-                                              //                 : 0xFFFFFF),
-                                              //         border: Border.all(
-                                              //             color: Color(
-                                              //                 vdata?.variationId ==
-                                              //                         variationid
-                                              //                     ? 0xFF43B978
-                                              //                     : 0xFF979EA4)),
-                                              //         borderRadius:
-                                              //             BorderRadius.circular(
-                                              //                 20)),
-                                              //     child: Center(
-                                              //       child: Text(
-                                              //         '${vdata!.options['variation_name']}',
-                                              //         style: ThreeKmTextConstants
-                                              //             .tk14PXPoppinsBlackMedium
-                                              //             .copyWith(
-                                              //                 color: Color(vdata
-                                              //                             .variationId ==
-                                              //                         variationid
-                                              //                     ? 0xFF43B978
-                                              //                     : 0xFF000000)),
-                                              //       ),
-                                              //     ),
-                                              //   ),
-                                              // );
-                                            })),
+                                  //           // InkWell(
+                                  //           //   onTap: () {
+                                  //           //     setState(() {
+                                  //           //       price = vdata?.price;
+                                  //           //       weight = vdata?.weight;
+                                  //           //       variationid =
+                                  //           //           vdata?.variationId;
+                                  //           //       variationIndex = i;
+                                  //           //       variation = vdata;
+                                  //           //     });
+                                  //           //   },
+                                  //           //   child: Container(
+                                  //           //     padding:
+                                  //           //         const EdgeInsets.only(
+                                  //           //             right: 20, left: 20),
+                                  //           //     margin: const EdgeInsets.only(
+                                  //           //         right: 20),
+                                  //           //     decoration: BoxDecoration(
+                                  //           //         color: Color(
+                                  //           //             vdata?.variationId ==
+                                  //           //                     variationid
+                                  //           //                 ? 0xFF43B97834
+                                  //           //                 : 0xFFFFFF),
+                                  //           //         border: Border.all(
+                                  //           //             color: Color(
+                                  //           //                 vdata?.variationId ==
+                                  //           //                         variationid
+                                  //           //                     ? 0xFF43B978
+                                  //           //                     : 0xFF979EA4)),
+                                  //           //         borderRadius:
+                                  //           //             BorderRadius.circular(
+                                  //           //                 20)),
+                                  //           //     child: Center(
+                                  //           //       child: Text(
+                                  //           //         '${vdata!.options['variation_name']}',
+                                  //           //         style: ThreeKmTextConstants
+                                  //           //             .tk14PXPoppinsBlackMedium
+                                  //           //             .copyWith(
+                                  //           //                 color: Color(vdata
+                                  //           //                             .variationId ==
+                                  //           //                         variationid
+                                  //           //                     ? 0xFF43B978
+                                  //           //                     : 0xFF000000)),
+                                  //           //       ),
+                                  //           //     ),
+                                  //           //   ),
+                                  //           // );
+                                  //         })),
                                   VisibilityDetector(
                                     key: key,
                                     onVisibilityChanged: (VisibilityInfo info) {
@@ -787,13 +948,17 @@ class _ProductDetailsState extends State<ProductDetails> {
                                                                   context.read<CartProvider>().addItemToCart(
                                                                       context:
                                                                           context,
-                                                                      creatorId: product
-                                                                          .creatorId,
-                                                                      image: product
-                                                                          .image,
-                                                                      name: product
-                                                                          .name,
-                                                                      price: price != 0
+                                                                      creatorId:
+                                                                          product
+                                                                              .creatorId,
+                                                                      image:
+                                                                          product
+                                                                              .image,
+                                                                      name:
+                                                                          product
+                                                                              .name,
+                                                                      price: price !=
+                                                                              0
                                                                           ? price
                                                                           : product
                                                                               .price,
@@ -807,20 +972,20 @@ class _ProductDetailsState extends State<ProductDetails> {
                                                                           ? variation.options[
                                                                               'variation_name']
                                                                           : null,
-                                                                      weight: weight != 0
+                                                                      weight: weight !=
+                                                                              0
                                                                           ? weight
                                                                           : product
                                                                               .weight,
-                                                                      masterStock: variationid != 0
-                                                                          ? data
-                                                                              .result
-                                                                              ?.variations![
-                                                                                  variationIndex!]
+                                                                      masterStock: variationid !=
+                                                                              0
+                                                                          ? variation
                                                                               .masterStock
                                                                           : product
                                                                               .masterStock,
-                                                                      manageStock: product
-                                                                          .manageStock,
+                                                                      manageStock:
+                                                                          product
+                                                                              .manageStock,
                                                                       creatorName: product
                                                                           .creatorDetails
                                                                           .businessName);
@@ -908,13 +1073,17 @@ class _ProductDetailsState extends State<ProductDetails> {
                                                                   context.read<CartProvider>().addItemToCart(
                                                                       context:
                                                                           context,
-                                                                      creatorId: product
-                                                                          .creatorId,
-                                                                      image: product
-                                                                          .image,
-                                                                      name: product
-                                                                          .name,
-                                                                      price: price != 0
+                                                                      creatorId:
+                                                                          product
+                                                                              .creatorId,
+                                                                      image:
+                                                                          product
+                                                                              .image,
+                                                                      name:
+                                                                          product
+                                                                              .name,
+                                                                      price: price !=
+                                                                              0
                                                                           ? price
                                                                           : product
                                                                               .price,
@@ -928,20 +1097,20 @@ class _ProductDetailsState extends State<ProductDetails> {
                                                                           ? variation.options[
                                                                               'variation_name']
                                                                           : null,
-                                                                      weight: weight != 0
+                                                                      weight: weight !=
+                                                                              0
                                                                           ? weight
                                                                           : product
                                                                               .weight,
-                                                                      masterStock: variationid != 0
-                                                                          ? data
-                                                                              .result
-                                                                              ?.variations![
-                                                                                  variationIndex!]
+                                                                      masterStock: variationid !=
+                                                                              0
+                                                                          ? variation
                                                                               .masterStock
                                                                           : product
                                                                               .masterStock,
-                                                                      manageStock: product
-                                                                          .manageStock,
+                                                                      manageStock:
+                                                                          product
+                                                                              .manageStock,
                                                                       creatorName: product
                                                                           .creatorDetails
                                                                           .businessName);
@@ -1609,11 +1778,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                                                         : product.weight,
                                                     masterStock: variationid !=
                                                             0
-                                                        ? data
-                                                            .result
-                                                            ?.variations![
-                                                                variationIndex!]
-                                                            .masterStock
+                                                        ? variation.masterStock
                                                         : product.masterStock,
                                                     manageStock:
                                                         product.manageStock,
@@ -1664,11 +1829,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                                                         : product.weight,
                                                     masterStock: variationid !=
                                                             0
-                                                        ? data
-                                                            .result
-                                                            ?.variations![
-                                                                variationIndex!]
-                                                            .masterStock
+                                                        ? variation.masterStock
                                                         : product.masterStock,
                                                     manageStock:
                                                         product.manageStock,
