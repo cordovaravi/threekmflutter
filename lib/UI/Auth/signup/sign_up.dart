@@ -248,12 +248,13 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
                 child: CustomButton(
                   color: ThreeKmTextConstants.blue1,
                   onTap: () async {
-                    if (phonetextController.text.length == 10) {
+                    if (phonetextController.text.length == 10 &&
+                        model.isLoding == false) {
                       String requestJson =
                           json.encode({"phone_no": phonetextController.text});
                       model.checkLogin(
                           requestJson, phonetextController.text, context, true);
-                    } else {
+                    } else if (model.isLoding == false) {
                       Fluttertoast.showToast(msg: "Please enter right number.");
                     }
                   },

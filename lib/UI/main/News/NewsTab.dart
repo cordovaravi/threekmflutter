@@ -25,6 +25,7 @@ import 'package:threekm/UI/Search/SearchPage.dart';
 import 'package:threekm/UI/main/News/NewsList.dart';
 import 'package:threekm/UI/main/News/PostView.dart';
 import 'package:threekm/UI/main/News/Widgets/HeighLightPost.dart';
+import 'package:threekm/UI/main/News/poll_page.dart';
 import 'package:threekm/UI/main/Notification/NotificationPage.dart';
 import 'package:threekm/UI/main/navigation.dart';
 import 'package:threekm/localization/localize.dart';
@@ -145,6 +146,18 @@ class _NewsTabState extends State<NewsTab>
         });
       });
     }
+    FirebaseMessaging.instance
+        .getInitialMessage()
+        .then((RemoteMessage? message) {
+      if (message != null) {
+        log("message from firebase is $message");
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) =>
+                    Postview(postId: message.data["post_id"])));
+      }
+    });
   }
 
   @override
@@ -490,15 +503,23 @@ class _NewsTabState extends State<NewsTab>
                                                   Navigator.push(
                                                       context,
                                                       MaterialPageRoute(
-                                                          builder: (context) =>
-                                                              VimeoPlayerPage(
-                                                                  VimeoUri: finalPost
-                                                                      .banners![
-                                                                          bannerIndex]
-                                                                      .imageswcta!
-                                                                      .first
-                                                                      .vimeoUrl
-                                                                      .toString())));
+                                                          builder: (context) => LocalPlayer(
+                                                              VideoURI: finalPost
+                                                                  .banners![
+                                                                      bannerIndex]
+                                                                  .imageswcta!
+                                                                  .first
+                                                                  .video
+                                                                  .toString())
+                                                          // VimeoPlayerPage(
+                                                          //     VimeoUri: finalPost
+                                                          //         .banners![
+                                                          //             bannerIndex]
+                                                          //         .imageswcta!
+                                                          //         .first
+                                                          //         .vimeoUrl
+                                                          //         .toString())
+                                                          ));
                                                 }
                                               },
                                               child: Container(

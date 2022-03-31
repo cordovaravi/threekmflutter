@@ -2,10 +2,12 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:device_info/device_info.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:threekm/Custom_library/pincodefields.dart';
 import 'package:provider/provider.dart';
 import 'package:threekm/UI/Auth/sign_in.dart';
+import 'package:threekm/commenwidgets/CustomSnakBar.dart';
 import 'package:threekm/providers/auth/signUp_Provider.dart';
 import 'package:threekm/utils/threekm_textstyles.dart';
 import 'package:threekm/utils/util_methods.dart';
@@ -25,6 +27,8 @@ class _SignUpConfirmOTPState extends State<SignUpConfirmOTP> {
   final focusNode = FocusNode();
   String? requestJson;
   //String? phoneNumber;
+
+  bool isVisibleResendOtp = false;
 
   @override
   void initState() {
@@ -58,8 +62,69 @@ class _SignUpConfirmOTPState extends State<SignUpConfirmOTP> {
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [buildControls(widget.phoneNumber), buildFooter],
+          // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            buildControls(widget.phoneNumber),
+            isVisibleResendOtp
+                ? InkWell(onTap: () {
+                    if (true) {
+                      String requestJson =
+                          json.encode({"phone_no": widget.phoneNumber});
+                      context
+                          .read<SignUpProvider>()
+                          .checkLogin(
+                              requestJson, widget.phoneNumber, context, false)
+                          .whenComplete(() => setState(() {
+                                isVisibleResendOtp = !isVisibleResendOtp;
+                              }));
+                      CustomSnackBar(context, Text("Sending otp again!"));
+                    }
+                  }, child: Consumer<SignUpProvider>(
+                    builder: (context, _controller, child) {
+                      return CustomButton(
+                        color: ThreeKmTextConstants.blue1,
+                        width: 152,
+                        height: 52,
+                        borderRadius: BorderRadius.circular(26),
+                        shadowRadius: BorderRadius.circular(26),
+                        shadowColor: Colors.transparent,
+                        elevation: 0,
+                        child: _controller.isLoding
+                            ? CupertinoActivityIndicator()
+                            : Text(
+                                "Resend Otp",
+                                style: ThreeKmTextConstants
+                                    .tk14PXWorkSansWhiteMedium,
+                              ),
+                      );
+                    },
+                  ))
+                : TweenAnimationBuilder<Duration>(
+                    duration: Duration(minutes: 1, seconds: 30),
+                    tween: Tween(
+                        begin: Duration(minutes: 1, seconds: 30),
+                        end: Duration.zero),
+                    onEnd: () {
+                      print('Timer ended');
+                      setState(() {
+                        isVisibleResendOtp = true;
+                      });
+                    },
+                    builder:
+                        (BuildContext context, Duration value, Widget? child) {
+                      final minutes = value.inMinutes;
+                      final seconds = value.inSeconds % 60;
+                      return Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 5),
+                          child: Text(
+                              'Resend confirmation code  $minutes:$seconds',
+                              textAlign: TextAlign.center,
+                              style: ThreeKmTextConstants
+                                  .tk12PXPoppinsWhiteRegular));
+                    }),
+            Spacer(),
+            buildFooter
+          ],
         ),
       ),
     );
@@ -68,6 +133,7 @@ class _SignUpConfirmOTPState extends State<SignUpConfirmOTP> {
   Widget buildControls(phone) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         InkWell(
           child: buildText(phone),
@@ -76,7 +142,12 @@ class _SignUpConfirmOTPState extends State<SignUpConfirmOTP> {
           },
         ),
         buildSpace(height: 32),
-        buildOTPTextField(phone),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            buildOTPTextField(phone),
+          ],
+        ),
         Consumer<SignUpProvider>(builder: (context, model, _) {
           return model.iswrongOTP
               ? Column(
@@ -166,7 +237,7 @@ class _SignUpConfirmOTPState extends State<SignUpConfirmOTP> {
 
   Widget buildOTPTextField(phone) {
     return Container(
-      width: MediaQuery.of(context).size.width * 0.65,
+      //width: MediaQuery.of(context).size.width * 0.65,
       child: PinCodeTextField(
         pinTextStyle: TextStyle(color: Colors.black),
         controller: textController,

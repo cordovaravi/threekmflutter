@@ -14,6 +14,12 @@ class HomeSecondProvider extends ChangeNotifier {
   NewsHomeModel? _homeModel;
   NewsHomeModel? get homeNews => _homeModel;
 
+  bool _isLoadingPoll = false;
+  bool get isLoadingPoll => _isLoadingPoll;
+
+  SinglePoll? _SinglePollModel;
+  SinglePoll? get singlePollModel => _SinglePollModel;
+
   Future<Null> getNewsSecond(requestJson) async {
     SharedPreferences _prefs = await SharedPreferences.getInstance();
     if (await _apiProvider.getConnectivityStatus()) {
@@ -42,6 +48,25 @@ class HomeSecondProvider extends ChangeNotifier {
         _homeModel = NewsHomeModel.fromJson(json.decode(rawModel));
         notifyListeners();
       }
+    }
+  }
+
+  Future<Null> getActivePoll({required String pollId}) async {
+    String requestJson = json
+        .encode({"poll_id": pollId, "token": await _apiProvider.getToken()});
+    _isLoadingPoll = true;
+    notifyListeners();
+    final response = await _apiProvider.post(activePollApi, requestJson);
+    if (response["status"] == "success") {
+      log(response.toString());
+      _SinglePollModel = SinglePoll.fromJson(response);
+      _isLoadingPoll = false;
+      //log(response["Result"]["quiz"]);
+      notifyListeners();
+    } else {
+      log("call on else");
+      _isLoadingPoll = false;
+      // notifyListeners();
     }
   }
 

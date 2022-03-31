@@ -669,6 +669,40 @@ class Option {
       );
 }
 
+SinglePoll singlePollFromJson(String str) =>
+    SinglePoll.fromJson(json.decode(str));
+
+class SinglePoll {
+  SinglePoll({
+    this.statusCode,
+    this.status,
+    this.result,
+  });
+
+  int? statusCode;
+  String? status;
+  PollResult? result;
+
+  factory SinglePoll.fromJson(Map<String, dynamic> json) => SinglePoll(
+        statusCode: json["StatusCode"] == null ? null : json["StatusCode"],
+        status: json["status"] == null ? null : json["status"],
+        result:
+            json["Result"] == null ? null : PollResult.fromJson(json["Result"]),
+      );
+}
+
+class PollResult {
+  PollResult({
+    this.quiz,
+  });
+
+  Quiz? quiz;
+
+  factory PollResult.fromJson(Map<String, dynamic> json) => PollResult(
+        quiz: json["quiz"] == null ? null : Quiz.fromJson(json["quiz"]),
+      );
+}
+
 // To parse this JSON data, do
 //
 //     final quiz = quizFromJson(jsonString);

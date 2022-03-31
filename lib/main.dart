@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:developer';
-import 'dart:io';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
@@ -10,9 +9,9 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:in_app_update/in_app_update.dart';
-import 'package:path_provider/path_provider.dart' as pathProvider;
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:threekm/UI/main/News/PostView.dart';
 import 'package:threekm/providers/FCM/fcm_sendToken_Provider.dart';
 import 'package:threekm/providers/Location/locattion_Provider.dart';
 import 'package:threekm/providers/Notification/Notification_Provider.dart';
@@ -81,6 +80,12 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   AppLanguage appLanguage = AppLanguage();
   await appLanguage.fetchLocale();
+
+  ///changelog after 1st relase
+  await Firebase.initializeApp();
+  final appDocumentDirectory = await getApplicationDocumentsDirectory();
+
+  Hive.init(appDocumentDirectory.path);
   Hive
     ..initFlutter()
     ..registerAdapter(CartHiveModelAdapter())
@@ -91,7 +96,6 @@ void main() async {
   ));
 
   //fcm code--------------------
-  await Firebase.initializeApp();
   // Set the background messaging handler early on, as a named top-level function
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
@@ -103,6 +107,15 @@ void main() async {
     );
 
     flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+
+    //update after 1st relase
+    var initializationSettingsAndroid =
+        AndroidInitializationSettings('icon_light');
+    var initializationSettingsIOs = IOSInitializationSettings();
+    var initSetttings = InitializationSettings(
+        android: initializationSettingsAndroid, iOS: initializationSettingsIOs);
+    flutterLocalNotificationsPlugin.initialize(initSetttings,
+        onSelectNotification: onSelectNotification);
 
     /// Create an Android Notification Channel.
     ///
@@ -140,7 +153,6 @@ void main() async {
   //   }
   // }
 
-  await Firebase.initializeApp();
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
     statusBarColor: Colors.transparent,
   ));
@@ -280,4 +292,11 @@ class MyApp extends StatelessWidget {
           },
         ));
   }
+}
+
+onSelectNotification(String? payload) {
+  Navigator.of(navigatorKey.currentContext!)
+      .push(MaterialPageRoute(builder: (_) {
+    return Postview(postId: payload!);
+  }));
 }
