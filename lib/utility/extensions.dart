@@ -20,3 +20,10 @@ extension ContextController on BuildContext {
     Navigator.of(this).pop();
   }
 }
+
+extension StringExtension on String {
+  String capitalize() {
+    var data = "${this[0].toUpperCase()}${this.substring(1).toLowerCase()}";
+    return data;
+  }
+}

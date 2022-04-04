@@ -271,7 +271,7 @@ class BusinessProductModel {
   late final String image;
   late final bool hasDiscount;
   late final String discountType;
-  late final int discountValue;
+  late final num discountValue;
   late final bool discountDates;
   late final String discountStartDate;
   late final String discountEndDate;

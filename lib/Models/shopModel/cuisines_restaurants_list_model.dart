@@ -51,7 +51,9 @@ class Result {
   late final List<CuisinesRestaurant> data;
 
   Result.fromJson(Map<String, dynamic> json) {
-    data = List.from(json['data']).map((e) => CuisinesRestaurant.fromJson(e)).toList();
+    data = List.from(json['data'])
+        .map((e) => CuisinesRestaurant.fromJson(e))
+        .toList();
   }
 
   Map<String, dynamic> toJson() {
@@ -83,7 +85,7 @@ class CuisinesRestaurant {
   late final bool status;
 
   CuisinesRestaurant.fromJson(Map<String, dynamic> json) {
-    id = json['_id'];
+    id = json['_id'] ?? "";
     restaurantId = json['restaurant_id'];
     creatorId = json['creator_id'];
     businessName = json['business_name'];

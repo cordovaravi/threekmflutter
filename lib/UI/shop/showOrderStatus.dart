@@ -52,7 +52,8 @@ class ShowOrderStaus {
               log('from snack bar 1');
               final snackBar = SnackBar(
                   elevation: 18,
-                  padding: EdgeInsets.only(top: 3),
+                  backgroundColor: Colors.grey[200],
+                  padding: EdgeInsets.only(top: 2),
                   behavior: SnackBarBehavior.fixed,
                   content: Container(
                     padding: EdgeInsets.only(left: 15, right: 15),
@@ -73,7 +74,7 @@ class ShowOrderStaus {
                             width: 55,
                             height: 45,
                             child: ClipRRect(
-                              borderRadius: BorderRadius.circular(20),
+                              borderRadius: BorderRadius.circular(10),
                               child: Image(
                                 image: NetworkImage('${event.restaurantCover}'),
                                 fit: BoxFit.cover,
@@ -137,7 +138,7 @@ class ShowOrderStaus {
                       borderRadius: BorderRadius.only(
                           topLeft: Radius.circular(22),
                           topRight: Radius.circular(22))),
-                  backgroundColor: Colors.grey[350],
+
                   // action: SnackBarAction(
                   //   textColor: Colors.black38,
                   //   label: "View Detail",

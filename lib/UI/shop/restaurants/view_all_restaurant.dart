@@ -40,9 +40,9 @@ class _AllRestaurantListState extends State<AllRestaurantList> {
     }
 
     // var initJson = json.encode({"lat": '', "lng": '', "page": 1});
-    if (widget.isSearchActive == false) {
-      context.read<ShopHomeProvider>().getRestaurants(mounted, 1);
-    }
+    // if (widget.isSearchActive == false) {
+    context.read<ShopHomeProvider>().getRestaurants(mounted, 1);
+    // }
     super.initState();
   }
 

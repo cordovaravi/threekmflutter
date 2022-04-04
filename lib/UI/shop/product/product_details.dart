@@ -18,6 +18,7 @@ import 'package:threekm/localization/localize.dart';
 import 'package:threekm/providers/shop/cart_provider.dart';
 import 'package:threekm/providers/shop/product_details_provider.dart';
 import 'package:threekm/providers/shop/wish_list_provide.dart';
+import 'package:threekm/utility/extensions.dart';
 import 'package:threekm/utils/screen_util.dart';
 import 'package:threekm/utils/threekm_textstyles.dart';
 import '../../shop/cart/cart_item_list_modal.dart';
@@ -647,7 +648,9 @@ class _ProductDetailsState extends State<ProductDetails> {
                                                   CrossAxisAlignment.start,
                                               mainAxisSize: MainAxisSize.min,
                                               children: [
-                                                Text('${key}'.toUpperCase()),
+                                                Text('${key}'.capitalize(),
+                                                    style: ThreeKmTextConstants
+                                                        .tk14PXPoppinsBlackSemiBold),
                                                 SizedBox(
                                                   height: 60,
                                                   width: MediaQuery.of(context)
@@ -667,7 +670,8 @@ class _ProductDetailsState extends State<ProductDetails> {
                                                                   right: 10),
                                                           child: ChoiceChip(
                                                             label: Text(
-                                                                '${Variantdata[key][ii]}'),
+                                                                '${Variantdata[key][ii]}'
+                                                                    .capitalize()),
                                                             selected: variation_name
                                                                 .contains(
                                                                     Variantdata[
