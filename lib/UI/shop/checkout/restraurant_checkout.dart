@@ -181,9 +181,9 @@ class _RestaurantsCheckOutScreenState extends State<RestaurantsCheckOutScreen> {
                                 ),
                                 InkWell(
                                   onTap: () {
-                                    restrobox?.length == 0
-                                        ? null
-                                        : _pageController.jumpToPage(2);
+                                    //  restrobox?.length == 0
+                                    //      ? null
+                                    //      : _pageController.jumpToPage(2);
                                   },
                                   child: Column(
                                     children: const [

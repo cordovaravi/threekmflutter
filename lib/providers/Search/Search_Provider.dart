@@ -1,10 +1,12 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:provider/src/provider.dart';
 import 'package:threekm/Models/BusinessSearch/BusinessSearchModel.dart';
 import 'package:threekm/Models/NewsSearch/NewsSearchModel.dart';
 import 'package:threekm/Models/ShopSearch/ShopSearchModel.dart';
 import 'package:threekm/networkservice/Api_Provider.dart';
+import 'package:threekm/providers/localization_Provider/appLanguage_provider.dart';
 import 'package:threekm/utils/api_paths.dart';
 
 class SearchBarProvider extends ChangeNotifier {
@@ -73,11 +75,16 @@ class SearchBarProvider extends ChangeNotifier {
 
   bool _newsLoading = false;
   bool get isNewsLoading => this._newsLoading;
-  Future<NewsSearchModel?> getNewsSearch({required String query}) async {
+  Future<NewsSearchModel?> getNewsSearch({required BuildContext context,required String query}) async {
     _newsLoading = true;
     notifyListeners();
     String requestJson =
-        json.encode({"lat": 21.1458004, "lng": 79.0881546, "query": "$query"});
+        json.encode({"lat": 21.1458004, "lng": 79.0881546, "query": "$query", "lang": context.read<AppLanguage>().appLocal == Locale("mr")
+              ? "mr"
+              : context.read<AppLanguage>().appLocal == Locale("en")
+                  ? "en"
+                  : "hi",
+});
 
     final response = await _apiProvider.post(Search_News, requestJson);
     if (response != null && response["status"] == "success") {
