@@ -14,7 +14,6 @@ import 'package:threekm/Custom_library/flutter_reaction_button.dart';
 import 'package:threekm/Models/newsByCategories_model.dart';
 import 'package:threekm/UI/main/News/Widgets/comment_Loading.dart';
 import 'package:threekm/UI/main/News/Widgets/likes_Loading.dart';
-import 'package:threekm/UI/main/News/Widgets/singlePost_Loading.dart';
 import 'package:threekm/UI/main/Profile/AuthorProfile.dart';
 import 'package:threekm/commenwidgets/CustomSnakBar.dart';
 import 'package:threekm/commenwidgets/commenwidget.dart';
@@ -1801,7 +1800,9 @@ class _NewsPostCardState extends State<NewsPostCard>
                         alignment: Alignment.centerLeft,
                         child: InkWell(
                           onTap: () {
-                            if (_formKey.currentState!.validate()) {
+                            if (_formKey.currentState!.validate() &&
+                                context.read<CommentProvider>().isLoading ==
+                                    false) {
                               context
                                   .read<CommentProvider>()
                                   .postCommentApi(

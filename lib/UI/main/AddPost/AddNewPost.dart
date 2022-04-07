@@ -146,7 +146,7 @@ class _AddNewPostState extends State<AddNewPost> {
                     maxLines: 1,
                     minLines: null,
                     expands: false,
-                    maxLength: 50,
+                    maxLength: 100,
                     textAlignVertical: TextAlignVertical.top,
                     maxLengthEnforcement: MaxLengthEnforcement.enforced,
                     buildCounter: (context,
@@ -204,7 +204,7 @@ class _AddNewPostState extends State<AddNewPost> {
                     maxLines: null,
                     minLines: null,
                     expands: true,
-                    maxLength: 250,
+                    //maxLength: 2500,
                     maxLengthEnforcement: MaxLengthEnforcement.enforced,
                     buildCounter: (context,
                         {required currentLength,
@@ -212,9 +212,9 @@ class _AddNewPostState extends State<AddNewPost> {
                         maxLength}) {
                       WidgetsBinding.instance!
                           .addPostFrameCallback((timeStamp) {
-                        setState(() {
-                          descriptionCount = currentLength;
-                        });
+                        // setState(() {
+                        //   descriptionCount = currentLength;
+                        // });
                       });
                       Container(
                         height: 1,
@@ -486,7 +486,7 @@ class _AddNewPostState extends State<AddNewPost> {
             ),
           ),
           Text(
-            "($headlineCount/50)",
+            "($headlineCount/100)",
             style: ThreeKmTextConstants.tk12PXPoppinsWhiteRegular.copyWith(
               fontSize: 10.5,
               fontWeight: FontWeight.w700,
@@ -514,7 +514,8 @@ class _AddNewPostState extends State<AddNewPost> {
             ),
           ),
           Text(
-            "($descriptionCount/250)",
+            "",
+            //"($descriptionCount/250)",
             style: ThreeKmTextConstants.tk12PXPoppinsWhiteRegular.copyWith(
               fontSize: 10.5,
               fontWeight: FontWeight.w700,

@@ -116,14 +116,15 @@ class AutthorProfileProvider extends ChangeNotifier {
 
   // get Author profile data and post
   Future<Null> getAuthorProfile(
-      {required int authorId, String? authorType}) async {
+      {required int authorId, String? authorType, String? language}) async {
     _gettingAuthorprofile = true;
     notifyListeners();
     String? _token = await _apiProvider.getToken();
     String requestJson = json.encode({
       "id": authorId,
       "author_type": authorType ?? "user",
-      "token": _token ?? ""
+      "token": _token ?? "",
+      "lang": language
     });
     final response = await _apiProvider.post(Author_Profile, requestJson);
     if (response != null) {

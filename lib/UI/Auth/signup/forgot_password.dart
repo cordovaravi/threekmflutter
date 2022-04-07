@@ -50,9 +50,9 @@ class _ForgotPasswordState extends State<ForgotPassword> {
     super.initState();
     //initTimer();
     if (widget.number != null) {
-      setState(() {
-        phoneController.text = widget.number.toString();
-      });
+      // setState(() {
+      //   phoneController.text = widget.number.toString();
+      // });
     }
   }
 

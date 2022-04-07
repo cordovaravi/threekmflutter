@@ -8,9 +8,9 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION"/> 
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <!-- <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION"/>  -->
+    <!-- <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/> -->
     <uses-feature android:name="android.hardware.location.network" android:required="true" />
     <uses-feature android:name="android.hardware.location.gps" android:required="true"  />
 
@@ -21,7 +21,7 @@
         <activity
                 android:name="com.razorpay.CheckoutActivity"
                 android:label="Razorpay Checkout" 
-                android:exported="false">
+                >
         </activity>
         <!-- Fabcebook Auth integrational -->
         <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/facebook_app_id"/>
@@ -115,12 +115,7 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
-         <service
-            android:name="me.carda.awesome_notifications.services.ForegroundService"
-            android:enabled="true"
-            android:exported="false"
-            android:foregroundServiceType="microphone|mediaPlayback"
-            android:stopWithTask="true" />
+         
         <!--google maps api-->
         <meta-data android:name="com.google.android.geo.API_KEY"
         android:value="AIzaSyCK9Q9Rt0k-q6HxqRNR5FtpssJZTXtmqsg"/>

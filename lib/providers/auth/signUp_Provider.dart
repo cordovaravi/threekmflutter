@@ -28,12 +28,16 @@ class SignUpProvider extends ChangeNotifier {
       if (response['status'] == 'success') {
         if (response['data']['result']['exist'] == false) {
           print("new user");
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => SignUpConfirmOTP(
-                        phoneNumber: phoneNumber,
-                      )));
+          _isLoading = false;
+          notifyListeners();
+          if (isNavigate!) {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => SignUpConfirmOTP(
+                          phoneNumber: phoneNumber,
+                        )));
+          }
         } else {
           print("returning user");
           final response = await sendOTP(requestJson);

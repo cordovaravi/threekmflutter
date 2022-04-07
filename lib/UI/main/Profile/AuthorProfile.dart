@@ -20,6 +20,7 @@ import 'package:threekm/UI/main/News/Widgets/likes_Loading.dart';
 import 'package:threekm/commenwidgets/CustomSnakBar.dart';
 import 'package:threekm/commenwidgets/commenwidget.dart';
 import 'package:threekm/providers/Global/logged_in_or_not.dart';
+import 'package:threekm/providers/localization_Provider/appLanguage_provider.dart';
 import 'package:threekm/providers/main/AthorProfile_Provider.dart';
 import 'package:threekm/providers/main/LikeList_Provider.dart';
 import 'package:threekm/providers/main/comment_Provider.dart';
@@ -58,9 +59,14 @@ class _AuthorProfileState extends State<AuthorProfile>
   void initState() {
     _tabController = TabController(length: 1, vsync: this);
     Future.delayed(Duration.zero, () {
-      context
-          .read<AutthorProfileProvider>()
-          .getAuthorProfile(authorId: widget.id, authorType: widget.authorType);
+      context.read<AutthorProfileProvider>().getAuthorProfile(
+          authorId: widget.id,
+          authorType: widget.authorType,
+          language: context.read<AppLanguage>().appLocal == Locale("en")
+              ? "en"
+              : context.read<AppLanguage>().appLocal == Locale("mr")
+                  ? "mr"
+                  : "hi");
     });
     super.initState();
   }

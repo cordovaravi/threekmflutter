@@ -12,12 +12,12 @@ import 'package:provider/src/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:threekm/UI/businesses/businesses_detail.dart';
 import 'package:threekm/UI/main/News/PostView.dart';
+import 'package:threekm/UI/main/News/poll_page.dart';
 import 'package:threekm/UI/main/navigation.dart';
 import 'package:threekm/UI/Auth/signup/sign_up.dart';
 import 'package:threekm/UI/shop/product/product_details.dart';
 import 'package:threekm/main.dart';
 import 'package:threekm/providers/FCM/fcm_sendToken_Provider.dart';
-import 'package:threekm/providers/Global/logged_in_or_not.dart';
 import 'package:uni_links/uni_links.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
@@ -92,14 +92,6 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   void handleFcm() {
-    FirebaseMessaging.instance
-        .getInitialMessage()
-        .then((RemoteMessage? message) {
-      if (message != null) {
-        log("message from firebase is $message");
-      }
-    });
-
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       RemoteNotification? notification = message.notification;
       AndroidNotification? android = message.notification?.android;
@@ -110,11 +102,16 @@ class _SplashScreenState extends State<SplashScreen> {
             notification.body,
             NotificationDetails(
               android: AndroidNotificationDetails(
-                channel.id,
-                channel.name,
-                icon: 'launch_background',
+                '3kmcustom_notification_push_app_1', // id
+                'noti_push_app',
+                importance: Importance.high,
+                icon: 'icon_light',
+                largeIcon: DrawableResourceAndroidBitmap('icon_light'),
+                sound: RawResourceAndroidNotificationSound('alert_tone'),
+                playSound: true,
               ),
-            ));
+            ),
+            payload: message.data["post_id"]);
       }
     });
 
@@ -167,6 +164,16 @@ class _SplashScreenState extends State<SplashScreen> {
                 MaterialPageRoute(builder: (_) => TabBarNavigation()),
                 (route) => false));
           });
+        } else if (initialLink.contains("poll")) {
+          Navigator.push(context, MaterialPageRoute(builder: (_) {
+            log("${int.parse(initialLink.split('/').last)}");
+            return PollPage(
+              PollId: "${int.parse(initialLink.split('/').last)}",
+            );
+          })).then((value) => Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (_) => TabBarNavigation()),
+              (route) => false));
         } else {
           Navigator.push(context,
               MaterialPageRoute(builder: (BuildContext context) {

@@ -871,8 +871,9 @@ class _NewsCardState extends State<NewsCard> {
                     ),
                     Padding(
                       padding: const EdgeInsets.all(16.0),
-                      child: HtmlWidget(
-                          newsData.posts![widget.index].story.toString()),
+                      child: HtmlWidget(newsData
+                          .posts![widget.index].submittedStory
+                          .toString()),
                     ),
 
                     SizedBox(

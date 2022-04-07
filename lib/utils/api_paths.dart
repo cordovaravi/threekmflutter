@@ -110,3 +110,9 @@ const String Get_Notification = "notification/list";
 
 // Send fcm
 const String attchToekn = "user/attachtokenwithoutuser";
+
+//single page navigation
+const String activePollApi = "quiz/getactivepoll";
+
+///feed url
+const String feedApi = "newspost/allposts";
