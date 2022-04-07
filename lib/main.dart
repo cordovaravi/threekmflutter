@@ -26,6 +26,7 @@ import 'package:threekm/providers/auth/social_auth/google_provider.dart';
 import 'package:threekm/providers/businesses/businesses_home_provider.dart';
 import 'package:threekm/providers/main/AthorProfile_Provider.dart';
 import 'package:threekm/providers/main/LikeList_Provider.dart';
+import 'package:threekm/providers/main/NewsFeed_Provider.dart';
 import 'package:threekm/providers/main/Quiz_Provider.dart';
 import 'package:threekm/providers/main/comment_Provider.dart';
 import 'package:threekm/providers/main/home1_provider.dart';
@@ -259,6 +260,9 @@ class MyApp extends StatelessWidget {
               create: (context) => NotificationProvider()),
           ChangeNotifierProvider<FCMProvider>(
               create: (context) => FCMProvider()),
+
+          ChangeNotifierProvider<NewsFeedProvider>(
+              create: (context) => NewsFeedProvider())
         ],
         child: Consumer<AppLanguage>(
           builder: (context, controller, child) {

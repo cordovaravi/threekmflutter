@@ -6,7 +6,7 @@ description: A NewsApp With Ecommerce.
 publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 5.0.0+30005
+version: 5.0.1+30006
 
 environment:
   sdk: ">=2.12.0 <3.0.0"
@@ -53,6 +53,7 @@ dependencies:
   flutter_zoom_drawer: ^2.1.2
   hidden_drawer_menu: ^3.0.1
   light_compressor: ^1.2.2
+  sliding_up_panel: ^2.0.0+1
   #firebase
   firebase_core:
   firebase_auth:
