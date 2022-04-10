@@ -124,7 +124,8 @@ class CheckoutProvider extends ChangeNotifier {
           openCheckout(
               amount: shippingAmount,
               orderID: _OrderRes.result?.orderId,
-              rzorderID: _OrderRes.result?.rzorderId);
+              rzorderID: _OrderRes.result?.rzorderId,
+              phoneNo: phone ?? dropLocation?.phoneNo);
           _state = 'loaded';
           notifyListeners();
         } else {
@@ -143,7 +144,7 @@ class CheckoutProvider extends ChangeNotifier {
 
   /// razorpay_flutter handler
 
-  void openCheckout({amount, orderID, rzorderID}) async {
+  void openCheckout({amount, orderID, rzorderID, phoneNo}) async {
     SharedPreferences _pref = await SharedPreferences.getInstance();
     var phone = await _pref.getString('userphone');
     var email = await _pref.getString('email');
@@ -160,7 +161,7 @@ class CheckoutProvider extends ChangeNotifier {
       'description': 'Order Pay description',
       'retry': {'enabled': true, 'max_count': 1},
       'send_sms_hash': true,
-      'prefill': {'contact': phone ?? "", 'email': email ?? ""},
+      'prefill': {'contact': phone ?? phoneNo ?? "", 'email': email ?? ""},
       'external': {
         'wallets': ['paytm']
       }
