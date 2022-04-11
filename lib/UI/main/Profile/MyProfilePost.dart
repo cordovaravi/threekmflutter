@@ -100,13 +100,17 @@ class _MyProfilePostState extends State<MyProfilePost>
               mainAxisSize: MainAxisSize.max,
               children: [
                 buildBackButton(context),
-                buildContent(context, selfProfile.selfProfile!)
+                selfProfile.selfProfile != null
+                    ? buildContent(context, selfProfile.selfProfile)
+                    : Center(
+                        child: Text("Some error while getting dada"),
+                      )
               ],
             ),
     );
   }
 
-  Widget buildContent(context, SelfProfileModel selfProfileModel) {
+  Widget buildContent(context, SelfProfileModel? selfProfileModel) {
     return Expanded(
       child: Container(
         clipBehavior: Clip.antiAlias,
@@ -127,7 +131,7 @@ class _MyProfilePostState extends State<MyProfilePost>
                 SliverAppBar(
                   collapsedHeight: 0,
                   expandedHeight: addingAbout == true &&
-                          selfProfileModel.data!.result!.author!.about == null
+                          selfProfileModel!.data!.result!.author!.about == null
                       ? 350
                       : 270,
                   // widget.isFromSelfProfileNavigate != true
@@ -159,7 +163,8 @@ class _MyProfilePostState extends State<MyProfilePost>
                         ),
                         Container(
                           //width: 298,
-                          child: selfProfileModel.data!.result!.author!.about !=
+                          child: selfProfileModel!
+                                      .data!.result!.author!.about !=
                                   null
                               ? Consumer<AutthorProfileProvider>(
                                   builder: (context, controller, _) {

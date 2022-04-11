@@ -737,7 +737,7 @@ class _NewsCardState extends State<NewsCard> {
                               ' Views'))
                 ]),
                 Text(
-                  newsData.posts![widget.index].submittedHeadline.toString(),
+                  newsData.posts![widget.index].headline.toString(),
                   style: ThreeKmTextConstants.tk14PXLatoBlackMedium,
                   textAlign: TextAlign.center,
                 ),

@@ -114,6 +114,7 @@ class _NewsListPageState extends State<NewsListPage> {
         initJson = json.encode({
           "lat": 21.1458004,
           "lng": 79.0881546,
+          "category": 2,
           "tags": ["entertainment"]
         });
       } else if (widget.title.contains("Health")) {

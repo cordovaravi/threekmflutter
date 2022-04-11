@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:threekm/Models/ProfilePostModel.dart';
 import 'package:threekm/Models/SelfProfile_Model.dart';
 import 'package:threekm/commenwidgets/CustomSnakBar.dart';
@@ -18,12 +19,26 @@ class AutthorProfileProvider extends ChangeNotifier {
   bool _isGettingSelfProfile = false;
   bool get isGettingSelfProfile => _isGettingSelfProfile;
   Future<Null> getSelfProfile() async {
-    _isGettingSelfProfile = true;
-    notifyListeners();
-    final response = await _apiProvider.get(Self_Profile);
-    if (response != null && response["status"] == "success") {
-      print("self profile \n\n$response");
-      _selfProfile = SelfProfileModel.fromJson(response);
+    try {
+      _isGettingSelfProfile = true;
+      notifyListeners();
+      final response = await _apiProvider.get(Self_Profile);
+      if (response != null) {
+        _isGettingSelfProfile = false;
+        notifyListeners();
+        if (response["status"] == "success") {
+          print("self profile \n$response");
+          _selfProfile = SelfProfileModel.fromJson(response);
+          print("this is selfmodel $_selfProfile");
+        } else {
+          Fluttertoast.showToast(
+              msg: "error while getteing profile",
+              backgroundColor: Colors.redAccent);
+        }
+        //notifyListeners();
+      }
+    } on Exception catch (e) {
+      log("${e.toString()}");
       _isGettingSelfProfile = false;
       notifyListeners();
     }
