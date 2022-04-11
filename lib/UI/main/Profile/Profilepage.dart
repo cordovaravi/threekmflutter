@@ -11,6 +11,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/src/provider.dart';
@@ -526,6 +527,25 @@ class _ProfilePageState extends State<ProfilePage> {
     });
   }
 
+  formatDate(dateUtc, option) {
+    var dateFormat =
+        DateFormat("hh:mm aa dd MM yyyy"); // you can change the format here
+    // DateFormat("dd-MM-yyyy hh:mm aa"); // you can change the format here
+    var utcDate =
+        dateFormat.format(DateTime.parse(dateUtc)); // pass the UTC time here
+    var localDate = dateFormat.parse(utcDate, true).toLocal().toString();
+    String createdDate = dateFormat.format(DateTime.parse(localDate));
+    print('${createdDate.split(" ")[2]}');
+    print('${createdDate.split(" ")[3]}');
+    print('${createdDate.split(" ")[4]}');
+    print(
+        "${createdDate}=====================================================");
+    if (option == "d") return createdDate.split(" ")[2];
+    if (option == "m") return createdDate.split(" ")[3];
+    if (option == "y") return createdDate.split(" ")[4];
+    //return createdDate;
+  }
+
   Widget buildDateOfBirthFields(
       {required String text, BorderRadiusGeometry? radius}) {
     return Container(
@@ -558,11 +578,12 @@ class _ProfilePageState extends State<ProfilePage> {
         }
       }
 
+      print(formatDate(controller.dateOfBirth.toString(), "d"));
       return Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           buildDateOfBirthFields(
-            text: controller.dateOfBirth?.day.toString() ??
+            text: formatDate(controller.dateOfBirth.toString(), "d") ??
                 widgetdateOfBirth?.day.toString() ??
                 "",
             radius: BorderRadius.only(
@@ -572,12 +593,12 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
           space(width: 10),
           buildDateOfBirthFields(
-              text: controller.dateOfBirth?.month.toString() ??
+              text: formatDate(controller.dateOfBirth.toString(), "m") ??
                   widgetdateOfBirth?.month.toString() ??
                   ""),
           space(width: 10),
           buildDateOfBirthFields(
-            text: controller.dateOfBirth?.year.toString() ??
+            text: formatDate(controller.dateOfBirth.toString(), "y") ??
                 widgetdateOfBirth?.year.toString() ??
                 "",
             radius: BorderRadius.only(
