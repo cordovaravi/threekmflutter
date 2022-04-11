@@ -23,7 +23,7 @@ extension ContextController on BuildContext {
 
 extension StringExtension on String {
   String capitalize() {
-    var data = "${this[0].toUpperCase()}${this.substring(1).toLowerCase()}";
+    var data = "${this[0].toUpperCase()}${this.substring(1)}";
     return data;
   }
 }

@@ -222,7 +222,7 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
                     pageNumber = 1;
                     context
                         .read<SearchBarProvider>()
-                        .getNewsSearch(query: value);
+                        .getNewsSearch(query: value, context: context);
                     context.read<SearchBarProvider>().getShopSearch(
                         query: value, pageNumber: 1, isNewCall: true);
                     context

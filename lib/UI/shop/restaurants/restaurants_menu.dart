@@ -258,7 +258,7 @@ class _RestaurantMenuState extends State<RestaurantMenu> {
               Container(
                 padding: const EdgeInsets.only(
                     top: 20, bottom: 20, left: 15, right: 15),
-                //width: ThreeKmScreenUtil.screenWidthDp / 1.2,
+                width: MediaQuery.of(context).size.width / 1.2,
                 child: TextFormField(
                   keyboardType: TextInputType.text,
                   // controller: _firstName,
