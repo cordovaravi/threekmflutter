@@ -823,14 +823,14 @@ class _NewsCardState extends State<NewsCard> {
                           : newsData
                               .posts![widget.index].videos!.first.thumbnail
                               .toString();
-                      // handleShare(
-                      //     newsData.author!.name.toString(),
-                      //     newsData.author!.image.toString(),
-                      //     newsData.posts![widget.index].submittedHeadline
-                      //         .toString(),
-                      //     imgUrl,
-                      //     newsData.posts![widget.index].createdDate.toString(),
-                      //     newsData.posts![widget.index].postId.toString());
+                      handleShare(
+                          newsData.author!.name.toString(),
+                          newsData.author!.image.toString(),
+                          newsData.posts![widget.index].submittedHeadline
+                              .toString(),
+                          imgUrl,
+                          newsData.posts![widget.index].createdDate.toString(),
+                          newsData.posts![widget.index].postId.toString());
                     },
                     icon: Center(
                       child: Image.asset('assets/icons-share.png',

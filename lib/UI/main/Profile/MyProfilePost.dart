@@ -103,7 +103,7 @@ class _MyProfilePostState extends State<MyProfilePost>
                 selfProfile.selfProfile != null
                     ? buildContent(context, selfProfile.selfProfile)
                     : Center(
-                        child: Text("Some error while getting dada"),
+                        child: Text("Some error while getting data"),
                       )
               ],
             ),
@@ -749,16 +749,16 @@ class _NewsCardState extends State<NewsCard> {
                                       Stack(
                                     alignment: AlignmentDirectional.center,
                                     children: [
-                                      newsData.author!.isVerified == true
-                                          ? Positioned(
-                                              left: 0,
-                                              child: Image.asset(
-                                                'assets/verified.png',
-                                                height: 15,
-                                                width: 15,
-                                                fit: BoxFit.cover,
-                                              ))
-                                          : SizedBox.shrink(),
+                                      // newsData.author!.isVerified == true
+                                      //     ? Positioned(
+                                      //         left: -10,
+                                      //         child: Image.asset(
+                                      //           'assets/verified.png',
+                                      //           height: 15,
+                                      //           width: 15,
+                                      //           fit: BoxFit.cover,
+                                      //         ))
+                                      //     : SizedBox.shrink(),
                                       newsData.posts![widget.index].status ==
                                               "rejected"
                                           ? Container(
