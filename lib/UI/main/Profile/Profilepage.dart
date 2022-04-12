@@ -528,22 +528,26 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   formatDate(dateUtc, option) {
-    var dateFormat =
-        DateFormat("hh:mm aa dd MM yyyy"); // you can change the format here
-    // DateFormat("dd-MM-yyyy hh:mm aa"); // you can change the format here
-    var utcDate =
-        dateFormat.format(DateTime.parse(dateUtc)); // pass the UTC time here
-    var localDate = dateFormat.parse(utcDate, true).toLocal().toString();
-    String createdDate = dateFormat.format(DateTime.parse(localDate));
-    print('${createdDate.split(" ")[2]}');
-    print('${createdDate.split(" ")[3]}');
-    print('${createdDate.split(" ")[4]}');
-    print(
-        "${createdDate}=====================================================");
-    if (option == "d") return createdDate.split(" ")[2];
-    if (option == "m") return createdDate.split(" ")[3];
-    if (option == "y") return createdDate.split(" ")[4];
-    //return createdDate;
+    if (dateUtc != "null") {
+      var dateFormat =
+          DateFormat("hh:mm aa dd MM yyyy"); // you can change the format here
+      // DateFormat("dd-MM-yyyy hh:mm aa"); // you can change the format here
+      var utcDate =
+          dateFormat.format(DateTime.parse(dateUtc)); // pass the UTC time here
+      var localDate = dateFormat.parse(utcDate, true).toLocal().toString();
+      String createdDate = dateFormat.format(DateTime.parse(localDate));
+      print('${createdDate.split(" ")[2]}');
+      print('${createdDate.split(" ")[3]}');
+      print('${createdDate.split(" ")[4]}');
+      print(
+          "${createdDate}=====================================================");
+      if (option == "d") return createdDate.split(" ")[2];
+      if (option == "m") return createdDate.split(" ")[3];
+      if (option == "y") return createdDate.split(" ")[4];
+      //return createdDate;
+    } else {
+      return null;
+    }
   }
 
   Widget buildDateOfBirthFields(
