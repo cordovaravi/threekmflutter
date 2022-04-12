@@ -8,6 +8,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
@@ -152,7 +153,7 @@ class _NewsTabState extends State<NewsTab>
   }
 
   void checkUpdate() {
-    if (Platform.isAndroid) {
+    if (Platform.isAndroid && kReleaseMode) {
       Future.delayed(Duration(seconds: 2), () {
         InAppUpdate.checkForUpdate().then((info) async {
           if (info.updateAvailability == UpdateAvailability.updateAvailable) {
@@ -211,9 +212,9 @@ class _NewsTabState extends State<NewsTab>
     final newsFirstProvider = context.watch<HomefirstProvider>();
     final newsSecondProvider = context.watch<HomeSecondProvider>();
     final profileProvider = context.watch<ProfileInfoProvider>();
-    final newsFeedProvider = context.watch<NewsFeedProvider>();
+    //final newsFeedProvider = context.watch<NewsFeedProvider>();
     return SlidingUpPanel(
-      minHeight: 50,
+      minHeight: 00,
       maxHeight: MediaQuery.of(context).size.height,
       parallaxEnabled: true,
       controller: _slidingUpPanelcontroller,
@@ -237,142 +238,143 @@ class _NewsTabState extends State<NewsTab>
       //     ],
       //   ),
       // ),
-      collapsed: Container(
-        decoration: BoxDecoration(
-          color: Colors.blueGrey,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(24.0),
-            topRight: Radius.circular(24.0),
-          ),
-        ),
-        child: Center(child: Text("Slide up For more News")),
-      ),
+      // collapsed: Container(
+      //   decoration: BoxDecoration(
+      //     color: Colors.blueGrey,
+      //     borderRadius: BorderRadius.only(
+      //       topLeft: Radius.circular(24.0),
+      //       topRight: Radius.circular(24.0),
+      //     ),
+      //   ),
+      //   child: Center(child: Text("Slide up For more News")),
+      //),
       panel: Container(
-          child: newsFeedProvider
-                          .newsFeedBottomModel?.data?.result?.posts?.length !=
-                      0 &&
-                  newsFeedProvider.newsFeedBottomModel?.data?.result?.posts !=
-                      null
-              ? Scaffold(
-                  appBar: PreferredSize(
-                    preferredSize: Size.fromHeight(20.0),
-                    child: AppBar(
-                      automaticallyImplyLeading: false,
-                      primary: false,
-                      backgroundColor: Colors.white,
-                      title: Text(
-                        "Explore more here",
-                        style: ThreeKmTextConstants.tk14PXLatoBlackBold,
-                      ),
-                      // actions: [
-                      //   IconButton(
-                      //       onPressed: () {
-                      //         _slidingUpPanelcontroller.close();
-                      //         log("closing panel");
-                      //       },
-                      //       icon: Icon(
-                      //         Icons.highlight_remove_outlined,
-                      //         color: Colors.grey,
-                      //       ))
-                      //],
-                    ),
-                  ),
-                  body: ListView.builder(
-                    cacheExtent: 999,
-                    primary: true,
-                    physics: ScrollPhysics(),
-                    shrinkWrap: true,
-                    itemCount: newsFeedProvider
-                        .newsFeedBottomModel!.data!.result!.posts!.length,
-                    itemBuilder: (context, index) {
-                      final post = newsFeedProvider
-                          .newsFeedBottomModel!.data!.result!.posts![index];
+          // child: newsFeedProvider
+          //                 .newsFeedBottomModel?.data?.result?.posts?.length !=
+          //             0 &&
+          //         newsFeedProvider.newsFeedBottomModel?.data?.result?.posts !=
+          //             null
+          //     ? Scaffold(
+          //         appBar: PreferredSize(
+          //           preferredSize: Size.fromHeight(20.0),
+          //           child: AppBar(
+          //             automaticallyImplyLeading: false,
+          //             primary: false,
+          //             backgroundColor: Colors.white,
+          //             title: Text(
+          //               "Explore more here",
+          //               style: ThreeKmTextConstants.tk14PXLatoBlackBold,
+          //             ),
+          //             // actions: [
+          //             //   IconButton(
+          //             //       onPressed: () {
+          //             //         _slidingUpPanelcontroller.close();
+          //             //         log("closing panel");
+          //             //       },
+          //             //       icon: Icon(
+          //             //         Icons.highlight_remove_outlined,
+          //             //         color: Colors.grey,
+          //             //       ))
+          //             //],
+          //           ),
+          //         ),
+          //         body: ListView.builder(
+          //           cacheExtent: 999,
+          //           primary: true,
+          //           physics: ScrollPhysics(),
+          //           shrinkWrap: true,
+          //           itemCount: newsFeedProvider
+          //               .newsFeedBottomModel!.data!.result!.posts!.length,
+          //           itemBuilder: (context, index) {
+          //             final post = newsFeedProvider
+          //                 .newsFeedBottomModel!.data!.result!.posts![index];
 
-                      return Container(
-                        //color: Colors.amber,
-                        height: 370,
-                        width: MediaQuery.of(context).size.width,
-                        margin: EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            boxShadow: [
-                              BoxShadow(color: Colors.black26, blurRadius: 8.0)
-                            ],
-                            borderRadius: BorderRadius.only(
-                                bottomRight: Radius.circular(10),
-                                bottomLeft: Radius.circular(10))),
-                        child: Column(children: [
-                          Container(
-                              height: 250,
-                              width: MediaQuery.of(context).size.width,
-                              decoration: BoxDecoration(
-                                  // color: Colors.black,
-                                  borderRadius: BorderRadius.only(
-                                      bottomRight: Radius.circular(10),
-                                      bottomLeft: Radius.circular(10))),
-                              child: post.images != null &&
-                                      post.images?.length != 0
-                                  ? CachedNetworkImage(
-                                      imageUrl: post.images!.first,
-                                      fit: BoxFit.fill)
-                                  : CachedNetworkImage(
-                                      imageUrl: post.videos!.first.thumbnail
-                                          .toString(),
-                                      fit: BoxFit.fill)),
-                          Row(children: [
-                            Padding(
-                                padding:
-                                    EdgeInsets.only(top: 5, left: 5, bottom: 2),
-                                child: InkWell(
-                                  onTap: () {},
-                                  child: post.likes != 0
-                                      ? Row(
-                                          children: [
-                                            Text('👍❤️'),
-                                            Container(
-                                              child: Center(
-                                                  child: Text('+' +
-                                                      post.likes.toString())),
-                                            )
-                                          ],
-                                        )
-                                      : SizedBox.shrink(),
-                                )),
-                            Spacer(),
-                            Padding(
-                                padding: EdgeInsets.only(
-                                    top: 5, right: 5, bottom: 2),
-                                child: Text(post.views.toString() + ' Views'))
-                          ]),
-                          Spacer(),
-                          Text(
-                            post.headline.toString(),
-                            maxLines: 2,
-                            style: ThreeKmTextConstants.tk14PXLatoBlackMedium,
-                            textAlign: TextAlign.center,
-                          ),
-                          TextButton(
-                              onPressed: () {
-                                Navigator.push(
-                                    context,
-                                    AnimatedSizeRoute(
-                                        page: Postview(
-                                            postId: post.postId.toString())));
-                              },
-                              child: Text(
-                                "Read More",
-                                style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.blue),
-                              )),
-                          Spacer()
-                        ]),
-                      );
-                    },
-                  ),
-                )
-              : SizedBox.shrink()),
+          //             return Container(
+          //               //color: Colors.amber,
+          //               height: 370,
+          //               width: MediaQuery.of(context).size.width,
+          //               margin: EdgeInsets.all(8),
+          //               decoration: BoxDecoration(
+          //                   color: Colors.white,
+          //                   boxShadow: [
+          //                     BoxShadow(color: Colors.black26, blurRadius: 8.0)
+          //                   ],
+          //                   borderRadius: BorderRadius.only(
+          //                       bottomRight: Radius.circular(10),
+          //                       bottomLeft: Radius.circular(10))),
+          //               child: Column(children: [
+          //                 Container(
+          //                     height: 250,
+          //                     width: MediaQuery.of(context).size.width,
+          //                     decoration: BoxDecoration(
+          //                         // color: Colors.black,
+          //                         borderRadius: BorderRadius.only(
+          //                             bottomRight: Radius.circular(10),
+          //                             bottomLeft: Radius.circular(10))),
+          //                     child: post.images != null &&
+          //                             post.images?.length != 0
+          //                         ? CachedNetworkImage(
+          //                             imageUrl: post.images!.first,
+          //                             fit: BoxFit.fill)
+          //                         : CachedNetworkImage(
+          //                             imageUrl: post.videos!.first.thumbnail
+          //                                 .toString(),
+          //                             fit: BoxFit.fill)),
+          //                 Row(children: [
+          //                   Padding(
+          //                       padding:
+          //                           EdgeInsets.only(top: 5, left: 5, bottom: 2),
+          //                       child: InkWell(
+          //                         onTap: () {},
+          //                         child: post.likes != 0
+          //                             ? Row(
+          //                                 children: [
+          //                                   Text('👍❤️'),
+          //                                   Container(
+          //                                     child: Center(
+          //                                         child: Text('+' +
+          //                                             post.likes.toString())),
+          //                                   )
+          //                                 ],
+          //                               )
+          //                             : SizedBox.shrink(),
+          //                       )),
+          //                   Spacer(),
+          //                   Padding(
+          //                       padding: EdgeInsets.only(
+          //                           top: 5, right: 5, bottom: 2),
+          //                       child: Text(post.views.toString() + ' Views'))
+          //                 ]),
+          //                 Spacer(),
+          //                 Text(
+          //                   post.headline.toString(),
+          //                   maxLines: 2,
+          //                   style: ThreeKmTextConstants.tk14PXLatoBlackMedium,
+          //                   textAlign: TextAlign.center,
+          //                 ),
+          //                 TextButton(
+          //                     onPressed: () {
+          //                       Navigator.push(
+          //                           context,
+          //                           AnimatedSizeRoute(
+          //                               page: Postview(
+          //                                   postId: post.postId.toString())));
+          //                     },
+          //                     child: Text(
+          //                       "Read More",
+          //                       style: TextStyle(
+          //                           fontSize: 14,
+          //                           fontWeight: FontWeight.bold,
+          //                           color: Colors.blue),
+          //                     )),
+          //                 Spacer()
+          //               ]),
+          //             );
+          //           },
+          //         ),
+          //       )
+          //     : SizedBox.shrink()
+          ),
       body: RefreshIndicator(
         onRefresh: () {
           return context

@@ -8,6 +8,7 @@ import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:threekm/Custom_library/flutter_reaction_button.dart';
 import 'package:threekm/UI/main/News/NewsList.dart';
 import 'package:threekm/UI/main/News/Widgets/singlePost_Loading.dart';
@@ -44,7 +45,8 @@ class _PostviewState extends State<Postview> {
 
   @override
   void initState() {
-    Future.delayed(Duration.zero, () {
+    Future.delayed(Duration.zero, () async {
+      SharedPreferences _prefs = await SharedPreferences.getInstance();
       context.read<SinglePostProvider>().getPostDetails(
           widget.postId,
           mounted,
@@ -52,7 +54,9 @@ class _PostviewState extends State<Postview> {
               ? "en"
               : context.read<AppLanguage>().appLocal == Locale("mr")
                   ? "mr"
-                  : "hi");
+                  : context.read<AppLanguage>().appLocal == Locale("hi")
+                      ? "hi"
+                      : _prefs.getString("language_code") ?? "en");
     });
     super.initState();
   }
