@@ -52,8 +52,8 @@ class _NewsListPageState extends State<NewsListPage> {
     if (widget.hasPostfromBanner == null) {
       if (widget.title == "Lifestyle/Travel") {
         initJson = json.encode({
-          "lat": '',
-          "lng": '',
+          "lat": 21.1458004,
+          "lng": 79.0881546,
           "tags": [
             "Fashion",
             "Jewelry",
@@ -121,6 +121,7 @@ class _NewsListPageState extends State<NewsListPage> {
         initJson = json.encode({
           "lat": 21.1458004,
           "lng": 79.0881546,
+          "category": 5,
           "tags": [
             "yoga",
             "hiit",
@@ -137,6 +138,20 @@ class _NewsListPageState extends State<NewsListPage> {
           "lng": 79.0881546,
           "tags": ["humanstory", "featurestory", "people", "peopleofpune"],
           "category": 6
+        });
+      } else if (widget.title == "Food") {
+        initJson = json.encode({
+          "lat": 21.1458004,
+          "lng": 79.0881546,
+          "tags": [
+            "Recipe",
+            "Homebaking",
+            "Baking",
+            "Food",
+            "Foodblogger",
+            "Punefoodie"
+          ],
+          "category": 3
         });
       } else {
         initJson =
@@ -766,7 +781,7 @@ class _NewsPostCardState extends State<NewsPostCard>
                                           child: newsData.likes != 0
                                               ? Row(
                                                   children: [
-                                                    Text('👍❤️😩'),
+                                                    Text('👍 ❤️ '),
                                                     Container(
                                                       child: Center(
                                                           child: Text('+' +
@@ -1366,7 +1381,7 @@ class _NewsPostCardState extends State<NewsPostCard>
                                                 newsData.likes);
                                           },
                                           child: newsData.likes != 0
-                                              ? Text("👍❤️😩 " +
+                                              ? Text("👍 ❤️ " +
                                                   newsData.likes.toString() +
                                                   ' Likes')
                                               : SizedBox.shrink(),

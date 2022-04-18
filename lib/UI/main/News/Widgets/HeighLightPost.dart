@@ -127,7 +127,7 @@ class _HeighlightPostState extends State<HeighlightPost> {
                         },
                         child: Row(
                           children: [
-                            Text('👍❤️😩'),
+                            Text('👍 ❤️ '),
                             Container(
                               child: Center(
                                   child: Text(

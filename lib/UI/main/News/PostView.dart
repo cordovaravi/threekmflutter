@@ -421,7 +421,7 @@ class _PostviewState extends State<Postview> {
                                           child: Padding(
                                               padding: EdgeInsets.only(
                                                   top: 2, left: 5, bottom: 2),
-                                              child: Text('👍❤️😩 ' +
+                                              child: Text('👍 ❤️ ' +
                                                   newsData.likes.toString() +
                                                   ' Likes')),
                                         ),

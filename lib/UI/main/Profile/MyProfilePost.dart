@@ -841,7 +841,7 @@ class _NewsCardState extends State<NewsCard> {
                                 },
                                 child: Row(
                                   children: [
-                                    Text('👍❤️😩'),
+                                    Text('👍 ❤️ '),
                                     Container(
                                       height: 30,
                                       width: 30,
