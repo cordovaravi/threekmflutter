@@ -214,7 +214,7 @@ class _RestaurantsHomeState extends State<RestaurantsHome>
                             },
                             child: Container(
                               height: 32,
-                              width: 250,
+                              width: MediaQuery.of(context).size.width * 0.7,
                               decoration: BoxDecoration(
                                   //color: Colors.white,
                                   borderRadius: BorderRadius.circular(21),
