@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/cupertino.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:threekm/Models/shopModel/cuisinesListModel.dart';
 import 'package:threekm/Models/shopModel/cuisines_restaurants_list_model.dart';
 import 'package:threekm/Models/shopModel/restaurants_menu_model.dart';
@@ -47,23 +49,34 @@ class RestaurantMenuProvider extends ChangeNotifier {
   }
 
   Future<void> cuisinesList(mounted) async {
-    if (mounted) {
-      showLoading();
-      _state = 'loading';
-      try {
-        final response =
-            await _apiProvider.post(cuisinesListAPI, jsonEncode({}));
+    SharedPreferences _prefs = await SharedPreferences.getInstance();
+    if (await _apiProvider.getConnectivityStatus()) {
+      if (mounted) {
+        // showLoading();
+        _state = 'loading';
+        try {
+          final response =
+              await _apiProvider.post(cuisinesListAPI, jsonEncode({}));
 
-        if (response != null) {
-          hideLoading();
-          // print(response);
-          _cuisinesListdata = CuisinesListModel.fromJson(response);
-          _state = 'loaded';
+          if (response != null) {
+            //  hideLoading();
+            // print(response);
+            _cuisinesListdata = CuisinesListModel.fromJson(response);
+            _state = 'loaded';
+            notifyListeners();
+          }
+        } catch (e) {
+          // hideLoading();
+          _state = 'error';
           notifyListeners();
         }
-      } catch (e) {
-        hideLoading();
-        _state = 'error';
+      }
+    } else {
+      Fluttertoast.showToast(msg: "No InterNet connection");
+      String? rawModel = _prefs.getString("cuisinesModel");
+      if (rawModel != null) {
+        _cuisinesListdata = CuisinesListModel.fromJson(json.decode(rawModel));
+        _state = 'loaded';
         notifyListeners();
       }
     }

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 
@@ -27,6 +28,8 @@ class _AllRestaurantListState extends State<AllRestaurantList> {
   bool isSearch = false;
   String SearchText = '';
   FocusNode _focusNode = FocusNode();
+  Timer? _debounce;
+
   @override
   void initState() {
     if (mounted) {
@@ -46,6 +49,15 @@ class _AllRestaurantListState extends State<AllRestaurantList> {
     super.initState();
   }
 
+  _onSearchChanged(String query) {
+    if (_debounce?.isActive ?? false) _debounce?.cancel();
+    _debounce = Timer(const Duration(milliseconds: 700), () {
+      context.read<ShopHomeProvider>().clearrestaurantListState(mounted);
+      context.read<ShopHomeProvider>().getRestaurants(mounted, 1, query: query);
+      setState(() {});
+    });
+  }
+
   @override
   void deactivate() {
     // TODO: implement deactivate
@@ -53,6 +65,13 @@ class _AllRestaurantListState extends State<AllRestaurantList> {
     context.read<ShopHomeProvider>().clearrestaurantListState(mounted);
     // context.read<ShopHomeProvider>().getRestaurants(mounted, 1);
     super.deactivate();
+  }
+
+  @override
+  void dispose() {
+    _debounce?.cancel();
+    // TODO: implement dispose
+    super.dispose();
   }
 
   @override
@@ -77,13 +96,7 @@ class _AllRestaurantListState extends State<AllRestaurantList> {
                           'Search Restaurant or Cusines',
                       hintStyle: TextStyle(color: Color(0xFF0F0F2D))),
                   onChanged: (value) {
-                    context
-                        .read<ShopHomeProvider>()
-                        .clearrestaurantListState(mounted);
-                    context
-                        .read<ShopHomeProvider>()
-                        .getRestaurants(mounted, 1, query: value);
-                    setState(() {});
+                    _onSearchChanged(value);
                   },
                   onEditingComplete: () {
                     FocusManager.instance.primaryFocus?.unfocus();

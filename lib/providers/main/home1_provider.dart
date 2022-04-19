@@ -13,6 +13,8 @@ class HomefirstProvider extends ChangeNotifier {
   ApiProvider _apiProvider = ApiProvider();
   NewsHomeModel? _homeModel;
   NewsHomeModel? get homeNewsFirst => _homeModel;
+  String? _state;
+  String? get state => _state;
 
   Future<Null> getNewsfirst(requestJson) async {
     SharedPreferences _prefs = await SharedPreferences.getInstance();
@@ -20,10 +22,12 @@ class HomefirstProvider extends ChangeNotifier {
       String token = await _apiProvider.getToken() ?? "";
       log("token is $token");
       try {
-        showLoading();
+        //showLoading();
+        _state = 'loading';
         final response = await _apiProvider.post(getHomePage, requestJson);
         if (response != null) {
-          hideLoading();
+          // hideLoading();
+          _state = 'loaded';
           _homeModel = NewsHomeModel.fromJson(response);
           _prefs.remove("homeModel");
           String offlineStringObj = json.encode(response);
@@ -31,13 +35,15 @@ class HomefirstProvider extends ChangeNotifier {
           notifyListeners();
         }
       } on Exception catch (e) {
-        hideLoading();
+        _state = 'error';
+        // hideLoading();
       }
     } else {
       Fluttertoast.showToast(msg: "No InterNet connection");
       String? rawModel = _prefs.getString("homeModel");
       if (rawModel != null) {
         _homeModel = NewsHomeModel.fromJson(json.decode(rawModel));
+        _state = 'loaded';
         notifyListeners();
       }
     }
