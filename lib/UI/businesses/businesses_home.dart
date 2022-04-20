@@ -125,7 +125,7 @@ class _HomeState extends State<Home> {
                       },
                       child: Container(
                         height: 32,
-                        width: MediaQuery.of(context).size.width / 1.5,
+                        width: MediaQuery.of(context).size.width * 0.7,
                         decoration: BoxDecoration(
                             //color: Colors.white,
                             borderRadius: BorderRadius.circular(21),

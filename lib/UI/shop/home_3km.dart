@@ -13,6 +13,7 @@ import 'package:threekm/UI/businesses/businesses_detail.dart';
 import 'package:threekm/UI/businesses/businesses_home.dart';
 import 'package:threekm/UI/main/navigation.dart';
 import 'package:threekm/UI/shop/cart/cart_item_list_modal.dart';
+import 'package:threekm/commenwidgets/commenwidget.dart';
 
 import 'package:threekm/localization/localize.dart';
 
@@ -84,9 +85,7 @@ class _Home3KMState extends State<Home3KM> {
         return context.read<ShopHomeProvider>().onRefresh(initJson, mounted);
       }, child: Builder(builder: (context) {
         if (shopHomeProvider.state == 'loading') {
-          return const Center(
-              // child: CircularProgressIndicator(),
-              );
+          return showLayoutLoading('shop');
         } else if (shopHomeProvider.state == "error") {
           context.read<ShopHomeProvider>().getShopHome(mounted);
           return const Center(
@@ -329,7 +328,7 @@ class _ShopHomeState extends State<ShopHome>
                         },
                         child: Container(
                           height: 32,
-                          width: 250,
+                          width: MediaQuery.of(context).size.width * 0.7,
                           decoration: BoxDecoration(
                               //color: Colors.white,
                               borderRadius: BorderRadius.circular(21),

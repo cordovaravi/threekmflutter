@@ -259,7 +259,7 @@ class _RestaurantCuisinesMenu extends State<RestaurantCuisinesMenu> {
               Container(
                 padding: const EdgeInsets.only(
                     top: 20, bottom: 20, left: 15, right: 15),
-                width: MediaQuery.of(context).size.width / 1.2,
+                width: MediaQuery.of(context).size.width,
                 child: TextFormField(
                   keyboardType: TextInputType.text,
                   // controller: _firstName,
@@ -269,18 +269,17 @@ class _RestaurantCuisinesMenu extends State<RestaurantCuisinesMenu> {
                   },
                   //maxLength: 16,
                   decoration: InputDecoration(
-                    hintText: 'Search',
-                    hintStyle: const TextStyle(color: Color(0xFF0F0F2D)),
+                    hintText: 'What would you like to have ...',
+                    hintStyle: const TextStyle(color: Colors.grey),
                     counterText: '',
                     filled: true,
-                    prefixIcon:
-                        const Icon(Icons.search, color: Color(0xFF0F0F2D)),
-                    fillColor: Colors.grey[200],
+                    prefixIcon: const Icon(Icons.search, color: Colors.grey),
+                    fillColor: Colors.grey[100],
                     //isDense: true,
                     contentPadding: const EdgeInsets.fromLTRB(10, 13, 10, 13),
 
                     border: const OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(20)),
+                        borderRadius: BorderRadius.all(Radius.circular(25)),
                         borderSide: BorderSide.none),
                   ),
                 ),
@@ -345,6 +344,19 @@ class _RestaurantCuisinesMenu extends State<RestaurantCuisinesMenu> {
                                 status:
                                     data.result!.creator.restaurant!.status))
                             .toList(),
+                        if (categoriesToShow.length == 0)
+                          Column(
+                            children: [
+                              Image(
+                                  image: AssetImage(
+                                      'assets/shopImg/search-not-found.gif')),
+                              Text(
+                                'No Food Found',
+                                style:
+                                    ThreeKmTextConstants.tk14PXLatoGreyRegular,
+                              )
+                            ],
+                          )
                       ]),
                     )
                   : Container(),

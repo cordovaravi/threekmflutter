@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +12,7 @@ import 'package:threekm/providers/Search/Search_Provider.dart';
 
 import 'package:threekm/utils/utils.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_svg/svg.dart';
 
 class SearchPage extends StatefulWidget {
   final int tabNuber;
@@ -27,7 +30,7 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
   ScrollController newsScrollController = ScrollController();
 
   int pageNumber = 1;
-
+  Timer? _debounce;
   @override
   void initState() {
     super.initState();
@@ -55,6 +58,20 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
     // });
   }
 
+  _onSearchChanged(String query) {
+    if (_debounce?.isActive ?? false) _debounce?.cancel();
+    _debounce = Timer(const Duration(milliseconds: 700), () {
+      pageNumber = 1;
+      context
+          .read<SearchBarProvider>()
+          .getNewsSearch(query: query, context: context);
+      context
+          .read<SearchBarProvider>()
+          .getShopSearch(query: query, pageNumber: 1, isNewCall: true);
+      context.read<SearchBarProvider>().getBusinessSearch(query: query);
+    });
+  }
+
   @override
   void dispose() {
     //  Get.delete<SearchController>();
@@ -63,6 +80,7 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
     shopScrollController.dispose();
     newsScrollController.dispose();
     controller.dispose();
+    _debounce?.cancel();
     super.dispose();
   }
 
@@ -218,16 +236,8 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
                 height: 48,
                 child: TextFormField(
                   controller: searchController,
-                  onFieldSubmitted: (value) {
-                    pageNumber = 1;
-                    context
-                        .read<SearchBarProvider>()
-                        .getNewsSearch(query: value, context: context);
-                    context.read<SearchBarProvider>().getShopSearch(
-                        query: value, pageNumber: 1, isNewCall: true);
-                    context
-                        .read<SearchBarProvider>()
-                        .getBusinessSearch(query: value);
+                  onChanged: (value) {
+                    _onSearchChanged(value);
                   },
                   maxLines: 1,
                   textAlignVertical: TextAlignVertical.bottom,
@@ -302,41 +312,43 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
       return controller.shopSearchData?.result?.products?.length != null
           ? controller.isShopLoading
               ? CupertinoActivityIndicator()
-              : ListView.builder(
-                  controller: shopScrollController,
-                  shrinkWrap: true,
-                  physics: BouncingScrollPhysics(),
-                  itemCount:
-                      controller.shopSearchData!.result!.products!.length,
-                  itemBuilder: (context, index) {
-                    return InkWell(
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => ProductDetails(
-                                    id: controller.shopSearchData!.result!
-                                        .products![index].catalogId!
-                                        .toInt())));
-                      },
-                      child: CategoryCardSearch(
-                          image: controller
-                              .shopSearchData!.result!.products![index].image
-                              .toString(),
-                          name: controller
-                              .shopSearchData!.result!.products![index].name
-                              .toString(),
-                          by: controller.shopSearchData!.result!
-                              .products![index].businessName
-                              .toString(),
-                          price: controller
-                              .shopSearchData!.result!.products![index].price
-                              .toString(),
-                          id: controller.shopSearchData!.result!
-                              .products![index].catalogId!
-                              .toInt()),
-                    );
-                  })
+              : controller.shopSearchData?.result?.products?.length != 0
+                  ? ListView.builder(
+                      controller: shopScrollController,
+                      shrinkWrap: true,
+                      physics: BouncingScrollPhysics(),
+                      itemCount:
+                          controller.shopSearchData!.result!.products!.length,
+                      itemBuilder: (context, index) {
+                        return InkWell(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => ProductDetails(
+                                        id: controller.shopSearchData!.result!
+                                            .products![index].catalogId!
+                                            .toInt())));
+                          },
+                          child: CategoryCardSearch(
+                              image: controller.shopSearchData!.result!
+                                  .products![index].image
+                                  .toString(),
+                              name: controller
+                                  .shopSearchData!.result!.products![index].name
+                                  .toString(),
+                              by: controller.shopSearchData!.result!
+                                  .products![index].businessName
+                                  .toString(),
+                              price: controller.shopSearchData!.result!
+                                  .products![index].price
+                                  .toString(),
+                              id: controller.shopSearchData!.result!
+                                  .products![index].catalogId!
+                                  .toInt()),
+                        );
+                      })
+                  : NotFound()
           : Container();
     });
   }
@@ -347,40 +359,47 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
               null
           ? controller.isbusinnessLoading
               ? CupertinoActivityIndicator()
-              : ListView.builder(
-                  shrinkWrap: true,
-                  physics: BouncingScrollPhysics(),
-                  itemCount: controller
-                      .BusinessSearchData!.data!.result!.creators!.length,
-                  itemBuilder: (context, index) {
-                    return InkWell(
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => BusinessDetail(
-                                    id: controller.BusinessSearchData!.data!
-                                        .result!.creators![index].creatorId)));
-                      },
-                      child: BizCategoryCardSearch(
-                          image: controller.BusinessSearchData!.data!.result!
-                              .creators![index].image
-                              .toString(),
-                          name: controller.BusinessSearchData!.data!.result!
-                              .creators![index].businessName
-                              .toString(),
-                          tags: controller.BusinessSearchData!.data!.result!
-                                      .creators![index].tags?.length !=
-                                  0
-                              ? "${controller.BusinessSearchData!.data!.result!.creators![index].tags?.first.toString()},  ${controller.BusinessSearchData!.data!.result!.creators![index].tags?.last.toString()}"
-                              : "",
-                          ownername:
-                              "${controller.BusinessSearchData!.data!.result!.creators![index].firstname} ${controller.BusinessSearchData!.data!.result!.creators![index].lastname}",
-                          id: controller.BusinessSearchData!.data!.result!
-                              .creators![index].creatorId!
-                              .toInt()),
-                    );
-                  })
+              : controller.BusinessSearchData?.data?.result?.creators?.length !=
+                      0
+                  ? ListView.builder(
+                      shrinkWrap: true,
+                      physics: BouncingScrollPhysics(),
+                      itemCount: controller
+                          .BusinessSearchData!.data!.result!.creators!.length,
+                      itemBuilder: (context, index) {
+                        return InkWell(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => BusinessDetail(
+                                        id: controller
+                                            .BusinessSearchData!
+                                            .data!
+                                            .result!
+                                            .creators![index]
+                                            .creatorId)));
+                          },
+                          child: BizCategoryCardSearch(
+                              image: controller.BusinessSearchData!.data!
+                                  .result!.creators![index].image
+                                  .toString(),
+                              name: controller.BusinessSearchData!.data!.result!
+                                  .creators![index].businessName
+                                  .toString(),
+                              tags: controller.BusinessSearchData!.data!.result!
+                                          .creators![index].tags?.length !=
+                                      0
+                                  ? "${controller.BusinessSearchData!.data!.result!.creators![index].tags?.first.toString()},  ${controller.BusinessSearchData!.data!.result!.creators![index].tags?.last.toString()}"
+                                  : "",
+                              ownername:
+                                  "${controller.BusinessSearchData!.data!.result!.creators![index].firstname} ${controller.BusinessSearchData!.data!.result!.creators![index].lastname}",
+                              id: controller.BusinessSearchData!.data!.result!
+                                  .creators![index].creatorId!
+                                  .toInt()),
+                        );
+                      })
+                  : NotFound()
           : Container();
     });
   }
@@ -390,26 +409,28 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
       return controller.newsSearchData?.data?.result?.posts != null
           ? controller.isNewsLoading
               ? CupertinoActivityIndicator()
-              : ListView.builder(
-                  physics: BouncingScrollPhysics(),
-                  shrinkWrap: true,
-                  itemCount:
-                      controller.newsSearchData!.data!.result!.posts!.length,
-                  itemBuilder: (context, index) {
-                    return InkWell(
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => Postview(
-                                    postId: controller.newsSearchData!.data!
-                                        .result!.posts![index].postId
-                                        .toString())));
-                      },
-                      child: buildNewsItems(controller
-                          .newsSearchData!.data!.result!.posts![index]),
-                    );
-                  })
+              : controller.newsSearchData?.data?.result?.posts?.length != 0
+                  ? ListView.builder(
+                      physics: BouncingScrollPhysics(),
+                      shrinkWrap: true,
+                      itemCount: controller
+                          .newsSearchData!.data!.result!.posts!.length,
+                      itemBuilder: (context, index) {
+                        return InkWell(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => Postview(
+                                        postId: controller.newsSearchData!.data!
+                                            .result!.posts![index].postId
+                                            .toString())));
+                          },
+                          child: buildNewsItems(controller
+                              .newsSearchData!.data!.result!.posts![index]),
+                        );
+                      })
+                  : NotFound()
           : Container();
     });
   }
@@ -564,20 +585,34 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
           ),
           child: Row(
             children: [
-              Container(
-                clipBehavior: Clip.antiAlias,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: posts.images!.length > 0
-                    ? CachedNetworkImage(
-                        imageUrl: posts.images!.first.toString(),
-                        fit: BoxFit.fill,
-                      ).size(height: 97, width: 146)
-                    : Container(
-                        color: Colors.grey.shade200,
-                      ).size(height: 97, width: 146),
+              Stack(
+                alignment: Alignment.center,
+                children: [
+                  Container(
+                    clipBehavior: Clip.antiAlias,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: posts.images!.length > 0
+                        ? CachedNetworkImage(
+                            imageUrl: posts.images!.first.toString(),
+                            fit: BoxFit.fill,
+                          ).size(height: 97, width: 146)
+                        : Container(
+                            color: Colors.grey.shade200,
+                          ).size(height: 97, width: 146),
+                  ),
+                  if (posts.videos!.length > 0)
+                    Center(
+                      child: Container(
+                        color: Colors.transparent,
+                        child: SvgPicture.asset(
+                          "assets/playicon.svg",
+                        ),
+                      ),
+                    )
+                ],
               ),
               // if (item.images!.length > 0) ...{
               //   Container(
@@ -702,6 +737,35 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
           ),
         ),
       ],
+    );
+  }
+}
+
+class NotFound extends StatelessWidget {
+  const NotFound({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.only(left: 30, right: 30),
+        child: Column(
+          children: [
+            Image(image: AssetImage('assets/shopImg/search-not-found.gif')),
+            Text(
+              'Oops!',
+              style: ThreeKmTextConstants.tk40PXWorkSansBoldBlack,
+            ),
+            Text(
+              'Sorry, but nothing matched your search please try some different keywords',
+              textAlign: TextAlign.center,
+              style: ThreeKmTextConstants.tk14PXLatoGreyRegular.copyWith(),
+            )
+          ],
+        ),
+      ),
     );
   }
 }
@@ -1041,7 +1105,7 @@ class CategoryCardSearch extends StatelessWidget {
                   borderRadius: BorderRadius.circular(7),
                   image: DecorationImage(
                       image: CachedNetworkImageProvider(image),
-                      fit: BoxFit.fill),
+                      fit: BoxFit.contain),
                 ),
               ),
               SizedBox(

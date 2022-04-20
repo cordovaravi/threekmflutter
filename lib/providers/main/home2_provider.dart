@@ -13,6 +13,8 @@ class HomeSecondProvider extends ChangeNotifier {
   ApiProvider _apiProvider = ApiProvider();
   NewsHomeModel? _homeModel;
   NewsHomeModel? get homeNews => _homeModel;
+  String? _state;
+  String? get state => _state;
 
   bool _isLoadingPoll = false;
   bool get isLoadingPoll => _isLoadingPoll;
@@ -25,12 +27,15 @@ class HomeSecondProvider extends ChangeNotifier {
     if (await _apiProvider.getConnectivityStatus()) {
       try {
         // _homeModel = null;
+        _state = 'loading';
         notifyListeners();
-        showLoading();
+        // showLoading();
+
         final response =
             await _apiProvider.post(getHomePage + "second", requestJson);
         if (response != null) {
-          hideLoading();
+          // hideLoading();
+          _state = 'loaded';
           _homeModel = NewsHomeModel.fromJson(response);
           _prefs.remove("homeModel2");
           String offlineStringObj = json.encode(response);
@@ -38,7 +43,8 @@ class HomeSecondProvider extends ChangeNotifier {
           notifyListeners();
         }
       } on Exception catch (e) {
-        hideLoading();
+        _state = 'error';
+        // hideLoading();
         // TODO
       }
     } else {
@@ -46,6 +52,7 @@ class HomeSecondProvider extends ChangeNotifier {
       String? rawModel = _prefs.getString("homeModel2");
       if (rawModel != null) {
         _homeModel = NewsHomeModel.fromJson(json.decode(rawModel));
+        _state = 'loaded';
         notifyListeners();
       }
     }
