@@ -83,7 +83,9 @@ void main() async {
   await appLanguage.fetchLocale();
 
   ///changelog after 1st relase
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(
+      //  options: DefaultFirebaseOptions.currentPlatform,
+      );
   final appDocumentDirectory = await getApplicationDocumentsDirectory();
 
   Hive.init(appDocumentDirectory.path);
@@ -95,6 +97,8 @@ void main() async {
   runApp(MyApp(
     appLanguage: appLanguage,
   ));
+
+  await FirebaseMessaging.instance.subscribeToTopic('Android');
 
   //fcm code--------------------
   // Set the background messaging handler early on, as a named top-level function
