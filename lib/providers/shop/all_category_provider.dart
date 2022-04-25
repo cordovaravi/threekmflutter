@@ -35,4 +35,8 @@ class AllCategoryListProvider extends ChangeNotifier {
   Future<void> onRefresh(mounted) async {
     await getAllCategory(mounted).whenComplete(() => notifyListeners());
   }
+
+  oncleardata() {
+    _allCategoryList = AllCategoryListModel();
+  }
 }

@@ -22,6 +22,12 @@ class _AllCategoryListState extends State<AllCategoryList> {
   }
 
   @override
+  void dispose() {
+    context.read<AllCategoryListProvider>().oncleardata();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final allCategoryProvider = context.watch<AllCategoryListProvider>();
     final data = allCategoryProvider.allCategoryListData.data?.result;

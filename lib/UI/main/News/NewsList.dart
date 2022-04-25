@@ -153,6 +153,13 @@ class _NewsListPageState extends State<NewsListPage> {
           ],
           "category": 3
         });
+      } else if (widget.title == "Trending") {
+        initJson = json.encode({
+          "lat": 21.1458004,
+          "lng": 79.0881546,
+          "tags": ["Trending"],
+          "category": 8
+        });
       } else {
         initJson =
             json.encode({"lat": '', "lng": '', "query": this.widget.title});

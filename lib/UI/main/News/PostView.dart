@@ -412,7 +412,7 @@ class _PostviewState extends State<Postview> {
                                       //     child: Text("no data"),
                                       //   ),
                                       Row(children: [
-                                        InkWell(
+                                      if(newsData.likes != 0)  InkWell(
                                           onTap: () {
                                             _showLikedBottomModalSheet(
                                                 newsData.postId!.toInt(),

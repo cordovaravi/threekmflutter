@@ -37,4 +37,8 @@ class ProductDetailsProvider extends ChangeNotifier {
   Future<void> onRefresh(mounted, id) async {
     await productDetails(mounted, id).whenComplete(() => notifyListeners());
   }
+
+  oncleardata() {
+    _productDetails = ProductDetailsModel();
+  }
 }

@@ -211,8 +211,9 @@ class _ShopHomeState extends State<ShopHome>
 
   @override
   Widget build(BuildContext context) {
+    log('3km home shop');
     final profileinfo = context.watch<ProfileInfoProvider>();
-    super.build(context);
+    // super.build(context);
     _controller.repeat();
     var shopAdvData = widget.shopHomeProvider.shopHomeData!.result!.shopAdv;
     var shopsData = widget.shopHomeProvider.shopHomeData?.result?.shops;

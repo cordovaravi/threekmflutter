@@ -204,6 +204,7 @@ class _ProductDetailsState extends State<ProductDetails> {
   @override
   void dispose() {
     removeVariableData();
+    context.read<ProductDetailsProvider>().oncleardata();
     // TODO: implement dispose
     super.dispose();
   }

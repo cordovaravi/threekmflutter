@@ -17,7 +17,8 @@
    <application
         android:label="3km"
         android:icon="@mipmap/ic_launcher"
-        android:usesCleartextTraffic="true">
+        android:usesCleartextTraffic="true"
+        android:largeHeap="true">
         <activity
                 android:name="com.razorpay.CheckoutActivity"
                 android:label="Razorpay Checkout" 

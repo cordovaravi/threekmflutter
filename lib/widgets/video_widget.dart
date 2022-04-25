@@ -26,6 +26,7 @@ class _VideoWidgetState extends State<VideoWidget> {
 
   @override
   void initState() {
+    log('_betterPlayerController init here....... ${widget.url}');
     BetterPlayerDataSource betterPlayerDataSource =
         BetterPlayerDataSource(BetterPlayerDataSourceType.network, widget.url);
     _betterPlayerController = BetterPlayerController(BetterPlayerConfiguration(
@@ -35,6 +36,7 @@ class _VideoWidgetState extends State<VideoWidget> {
           _betterPlayerController!.play();
           _betterPlayerController!.setControlsVisibility(false);
         } else {
+          // _betterPlayerController!.clearCache();
           _betterPlayerController!.pause();
           _betterPlayerController!.setControlsVisibility(true);
         }
@@ -61,8 +63,10 @@ class _VideoWidgetState extends State<VideoWidget> {
 
   @override
   void dispose() {
-    super.dispose();
+    _betterPlayerController!.clearCache();
     _betterPlayerController!.dispose();
+    log('_betterPlayerController dispose here .....');
+    super.dispose();
   }
 
   @override

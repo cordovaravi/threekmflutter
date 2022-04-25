@@ -69,6 +69,12 @@ class _BusinessDetailState extends State<BusinessDetail> {
   }
 
   @override
+  void dispose() {
+    context.read<BusinessDetailProvider>().oncleardata();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     var data = context
         .watch<BusinessDetailProvider>()

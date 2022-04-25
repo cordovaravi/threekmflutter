@@ -701,7 +701,7 @@ class _NewsCardState extends State<NewsCard> {
                     ),
                   ]),
                 Row(children: [
-                  Padding(
+                if(newsData.posts![widget.index].likes != null && newsData.posts![widget.index].likes != 0 )  Padding(
                       padding: EdgeInsets.only(top: 5, left: 5, bottom: 2),
                       child: InkWell(
                         onTap: () {

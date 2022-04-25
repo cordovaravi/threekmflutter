@@ -42,4 +42,8 @@ class BusinessDetailProvider extends ChangeNotifier {
     await getBusinessesDetail(mounted, id)
         .whenComplete(() => notifyListeners());
   }
+
+  oncleardata() {
+    _businessesHomedata = BusinessesDetailModel.fromJson({});
+  }
 }

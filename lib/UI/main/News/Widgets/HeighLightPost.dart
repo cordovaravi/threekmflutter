@@ -118,7 +118,7 @@ class _HeighlightPostState extends State<HeighlightPost> {
                 ),
 
                 Row(children: [
-                  Padding(
+                if(widget.business.likes != 0)  Padding(
                       padding: EdgeInsets.only(top: 5, left: 5, bottom: 2),
                       child: InkWell(
                         onTap: () {
