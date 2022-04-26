@@ -10,7 +10,7 @@ import 'package:provider/src/provider.dart';
 import 'package:threekm/providers/shop/product_listing_provider.dart';
 import 'package:threekm/Models/shopModel/product_listing_model.dart';
 import 'package:threekm/providers/shop/wish_list_provide.dart';
-import 'package:threekm/utils/screen_util.dart';
+
 import 'package:threekm/utils/threekm_textstyles.dart';
 import '../shop/product/product_details.dart';
 
@@ -182,7 +182,10 @@ class _ProductListingState extends State<ProductListing> {
                                 );
                               } else if (i ==
                                   productListingdata.result!.total - 1) {
-                                return const Center(child: Text('End of list'));
+                                return ItemBuilderWidget(
+                                  data: data,
+                                  i: i,
+                                );
                               } else {
                                 context
                                     .read<ProductListingProvider>()
@@ -239,8 +242,8 @@ class _ItemBuilderWidgetState extends State<ItemBuilderWidget> {
     return Container(
       padding: const EdgeInsets.all(10),
       //margin: const EdgeInsets.only(left: 10, right: 10, top: 25, bottom: 10),
-      width: ThreeKmScreenUtil.screenWidthDp,
-      height: ThreeKmScreenUtil.screenHeightDp / 5,
+      width: MediaQuery.of(context).size.width,
+      height: MediaQuery.of(context).size.height / 5,
       child: InkWell(
         onTap: () {
           Navigator.push(
@@ -294,8 +297,8 @@ class _ItemBuilderWidgetState extends State<ItemBuilderWidget> {
                             ),
                           ),
                           imageUrl: '${widget.data[widget.i].image}',
-                          height: ThreeKmScreenUtil.screenHeightDp / 6,
-                          width: ThreeKmScreenUtil.screenWidthDp / 2.5,
+                          height: MediaQuery.of(context).size.height / 6,
+                          width: MediaQuery.of(context).size.width / 2.5,
                           fit: BoxFit.contain,
                         ),
                       ),
@@ -322,7 +325,7 @@ class _ItemBuilderWidgetState extends State<ItemBuilderWidget> {
                 ),
                 Container(
                   padding: const EdgeInsets.only(top: 20, left: 10),
-                  width: ThreeKmScreenUtil.screenWidthDp / 2,
+                  width: MediaQuery.of(context).size.width / 2,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -342,7 +345,7 @@ class _ItemBuilderWidgetState extends State<ItemBuilderWidget> {
                       const Spacer(),
                       Container(
                         padding: const EdgeInsets.only(bottom: 10),
-                        width: ThreeKmScreenUtil.screenWidthDp / 2,
+                        width: MediaQuery.of(context).size.width / 2,
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
