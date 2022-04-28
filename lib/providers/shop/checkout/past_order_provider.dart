@@ -23,6 +23,7 @@ class PastOrderProvider extends ChangeNotifier {
         final response = await _apiProvider.get(shopPastOrder);
         if (response != null) {
           _shopPastOrderList = PastOrderModel.fromJson(response);
+          getPastMenuOrderList(mounted);
           _state = 'loaded';
           hideLoading();
           notifyListeners();

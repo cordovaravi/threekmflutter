@@ -255,10 +255,12 @@ class _ProductDetailsState extends State<ProductDetails> {
                   ),
                   onPressed: () {
                     log("share button ");
-                    var url =
-                        'https://3km.in/sell/${product?.name.replaceAll(" ", "")}/${product?.catalogId}';
+                    if(product?.catalogId != null){
+                    var url ='https://3km.in/sell/${product?.name.replaceAll(RegExp("([^A-Z,^a-z,^/,^:,\n\t\r\f])+"), "")}/${product?.catalogId}';
                     Share.share(
                         '${Uri.parse(url)} ${product?.name} from ${product?.businessName}');
+                    }
+                   
                   }),
             ),
             Stack(

@@ -18,8 +18,10 @@ class _PastOrderState extends State<PastOrder> {
   @override
   void initState() {
     super.initState();
-    context.read<PastOrderProvider>().getPastShopOrderList(mounted);
-    context.read<PastOrderProvider>().getPastMenuOrderList(mounted);
+    Future.microtask(() {
+      context.read<PastOrderProvider>().getPastShopOrderList(mounted);
+      // context.read<PastOrderProvider>().getPastMenuOrderList(mounted);
+    });
     openBox();
   }
 

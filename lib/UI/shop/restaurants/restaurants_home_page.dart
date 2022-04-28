@@ -180,7 +180,7 @@ class _RestaurantsHomeState extends State<RestaurantsHome>
                             constraints: BoxConstraints(
                                 minWidth: 40,
                                 maxWidth:
-                                    MediaQuery.of(context).size.width / 2),
+                                    MediaQuery.of(context).size.width * 0.85),
                             child: Text(
                               locationProvider.AddressFromCordinate ??
                                   _selecetedAddress ??

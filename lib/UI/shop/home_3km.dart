@@ -213,7 +213,7 @@ class _ShopHomeState extends State<ShopHome>
   Widget build(BuildContext context) {
     log('3km home shop');
     final profileinfo = context.watch<ProfileInfoProvider>();
-    // super.build(context);
+    super.build(context);
     _controller.repeat();
     var shopAdvData = widget.shopHomeProvider.shopHomeData!.result!.shopAdv;
     var shopsData = widget.shopHomeProvider.shopHomeData?.result?.shops;
@@ -297,7 +297,7 @@ class _ShopHomeState extends State<ShopHome>
                       Container(
                         constraints: BoxConstraints(
                             minWidth: 40,
-                            maxWidth: MediaQuery.of(context).size.width / 2),
+                            maxWidth: MediaQuery.of(context).size.width * 0.85),
                         child: Text(
                           locationProvider.AddressFromCordinate ??
                               _selecetedAddress ??

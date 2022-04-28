@@ -327,7 +327,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                     const EdgeInsets.all(18.0),
                                                 child: Image(
                                                   image: AssetImage(
-                                                      'assets/shopImg/heart-balloon.gif'),
+                                                      'assets/shopImg/ProductOrderDetail.gif'),
                                                   height: 130,
                                                 ),
                                               ),
@@ -662,7 +662,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                     orderStatusBox.put(
                                         'orderStatus', orderData.orderStatus);
 
-                                    return orderData.orderStatus == 'created' 
+                                    return orderData.orderStatus == 'created'
                                         ? Container(
                                             height: 700,
                                             color: Colors.white,
