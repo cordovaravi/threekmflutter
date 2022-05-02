@@ -14,8 +14,14 @@ class CommentProvider extends ChangeNotifier {
   List<AllComments>? get commentList => _commentList;
   bool _isGettingComments = false;
   bool get isGettingComments => _isGettingComments;
+
+  bool _isLoading = false;
+  bool get isLoading => this._isLoading;
+
   Future<Null> postCommentApi(int postId, String? comment) async {
     print("this is new post:$postId");
+    _isLoading = true;
+    notifyListeners();
     String _token = await _apiProvider.getToken();
     String _requestJson = json.encode({
       "module": "news_post",
@@ -30,9 +36,11 @@ class CommentProvider extends ChangeNotifier {
         var data = response['data']['result']['comments'] as List;
         _commentList = data.map((e) => AllComments.fromJson(e)).toList();
       }
+      _isLoading = false;
       _isGettingComments = false;
       notifyListeners();
     } else {
+      _isLoading = false;
       _isGettingComments = false;
       notifyListeners();
       CustomSnackBar(
@@ -51,12 +59,6 @@ class CommentProvider extends ChangeNotifier {
     final response = await _apiProvider.post(deleteComment, _requestJson);
     if (response != null) {
       if (response != null && response['status'] == 'success') {
-        //print(response);
-        // if (response['data']['result']['comments'] != null) {
-        //   var data = response['data']['result']['comments'] as List;
-        //   _commentList = data.map((e) => AllComments.fromJson(e)).toList();
-        // }
-        // _isGettingComments = false;
         getAllCommentsApi(_postId).then((value) => notifyListeners());
       } else {
         CustomSnackBar(

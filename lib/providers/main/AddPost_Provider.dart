@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:threekm/UI/main/AddPost/BottomSnack.dart';
+import 'package:threekm/UI/main/navigation.dart';
 import 'package:threekm/commenwidgets/CustomSnakBar.dart';
 import 'package:threekm/main.dart';
 
@@ -53,7 +54,7 @@ class AddPostProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void removeImages(int Index) {
+  Future removeImages(int Index) async {
     _moreImages.removeAt(Index);
     notifyListeners();
   }
@@ -85,14 +86,15 @@ class AddPostProvider extends ChangeNotifier {
   bool _isUploadeerror = false;
   bool get isUploadError => _isUploadeerror;
   //UploadedFileProvider _uploadedFileProvider = UploadedFileProvider();
-  Future<Null> uploadPng(context, String headLine, String story, String address,
-      double lat, double long) async {
+  Future<Null> uploadPng(context, String? headLine, String? story,
+      String? address, double? lat, double? long) async {
     if (_moreImages.isNotEmpty && _moreImages.length != null) {
       /// Showing snackbar of uploading
-      showUploadingSnackbar(context, _moreImages.first);
+      //  showUploadingSnackbar(context, _moreImages.first);
 
       _moreImages.forEach((element) async {
         print("uploading");
+        log("${element.path}");
         if (element.path.contains(".png") ||
             element.path.contains(".jpg") ||
             element.path.contains(".jpeg")) {
@@ -108,6 +110,7 @@ class AddPostProvider extends ChangeNotifier {
             var httpresponse = await request.send();
             final res = await http.Response.fromStream(httpresponse);
             final response = json.decode(res.body);
+
             if (httpresponse.statusCode == 200) {
               print("uploaded");
               if (response["status"] == "success") {
@@ -136,7 +139,7 @@ class AddPostProvider extends ChangeNotifier {
             String _token = await _apiProvider.getToken();
             print("this is token $_token");
             var request = await http.MultipartRequest(
-                'POST', Uri.parse(upload_Imagefile));
+                'POST', Uri.parse(upload_VideoFile));
             request.headers['Authorization'] = _token;
             request.fields['storage_url'] = "post";
             request.fields['record_id'] = "0";
@@ -150,8 +153,8 @@ class AddPostProvider extends ChangeNotifier {
               print("video uploaded");
               if (response["status"] == "success") {
                 log("this is video response${response.toString()}");
-                log(response["photo"]["photo"]);
-                _uploadImageUrls.add(response["photo"]["photo"]);
+                log(response["video"]["video"]);
+                _uploadImageUrls.add(response["video"]["video"]);
                 //log(_uploadImageUrls.toList().toString());
                 if (_moreImages.length == _uploadImageUrls.length) {
                   log("video progress is 100");
@@ -169,13 +172,15 @@ class AddPostProvider extends ChangeNotifier {
           }
         }
       });
+    } else {
+      uploadPost(context, headLine, story, address, lat, long);
     }
   }
 
   List _videosUrl = [];
 
-  Future<Null> uploadPost(context, String headLine, String story,
-      String address, double lat, double long) async {
+  Future<Null> uploadPost(context, String? headLine, String? story,
+      String? address, double? lat, double? long) async {
     List tempImages = [];
     uploadedImagesUrl.forEach((element) {
       if (element.contains(".png") ||
@@ -183,9 +188,15 @@ class AddPostProvider extends ChangeNotifier {
           element.contains(".jpeg")) {
         tempImages.add(element);
       } else {
-        _videosUrl.add(element);
+        // SubmitVideo submitVideo = SubmitVideo( element);
+        // String objVideo = json.encode({submitVideo});
+        // print(objVideo);
+        // _videosUrl.add(objVideo);
+        SubmitVideo objvideoUrls = SubmitVideo(element);
+        _videosUrl.add(objvideoUrls);
       }
     });
+    log("this is Video urls list $_videosUrl");
     String requestJson = json.encode({
       "headline": "$headLine",
       "story": "$story",
@@ -209,6 +220,16 @@ class AddPostProvider extends ChangeNotifier {
         Future.delayed(Duration(seconds: 1), () {
           //CustomSnackBar(context, Text("Post Submitted"));
           _isUploaded = true;
+          Future.delayed(Duration.zero, () {
+            Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => TabBarNavigation(
+                          redirectedFromPost: false,
+                          isPostUploaded: true,
+                        )),
+                (route) => false);
+          });
           notifyListeners();
           resetUpload(context);
         });
@@ -231,6 +252,14 @@ class AddPostProvider extends ChangeNotifier {
     notifyListeners();
     // CustomSnackBar(context, Text("Post has been submmitted"));
   }
+}
+
+class SubmitVideo {
+  String src;
+  SubmitVideo(this.src);
+  Map toJson() => {
+        'src': src,
+      };
 }
 
 // class UploadedFileProvider extends ChangeNotifier {

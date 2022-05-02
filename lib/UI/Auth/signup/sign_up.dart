@@ -2,11 +2,15 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:threekm/UI/Auth/sign_in.dart';
+import 'package:threekm/UI/Help_Supportpage.dart';
+import 'package:threekm/UI/main/navigation.dart';
+import 'package:threekm/localization/localize.dart';
 import 'package:threekm/providers/auth/signUp_Provider.dart';
 import 'package:threekm/providers/auth/social_auth/facebook_provider.dart';
 import 'package:threekm/providers/auth/social_auth/google_provider.dart';
@@ -14,12 +18,9 @@ import 'package:threekm/utils/intl.dart';
 import 'package:threekm/utils/threekm_textstyles.dart';
 import 'package:threekm/utils/utils.dart';
 import 'package:threekm/widgets/custom_button.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class SignUp extends StatefulWidget {
-  // static const String path = "/signup";
-  // final String popRoute;
-  // SignUp({required this.popRoute});
-
   @override
   _SignUpState createState() => _SignUpState();
 }
@@ -32,31 +33,10 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
   bool _keyboardVisible = false;
   ScrollController scrollController = ScrollController();
 
-  // loadIntl() async {
-  //   Box hive = await Hive.openBox("language");
-  //   Language model = hive.getAt(0);
-  //   late S temp;
-  //   if (model.language == "English") {
-  //     temp = await S.delegate.load(Locale("en"));
-  //   } else if (model.language == "Marathi") {
-  //     temp = await S.delegate.load(Locale("mr"));
-  //   } else {
-  //     temp = await S.delegate.load(Locale("hi"));
-  //   }
-
-  //   WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
-  //     setState(() {
-  //       intl = temp;
-  //     });
-  //   });
-  // }
-
   @override
   void initState() {
     super.initState();
-    // WidgetsBinding.instance!.addObserver(this);
-    // loadIntl();
-    // controller.popRoute = widget.popRoute;
+    //Future.microtask(() => context.read<AppLanguage>());
     fowardController = AnimationController(
       vsync: this,
       duration: Duration(seconds: 10),
@@ -71,12 +51,10 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
 
   @override
   void dispose() {
-    // Get.delete<AuthController>();
     fowardController.dispose();
     backwardController.dispose();
     phonetextController.dispose();
     scrollController.dispose();
-    //WidgetsBinding.instance!.removeObserver(this);
     super.dispose();
   }
 
@@ -120,7 +98,27 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [buildRotatingIcon, buildInputs, buildFooter],
+              children: [
+                Stack(
+                  alignment: Alignment.center,
+                  clipBehavior: Clip.none,
+                  children: [
+                    Container(
+                        child: Image.asset(
+                      "assets/Path136679@3x.png",
+                      height: 150,
+                      width: 150,
+                    )),
+                    Container(
+                      child: SvgPicture.asset(
+                        "assets/logopic1.svg",
+                      ),
+                    ),
+                  ],
+                ),
+                buildInputs,
+                buildFooter
+              ],
             ),
           ),
         ),
@@ -180,11 +178,9 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
   Widget get buildInputs {
     return Column(
       children: [
-        Text(
-          "Enter Your Phone Number",
-          style: ThreeKmTextConstants.tk12PXPoppinsWhiteRegular.copyWith(
-              color: Colors.white, fontWeight: FontWeight.w600, fontSize: 16),
-        ),
+        Text(AppLocalizations.of(context)!.translate('enter_phone') ?? "",
+            style: GoogleFonts.montserrat()
+                .copyWith(fontSize: 16, color: Colors.white)),
         space(
           height: 12,
         ),
@@ -252,12 +248,13 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
                 child: CustomButton(
                   color: ThreeKmTextConstants.blue1,
                   onTap: () async {
-                    if (phonetextController.text.length == 10) {
+                    if (phonetextController.text.length == 10 &&
+                        model.isLoding == false) {
                       String requestJson =
                           json.encode({"phone_no": phonetextController.text});
                       model.checkLogin(
                           requestJson, phonetextController.text, context, true);
-                    } else {
+                    } else if (model.isLoding == false) {
                       Fluttertoast.showToast(msg: "Please enter right number.");
                     }
                   },
@@ -343,7 +340,20 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
                 child: buildLoginButtons(
                     "assets/facebook.png", "Login with Apple"),
               )
-            : Container()
+            : Container(),
+        TextButton(
+          onPressed: () {
+            print("skip login");
+            Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => TabBarNavigation()),
+                (route) => false);
+          },
+          child: Text(
+            'Skip Login',
+            style: TextStyle(color: Colors.white),
+          ),
+        ),
       ],
     );
   }
@@ -383,7 +393,8 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         GestureDetector(
-          //onTap: () => Navigator.of(context).pushNamed(HelpAndSupport.path),
+          onTap: () => Navigator.push(context,
+              MaterialPageRoute(builder: (context) => HelpAndSupport())),
           child: Text(
             "Help and Support",
             style: ThreeKmTextConstants.tk12PXPoppinsWhiteRegular

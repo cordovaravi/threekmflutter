@@ -8,32 +8,42 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION"/> 
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <!-- <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION"/>  -->
+    <!-- <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/> -->
     <uses-feature android:name="android.hardware.location.network" android:required="true" />
     <uses-feature android:name="android.hardware.location.gps" android:required="true"  />
 
    <application
-        android:label="threekm"
+        android:label="3km"
         android:icon="@mipmap/ic_launcher"
-        android:usesCleartextTraffic="true">
-        <!-- Fabcebook Auth integrational -->
-        <meta-data android:name="com.facebook.sdk.ApplicationId" 
-        android:value="@string/facebook_app_id"/>
-        <activity android:name="com.facebook.FacebookActivity"
-            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
-            android:label="@string/app_name" />
+        android:usesCleartextTraffic="true"
+        android:largeHeap="true">
         <activity
-            android:name="com.facebook.CustomTabActivity"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="@string/fb_login_protocol_scheme" />
-            </intent-filter>
+                android:name="com.razorpay.CheckoutActivity"
+                android:label="Razorpay Checkout" 
+                >
         </activity>
+        <!-- Fabcebook Auth integrational -->
+        <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/facebook_app_id"/>
+        <meta-data android:name="com.facebook.sdk.ClientToken" android:value="@string/facebook_client_token"/>
+
+          <activity android:name="com.facebook.FacebookActivity"
+              android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+              android:label="@string/app_name" />
+          <activity
+              android:name="com.facebook.CustomTabActivity"
+              android:exported="true">
+              <intent-filter>
+                  <action android:name="android.intent.action.VIEW" />
+                  <category android:name="android.intent.category.DEFAULT" />
+                  <category android:name="android.intent.category.BROWSABLE" />
+                  <data android:scheme="@string/fb_login_protocol_scheme" />
+              </intent-filter>
+          </activity>
+       
+        
+        
           <!-- end of fb auth -->
           <!--.MainActivity-->
         <activity
@@ -65,17 +75,40 @@
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
-            <!--new code for deep link-->
             <!-- Deep linking -->
-            <meta-data android:name="flutter_deeplinking_enabled" android:value="true" />
+            <!-- <meta-data android:name="flutter_deeplinking_enabled" android:value="true" />
             <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data android:scheme="http" android:host="3km.in" />
                 <data android:scheme="https" />
+            </intent-filter> -->
+             <!--new code for deep link-->
+            <!-- Scheme+host+pathPrefix filter -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                    android:scheme="http"
+                    android:host="3km.in"
+                    />
+                    <data android:scheme="https" />
+            </intent-filter>
+            <!-- Scheme-only filter -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="https" />
             </intent-filter>
             <!--end of code-->
+            <!-- this is fcm on click -->
+            <intent-filter>
+                <action android:name="FLUTTER_NOTIFICATION_CLICK" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
         </activity>
         
         <!-- Don't delete the meta-data below.
@@ -83,15 +116,35 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
-         <service
-            android:name="me.carda.awesome_notifications.services.ForegroundService"
-            android:enabled="true"
-            android:exported="false"
-            android:foregroundServiceType="microphone|mediaPlayback"
-            android:stopWithTask="true" />
+         
         <!--google maps api-->
         <meta-data android:name="com.google.android.geo.API_KEY"
         android:value="AIzaSyCK9Q9Rt0k-q6HxqRNR5FtpssJZTXtmqsg"/>
         <!--end of gmap-->
+        <!--Fcm code -->
+        <meta-data
+          android:name="com.google.firebase.messaging.default_notification_channel_id"
+          android:value="high_importance_channel" />
+       <!--end fcm --> 
     </application>
+    <queries>
+            <intent>
+              <action android:name="android.intent.action.DIAL" />
+              <data android:scheme="tel" />
+            </intent>
+             <intent>
+              <action android:name="android.intent.action.VIEW" />
+              <data android:scheme="https" />
+            </intent>
+             <intent>
+              <action android:name="android.intent.action.VIEW" />
+              <data android:scheme="http" />
+            </intent>
+            <intent>
+              <action android:name="android.intent.action.SEND" />
+              <data android:mimeType="*/*" />
+            </intent>
+          <provider android:authorities="com.facebook.katana.provider.PlatformProvider" />
+
+</queries>
 </manifest>

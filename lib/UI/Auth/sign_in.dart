@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:threekm/UI/Auth/signup/forgot_password.dart';
+import 'package:threekm/localization/localize.dart';
 import 'package:threekm/providers/auth/signIn_Provider.dart';
 import 'package:threekm/utils/constants.dart';
 import 'package:threekm/utils/intl.dart';
@@ -13,6 +14,8 @@ import 'package:threekm/utils/threekm_textstyles.dart';
 import 'package:threekm/utils/util_methods.dart';
 import 'package:threekm/widgets/custom_button.dart';
 import 'package:provider/provider.dart';
+
+import '../Help_Supportpage.dart';
 
 class SignInScreen extends StatefulWidget {
   final String? phoneNumber;
@@ -142,7 +145,9 @@ class _SignInScreenState extends State<SignInScreen> {
                       children: [
                         verticalSpacing(height: 24),
                         Text(
-                          "Enter Your Phone Number",
+                          AppLocalizations.of(context)
+                                  ?.translate("phone_number") ??
+                              "Enter Your Phone Number",
                           style: ThreeKmTextConstants.tk16PXPoppinsBlackSemiBold
                               .copyWith(color: Colors.white),
                         ),
@@ -324,7 +329,9 @@ class _SignInScreenState extends State<SignInScreen> {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (conext) => ForgotPassword()));
+                                    builder: (conext) => ForgotPassword(
+                                          number: widget.phoneNumber,
+                                        )));
                           },
                           child: Container(
                             height: 48,
@@ -365,8 +372,10 @@ class _SignInScreenState extends State<SignInScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     GestureDetector(
-                      //onTap: () =>
-                      //    Navigator.of(context).pushNamed(HelpAndSupport.path),
+                      onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => HelpAndSupport())),
                       child: Text(
                         "Help and Support",
                         style: ThreeKmTextConstants.tk12PXPoppinsWhiteRegular

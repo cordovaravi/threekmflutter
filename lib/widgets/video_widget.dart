@@ -1,91 +1,203 @@
+import 'dart:developer';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:chewie/chewie.dart';
-import 'package:video_player/video_player.dart';
+import 'package:better_player/better_player.dart';
 
 class VideoWidget extends StatefulWidget {
   final String url;
   final bool play;
   final String? thubnail;
+  final bool? fromSinglePage;
 
   const VideoWidget(
-      {Key? key, this.thubnail, required this.url, required this.play})
+      {Key? key,
+      this.fromSinglePage,
+      this.thubnail,
+      required this.url,
+      required this.play})
       : super(key: key);
   @override
   _VideoWidgetState createState() => _VideoWidgetState();
 }
 
-class _VideoWidgetState extends State<VideoWidget>
-    with AutomaticKeepAliveClientMixin {
-  late VideoPlayerController _videoPlayerController1;
-  late VideoPlayerController _videoPlayerController2;
-  ChewieController? _chewieController;
+class _VideoWidgetState extends State<VideoWidget> {
+  BetterPlayerController? _betterPlayerController;
 
   @override
   void initState() {
+    log('_betterPlayerController init here....... ${widget.url}');
+    BetterPlayerDataSource betterPlayerDataSource =
+        BetterPlayerDataSource(BetterPlayerDataSourceType.network, widget.url);
+    _betterPlayerController = BetterPlayerController(BetterPlayerConfiguration(
+      //autoDetectFullscreenAspectRatio: true,
+      playerVisibilityChangedBehavior: (visibilityFraction) {
+        if (visibilityFraction == 1.0) {
+          _betterPlayerController!.play();
+          _betterPlayerController!.setControlsVisibility(false);
+        } else {
+          // _betterPlayerController!.clearCache();
+          _betterPlayerController!.pause();
+          _betterPlayerController!.setControlsVisibility(true);
+        }
+      },
+    ), betterPlayerDataSource: betterPlayerDataSource);
+    _betterPlayerController!.addEventsListener((BetterPlayerEvent event) {
+      if (event.betterPlayerEventType == BetterPlayerEventType.initialized) {
+        log("this is video height ${_betterPlayerController!.videoPlayerController!.value.size!.height}");
+        log("and aspect Ratio is ${_betterPlayerController!.videoPlayerController!.value.aspectRatio}");
+        if (widget.fromSinglePage == true) {
+          setState(() {});
+        }
+        //setState(() {});
+        setState(() {
+          _betterPlayerController!.setOverriddenAspectRatio(
+              _betterPlayerController!
+                  .videoPlayerController!.value.aspectRatio);
+          _betterPlayerController!.setOverriddenFit(BoxFit.contain);
+        });
+      }
+    });
     super.initState();
-    initializePlayer();
-  }
-
-  Future<void> initializePlayer() async {
-    _videoPlayerController1 = VideoPlayerController.network(widget.url);
-    await Future.wait([
-      _videoPlayerController1.initialize(),
-    ]);
-    _createChewieController();
-    setState(() {});
-  }
-
-  void _createChewieController() {
-    _chewieController = ChewieController(
-      videoPlayerController: _videoPlayerController1,
-      autoPlay: widget.play,
-      looping: false,
-      subtitleBuilder: (context, dynamic subtitle) => Container(
-        padding: const EdgeInsets.all(10.0),
-        child: subtitle is InlineSpan
-            ? RichText(
-                text: subtitle,
-              )
-            : Text(
-                subtitle.toString(),
-                style: const TextStyle(color: Colors.black),
-              ),
-      ),
-    );
   }
 
   @override
   void dispose() {
-    _videoPlayerController1.dispose();
-    _videoPlayerController2.dispose();
-    _chewieController?.dispose();
+    _betterPlayerController!.clearCache();
+    _betterPlayerController!.dispose();
+    log('_betterPlayerController dispose here .....');
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    super.build(context);
+    log("building video context");
     return Container(
-      child: _chewieController != null &&
-              _chewieController!.videoPlayerController.value.isInitialized
-          ? Chewie(
-              controller: _chewieController!,
-            )
-          : Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: const [
-                CircularProgressIndicator(),
-                SizedBox(height: 20),
-                Text('Loading'),
-              ],
-            ),
-    );
+        child:
+            _betterPlayerController?.videoPlayerController?.value.initialized ==
+                    true
+                ? BetterPlayer(controller: _betterPlayerController!)
+                : Container(
+                    color: Colors.black,
+                    child: Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                    height: 254,
+                    width: MediaQuery.of(context).size.width,
+                  ));
+    // AspectRatio(
+    //   aspectRatio: _betterPlayerController
+    //               ?.videoPlayerController?.value.aspectRatio !=
+    //           null
+    //       ? _betterPlayerController!.videoPlayerController!.value.aspectRatio
+    //       : 16 / 9,
+    //   //  height:
+    //   //     _betterPlayerController?.videoPlayerController?.value.size?.height ??
+    //   //         300,
+    //   // width:
+    //   //     _betterPlayerController?.videoPlayerController?.value.size?.width ??
+    //   //         300,
+    //   child: BetterPlayer(
+    //     controller: _betterPlayerController!,
+    //   ),
+    // );
+    // Container(
+    //   height: _betterPlayerController
+    //               ?.videoPlayerController?.value.size?.height !=
+    //           null
+    //       ? _betterPlayerController!.videoPlayerController!.value.size!.height
+    //       : 300,
+    //   width: MediaQuery.of(context).size.width,
+    //   child: BetterPlayer(
+    //     controller: _betterPlayerController!,
+    //   ),
+    // );
   }
-
-  @override
-  bool get wantKeepAlive => true;
 }
+
+// class VideoWidget extends StatefulWidget {
+//   final String url;
+//   final bool play;
+//   final String? thubnail;
+
+//   const VideoWidget(
+//       {Key? key, this.thubnail, required this.url, required this.play})
+//       : super(key: key);
+//   @override
+//   _VideoWidgetState createState() => _VideoWidgetState();
+// }
+
+// class _VideoWidgetState extends State<VideoWidget>
+//     with AutomaticKeepAliveClientMixin {
+//   VideoPlayerController? _videoPlayerController1;
+//   //VideoPlayerController? _videoPlayerController2;
+//   ChewieController? _chewieController;
+
+//   @override
+//   void initState() {
+//     super.initState();
+//     initializePlayer();
+//   }
+
+//   Future<void> initializePlayer() async {
+//     _videoPlayerController1 = VideoPlayerController.network(widget.url);
+//     await Future.wait([
+//       _videoPlayerController1!.initialize(),
+//     ]);
+//     _createChewieController();
+//     setState(() {});
+//   }
+
+//   void _createChewieController() {
+//     _chewieController = ChewieController(
+//       videoPlayerController: _videoPlayerController1!,
+//       autoPlay: widget.play,
+//       looping: false,
+//       subtitleBuilder: (context, dynamic subtitle) => Container(
+//         padding: const EdgeInsets.all(10.0),
+//         child: subtitle is InlineSpan
+//             ? RichText(
+//                 text: subtitle,
+//               )
+//             : Text(
+//                 subtitle.toString(),
+//                 style: const TextStyle(color: Colors.black),
+//               ),
+//       ),
+//     );
+//   }
+
+//   @override
+//   void dispose() {
+//     _videoPlayerController1!.dispose();
+//     //  _videoPlayerController2!.dispose();
+//     _chewieController?.dispose();
+//     super.dispose();
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     super.build(context);
+//     return Container(
+//       child: _chewieController != null &&
+//               _chewieController!.videoPlayerController.value.isInitialized
+//           ? Chewie(
+//               controller: _chewieController!,
+//             )
+//           : Column(
+//               mainAxisAlignment: MainAxisAlignment.center,
+//               children: const [
+//                 CircularProgressIndicator(),
+//                 SizedBox(height: 20),
+//                 Text('Loading'),
+//               ],
+//             ),
+//     );
+//   }
+
+//   @override
+//   bool get wantKeepAlive => true;
+// }
 
 
 // class _VideoWidgetState extends State<VideoWidget> {

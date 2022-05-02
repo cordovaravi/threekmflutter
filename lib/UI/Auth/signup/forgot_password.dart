@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:threekm/Custom_library/pincodefields.dart';
 import 'package:threekm/UI/Auth/signup/update_password_last_step.dart';
 import 'package:threekm/commenwidgets/CustomSnakBar.dart';
+import 'package:threekm/localization/localize.dart';
 import 'package:threekm/providers/auth/Forgetpassword_provider.dart';
 import 'package:threekm/utils/threekm_textstyles.dart';
 import 'package:threekm/utils/util_methods.dart';
@@ -14,7 +15,7 @@ import 'package:threekm/widgets/custom_button.dart';
 import 'package:provider/provider.dart';
 
 class ForgotPassword extends StatefulWidget {
-  String? number;
+  final String? number;
   ForgotPassword({this.number, Key? key}) : super(key: key);
 
   @override
@@ -49,9 +50,9 @@ class _ForgotPasswordState extends State<ForgotPassword> {
     super.initState();
     //initTimer();
     if (widget.number != null) {
-      setState(() {
-        phoneController.text = widget.number.toString();
-      });
+      // setState(() {
+      //   phoneController.text = widget.number.toString();
+      // });
     }
   }
 
@@ -85,7 +86,10 @@ class _ForgotPasswordState extends State<ForgotPassword> {
             ),
           ),
           title: Text(
-            "Reset your Password".toUpperCase(),
+            AppLocalizations.of(context)!.translate('reset_password') ??
+                ""
+                    //"Reset your Password"
+                    .toUpperCase(),
             style: ThreeKmTextConstants.tk16PXPoppinsWhiteBold,
           ),
           backgroundColor: Color(0xFF0044CE),
@@ -115,7 +119,9 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                   if (index == 1) ...{
                     space(height: 40),
                     Text(
-                      "Enter Your Phone Number",
+                      AppLocalizations.of(context)!
+                              .translate('ten_digit_text') ??
+                          "",
                       style: ThreeKmTextConstants.tk16PXPoppinsBlackSemiBold,
                     ),
                     space(height: 12),
@@ -138,7 +144,11 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                             });
                           });
                         } else {
-                          CustomSnackBar(context, Text("Please enter number"));
+                          CustomSnackBar(
+                              context,
+                              Text(AppLocalizations.of(context)!
+                                      .translate('ten_digit_text') ??
+                                  "Please enter number"));
                         }
                       },
                       borderRadius: BorderRadius.circular(26),

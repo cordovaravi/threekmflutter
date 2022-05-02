@@ -1,27 +1,34 @@
 import 'dart:io';
-
 import 'package:device_info/device_info.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
 import 'package:provider/src/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:threekm/UI/main/DrawerScreen.dart';
-import 'package:threekm/UI/main/draggableex.dart';
+import 'package:threekm/UI/main/News/NewsTab.dart';
+import 'package:threekm/UI/shop/home_3km.dart';
+import 'package:threekm/UI/shop/restaurants/restaurants_home_page.dart';
+import 'package:threekm/UI/shop/showOrderStatus.dart';
+import 'package:threekm/localization/localize.dart';
+import 'package:threekm/providers/localization_Provider/appLanguage_provider.dart';
 import 'package:threekm/providers/main/AthorProfile_Provider.dart';
+import 'package:threekm/utils/screen_util.dart';
 import 'package:threekm/utils/spacings.dart';
 
 final drawerController = ZoomDrawerController();
 
 class TabBarNavigation extends StatefulWidget {
   final bool? redirectedFromPost;
-  TabBarNavigation({this.redirectedFromPost, Key? key}) : super(key: key);
+  final bool? isPostUploaded;
+  TabBarNavigation({this.redirectedFromPost, this.isPostUploaded, Key? key})
+      : super(key: key);
 
   @override
   _TabBarNavigationState createState() => _TabBarNavigationState();
 }
 
 class _TabBarNavigationState extends State<TabBarNavigation>
-    with TickerProviderStateMixin {
+    with TickerProviderStateMixin, AutomaticKeepAliveClientMixin {
   AnimationController? _animationController1;
   AnimationController? _animationController2;
 
@@ -67,7 +74,13 @@ class _TabBarNavigationState extends State<TabBarNavigation>
     var fname = _prefs.getString("userfname");
     var lname = _prefs.getString("userlname");
     UserName = "$fname $lname";
-    avatar = _prefs.getString("avatar")!;
+    avatar = _prefs.getString("avatar") ?? "";
+  }
+
+  @override
+  void didChangeDependencies() {
+    ThreeKmScreenUtil().init(context);
+    super.didChangeDependencies();
   }
 
   @override
@@ -75,7 +88,9 @@ class _TabBarNavigationState extends State<TabBarNavigation>
     _getConstants();
     Future.delayed(Duration.zero, () {
       context.read<AutthorProfileProvider>().getSelfProfile();
+      context.read<AppLanguage>().fetchLocale();
     });
+
     //initAnimation();
     //getDeviceId();
     _animationController1 =
@@ -110,6 +125,8 @@ class _TabBarNavigationState extends State<TabBarNavigation>
         });
       });
     });
+    ShowOrderStaus();
+
     super.initState();
   }
 
@@ -144,7 +161,7 @@ class _TabBarNavigationState extends State<TabBarNavigation>
 
   @override
   void dispose() {
-    _animationController!.dispose();
+    // _animationController!.dispose();
     // _tabController!.dispose();
     _animationController2!.dispose();
     _animationController1!.dispose();
@@ -159,9 +176,15 @@ class _TabBarNavigationState extends State<TabBarNavigation>
 
   @override
   Widget build(BuildContext context) {
+    final languageProvider = context.watch<AppLanguage>();
+    super.build(context);
     return WillPopScope(
       onWillPop: onWillPop,
       child: ZoomDrawer(
+        openCurve: Curves.easeIn,
+        closeCurve: Curves.easeInOut,
+        showShadow: true,
+        angle: 0.0,
         controller: drawerController,
         menuScreen: DrawerScreen(
           avatar: avatar,
@@ -261,7 +284,7 @@ class _TabBarNavigationState extends State<TabBarNavigation>
                               Stack(
                                 children: [
                                   buildTabs,
-                                  buildTabViews,
+                                  buildTabViews(languageProvider.appLocal),
                                 ],
                               ),
                             ],
@@ -320,7 +343,7 @@ class _TabBarNavigationState extends State<TabBarNavigation>
     // );
   }
 
-  Widget get buildTabViews {
+  Widget buildTabViews(Locale? langauge) {
     return Container(
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
@@ -336,32 +359,31 @@ class _TabBarNavigationState extends State<TabBarNavigation>
               TabsWrapper(
                 animation: _animationController2!,
                 bodyWidget: Container(
-                  height: MediaQuery.of(context).size.height,
-                  width: MediaQuery.of(context).size.width,
-                  child: DraggablePage(
-                    isredirected: widget.redirectedFromPost,
-                  ),
-                ),
+                    height: MediaQuery.of(context).size.height,
+                    width: MediaQuery.of(context).size.width,
+                    child: NewsTab(
+                      reload: widget.redirectedFromPost,
+                      isPostUploaded: widget.isPostUploaded,
+                      appLanguage: langauge,
+                    )
+                    // DraggablePage(
+                    //   isredirected: widget.redirectedFromPost,
+                    // ),
+                    ),
               ),
               TabsWrapper(
                 animation: _animationController2!,
                 bodyWidget: Container(
-                  height: MediaQuery.of(context).size.height,
-                  width: MediaQuery.of(context).size.width,
-                  child: DraggablePage(
-                    isredirected: widget.redirectedFromPost,
-                  ),
-                ),
+                    height: MediaQuery.of(context).size.height,
+                    width: MediaQuery.of(context).size.width,
+                    child: RestaurantsHome()),
               ),
               TabsWrapper(
                 animation: _animationController2!,
                 bodyWidget: Container(
-                  height: MediaQuery.of(context).size.height,
-                  width: MediaQuery.of(context).size.width,
-                  child: DraggablePage(
-                    isredirected: widget.redirectedFromPost,
-                  ),
-                ),
+                    height: MediaQuery.of(context).size.height,
+                    width: MediaQuery.of(context).size.width,
+                    child: Home3KM()),
               ),
 
               // NewsTab1(animation: _animationController2!),
@@ -423,7 +445,23 @@ class _TabBarNavigationState extends State<TabBarNavigation>
                   ),
                 ),
                 horizontalSpacing(width: 8),
-                Text("News"),
+                Text(AppLocalizations.of(context)?.translate("news") ?? ""),
+              ],
+            ),
+          ),
+          Tab(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  child: Image.asset(
+                    "assets/restaurant_menu.png",
+                    height: 24,
+                    width: 24,
+                  ),
+                ),
+                horizontalSpacing(width: 8),
+                Text(AppLocalizations.of(context)?.translate("food") ?? ""),
               ],
             ),
           ),
@@ -439,24 +477,8 @@ class _TabBarNavigationState extends State<TabBarNavigation>
                   ),
                 ),
                 horizontalSpacing(width: 8),
-                Text("Shop"),
-              ],
-            ),
-          ),
-          Tab(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  child: Image.asset(
-                    "assets/storefront.png",
-                    height: 24,
-                    width: 24,
-                  ),
-                ),
-                horizontalSpacing(width: 8),
                 Text(
-                  "Biz",
+                  AppLocalizations.of(context)?.translate("shop") ?? "",
                 ),
               ],
             ),
@@ -465,6 +487,9 @@ class _TabBarNavigationState extends State<TabBarNavigation>
       ),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }
 
 class TabsWrapper extends StatefulWidget {

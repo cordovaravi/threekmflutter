@@ -154,7 +154,7 @@ class Imageswcta {
   String? vimeoUrl;
   String? header;
   List<int>? post;
-  String? business;
+  var business;
   String? website;
   String? product;
   String? phone;
@@ -666,6 +666,40 @@ class Option {
         count: json["count"] == null ? null : json["count"],
         bullets: json["bullets"] == null ? null : json["bullets"],
         dPercent: json["d_percent"] == null ? null : json["d_percent"],
+      );
+}
+
+SinglePoll singlePollFromJson(String str) =>
+    SinglePoll.fromJson(json.decode(str));
+
+class SinglePoll {
+  SinglePoll({
+    this.statusCode,
+    this.status,
+    this.result,
+  });
+
+  int? statusCode;
+  String? status;
+  PollResult? result;
+
+  factory SinglePoll.fromJson(Map<String, dynamic> json) => SinglePoll(
+        statusCode: json["StatusCode"] == null ? null : json["StatusCode"],
+        status: json["status"] == null ? null : json["status"],
+        result:
+            json["Result"] == null ? null : PollResult.fromJson(json["Result"]),
+      );
+}
+
+class PollResult {
+  PollResult({
+    this.quiz,
+  });
+
+  Quiz? quiz;
+
+  factory PollResult.fromJson(Map<String, dynamic> json) => PollResult(
+        quiz: json["quiz"] == null ? null : Quiz.fromJson(json["quiz"]),
       );
 }
 

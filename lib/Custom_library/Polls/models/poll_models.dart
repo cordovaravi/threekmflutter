@@ -26,11 +26,13 @@ class PollOptions {
   final dynamic id;
   int pollsCount;
   bool isSelected;
+  final double? netWorkPersentage;
 
   PollOptions({
     required this.label,
     required this.pollsCount,
     required this.id,
     this.isSelected = false,
+    this.netWorkPersentage,
   });
 }

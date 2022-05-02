@@ -143,7 +143,7 @@ class Post {
         author: Author.fromJson(json["author"]),
         authorType: json["author_type"],
         authorClassification: json["author_classification"],
-        approver: Approver.fromJson(json["approver"]),
+        //approver: Approver.fromJson(json["approver"]),
         business: List<dynamic>.from(json["business"].map((x) => x)),
         products: List<dynamic>.from(json["products"].map((x) => x)),
         impressions: json["impressions"],

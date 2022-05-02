@@ -1,166 +1,242 @@
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/src/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:threekm/Custom_library/GooleMapsWidget/src/place_picker.dart';
 import 'package:threekm/Custom_library/draggable_home.dart';
 import 'package:threekm/UI/main/AddPost/ImageEdit/editImage.dart';
 import 'package:threekm/UI/main/News/NewsTab.dart';
+import 'package:threekm/UI/main/navigation.dart';
+import 'package:threekm/commenwidgets/CustomSnakBar.dart';
+import 'package:threekm/providers/Location/locattion_Provider.dart';
 import 'package:threekm/providers/main/AddPost_Provider.dart';
+import 'package:threekm/utils/api_paths.dart';
 import 'package:threekm/utils/utils.dart';
+import 'package:google_maps_webservice/directions.dart';
 
 import 'News/NewsList.dart';
 
-class DraggablePage extends StatelessWidget {
+class DraggablePage extends StatefulWidget {
   final bool? isredirected;
   DraggablePage({this.isredirected});
+
+  @override
+  State<DraggablePage> createState() => _DraggablePageState();
+}
+
+class _DraggablePageState extends State<DraggablePage>
+    with AutomaticKeepAliveClientMixin {
   final ImagePicker _imagePicker = ImagePicker();
+  String? _selecetdAddress;
+  Geometry? _geometry;
+
+  @override
+  void initState() {
+    Future.microtask(() => context.read<LocationProvider>().getLocation());
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return DraggableHome(
-        //backgroundColor: Colors.white,
-        headerExpandedHeight: 0.00000000001,
-        body: [NewsTab(reload: isredirected)],
+        headerExpandedHeight: 0.0000000000001,
+        body: [NewsTab(reload: widget.isredirected)],
         fullyStretchable: true,
         expandedBody: Container(
-          color: Color(0xff3E7EFF),
-          child: Padding(
-            padding: EdgeInsets.zero,
-            child: Row(
-              children: [
-                Column(
-                  children: [
-                    InkWell(
-                      onTap: () async {
-                        context.read<AddPostProvider>().deletImages();
-                        _showImageVideoBottomModalSheet(context);
-                      },
-                      child: Container(
-                        margin: EdgeInsets.all(16),
-                        height: 127,
-                        width: 161,
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(20)),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Container(
-                              height: 42,
-                              width: 42,
-                              decoration: BoxDecoration(
-                                  image: DecorationImage(
-                                      image: AssetImage("assets/Grouppost.png"),
-                                      fit: BoxFit.cover),
-                                  shape: BoxShape.circle,
-                                  color: Color(0xffFBA924)),
-                            ),
-                            SizedBox(
-                              height: 8,
-                            ),
-                            Text(
-                              "New Post",
-                              style:
-                                  ThreeKmTextConstants.tk16PXPoppinsBlackMedium,
-                            )
-                          ],
-                        ),
+          color: //Colors.amber,
+              Color(0xff3E7EFF),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Column(
+                children: [
+                  InkWell(
+                    onTap: () async {
+                      context.read<AddPostProvider>().deletImages();
+                      _showImageVideoBottomModalSheet(context);
+                    },
+                    child: Container(
+                      margin: EdgeInsets.only(top: 16, bottom: 16),
+                      height: 127,
+                      width: 161,
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(20)),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            height: 42,
+                            width: 42,
+                            decoration: BoxDecoration(
+                                image: DecorationImage(
+                                    image: AssetImage("assets/Grouppost.png"),
+                                    fit: BoxFit.cover),
+                                shape: BoxShape.circle,
+                                color: Color(0xffFBA924)),
+                          ),
+                          SizedBox(
+                            height: 8,
+                          ),
+                          Text(
+                            "New Post",
+                            style:
+                                ThreeKmTextConstants.tk16PXPoppinsBlackMedium,
+                          )
+                        ],
                       ),
                     ),
-                    InkWell(
-                      child: Container(
-                        margin:
-                            EdgeInsets.only(bottom: 16, left: 16, right: 16),
-                        //height: MediaQuery.of(context).size.height * 0.1,
-                        height: 127,
-                        width: 161,
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(20)),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Container(
-                              height: 42,
-                              width: 42,
-                              decoration: BoxDecoration(
-                                  image: DecorationImage(
-                                    image:
-                                        AssetImage("assets/Group 41299@2x.png"),
-                                  ),
-                                  shape: BoxShape.circle,
-                                  color: Color(0xffFC5E6A),
-                                  boxShadow: [
-                                    BoxShadow(
-                                        color: Color(0xffFC5E6A33),
-                                        blurRadius: 0.8)
-                                  ]),
-                            ),
-                            SizedBox(
-                              height: 8,
-                            ),
-                            Text(
-                              "My Profile",
-                              style:
-                                  ThreeKmTextConstants.tk16PXPoppinsBlackMedium,
-                            )
-                          ],
-                        ),
+                  ),
+                  InkWell(
+                    onTap: () {
+                      drawerController.open!();
+                    },
+                    child: Container(
+                      margin: EdgeInsets.only(bottom: 16, left: 16, right: 16),
+                      //height: MediaQuery.of(context).size.height * 0.1,
+                      height: 127,
+                      width: 161,
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(20)),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            height: 42,
+                            width: 42,
+                            decoration: BoxDecoration(
+                                image: DecorationImage(
+                                  image:
+                                      AssetImage("assets/Group 41299@2x.png"),
+                                ),
+                                shape: BoxShape.circle,
+                                color: Color(0xffFC5E6A),
+                                boxShadow: [
+                                  BoxShadow(
+                                      color: Color(0xffFC5E6A33),
+                                      blurRadius: 0.8)
+                                ]),
+                          ),
+                          SizedBox(
+                            height: 8,
+                          ),
+                          Text(
+                            "My Profile",
+                            style:
+                                ThreeKmTextConstants.tk16PXPoppinsBlackMedium,
+                          )
+                        ],
                       ),
                     ),
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    InkWell(
-                      child: Container(
-                        margin: EdgeInsets.only(
-                            bottom: 16, left: 16, right: 16, top: 0),
-                        //height: MediaQuery.of(context).size.height * 0.2,
-                        height: 270,
-                        width: 161,
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(20)),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Container(
-                              height: 42,
-                              width: 42,
-                              decoration: BoxDecoration(
-                                  image: DecorationImage(
-                                    image:
-                                        AssetImage("assets/Grouplocation.png"),
-                                  ),
-                                  shape: BoxShape.circle,
-                                  color: Color(0xff43B978),
-                                  boxShadow: [
-                                    BoxShadow(
-                                        color: Color(0xff43B97833),
-                                        blurRadius: 0.8)
-                                  ]),
-                            ),
-                            SizedBox(
-                              height: 8,
-                            ),
-                            Text(
-                              "My Location",
-                              style:
-                                  ThreeKmTextConstants.tk16PXPoppinsBlackMedium,
-                            ),
-                            SizedBox(
-                              height: 30,
-                            ),
-                            Text(
-                              "Baner-Pashan \n Link Road",
-                              style:
-                                  ThreeKmTextConstants.tk16PXPoppinsBlackMedium,
-                              textAlign: TextAlign.center,
-                            ),
-                            SizedBox(
-                              height: 32,
-                            ),
-                            Container(
+                  ),
+                ],
+              ),
+              Column(
+                children: [
+                  InkWell(
+                    child: Container(
+                      margin: EdgeInsets.only(top: 16),
+                      // margin: EdgeInsets.only(
+                      //     bottom: 16, left: 16, right: 16, top: 0),
+                      //height: MediaQuery.of(context).size.height * 0.2,
+                      height: 270,
+                      width: 161,
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(20)),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            height: 42,
+                            width: 42,
+                            decoration: BoxDecoration(
+                                image: DecorationImage(
+                                  image: AssetImage("assets/Grouplocation.png"),
+                                ),
+                                shape: BoxShape.circle,
+                                color: Color(0xff43B978),
+                                boxShadow: [
+                                  BoxShadow(
+                                      color: Color(0xff43B97833),
+                                      blurRadius: 0.8)
+                                ]),
+                          ),
+                          SizedBox(
+                            height: 8,
+                          ),
+                          Text(
+                            "My Location",
+                            style:
+                                ThreeKmTextConstants.tk16PXPoppinsBlackMedium,
+                          ),
+                          SizedBox(
+                            height: 15,
+                          ),
+                          Text(
+                            _selecetdAddress ?? "",
+                            style:
+                                ThreeKmTextConstants.tk16PXPoppinsBlackMedium,
+                            textAlign: TextAlign.center,
+                          ),
+                          SizedBox(
+                            height: 15,
+                          ),
+                          InkWell(
+                            onTap: () {
+                              Future.delayed(Duration.zero, () {
+                                context
+                                    .read<LocationProvider>()
+                                    .getLocation()
+                                    .whenComplete(() {
+                                  final _locationProvider = context
+                                      .read<LocationProvider>()
+                                      .getlocationData;
+                                  final kInitialPosition = LatLng(
+                                      _locationProvider!.latitude!,
+                                      _locationProvider.longitude!);
+                                  if (_locationProvider != null) {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => PlacePicker(
+                                            apiKey: GMap_Api_Key,
+                                            // initialMapType: MapType.satellite,
+                                            onPlacePicked: (result) async {
+                                              //print(result.formattedAddress);
+                                              setState(() {
+                                                _selecetdAddress =
+                                                    result.formattedAddress;
+                                                print(
+                                                    result.geometry!.toJson());
+                                                _geometry = result.geometry;
+                                              });
+                                              SharedPreferences _prefs =
+                                                  await SharedPreferences
+                                                      .getInstance();
+                                              _prefs.setString("Geometry",
+                                                  _geometry.toString());
+                                              CustomSnackBar(
+                                                  context,
+                                                  Text(
+                                                      "Updating Hyperlocal contetnt in background"));
+                                              Navigator.of(context).pop();
+                                            },
+                                            initialPosition: kInitialPosition,
+                                            useCurrentLocation: true,
+                                            selectInitialPosition: true,
+                                            usePinPointingSearch: true,
+                                            usePlaceDetailSearch: true,
+                                          ),
+                                        ));
+                                  }
+                                });
+                              });
+                            },
+                            child: Container(
                               width: 108,
                               height: 36,
                               decoration: BoxDecoration(
@@ -173,15 +249,15 @@ class DraggablePage extends StatelessWidget {
                                       .tk16PXPoppinsWhiteBold,
                                 ),
                               ),
-                            )
-                          ],
-                        ),
+                            ),
+                          )
+                        ],
                       ),
-                    )
-                  ],
-                )
-              ],
-            ),
+                    ),
+                  )
+                ],
+              )
+            ],
           ),
         ));
   }
@@ -201,25 +277,6 @@ class DraggablePage extends StatelessWidget {
       ),
     );
   }
-
-  // Container headerWidget(BuildContext context) => Container(
-
-  //     child: DefaultTabController(
-  //         length: 3,
-  //         child: TabBar(
-  //           tabs: [
-  //             Tab(
-  //               text: "News",
-  //             ),
-  //             Tab(
-  //               text: "Shopping",
-  //             ),
-  //             Tab(
-  //               text: "Business",
-  //             )
-  //           ],
-  //         ))
-  //         );
 
   ListView listView() {
     return ListView.builder(
@@ -274,6 +331,7 @@ class DraggablePage extends StatelessWidget {
                             print(element.name);
                             print(element.path);
                           });
+
                           if (imageFileList != null) {
                             Navigator.push(
                                 context,
@@ -304,7 +362,22 @@ class DraggablePage extends StatelessWidget {
                         height: 10,
                       ),
                       InkWell(
-                        onTap: () {},
+                        onTap: () async {
+                          final pickedVideo = await _imagePicker.pickVideo(
+                              source: ImageSource.gallery);
+                          //final file = XFile(pickedVideo!.path);
+                          Navigator.pop(context);
+                          if (pickedVideo != null) {
+                            // context
+                            //     .read<AddPostProvider>()
+                            //     .addImages(File(pickedVideo.path));
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => EditImage(
+                                        images: [XFile(pickedVideo.path)])));
+                          }
+                        },
                         child: Container(
                           decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(20),
@@ -333,4 +406,7 @@ class DraggablePage extends StatelessWidget {
       },
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

@@ -1,5 +1,8 @@
 import 'dart:math';
+import 'dart:typed_data';
 
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:extended_image/extended_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -7,8 +10,13 @@ import 'package:flutter/painting.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:threekm/utils/constants.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:provider/provider.dart';
+import 'package:provider/src/provider.dart';
+import 'package:threekm/UI/main/AddPost/ImageEdit/EditHelper.dart';
+import 'package:threekm/providers/ProfileInfo/ProfileInfo_Provider.dart';
 import 'package:threekm/utils/threekm_textstyles.dart';
 import 'package:threekm/utils/util_methods.dart';
 import 'package:threekm/widgets/animated_button_circle.dart';
@@ -20,6 +28,25 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+  final TextEditingController _emailController = TextEditingController();
+  @override
+  void initState() {
+    Future.microtask(
+        () => context.read<ProfileInfoProvider>().getProfileBasicData());
+    super.initState();
+  }
+
+  @override
+  void didChangeDependencies() async {
+    final data = context.watch<ProfileInfoProvider>();
+    if (data.Email != null) {
+      setState(() {
+        _emailController.text = data.Email!;
+      });
+    }
+    super.didChangeDependencies();
+  }
+
   @override
   void dispose() {
     super.dispose();
@@ -27,63 +54,53 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+    final profileData = context.watch<ProfileInfoProvider>();
     return Scaffold(
       backgroundColor: Colors.white,
       resizeToAvoidBottomInset: true,
       appBar: buildAppBar,
       body: SingleChildScrollView(
-        physics: BouncingScrollPhysics(),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            buildProfileImage,
-            space(height: 8),
-            buildProfileName,
-            space(height: 8),
-            buildProfileButton(
-              title: "Change Name",
-              width: 105,
-              onTap: () => showNameDialog(),
-            ),
-            space(height: 60),
-            buildProfileRow(
-              title: "Mobile",
-              showDivider: true,
-              child: buildPhoneNumber,
-            ),
-            buildProfileRow(
-              title: "Email",
-              showDivider: true,
-              child: buildEmail,
-            ),
-            buildProfileRow(
-              title: "Date of Birth",
-              showDivider: true,
-              child: buildDateOfBirth,
-            ),
-            buildProfileRow(
-              title: "Gender",
-              showDivider: true,
-              child: buildGender,
-            ),
-            buildProfileRow(
-              title: "Account Password",
-              showDivider: false,
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.end,
+          physics: BouncingScrollPhysics(),
+          child: Consumer<ProfileInfoProvider>(
+            builder: (context, controller, _) {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  buildProfileButton(
-                    title: "Change Password",
-                    width: 127,
-                    onTap: () => showPasswordDialog(),
+                  buildProfileImage(context),
+                  space(height: 8),
+                  buildProfileName(name: profileData.UserName ?? ""),
+                  space(height: 8),
+                  // buildProfileButton(
+                  //   title: "Change name",
+                  //   width: 105,
+                  //   onTap: () => showChangeNameDialog(),
+                  // ),
+                  space(height: 60),
+                  // Padding(
+                  //   padding: EdgeInsets.only(left: 18),
+                  //   child: buildPhoneNumber,
+                  // ),
+                  buildProfileRow(
+                    title: "Email",
+                    showDivider: true,
+                    child: buildEmail(emailController: _emailController),
+                  ),
+                  buildProfileRow(
+                    title: "Date of Birth",
+                    showDivider: true,
+                    child: buildDateOfBirth(
+                        widgetdateOfBirth: profileData.dateOfBirth),
+                  ),
+                  buildProfileRow(
+                    title: "Gender",
+                    showDivider: true,
+                    child:
+                        buildGender(context, widgetGender: profileData.Gender),
                   ),
                 ],
-              ),
-            ),
-            space(height: 80)
-          ],
-        ),
-      ),
+              );
+            },
+          )),
     );
   }
 
@@ -179,6 +196,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     //   Get.find<ProfileController>().imageName = null;
                     //   Navigator.of(context).pop();
                     // }
+                    Navigator.of(context).pop();
                   }),
                   ProfileImagePopUp()
                 ],
@@ -188,12 +206,12 @@ class _ProfilePageState extends State<ProfilePage> {
         });
   }
 
-  Future<void> showNameDialog() async {
+  Future<void> showChangeNameDialog() async {
     await showGeneralDialog(
         context: context,
         barrierColor: Color(0xFF0F0F2D).withOpacity(0.75), // background color
         barrierDismissible: false,
-        transitionDuration: Duration(milliseconds: 400),
+        transitionDuration: Duration(milliseconds: 200),
         useRootNavigator: false,
         pageBuilder: (_context, anim, anim2) {
           return Scaffold(
@@ -262,51 +280,53 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Widget get buildProfileImage {
-    return Container(
-      width: MediaQuery.of(context).size.width,
-      child: Stack(
-        alignment: AlignmentDirectional.center,
-        children: [
-          Container(
-            width: 120,
-            height: 120,
-            clipBehavior: Clip.antiAlias,
-            margin: EdgeInsets.only(top: 33),
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: ThreeKmTextConstants.lightBlue,
+  Widget buildProfileImage(BuildContext context) {
+    return Consumer<ProfileInfoProvider>(builder: (context, controller, _) {
+      return Container(
+        width: MediaQuery.of(context).size.width,
+        child: Stack(
+          alignment: AlignmentDirectional.center,
+          children: [
+            Container(
+              width: 120,
+              height: 120,
+              clipBehavior: Clip.antiAlias,
+              margin: EdgeInsets.only(top: 33),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: ThreeKmTextConstants.lightBlue,
+              ),
+              child: controller.Avatar == null
+                  ? Image.asset("assets/default_profile_image.png")
+                  : CachedNetworkImage(
+                      imageUrl: controller.Avatar.toString(),
+                      fit: BoxFit.fill,
+                      placeholder: (context, url) =>
+                          CupertinoActivityIndicator(),
+                    ),
+              // Image.asset("assets/default_profile_image.png"),
             ),
-            // child: _controller.profile.imageUrl == null
-            //     ? Image.asset("assets/default_profile_image.png")
-            //     : CachedNetworkImage(
-            //         imageUrl: _controller.profile.imageUrl!,
-            //         fit: BoxFit.fill,
-            //         placeholder: (context, url) =>
-            //             CupertinoActivityIndicator(),
-            //       ),
-            child: Image.asset("assets/default_profile_image.png"),
-          ),
-          Transform.translate(
-            offset: Offset(45, -30),
-            child: Container(
-              height: 32,
-              decoration:
-                  BoxDecoration(color: Colors.white, shape: BoxShape.circle),
-              child: Center(
-                child: GestureDetector(
-                  onTap: showProfileImageDialog,
-                  child: Icon(
-                    Icons.edit,
-                    size: 20,
+            Transform.translate(
+              offset: Offset(45, -30),
+              child: Container(
+                height: 32,
+                decoration:
+                    BoxDecoration(color: Colors.white, shape: BoxShape.circle),
+                child: Center(
+                  child: GestureDetector(
+                    onTap: showProfileImageDialog,
+                    child: Icon(
+                      Icons.edit,
+                      size: 20,
+                    ),
                   ),
                 ),
               ),
-            ),
-          )
-        ],
-      ),
-    );
+            )
+          ],
+        ),
+      );
+    });
   }
 
   Widget buildProfileRow(
@@ -343,10 +363,10 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Widget get buildProfileName {
+  Widget buildProfileName({required String name}) {
     return Text(
       // _controller.profile.profileName ??
-      "Profile Name",
+      name,
       style: GoogleFonts.poppins(
         fontSize: 24,
         color: Color(0xFF0F0F2D),
@@ -449,43 +469,85 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Widget get buildEmail {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: [
-        Container(
-          width: 220,
-          height: 50,
-          margin: EdgeInsets.only(top: 0),
-          child: TextField(
-            // focusNode: _controller.node,
-            // controller: _controller.textForEmail,
-            textAlign: TextAlign.end,
-            textAlignVertical: TextAlignVertical.top,
-            maxLines: 1,
-            decoration: InputDecoration(
-              hintText: "Enter your email here",
-              border: InputBorder.none,
-              focusedBorder: InputBorder.none,
-              enabledBorder: InputBorder.none,
-              hintStyle: GoogleFonts.poppins(
+  Widget buildEmail({required TextEditingController emailController}) {
+    return Consumer<ProfileInfoProvider>(builder: (context, controller, _) {
+      return Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          Container(
+            width: 220,
+            height: 50,
+            margin: EdgeInsets.only(top: 0),
+            child: TextFormField(
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              // focusNode: _controller.node,
+              controller: emailController,
+              textAlign: TextAlign.end,
+              textAlignVertical: TextAlignVertical.top,
+              maxLines: 1,
+              decoration: InputDecoration(
+                hintText: "Enter your email here",
+                border: InputBorder.none,
+                focusedBorder: InputBorder.none,
+                enabledBorder: InputBorder.none,
+                hintStyle: GoogleFonts.poppins(
+                  fontSize: 16,
+                  color: Color(0xFF979EA4),
+                  fontWeight: FontWeight.normal,
+                ),
+              ),
+              onFieldSubmitted: (val) {
+                FocusScope.of(context).unfocus();
+                if (val.isNotEmpty && val.contains(".") && val.contains("@")) {
+                  print("save");
+                  controller.updateProfileInfo(email: emailController.text);
+                }
+              },
+
+              style: GoogleFonts.poppins(
                 fontSize: 16,
-                color: Color(0xFF979EA4),
+                color: Color(0xFF0F0F2D),
                 fontWeight: FontWeight.normal,
               ),
-            ),
-            onEditingComplete: () {
-              // _controller.saveEmail();
-            },
-            style: GoogleFonts.poppins(
-              fontSize: 16,
-              color: Color(0xFF0F0F2D),
-              fontWeight: FontWeight.normal,
+              validator: (val) {
+                if (val!.isEmpty || val == null) {
+                  return "Email is empty";
+                } else if (!val.contains(".")) {
+                  return "Please enter valid Email";
+                } else if (val.contains(" ")) {
+                  return "Space is not allowed";
+                } else if (!val.contains("@")) {
+                  return "Please enter valid Email";
+                }
+              },
             ),
           ),
-        ),
-      ],
-    );
+        ],
+      );
+    });
+  }
+
+  formatDate(dateUtc, option) {
+    if (dateUtc != "null") {
+      var dateFormat =
+          DateFormat("hh:mm aa dd MM yyyy"); // you can change the format here
+      // DateFormat("dd-MM-yyyy hh:mm aa"); // you can change the format here
+      var utcDate =
+          dateFormat.format(DateTime.parse(dateUtc)); // pass the UTC time here
+      var localDate = dateFormat.parse(utcDate, true).toLocal().toString();
+      String createdDate = dateFormat.format(DateTime.parse(localDate));
+      print('${createdDate.split(" ")[2]}');
+      print('${createdDate.split(" ")[3]}');
+      print('${createdDate.split(" ")[4]}');
+      print(
+          "${createdDate}=====================================================");
+      if (option == "d") return createdDate.split(" ")[2];
+      if (option == "m") return createdDate.split(" ")[3];
+      if (option == "y") return createdDate.split(" ")[4];
+      //return createdDate;
+    } else {
+      return null;
+    }
   }
 
   Widget buildDateOfBirthFields(
@@ -504,119 +566,146 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Widget get buildDateOfBirth {
-    String day = "15";
-    // _controller.profile.dateOfBirth != null
-    //     ? _controller.profile.dateOfBirth!.split("T")[0].split("-")[2]
-    //     : "DD";
-    String month = "11";
-    //  _controller.profile.dateOfBirth != null
-    //     ? _controller.profile.dateOfBirth!.split("T")[0].split("-")[1]
-    //     : "MM";
-    String year = "1998";
-    // _controller.profile.dateOfBirth != null
-    //     ? _controller.profile.dateOfBirth!.split("T")[0].split("-")[0]
-    //     : "YYYY";
+  Widget buildDateOfBirth({DateTime? widgetdateOfBirth}) {
+    return Consumer<ProfileInfoProvider>(builder: (context, controller, _) {
+      Future<void> _selectDate(BuildContext context) async {
+        final DateTime? picked = await showDatePicker(
+            initialEntryMode: DatePickerEntryMode.calendarOnly,
+            initialDatePickerMode: DatePickerMode.day,
+            context: context,
+            initialDate: DateTime.now(),
+            firstDate: DateTime(1960, 8),
+            lastDate: DateTime.now().add(Duration(minutes: 10)));
+        if (picked != null) {
+          print("dob from context $picked");
+          context.read<ProfileInfoProvider>().setDob(dob: picked);
+        }
+      }
 
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        buildDateOfBirthFields(
-          text: "${day.length <= 1 ? "0$day" : "$day"}",
-          radius: BorderRadius.only(
-            topLeft: Radius.circular(10),
-            bottomLeft: Radius.circular(10),
-          ),
-        ),
-        space(width: 10),
-        buildDateOfBirthFields(
-            text: "${month.length <= 1 ? "0$month" : "$month"}"),
-        space(width: 10),
-        buildDateOfBirthFields(
-          text: "$year",
-          radius: BorderRadius.only(
-            topRight: Radius.circular(10),
-            bottomRight: Radius.circular(10),
-          ),
-        ),
-        space(width: 14),
-        Container(
-          padding: EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            color: Color(0xFFF4F3F8),
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: GestureDetector(
-            //onTap: () => _controller.updateDateOfBirth(context),
-            child: Icon(
-              Icons.calendar_today,
-              color: Color(0xFF3E7EFF),
+      print(formatDate(controller.dateOfBirth.toString(), "d"));
+      return Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          buildDateOfBirthFields(
+            text: formatDate(controller.dateOfBirth.toString(), "d") ??
+                widgetdateOfBirth?.day.toString() ??
+                "",
+            radius: BorderRadius.only(
+              topLeft: Radius.circular(10),
+              bottomLeft: Radius.circular(10),
             ),
           ),
-        )
-      ],
-    );
-  }
-
-  Widget get buildGender {
-    return GestureDetector(
-      onTap: showGenderDialog,
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 9),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          color: Color(0xFFF4F3F8),
-        ),
-        child: Row(
-          children: [
-            Text(
-              "Select Your Gender",
-              style: ThreeKmTextConstants.tk14PXPoppinsBlackSemiBold.copyWith(
-                fontSize: 16,
-                fontWeight: FontWeight.normal,
-                color: Color(0xFF979EA4),
+          space(width: 10),
+          buildDateOfBirthFields(
+              text: formatDate(controller.dateOfBirth.toString(), "m") ??
+                  widgetdateOfBirth?.month.toString() ??
+                  ""),
+          space(width: 10),
+          buildDateOfBirthFields(
+            text: formatDate(controller.dateOfBirth.toString(), "y") ??
+                widgetdateOfBirth?.year.toString() ??
+                "",
+            radius: BorderRadius.only(
+              topRight: Radius.circular(10),
+              bottomRight: Radius.circular(10),
+            ),
+          ),
+          space(width: 14),
+          Container(
+            padding: EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: Color(0xFFF4F3F8),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: GestureDetector(
+              onTap: () {
+                _selectDate(context);
+              },
+              child: Icon(
+                Icons.calendar_today,
+                color: Color(0xFF3E7EFF),
               ),
             ),
-            space(width: 10),
-            Icon(
-              Icons.keyboard_arrow_down,
-              color: Color(0xFF979EA4),
-            ),
-          ],
-        ),
-      ),
-    );
-    // : Row(
-    //     children: [
-    //       if (_controller.profile.gender?.toLowerCase() != "other") ...{
-    //         SvgPicture.asset(
-    //           _controller.profile.gender?.toLowerCase() == "male"
-    //               ? "assets/male.svg"
-    //               : _controller.profile.gender?.toLowerCase() == "female"
-    //                   ? "assets/female.svg"
-    //                   : "assets/other.png",
-    //           height: 32,
-    //           width: 32,
-    //         ),
-    //       } else ...{
-    //         Image.asset(
-    //           "assets/other.png",
-    //           height: 32,
-    //           width: 32,
-    //         )
-    //       },
-    //       space(width: 12),
-    //       Text(
-    //         "${_controller.profile.gender}",
-    //         style: GoogleFonts.poppins(
-    //             color: Color(0xFF232629),
-    //             fontSize: 18,
-    //             fontWeight: FontWeight.w600),
-    //       ),
-    //       space(width: 71),
-    //       buildEditButton(onTap: showGenderDialog)
-    //     ],
-    //   );
+          )
+        ],
+      );
+    });
+  }
+
+  Widget buildGender(BuildContext context, {String? widgetGender}) {
+    return Consumer<ProfileInfoProvider>(builder: (context, controller, _) {
+      return controller.gender == null
+          ? GestureDetector(
+              onTap: showGenderDialog,
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 9),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  color: Color(0xFFF4F3F8),
+                ),
+                child: Row(
+                  children: [
+                    Text(
+                      "Select Your Gender",
+                      style: ThreeKmTextConstants.tk14PXPoppinsBlackSemiBold
+                          .copyWith(
+                        fontSize: 16,
+                        fontWeight: FontWeight.normal,
+                        color: Color(0xFF979EA4),
+                      ),
+                    ),
+                    space(width: 10),
+                    Icon(
+                      Icons.keyboard_arrow_down,
+                      color: Color(0xFF979EA4),
+                    ),
+                  ],
+                ),
+              ),
+            )
+          : Row(
+              children: [
+                if (controller.gender.toLowerCase() != "other" ||
+                    widgetGender != "other") ...{
+                  SvgPicture.asset(
+                    controller.gender.toLowerCase() == "male" ||
+                            widgetGender == "male"
+                        ? "assets/male.svg"
+                        : controller.gender.toLowerCase() == "female" ||
+                                widgetGender == "female"
+                            ? "assets/female.svg"
+                            : "assets/other.png",
+                    height: 32,
+                    width: 32,
+                  ),
+                } else ...{
+                  Image.asset(
+                    "assets/other.png",
+                    height: 32,
+                    width: 32,
+                  )
+                },
+                space(width: 12),
+                widgetGender == null
+                    ? Text(
+                        "${controller.gender}",
+                        style: GoogleFonts.poppins(
+                            color: Color(0xFF232629),
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600),
+                      )
+                    : Text(
+                        "$widgetGender",
+                        style: GoogleFonts.poppins(
+                            color: Color(0xFF232629),
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600),
+                      ),
+                space(width: 71),
+                buildEditButton(onTap: showGenderDialog)
+              ],
+            );
+    });
   }
 }
 
@@ -631,9 +720,21 @@ class _ProfilePageState extends State<ProfilePage> {
 //
 //
 //
-class ProfileImagePopUp extends StatelessWidget {
-  const ProfileImagePopUp({Key? key}) : super(key: key);
 
+class ProfileImagePopUp extends StatefulWidget {
+  ProfileImagePopUp({Key? key}) : super(key: key);
+
+  @override
+  State<ProfileImagePopUp> createState() => _ProfileImagePopUpState();
+}
+
+class _ProfileImagePopUpState extends State<ProfileImagePopUp> {
+  ImagePicker _imagePicker = ImagePicker();
+
+  XFile? image;
+
+  final GlobalKey<ExtendedImageEditorState> editorKey =
+      GlobalKey<ExtendedImageEditorState>();
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -665,8 +766,12 @@ class ProfileImagePopUp extends StatelessWidget {
           ),
           buildProfileButton(
             title: "Select other Photo",
-            onTap: () {
-              // Get.find<ProfileController>().pickImage();
+            onTap: () async {
+              image = await _imagePicker.pickImage(source: ImageSource.gallery);
+              if (image != null) {
+                //Navigator.pop(context);
+                setState(() {});
+              }
             },
             width: 177,
           ),
@@ -679,16 +784,32 @@ class ProfileImagePopUp extends StatelessWidget {
               decoration: BoxDecoration(
                 color: Colors.grey.withOpacity(0.2),
               ),
-              child: Icon(
-                Icons.collections,
-                size: 100,
-                color: Colors.grey,
-              )
-              // : Image.memory(
-              //     _controller.imageList!,
-              //     fit: BoxFit.fill,
-              //   ),
-              ),
+              child: image == null
+                  ? Icon(
+                      Icons.collections,
+                      size: 100,
+                      color: Colors.grey,
+                    )
+                  // : Image.file(
+                  //     File(image!.path),
+                  //     fit: BoxFit.contain,
+                  //   ),
+                  : ExtendedImage.file(
+                      File(image!.path),
+                      cacheRawData: true,
+                      fit: BoxFit.contain,
+                      clearMemoryCacheWhenDispose: true,
+                      // enableLoadState: true,
+                      mode: ExtendedImageMode.editor,
+                      extendedImageEditorKey: editorKey,
+                      initEditorConfigHandler: (state) {
+                        return EditorConfig(
+                            maxScale: 8.0,
+                            cropRectPadding: EdgeInsets.all(20.0),
+                            hitTestSize: 20.0,
+                            cropAspectRatio: CropAspectRatios.custom);
+                      },
+                    )),
           space(
             height: 72,
           ),
@@ -702,8 +823,6 @@ class ProfileImagePopUp extends StatelessWidget {
       ),
     );
   }
-
-  // Widgets
 
   Widget buildProfileButton(
       {required String title, double? width, required VoidCallback onTap}) {
@@ -739,7 +858,7 @@ class ProfileImagePopUp extends StatelessWidget {
     );
   }
 
-  Widget buildSaveButton(context) {
+  Widget buildSaveButton(BuildContext context) {
     return CustomButton(
       height: 52,
       width: 176,
@@ -750,34 +869,47 @@ class ProfileImagePopUp extends StatelessWidget {
         //   Get.find<ProfileController>().imageList = null;
         //   Navigator.of(context).pop();
         // }
+        Uint8List? fileData;
+        if (editorKey.currentState?.rawImageData != null) {
+          fileData = await cropImageDataWithNativeLibrary(
+              state: editorKey.currentState!);
+          final tempDir = await getTemporaryDirectory();
+          File file = await File('${tempDir.path}/image.png').create();
+          file.writeAsBytesSync(fileData!);
+          print(file.path);
+          context
+              .read<ProfileInfoProvider>()
+              .uploadPhoto(context: context, filePath: file.path);
+        }
       },
       borderRadius: BorderRadius.circular(26),
       color: Color(0xFF3E7EFF),
       elevation: 0,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          // if (!Get.find<ProfileController>().buttonLoading)
-          // ...{
-          AnimatedButtonCircle(),
-          SizedBox(
-            width: 12,
-          ),
-          Text(
-            "Save Image",
-            style: ThreeKmTextConstants.tk14PXPoppinsBlackBold
-                .copyWith(color: Colors.white),
-          )
-          // } else ...{
-          //   Container(
-          //     height: 30,
-          //     child: CircularProgressIndicator(
-          //       backgroundColor: Colors.transparent,
-          //       valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-          //     ),
-          //   )
-          // }
-        ],
+      child: Consumer<ProfileInfoProvider>(
+        builder: (context, controller, _) {
+          return controller.uploadingPhoto == false
+              ? Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    AnimatedButtonCircle(),
+                    SizedBox(
+                      width: 12,
+                    ),
+                    Text(
+                      "Save Image",
+                      style: ThreeKmTextConstants.tk14PXPoppinsBlackBold
+                          .copyWith(color: Colors.white),
+                    )
+                  ],
+                )
+              : Container(
+                  height: 30,
+                  child: CircularProgressIndicator(
+                    backgroundColor: Colors.transparent,
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                  ),
+                );
+        },
       ),
     );
   }
@@ -799,16 +931,6 @@ class _NamePopUpState extends State<NamePopUp> {
   @override
   void initState() {
     super.initState();
-    setNames();
-  }
-
-  void setNames() async {
-    var pref = await SharedPreferences.getInstance();
-    firstname.text = pref.getString(FIRSTNAME) ?? "";
-    lastname.text = pref.getString(LASTNAME) ?? "";
-    WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
-      setState(() {});
-    });
   }
 
   @override
@@ -864,7 +986,7 @@ class _NamePopUpState extends State<NamePopUp> {
     );
   }
 
-  Widget buildSaveButton(context) {
+  Widget buildSaveButton(BuildContext context) {
     return CustomButton(
       height: 52,
       width: 127,
@@ -885,10 +1007,18 @@ class _NamePopUpState extends State<NamePopUp> {
           SizedBox(
             width: 12,
           ),
-          Text(
-            "Save",
-            style: ThreeKmTextConstants.tk14PXPoppinsBlackBold
-                .copyWith(color: Colors.white),
+          InkWell(
+            onTap: () {
+              if (firstname.text.isNotEmpty && lastname.text.isNotEmpty) {
+                context.read<ProfileInfoProvider>().updateProfileInfo(
+                    fname: firstname.text, lname: lastname.text);
+              }
+            },
+            child: Text(
+              "Save",
+              style: ThreeKmTextConstants.tk14PXPoppinsBlackBold
+                  .copyWith(color: Colors.white),
+            ),
           )
           // } else ...{
           //   Container(
@@ -914,6 +1044,17 @@ class _NamePopUpState extends State<NamePopUp> {
       height: 60,
       margin: EdgeInsets.only(bottom: 8),
       child: TextFormField(
+        validator: (String? val) {
+          if (val!.isEmpty || val == null) {
+            return " name is empty";
+          } else if (val.length < 3) {
+            return "Please enter valid name";
+          } else if (val.contains(" ")) {
+            return "Space is not allowed";
+          } else if (val.contains(".")) {
+            return "Please enter valid name";
+          }
+        },
         expands: hintText == "Enter Password" ? false : true,
         controller: controller,
         maxLines: hintText == "Enter Password" ? 1 : null,
@@ -1387,126 +1528,131 @@ class _ChangePasswordPopUpState extends State<ChangePasswordPopUp> {
 
 class GenderPopUp extends StatelessWidget {
   Widget buildGenderRow({required String asset, required String title}) {
-    return GestureDetector(
-      //onTap: () => _controller.changeGender(title),
-      child: Row(
-        children: [
-          if (asset.substring(asset.lastIndexOf(".") + 1) == "png") ...{
-            Image.asset(
-              asset,
-              width: 48,
-              height: 48,
+    return Consumer<ProfileInfoProvider>(builder: (context, controller, _) {
+      return GestureDetector(
+        onTap: () => controller.changeGender(title),
+        child: Row(
+          children: [
+            if (asset.substring(asset.lastIndexOf(".") + 1) == "png") ...{
+              Image.asset(
+                asset,
+                width: 48,
+                height: 48,
+              ),
+            } else ...{
+              SvgPicture.asset(
+                asset,
+                width: 48,
+                height: 48,
+              ),
+            },
+            space(width: 16),
+            Expanded(
+              child: Text(
+                title,
+                style: ThreeKmTextConstants.tk14PXPoppinsBlackSemiBold
+                    .copyWith(fontSize: 18),
+              ),
             ),
-          } else ...{
-            SvgPicture.asset(
-              asset,
-              width: 48,
-              height: 48,
+            Checkbox(
+              value: title == controller.gender,
+              onChanged: (v) => controller.changeGender(title),
+              activeColor: Colors.green,
+              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
             ),
-          },
-          space(width: 16),
-          Expanded(
-            child: Text(
-              title,
-              style: ThreeKmTextConstants.tk14PXPoppinsBlackSemiBold
-                  .copyWith(fontSize: 18),
-            ),
-          ),
-          // Checkbox(
-          //   value: title == _controller.gender,
-          //   onChanged: (v) => _controller.changeGender(title),
-          //   activeColor: Colors.green,
-          //   materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-          // ),
-        ],
-      ),
-    );
+          ],
+        ),
+      );
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.only(left: 10, right: 24),
-      height: 466,
-      width: double.infinity,
-      margin: EdgeInsets.only(
-        top: 24,
-        left: 8,
-        right: 8,
-        bottom: 32,
-      ),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(50),
-      ),
-      child: Column(
-        children: [
-          space(height: 40),
-          Text(
-            "Select gender".toUpperCase(),
-            style: ThreeKmTextConstants.tk14PXPoppinsBlackBold
-                .copyWith(fontSize: 16),
-          ),
-          space(height: 56),
-          buildGenderRow(asset: "assets/female.svg", title: "Female"),
-          space(height: 24),
-          buildGenderRow(asset: "assets/male.svg", title: "Male"),
-          space(height: 24),
-          buildGenderRow(asset: "assets/other.png", title: "Other"),
-          space(height: 56),
-          CustomButton(
-            height: 52,
-            width: 183,
-            onTap: () async {
-              // _controller.saveGender(_controller.gender, context);
-            },
-            borderRadius: BorderRadius.circular(26),
-            color: Color(0xFF3E7EFF),
-            elevation: 0,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Stack(
-                  alignment: AlignmentDirectional.center,
-                  children: [
-                    Container(
-                      height: 8,
-                      width: 8,
-                      decoration: BoxDecoration(
-                          color: Colors.white, shape: BoxShape.circle),
+    return Consumer<ProfileInfoProvider>(builder: (context, controller, _) {
+      return Container(
+        padding: EdgeInsets.only(left: 10, right: 24),
+        height: 466,
+        width: double.infinity,
+        margin: EdgeInsets.only(
+          top: 24,
+          left: 8,
+          right: 8,
+          bottom: 32,
+        ),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(50),
+        ),
+        child: Column(
+          children: [
+            space(height: 40),
+            Text(
+              "Select gender".toUpperCase(),
+              style: ThreeKmTextConstants.tk14PXPoppinsBlackBold
+                  .copyWith(fontSize: 16),
+            ),
+            space(height: 56),
+            buildGenderRow(asset: "assets/female.svg", title: "Female"),
+            space(height: 24),
+            buildGenderRow(asset: "assets/male.svg", title: "Male"),
+            space(height: 24),
+            buildGenderRow(asset: "assets/other.png", title: "Other"),
+            space(height: 56),
+            CustomButton(
+              height: 52,
+              width: 183,
+              onTap: () async {
+                controller.saveGender(controller.gender, context);
+              },
+              borderRadius: BorderRadius.circular(26),
+              color: Color(0xFF3E7EFF),
+              elevation: 0,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  if (controller.genderLoading == false) ...{
+                    Stack(
+                      alignment: AlignmentDirectional.center,
+                      children: [
+                        Container(
+                          height: 8,
+                          width: 8,
+                          decoration: BoxDecoration(
+                              color: Colors.white, shape: BoxShape.circle),
+                        ),
+                        Container(
+                          height: 18,
+                          width: 18,
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.4),
+                            shape: BoxShape.circle,
+                          ),
+                        )
+                      ],
                     ),
+                    SizedBox(
+                      width: 12,
+                    ),
+                    Text(
+                      "Save Gender",
+                      style: ThreeKmTextConstants.tk14PXPoppinsBlackBold
+                          .copyWith(color: Colors.white),
+                    )
+                  } else ...{
                     Container(
-                      height: 18,
-                      width: 18,
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.4),
-                        shape: BoxShape.circle,
+                      height: 30,
+                      child: CircularProgressIndicator(
+                        backgroundColor: Colors.transparent,
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                       ),
                     )
-                  ],
-                ),
-                SizedBox(
-                  width: 12,
-                ),
-                Text(
-                  "Save Gender",
-                  style: ThreeKmTextConstants.tk14PXPoppinsBlackBold
-                      .copyWith(color: Colors.white),
-                )
-                // } else ...{
-                //   Container(
-                //     height: 30,
-                //     child: CircularProgressIndicator(
-                //       backgroundColor: Colors.transparent,
-                //       valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                //     ),
-                //   )
-                // }
-              ],
+                  }
+                ],
+              ),
             ),
-          ),
-        ],
-      ),
-    );
+          ],
+        ),
+      );
+    });
   }
 }

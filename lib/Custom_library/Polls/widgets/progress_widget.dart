@@ -19,16 +19,19 @@ class CustomLinearProgressBar extends StatelessWidget {
       return Container(
         //padding: EdgeInsets.all(3),
         decoration: BoxDecoration(
+            color: Colors.white,
             border: Border.all(color: Color(0xffD5D5D5)),
             borderRadius: BorderRadius.circular(15)),
         child: Row(
           children: [
             Container(
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(15),
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(15),
+                    bottomLeft: Radius.circular(15)),
 
                 /// If [color] of bar is null default color will be applied.
-                color: color ?? Colors.grey[100],
+                color: color ?? Colors.grey[300],
               ),
               height: height,
 

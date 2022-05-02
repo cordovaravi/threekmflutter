@@ -16,238 +16,184 @@ class ProfilePostModel {
     error = null;
     data = Data.fromJson(json['data']);
   }
-
-  Map<String, dynamic> toJson() {
-    final _data = <String, dynamic>{};
-    _data['status'] = status;
-    _data['message'] = message;
-    _data['error'] = error;
-    _data['data'] = data.toJson();
-    return _data;
-  }
 }
 
 class Data {
   Data({
-    required this.result,
+    this.result,
   });
-  late final Result result;
 
-  Data.fromJson(Map<String, dynamic> json) {
-    result = Result.fromJson(json['result']);
-  }
+  Result? result;
 
-  Map<String, dynamic> toJson() {
-    final _data = <String, dynamic>{};
-    _data['result'] = result.toJson();
-    return _data;
-  }
+  factory Data.fromJson(Map<String, dynamic> json) => Data(
+        result: json["result"] == null ? null : Result.fromJson(json["result"]),
+      );
 }
 
 class Result {
   Result({
-    required this.posts,
-    required this.totalPosts,
-    required this.follow,
-    required this.selfUser,
+    this.author,
+    this.posts,
   });
-  late final List<Posts> posts;
-  late final int totalPosts;
-  late final bool follow;
-  late final bool selfUser;
 
-  Result.fromJson(Map<String, dynamic> json) {
-    posts = List.from(json['posts']).map((e) => Posts.fromJson(e)).toList();
-    totalPosts = json['total_posts'];
-    follow = json['follow'];
-    selfUser = json['self_user'];
-  }
+  Author? author;
+  List<Post>? posts;
 
-  Map<String, dynamic> toJson() {
-    final _data = <String, dynamic>{};
-    _data['posts'] = posts.map((e) => e.toJson()).toList();
-    _data['total_posts'] = totalPosts;
-    _data['follow'] = follow;
-    _data['self_user'] = selfUser;
-    return _data;
-  }
-}
-
-class Posts {
-  Posts({
-    required this.postId,
-    required this.submittedHeadline,
-    required this.submittedStory,
-    required this.headline,
-    required this.story,
-    required this.images,
-    required this.videos,
-    required this.type,
-    required this.tags,
-    required this.author,
-    required this.authorType,
-    required this.authorClassification,
-    required this.status,
-    required this.impressions,
-    required this.views,
-    required this.postCreatedDate,
-    required this.createdDate,
-    this.context,
-    required this.isUgc,
-    required this.likes,
-    this.id,
-    required this.isLiked,
-    required this.shares,
-    required this.itemType,
-    required this.shararableDate,
-  });
-  late final int postId;
-  late final String submittedHeadline;
-  late final String submittedStory;
-  late final String headline;
-  late final String story;
-  late final List<String> images;
-  late final List<Videos> videos;
-  late final String type;
-  late final List<String> tags;
-  late final Author author;
-  late final String authorType;
-  late final String authorClassification;
-  late final String status;
-  late final int impressions;
-  late final int views;
-  late final String postCreatedDate;
-  late final String createdDate;
-  late final Null context;
-  late final bool isUgc;
-  late final int likes;
-  late final Null id;
-  late final bool isLiked;
-  late final int shares;
-  late final String itemType;
-  late final String shararableDate;
-
-  Posts.fromJson(Map<String, dynamic> json) {
-    postId = json['post_id'];
-    submittedHeadline = json['submitted_headline'];
-    submittedStory = json['submitted_story'];
-    headline = json['headline'];
-    story = json['story'];
-    images = List.castFrom<dynamic, String>(json['images']);
-    videos = List.from(json['videos']).map((e) => Videos.fromJson(e)).toList();
-    type = json['type'];
-    tags = List.castFrom<dynamic, String>(json['tags']);
-    author = Author.fromJson(json['author']);
-    authorType = json['author_type'];
-    authorClassification = json['author_classification'];
-    status = json['status'];
-    impressions = json['impressions'];
-    views = json['views'];
-    postCreatedDate = json['post_created_date'];
-    createdDate = json['created_date'];
-    context = null;
-    isUgc = json['is_ugc'];
-    likes = json['likes'];
-    id = null;
-    isLiked = json['is_liked'];
-    shares = json['shares'];
-    itemType = json['item_type'];
-    shararableDate = json['shararable_date'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final _data = <String, dynamic>{};
-    _data['post_id'] = postId;
-    _data['submitted_headline'] = submittedHeadline;
-    _data['submitted_story'] = submittedStory;
-    _data['headline'] = headline;
-    _data['story'] = story;
-    _data['images'] = images;
-    _data['videos'] = videos.map((e) => e.toJson()).toList();
-    _data['type'] = type;
-    _data['tags'] = tags;
-    _data['author'] = author.toJson();
-    _data['author_type'] = authorType;
-    _data['author_classification'] = authorClassification;
-    _data['status'] = status;
-    _data['impressions'] = impressions;
-    _data['views'] = views;
-    _data['post_created_date'] = postCreatedDate;
-    _data['created_date'] = createdDate;
-    _data['context'] = context;
-    _data['is_ugc'] = isUgc;
-    _data['likes'] = likes;
-    _data['id'] = id;
-    _data['is_liked'] = isLiked;
-    _data['shares'] = shares;
-    _data['item_type'] = itemType;
-    _data['shararable_date'] = shararableDate;
-    return _data;
-  }
-}
-
-class Videos {
-  Videos({
-    required this.src,
-    required this.thumbnail,
-    required this.player,
-    required this.vimeoUrl,
-    required this.width,
-    required this.height,
-  });
-  late final String src;
-  late final String thumbnail;
-  late final String player;
-  late final String vimeoUrl;
-  late final int width;
-  late final int height;
-
-  Videos.fromJson(Map<String, dynamic> json) {
-    src = json['src'];
-    thumbnail = json['thumbnail'];
-    player = json['player'];
-    vimeoUrl = json['vimeo_url'];
-    width = json['width'];
-    height = json['height'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final _data = <String, dynamic>{};
-    _data['src'] = src;
-    _data['thumbnail'] = thumbnail;
-    _data['player'] = player;
-    _data['vimeo_url'] = vimeoUrl;
-    _data['width'] = width;
-    _data['height'] = height;
-    return _data;
-  }
+  factory Result.fromJson(Map<String, dynamic> json) => Result(
+        author: json["author"] == null ? null : Author.fromJson(json["author"]),
+        posts: json["posts"] == null
+            ? null
+            : List<Post>.from(json["posts"].map((x) => Post.fromJson(x))),
+      );
 }
 
 class Author {
-  Author({
-    required this.id,
-    required this.name,
-    required this.image,
-    required this.type,
+  Author(
+      {this.id,
+      this.name,
+      this.image,
+      this.type,
+      this.isVerified,
+      this.about,
+      this.followers,
+      this.following,
+      this.totalPosts,
+      this.isFollowed});
+
+  int? id;
+  String? name;
+  String? image;
+  String? type;
+  bool? isVerified;
+  bool? isFollowed;
+  String? about;
+  int? followers;
+  int? following;
+  int? totalPosts;
+
+  factory Author.fromJson(Map<String, dynamic> json) => Author(
+        id: json["id"] == null ? null : json["id"],
+        name: json["name"] == null ? null : json["name"],
+        image: json["image"] == null ? null : json["image"],
+        type: json["type"] == null ? null : json["type"],
+        isVerified: json["is_verified"] == null ? null : json["is_verified"],
+        isFollowed: json["is_followed"] == null ? null : json["is_followed"],
+        about: json["about"],
+        followers: json["followers"] == null ? null : json["followers"],
+        following: json["following"] == null ? null : json["following"],
+        totalPosts: json["total_posts"] == null ? null : json["total_posts"],
+      );
+}
+
+class Post {
+  Post({
+    this.postId,
+    this.submittedHeadline,
+    this.submittedStory,
+    this.headline,
+    this.story,
+    this.images,
+    this.videos,
+    this.type,
+    this.tags,
+    this.author,
+    this.authorType,
+    this.authorClassification,
+    this.status,
+    this.views,
+    this.createdDate,
+    this.context,
+    this.likes,
+    //this.comments,
+    this.id,
+    this.isVerified,
+    this.isLiked,
+    this.itemType,
   });
-  late final int id;
-  late final String name;
-  late final String image;
-  late final String type;
 
-  Author.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    name = json['name'];
-    image = json['image'];
-    type = json['type'];
-  }
+  int? postId;
+  String? submittedHeadline;
+  String? submittedStory;
+  String? headline;
+  String? story;
+  List<String>? images;
+  List<Video>? videos;
+  String? type;
+  List<String>? tags;
+  Author? author;
+  String? authorType;
+  String? authorClassification;
+  String? status;
+  int? views;
+  String? createdDate;
+  dynamic context;
+  int? likes;
+  //int? comments;
+  dynamic id;
+  bool? isVerified;
+  bool? isLiked;
+  String? itemType;
 
-  Map<String, dynamic> toJson() {
-    final _data = <String, dynamic>{};
-    _data['id'] = id;
-    _data['name'] = name;
-    _data['image'] = image;
-    _data['type'] = type;
-    return _data;
-  }
+  factory Post.fromJson(Map<String, dynamic> json) => Post(
+        postId: json["post_id"] == null ? null : json["post_id"],
+        submittedHeadline: json["submitted_headline"] == null
+            ? null
+            : json["submitted_headline"],
+        submittedStory:
+            json["submitted_story"] == null ? null : json["submitted_story"],
+        headline: json["headline"] == null ? null : json["headline"],
+        story: json["story"] == null ? null : json["story"],
+        images: json["images"] == null
+            ? null
+            : List<String>.from(json["images"].map((x) => x)),
+        videos: json["videos"] == null
+            ? null
+            : List<Video>.from(json["videos"].map((x) => Video.fromJson(x))),
+        type: json["type"] == null ? null : json["type"],
+        tags: json["tags"] == null
+            ? null
+            : List<String>.from(json["tags"].map((x) => x)),
+        author: json["author"] == null ? null : Author.fromJson(json["author"]),
+        authorType: json["author_type"] == null ? null : json["author_type"],
+        authorClassification: json["author_classification"] == null
+            ? null
+            : json["author_classification"],
+        status: json["status"] == null ? null : json["status"],
+        views: json["views"] == null ? null : json["views"],
+        createdDate: json["created_date"] == null ? null : json["created_date"],
+        context: json["context"],
+        likes: json["likes"] == null ? null : json["likes"],
+        //comments: json["comments"] == null ? null : json["comments"],
+        id: json["id"],
+        isVerified: json["is_verified"] == null ? null : json["is_verified"],
+        isLiked: json["is_liked"] == null ? null : json["is_liked"],
+        itemType: json["item_type"] == null ? null : json["item_type"],
+      );
+}
+
+class Video {
+  Video({
+    this.src,
+    this.thumbnail,
+    this.player,
+    this.vimeoUrl,
+    this.width,
+    this.height,
+  });
+
+  String? src;
+  String? thumbnail;
+  String? player;
+  String? vimeoUrl;
+  int? width;
+  int? height;
+
+  factory Video.fromJson(Map<String, dynamic> json) => Video(
+        src: json["src"] == null ? null : json["src"],
+        thumbnail: json["thumbnail"] == null ? null : json["thumbnail"],
+        player: json["player"] == null ? null : json["player"],
+        vimeoUrl: json["vimeo_url"] == null ? null : json["vimeo_url"],
+        width: json["width"] == null ? null : json["width"],
+        height: json["height"] == null ? null : json["height"],
+      );
 }

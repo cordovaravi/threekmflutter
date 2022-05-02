@@ -1,8 +1,8 @@
 import 'dart:developer';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:threekm/UI/main/navigation.dart';
 import 'package:threekm/commenwidgets/CustomSnakBar.dart';
 import 'package:threekm/commenwidgets/commenwidget.dart';
@@ -26,14 +26,16 @@ class SignInProvider extends ChangeNotifier {
         hideLoading();
         log("$response");
         if (response['status'] == 'success') {
-          // CustomSnackBar(context, Text("Login Successfull"));
-          _apiProvider.saveLoginCredentials(
-            response['data']['result']['token'],
-            response['data']['result']['firstname'],
-            response['data']['result']['lastname'],
-            response['data']['result']['phone_no'],
-            response['data']['result']['avatar'],
-          );
+          final prefs = await SharedPreferences.getInstance();
+          prefs.setString("token", response['data']['result']['token'] ?? "");
+          prefs.setString(
+              "userlname", response['data']['result']['lastname'] ?? "");
+          prefs.setString(
+              "userfname", response['data']['result']['firstname'] ?? "");
+          prefs.setString("avatar", response['data']['result']['avatar'] ?? "");
+          prefs.setString("gender", response['data']['result']['gender'] ?? "");
+          prefs.setString("email", response['data']['result']['email'] ?? "");
+          prefs.setString("dob", response['data']['result']['dob'] ?? "");
           Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(builder: (context) => TabBarNavigation()),
@@ -59,13 +61,18 @@ class SignInProvider extends ChangeNotifier {
         hideLoading();
         _wrongOTP = false;
         notifyListeners();
-        _apiProvider.saveLoginCredentials(
-          response['data']['result']['token'],
-          response['data']['result']['firstname'],
-          response['data']['result']['lastname'],
-          response['data']['result']['phone_no'],
-          response['data']['result']['avatar'],
-        );
+        final prefs = await SharedPreferences.getInstance();
+        prefs.setString("token", response['data']['result']['token'] ?? "");
+        prefs.setString(
+            "userlname", response['data']['result']['lastname'] ?? "");
+        prefs.setString(
+            "userfname", response['data']['result']['firstname'] ?? "");
+        prefs.setString("avatar", response['data']['result']['avatar'] ?? "");
+        prefs.setString("gender", response['data']['result']['gender'] ?? "");
+        prefs.setString("email", response['data']['result']['email'] ?? "");
+        if (response['data']['result']['dob'] != null) {
+          prefs.setString("dob", response['data']['result']['dob'] ?? "");
+        }
         Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(builder: (context) => TabBarNavigation()),

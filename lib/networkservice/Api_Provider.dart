@@ -1,7 +1,7 @@
 import 'dart:convert';
-import 'dart:developer';
 import 'dart:io';
 
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -9,10 +9,13 @@ import 'package:threekm/commenwidgets/CustomSnakBar.dart';
 import 'package:threekm/commenwidgets/commenwidget.dart';
 import 'package:threekm/exceptions/custom_exception.dart';
 import 'package:threekm/main.dart';
+import 'package:threekm/providers/Global/logged_in_or_not.dart';
 import 'package:threekm/utils/api_paths.dart';
 
 class ApiProvider {
   String? _baseUrl = baseUrl;
+
+  final Connectivity _connectivity = Connectivity();
 
   //prefs
   getToken() async {
@@ -51,10 +54,22 @@ class ApiProvider {
     return responseJson;
   }
 
+  Future<bool> getConnectivityStatus() async {
+    ConnectivityResult connectivityResult =
+        await _connectivity.checkConnectivity();
+    if (connectivityResult == ConnectivityResult.mobile) {
+      return true;
+    } else if (connectivityResult == ConnectivityResult.wifi) {
+      return true;
+    }
+    return false;
+  }
+
   //future get
   Future<dynamic> get(String url) async {
     var responseJson;
-    String token = await getToken();
+    String token = await getToken() ?? '';
+
     try {
       //showLoading();
       final response = await http
@@ -80,7 +95,7 @@ class ApiProvider {
   //future post
   Future<dynamic> post(String url, requestJson) async {
     var responseJson;
-    String token = await getToken();
+    String token = await getToken() ?? "";
     print(_baseUrl! + url);
     print(requestJson);
     try {
@@ -120,7 +135,7 @@ class ApiProvider {
     return responseJson;
   }
 
-  dynamic _response(http.Response response) {
+  dynamic _response(http.Response response) async {
     //BuildContext context;
     switch (response.statusCode) {
       case 200:
@@ -130,8 +145,11 @@ class ApiProvider {
       case 400:
         throw BadRequestException(response.body.toString());
       case 401:
-        hideLoading();
-        showMessage(response.body.toString());
+        if (await getAuthStatus()) {
+          hideLoading();
+          showMessage(response.body.toString());
+        }
+
         break;
       case 403:
         throw UnauthorisedException(response.body.toString());

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:threekm/networkservice/Api_Provider.dart';
@@ -7,6 +8,7 @@ import 'package:threekm/utils/api_paths.dart';
 class QuizProvider extends ChangeNotifier {
   bool? _isCorectAns;
   bool? get isCorrectAns => _isCorectAns;
+
   Future<void> update(String isSelectedAns, String rightAns, int index) async {
     if (isSelectedAns == rightAns) {
       _isCorectAns = true;
@@ -38,6 +40,7 @@ class QuizProvider extends ChangeNotifier {
     if (selectedIndex == correctAnsIndex) {
       _isCorectAns == true;
       _showBlast = true;
+
       notifyListeners();
     } else {
       _shake = true;
@@ -51,6 +54,8 @@ class QuizProvider extends ChangeNotifier {
       _showBlast = false;
       notifyListeners();
     });
+    log("ans index is = $_answredIndex");
+    log("ans index is = $_selecctedIndex");
   }
 
   //// serivice calls

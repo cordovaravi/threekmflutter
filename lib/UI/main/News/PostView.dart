@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
@@ -7,20 +8,26 @@ import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:threekm/Custom_library/flutter_reaction_button.dart';
-import 'package:threekm/Custom_library/src/reaction.dart';
 import 'package:threekm/UI/main/News/NewsList.dart';
 import 'package:threekm/UI/main/News/Widgets/singlePost_Loading.dart';
+import 'package:threekm/UI/main/Profile/AuthorProfile.dart';
 import 'package:threekm/commenwidgets/CustomSnakBar.dart';
 import 'package:threekm/commenwidgets/commenwidget.dart';
+import 'package:threekm/providers/Global/logged_in_or_not.dart';
+import 'package:threekm/providers/localization_Provider/appLanguage_provider.dart';
+import 'package:threekm/providers/main/LikeList_Provider.dart';
 import 'package:threekm/providers/main/comment_Provider.dart';
 import 'package:threekm/providers/main/singlePost_provider.dart';
 import 'package:threekm/utils/threekm_textstyles.dart';
 import 'package:provider/provider.dart';
 import 'package:threekm/widgets/video_widget.dart';
 import 'package:threekm/widgets/reactions_assets.dart' as reactionAsset;
+import 'package:timelines/timelines.dart';
 
 import 'Widgets/comment_Loading.dart';
+import 'Widgets/likes_Loading.dart';
 
 class Postview extends StatefulWidget {
   final String postId;
@@ -34,11 +41,22 @@ class Postview extends StatefulWidget {
 class _PostviewState extends State<Postview> {
   ScreenshotController screenshotController = ScreenshotController();
   TextEditingController _commentController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
-    Future.delayed(Duration.zero, () {
-      context.read<SinglePostProvider>().getPostDetails(widget.postId, mounted);
+    Future.delayed(Duration.zero, () async {
+      SharedPreferences _prefs = await SharedPreferences.getInstance();
+      context.read<SinglePostProvider>().getPostDetails(
+          widget.postId,
+          mounted,
+          context.read<AppLanguage>().appLocal == Locale("en")
+              ? "en"
+              : context.read<AppLanguage>().appLocal == Locale("mr")
+                  ? "mr"
+                  : context.read<AppLanguage>().appLocal == Locale("hi")
+                      ? "hi"
+                      : _prefs.getString("language_code") ?? "en");
     });
     super.initState();
   }
@@ -46,9 +64,11 @@ class _PostviewState extends State<Postview> {
   @override
   void dispose() {
     SinglePostProvider? _singlepost;
-    _singlepost!.resetRefresh();
+    _singlepost?.resetRefresh();
     super.dispose();
   }
+
+  final _imagKey = GlobalKey();
 
   @override
   Widget build(BuildContext context) {
@@ -116,23 +136,46 @@ class _PostviewState extends State<Postview> {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
-                                            Container(
-                                                margin:
-                                                    EdgeInsets.only(right: 10),
-                                                height: 50,
-                                                width: 50,
-                                                child: Container(
+                                            InkWell(
+                                              onTap: () {
+                                                Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            AuthorProfile(
+                                                                authorType:
+                                                                    newsData
+                                                                        ?.authorType,
+                                                                id:
+                                                                    newsData!
+                                                                        .author!
+                                                                        .id!,
+                                                                avatar: newsData
+                                                                    .author!
+                                                                    .image!,
+                                                                userName: newsData
+                                                                    .author!
+                                                                    .name!)));
+                                              },
+                                              child: Container(
+                                                  margin: EdgeInsets.only(
+                                                      right: 10),
                                                   height: 50,
                                                   width: 50,
-                                                  decoration: BoxDecoration(
-                                                      shape: BoxShape.circle,
-                                                      image: DecorationImage(
-                                                          fit: BoxFit.cover,
-                                                          image: CachedNetworkImageProvider(
-                                                              newsData!
-                                                                  .author!.image
-                                                                  .toString()))),
-                                                )),
+                                                  child: Container(
+                                                    height: 50,
+                                                    width: 50,
+                                                    decoration: BoxDecoration(
+                                                        shape: BoxShape.circle,
+                                                        image: DecorationImage(
+                                                            fit: BoxFit.cover,
+                                                            image: CachedNetworkImageProvider(
+                                                                newsData!
+                                                                    .author!
+                                                                    .image
+                                                                    .toString()))),
+                                                  )),
+                                            ),
                                             Column(
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.start,
@@ -174,29 +217,168 @@ class _PostviewState extends State<Postview> {
                                           ],
                                         ),
                                       ),
-                                      if (newsData.images!.isNotEmpty ||
-                                          newsData.images!.length > 0) ...{
-                                        CachedNetworkImage(
-                                          height: 254,
-                                          width: 338,
-                                          fit: BoxFit.cover,
-                                          imageUrl: '${newsData.images!.first}',
-                                        )
-                                      } else if (newsData.videos!.isNotEmpty ||
-                                          newsData.videos!.length > 0) ...{
-                                        Container(
-                                          height: 254,
-                                          width:
-                                              MediaQuery.of(context).size.width,
-                                          child: VideoWidget(
-                                            play: true,
-                                            thubnail: newsData
-                                                .videos!.first.thumbnail,
-                                            url: newsData.videos!.first.src
-                                                .toString(),
-                                          ),
-                                        )
-                                      },
+                                      newsData.images!.length > 1 ||
+                                              newsData.videos!.length > 1
+                                          ?
+                                          //video and image both
+                                          Container(
+                                              height: 400,
+                                              width: 400,
+                                              child: PageView.builder(
+                                                itemCount:
+                                                    newsData.images!.length +
+                                                        newsData.videos!.length,
+                                                // options: CarouselOptions(
+                                                //   // aspectRatio: null,
+                                                //   viewportFraction: 0.99,
+                                                // ),
+                                                itemBuilder: (
+                                                  context,
+                                                  index,
+                                                ) {
+                                                  List videoUrls = newsData
+                                                      .videos!
+                                                      .map((e) => e.src)
+                                                      .toList();
+                                                  List templist = List.from(
+                                                      newsData.images!.toList())
+                                                    ..addAll(videoUrls);
+                                                  return templist != null
+                                                      ? templist[index]
+                                                              .toString()
+                                                              .contains(".mp4")
+                                                          ? SizedBox(
+                                                              height: 300,
+                                                              width:
+                                                                  MediaQuery.of(
+                                                                          context)
+                                                                      .size
+                                                                      .width,
+                                                              child: VideoWidget(
+                                                                  thubnail: '',
+                                                                  url: templist[
+                                                                          index]
+                                                                      .toString(),
+                                                                  play: false),
+                                                            )
+                                                          : CachedNetworkImage(
+                                                              key: _imagKey,
+                                                              height: _imagKey
+                                                                  .currentContext
+                                                                  ?.size
+                                                                  ?.height,
+                                                              width:
+                                                                  MediaQuery.of(
+                                                                          context)
+                                                                      .size
+                                                                      .width,
+                                                              fit: BoxFit
+                                                                  .contain,
+                                                              imageUrl:
+                                                                  templist[
+                                                                      index])
+                                                      : SizedBox(
+                                                          child: Text("null"),
+                                                        );
+                                                },
+                                              ),
+                                            )
+                                          // image or video
+                                          : Container(
+                                              child: newsData.images!.length ==
+                                                      1
+                                                  ? CachedNetworkImage(
+                                                      height: _imagKey
+                                                          .currentContext
+                                                          ?.size
+                                                          ?.height,
+                                                      width:
+                                                          MediaQuery.of(context)
+                                                              .size
+                                                              .width,
+                                                      fit: BoxFit.fitWidth,
+                                                      imageUrl:
+                                                          '${newsData.images!.first}',
+                                                    )
+                                                  : VideoWidget(
+                                                      thubnail: newsData
+                                                                  .videos
+                                                                  ?.first
+                                                                  .thumbnail !=
+                                                              null
+                                                          ? newsData.videos!
+                                                              .first.thumbnail
+                                                              .toString()
+                                                          : '',
+                                                      url: newsData
+                                                          .videos!.first.src
+                                                          .toString(),
+                                                      fromSinglePage: true,
+                                                      play: false),
+                                            ),
+                                      newsData.images != null &&
+                                                  newsData.images!.length > 1 ||
+                                              newsData.videos != null &&
+                                                  newsData.videos!.length > 1
+                                          ? Container(
+                                              height: 10,
+                                              width: MediaQuery.of(context)
+                                                  .size
+                                                  .width,
+                                              child:
+                                                  Builder(builder: (context) {
+                                                List videoUrls = newsData
+                                                    .videos!
+                                                    .map((e) => e.src)
+                                                    .toList();
+                                                List templist = List.from(
+                                                    newsData.images!.toList())
+                                                  ..addAll(videoUrls);
+                                                return Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    children: templist
+                                                        .asMap()
+                                                        .entries
+                                                        .map((entry) {
+                                                      return Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .only(left: 2),
+                                                        child: DotIndicator(
+                                                          size: 8.0,
+                                                          color: Colors.grey,
+                                                        ),
+                                                      );
+                                                    }).toList());
+                                              }),
+                                            )
+                                          : SizedBox.shrink(),
+                                      // if (newsData.images!.isNotEmpty ||
+                                      //     newsData.images!.length > 0) ...{
+                                      //   CachedNetworkImage(
+                                      //     height: 254,
+                                      //     width:
+                                      //         MediaQuery.of(context).size.width,
+                                      //     fit: BoxFit.fitWidth,
+                                      //     imageUrl: '${newsData.images!.first}',
+                                      //   )
+                                      // } else if (newsData.videos!.isNotEmpty ||
+                                      //     newsData.videos!.length > 0) ...{
+                                      //   Container(
+                                      //     // height: 254,
+                                      //     width:
+                                      //         MediaQuery.of(context).size.width,
+                                      //     child: VideoWidget(
+                                      //       play: true,
+                                      //       thubnail: newsData
+                                      //           .videos!.first.thumbnail,
+                                      //       url: newsData.videos!.first.src
+                                      //           .toString(),
+                                      //     ),
+                                      //   )
+                                      // },
                                       // if (newsData.images != null &&
                                       //     newsData.images!.length > 0)
                                       //   CachedNetworkImage(
@@ -230,12 +412,19 @@ class _PostviewState extends State<Postview> {
                                       //     child: Text("no data"),
                                       //   ),
                                       Row(children: [
-                                        Padding(
-                                            padding: EdgeInsets.only(
-                                                top: 2, left: 5, bottom: 2),
-                                            child: Text(
-                                                newsData.likes.toString() +
-                                                    ' Likes')),
+                                      if(newsData.likes != 0)  InkWell(
+                                          onTap: () {
+                                            _showLikedBottomModalSheet(
+                                                newsData.postId!.toInt(),
+                                                newsData.likes);
+                                          },
+                                          child: Padding(
+                                              padding: EdgeInsets.only(
+                                                  top: 2, left: 5, bottom: 2),
+                                              child: Text('👍 ❤️ ' +
+                                                  newsData.likes.toString() +
+                                                  ' Likes')),
+                                        ),
                                         Spacer(),
                                         Padding(
                                             padding: EdgeInsets.only(
@@ -264,6 +453,9 @@ class _PostviewState extends State<Postview> {
                                           newsData.story.toString(),
                                           textStyle: TextStyle(),
                                         ),
+                                      ),
+                                      SizedBox(
+                                        height: 50,
                                       )
                                     ],
                                   ),
@@ -296,25 +488,32 @@ class _PostviewState extends State<Postview> {
                                         ? FlutterReactionButtonCheck(
                                             boxAlignment: Alignment.center,
                                             boxPosition: Position.TOP,
-                                            onReactionChanged:
-                                                (reaction, index, isChecked) {
-                                              print(
-                                                  'reaction selected index: $index');
-                                              print("is checked $isChecked");
-                                              if (newsData.isLiked == true) {
-                                                print("remove Like");
-                                                context
-                                                    .read<SinglePostProvider>()
-                                                    .postUnLike(newsData.postId
-                                                        .toString());
+                                            onReactionChanged: (reaction, index,
+                                                isChecked) async {
+                                              if (await getAuthStatus()) {
+                                                print(
+                                                    'reaction selected index: $index');
+                                                print("is checked $isChecked");
+                                                if (newsData.isLiked == true) {
+                                                  print("remove Like");
+                                                  context
+                                                      .read<
+                                                          SinglePostProvider>()
+                                                      .postUnLike(newsData
+                                                          .postId
+                                                          .toString());
+                                                } else {
+                                                  print("Liked");
+                                                  context
+                                                      .read<
+                                                          SinglePostProvider>()
+                                                      .postLike(
+                                                          newsData.postId
+                                                              .toString(),
+                                                          null);
+                                                }
                                               } else {
-                                                print("Liked");
-                                                context
-                                                    .read<SinglePostProvider>()
-                                                    .postLike(
-                                                        newsData.postId
-                                                            .toString(),
-                                                        null);
+                                                NaviagateToLogin(context);
                                               }
                                             },
                                             reactions: reactionAsset.reactions,
@@ -349,9 +548,13 @@ class _PostviewState extends State<Postview> {
                                   height: 60,
                                   width: 60,
                                   child: IconButton(
-                                      onPressed: () {
-                                        _showCommentsBottomModalSheet(
-                                            context, newsData.postId!.toInt());
+                                      onPressed: () async {
+                                        if (await getAuthStatus()) {
+                                          _showCommentsBottomModalSheet(context,
+                                              newsData.postId!.toInt());
+                                        } else {
+                                          NaviagateToLogin(context);
+                                        }
                                       },
                                       icon: Image.asset(
                                           'assets/icons-topic.png',
@@ -410,6 +613,103 @@ class _PostviewState extends State<Postview> {
             ),
           )
         : SinglePostLoading();
+  }
+
+  _showLikedBottomModalSheet(int postId, totalLikes) {
+    context.read<LikeListProvider>().showLikes(context, postId);
+    showModalBottomSheet<void>(
+      backgroundColor: Colors.white,
+      context: context,
+      builder: (BuildContext context) {
+        final _likeProvider = context.watch<LikeListProvider>();
+        return Padding(
+            padding: EdgeInsets.zero,
+            child: StatefulBuilder(
+              builder: (context, _) {
+                return Container(
+                  color: Colors.white,
+                  height: 192,
+                  width: MediaQuery.of(context).size.width,
+                  child: _likeProvider.isLoading
+                      ? LikesLoding()
+                      : Column(
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                            Row(
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.only(
+                                      top: 24, left: 18, bottom: 34),
+                                  child: Text(
+                                      "$totalLikes People reacted to this"),
+                                ),
+                              ],
+                            ),
+                            Container(
+                              height: 90,
+                              width: double.infinity,
+                              child: ListView.builder(
+                                scrollDirection: Axis.horizontal,
+                                itemCount: _likeProvider
+                                    .likeList!.data!.result!.users!.length,
+                                shrinkWrap: true,
+                                itemBuilder: (context, index) {
+                                  return Container(
+                                      margin: EdgeInsets.only(
+                                        left: 21,
+                                      ),
+                                      height: 85,
+                                      width: 85,
+                                      decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          image: DecorationImage(
+                                              fit: BoxFit.cover,
+                                              image: NetworkImage(_likeProvider
+                                                  .likeList!
+                                                  .data!
+                                                  .result!
+                                                  .users![index]
+                                                  .avatar
+                                                  .toString()))),
+                                      child: Stack(
+                                        children: [
+                                          Positioned(
+                                              right: 0,
+                                              child: Image.asset(
+                                                'assets/fblike2x.png',
+                                                height: 15,
+                                                width: 15,
+                                                fit: BoxFit.cover,
+                                              )),
+                                          _likeProvider
+                                                      .likeList!
+                                                      .data!
+                                                      .result!
+                                                      .users![index]
+                                                      .isUnknown !=
+                                                  null
+                                              ? Center(
+                                                  child: Text(
+                                                      "+${_likeProvider.likeList!.data!.result!.anonymousCount}",
+                                                      style: TextStyle(
+                                                          fontSize: 17,
+                                                          color: Colors.white),
+                                                      textAlign:
+                                                          TextAlign.center),
+                                                )
+                                              : SizedBox.shrink()
+                                        ],
+                                      ));
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                );
+              },
+            ));
+      },
+    );
   }
 
   PopupMenuButton showPopMenu(String postID, newsData) {
@@ -613,17 +913,30 @@ class _PostviewState extends State<Postview> {
                               )
                             : SizedBox();
                       }),
-                      Container(
-                        height: 116,
-                        width: 338,
-                        decoration: BoxDecoration(
-                            color: Colors.grey.shade200,
-                            borderRadius: BorderRadius.circular(20)),
-                        child: TextFormField(
-                          controller: _commentController,
-                          maxLines: null,
-                          keyboardType: TextInputType.multiline,
-                          decoration: InputDecoration(border: InputBorder.none),
+                      Form(
+                        key: _formKey,
+                        child: Container(
+                          height: 60,
+                          width: 338,
+                          decoration: BoxDecoration(
+                              color: Colors.grey.shade200,
+                              borderRadius: BorderRadius.circular(20)),
+                          child: TextFormField(
+                            autovalidateMode:
+                                AutovalidateMode.onUserInteraction,
+                            validator: (String? value) {
+                              if (value == null) {
+                                return "  Comment cant be blank";
+                              } else if (value.isEmpty) {
+                                return "  Comment cant be blank";
+                              }
+                            },
+                            controller: _commentController,
+                            maxLines: null,
+                            keyboardType: TextInputType.multiline,
+                            decoration:
+                                InputDecoration(border: InputBorder.none),
+                          ),
                         ),
                       ),
                       SizedBox(
@@ -633,24 +946,36 @@ class _PostviewState extends State<Postview> {
                         alignment: Alignment.centerLeft,
                         child: InkWell(
                           onTap: () {
-                            context
-                                .read<CommentProvider>()
-                                .postCommentApi(postId, _commentController.text)
-                                .then((value) => _commentController.clear());
+                            if (_formKey.currentState!.validate()) {
+                              context
+                                  .read<CommentProvider>()
+                                  .postCommentApi(
+                                      postId, _commentController.text)
+                                  .then(
+                                      (value) => _commentController.text = "");
+                            } else {
+                              CustomSnackBar(
+                                  context, Text("Comment cant be blank"));
+                            }
                           },
                           child: Container(
+                            margin: EdgeInsets.only(left: 10),
                             height: 36,
                             width: 112,
                             decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(18),
                                 color: ThreeKmTextConstants.blue2),
-                            child: Center(
-                              child: Text(
-                                "Submit",
-                                style: ThreeKmTextConstants
-                                    .tk14PXPoppinsWhiteMedium,
-                              ),
-                            ),
+                            child: Center(child: Consumer<CommentProvider>(
+                              builder: (context, _controller, child) {
+                                return _controller.isLoading == false
+                                    ? Text(
+                                        "Submit",
+                                        style: ThreeKmTextConstants
+                                            .tk14PXPoppinsWhiteMedium,
+                                      )
+                                    : CupertinoActivityIndicator();
+                              },
+                            )),
                           ),
                         ),
                       )

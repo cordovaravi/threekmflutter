@@ -9,10 +9,12 @@ class PollResultsWidget extends StatelessWidget {
   final double percentage;
   final PollOptions optionModel;
   final TextStyle? optionsStyle;
+  final bool isVoated;
   const PollResultsWidget({
     Key? key,
     required this.percentage,
     required this.optionModel,
+    required this.isVoated,
     this.optionsStyle,
   }) : super(key: key);
 
@@ -27,7 +29,17 @@ class PollResultsWidget extends StatelessWidget {
           /// CustomLinearProgressBar is a widget that works like a progress bar but will be static.
           CustomLinearProgressBar(
             value: percentage,
-            color: Color(0xffFBA924),
+            color: Color(0xffD5D5D5),
+          ),
+
+          Positioned(
+            right: 10,
+            child: Text(
+                double.parse((percentage * 100).toStringAsFixed(1)).toString() +
+                    '%',
+                overflow: TextOverflow.ellipsis,
+                style: ThreeKmTextConstants.tk14PXLatoBlackRegular
+                    .copyWith(fontWeight: FontWeight.bold)),
           ),
 
           /// This will create the label of the option in results screen.
@@ -65,15 +77,7 @@ class PollResultsWidget extends StatelessWidget {
       ),
 
       /// Trailing portion will show the percentage of polls for each option.
-      trailing: Text(
-        double.parse((percentage * 100).toStringAsFixed(1)).toString() + '%',
-        overflow: TextOverflow.ellipsis,
-        style: TextStyle(
-          fontSize: 13,
-          color: Colors.grey,
-          fontWeight: FontWeight.w500,
-        ),
-      ),
+      //trailing:
     );
   }
 }

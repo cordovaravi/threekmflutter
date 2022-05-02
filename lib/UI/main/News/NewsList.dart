@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -10,10 +11,14 @@ import 'package:path_provider/path_provider.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:threekm/Custom_library/flutter_reaction_button.dart';
+import 'package:threekm/Models/newsByCategories_model.dart';
 import 'package:threekm/UI/main/News/Widgets/comment_Loading.dart';
 import 'package:threekm/UI/main/News/Widgets/likes_Loading.dart';
+import 'package:threekm/UI/main/Profile/AuthorProfile.dart';
 import 'package:threekm/commenwidgets/CustomSnakBar.dart';
 import 'package:threekm/commenwidgets/commenwidget.dart';
+import 'package:threekm/providers/Global/logged_in_or_not.dart';
+import 'package:threekm/providers/localization_Provider/appLanguage_provider.dart';
 import 'package:threekm/providers/main/LikeList_Provider.dart';
 import 'package:threekm/providers/main/comment_Provider.dart';
 import 'package:threekm/providers/main/newsList_provider.dart';
@@ -23,10 +28,18 @@ import 'package:threekm/widgets/emotion_Button.dart';
 import 'package:threekm/widgets/video_widget.dart';
 
 import 'package:threekm/widgets/reactions_assets.dart' as reactionAssets;
+import 'package:timelines/timelines.dart';
+
+import 'Widgets/newsListLoading.dart';
 
 class NewsListPage extends StatefulWidget {
   final String title;
-  NewsListPage({required this.title, Key? key}) : super(key: key);
+  final List? hasPostfromBanner;
+  NewsListPage({
+    required this.title,
+    this.hasPostfromBanner,
+    Key? key,
+  }) : super(key: key);
 
   @override
   _NewsListPageState createState() => _NewsListPageState();
@@ -36,20 +49,156 @@ class _NewsListPageState extends State<NewsListPage> {
   String? initJson;
 
   pageInit() {
-    //context.read<NewsListProvider>().state != 'loaded'
-    if (true) {
-      initJson =
-          json.encode({"lat": '', "lng": '', "query": this.widget.title});
+    if (widget.hasPostfromBanner == null) {
+      if (widget.title == "Lifestyle/Travel") {
+        initJson = json.encode({
+          "lat": 21.1458004,
+          "lng": 79.0881546,
+          "tags": [
+            "Fashion",
+            "Jewelry",
+            "Homedecor",
+            "Travel",
+            "places",
+            "spirituality",
+            "tarot",
+            "mythology",
+            "meme",
+            "dance",
+            "music",
+            "singer",
+            "artist",
+            "arts",
+            "painting"
+          ],
+          "category": 4
+        });
+      } else if (widget.title == "Junta - UGC") {
+        initJson = json.encode({
+          "lat": 21.1458004,
+          "lng": 79.0881546,
+          "tags": ["humanstory", "featurestory", "people", "peopleofpune"],
+          "category": 7
+        });
+      } else if (widget.title == "News & Politics") {
+        initJson = json.encode({
+          "lat": 21.1458004,
+          "lng": 79.0881546,
+          "tags": [
+            "news",
+            "corporators",
+            "election",
+            "BJP",
+            "NCP",
+            "CONGRESS",
+            "SHIVSENA",
+            "MNS",
+            "BJP Pune",
+            "BJP PCMC",
+            "NCP Pune",
+            "NCP PCMC",
+            "Pune Congress",
+            "PCMC Congress",
+            "Shivsena Pune",
+            "Shivsena PCMC",
+            "Pune MNS",
+            "PCMC MNS",
+            "Pune Corporator",
+            "PCMC Corporator",
+            "Pune Politics",
+            "PMC"
+          ],
+          "category": 1
+        });
+      } else if (widget.title.contains("Entertainment")) {
+        initJson = json.encode({
+          "lat": 21.1458004,
+          "lng": 79.0881546,
+          "category": 2,
+          "tags": ["entertainment"]
+        });
+      } else if (widget.title.contains("Health")) {
+        initJson = json.encode({
+          "lat": 21.1458004,
+          "lng": 79.0881546,
+          "category": 5,
+          "tags": [
+            "yoga",
+            "hiit",
+            "nutrition",
+            "health",
+            "nutrition",
+            "fitness",
+            "fitnessandworkout"
+          ]
+        });
+      } else if (widget.title == "People") {
+        initJson = json.encode({
+          "lat": 21.1458004,
+          "lng": 79.0881546,
+          "tags": ["humanstory", "featurestory", "people", "peopleofpune"],
+          "category": 6
+        });
+      } else if (widget.title == "Food") {
+        initJson = json.encode({
+          "lat": 21.1458004,
+          "lng": 79.0881546,
+          "tags": [
+            "Recipe",
+            "Homebaking",
+            "Baking",
+            "Food",
+            "Foodblogger",
+            "Punefoodie"
+          ],
+          "category": 3
+        });
+      } else if (widget.title == "Trending") {
+        initJson = json.encode({
+          "lat": 21.1458004,
+          "lng": 79.0881546,
+          "tags": ["Trending"],
+          "category": 8
+        });
+      } else {
+        initJson =
+            json.encode({"lat": '', "lng": '', "query": this.widget.title});
+      }
+
       Future.delayed(Duration.zero, () {
         context
             .read<NewsListProvider>()
             .featchPostIds(initJson, mounted)
             .whenComplete(() {
-          context
-              .read<NewsListProvider>()
-              .getNewsPost(widget.title, mounted, 10, 0, true);
+          context.read<NewsListProvider>().getNewsPost(
+                widget.title,
+                mounted,
+                10,
+                0,
+                true,
+                null,
+                context.read<AppLanguage>().appLocal == Locale("en")
+                    ? "en"
+                    : context.read<AppLanguage>().appLocal == Locale("mr")
+                        ? "mr"
+                        : "hi",
+              );
         });
       });
+    } else {
+      context.read<NewsListProvider>().getNewsPost(
+            widget.title,
+            mounted,
+            10,
+            0,
+            true,
+            widget.hasPostfromBanner!,
+            context.read<AppLanguage>().appLocal == Locale("en")
+                ? "en"
+                : context.read<AppLanguage>().appLocal == Locale("mr")
+                    ? "mr"
+                    : "hi",
+          );
     }
   }
 
@@ -78,32 +227,47 @@ class _NewsListPageState extends State<NewsListPage> {
             style: ThreeKmTextConstants.tk18PXLatoBlackMedium,
           ),
         ),
-        body: RefreshIndicator(
-          onRefresh: () {
-            return context
-                .read<NewsListProvider>()
-                .onRefresh(initJson, widget.title, mounted, 10, 0, true);
-          },
-          child: Builder(
-            builder: (context) {
-              if (newsProvider.state == "loading") {
-                return Center(
-                  child: CircularProgressIndicator(),
-                );
-              } else if (newsProvider.state == "error") {
-                return Center(
-                  child: Lottie.asset("assets/Caterror.json"),
-                );
-              } else if (newsProvider.state == "loaded") {
-                return newsProvider.newsBycategory != null
-                    ? NewsPostCard(
-                        newsListProvider: newsProvider,
-                        name: widget.title,
-                      )
-                    : Text("null");
-              }
-              return Container();
+        body: SizedBox(
+          height: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
+          child: RefreshIndicator(
+            onRefresh: () {
+              return context.read<NewsListProvider>().onRefresh(
+                  initJson,
+                  widget.title,
+                  mounted,
+                  10,
+                  0,
+                  true,
+                  context.read<AppLanguage>().appLocal == Locale("en")
+                      ? "en"
+                      : context.read<AppLanguage>().appLocal == Locale("mr")
+                          ? "mr"
+                          : "hi");
             },
+            child: Builder(
+              builder: (context) {
+                if (newsProvider.state == "loading") {
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                } else if (newsProvider.state == "error") {
+                  return Center(
+                    child: Lottie.asset("assets/Caterror.json"),
+                  );
+                } else if (newsProvider.state == "loaded") {
+                  return newsProvider.newsBycategory != null
+                      ? NewsPostCard(
+                          noScorll:
+                              widget.hasPostfromBanner != null ? true : false,
+                          newsListProvider: newsProvider,
+                          name: widget.title,
+                        )
+                      : Text("null");
+                }
+                return Container();
+              },
+            ),
           ),
         ),
       ),
@@ -114,7 +278,12 @@ class _NewsListPageState extends State<NewsListPage> {
 class NewsPostCard extends StatefulWidget {
   final NewsListProvider newsListProvider;
   final String name;
-  NewsPostCard({required this.newsListProvider, required this.name, Key? key})
+  final bool noScorll;
+  NewsPostCard(
+      {required this.newsListProvider,
+      required this.name,
+      required this.noScorll,
+      Key? key})
       : super(key: key);
 
   @override
@@ -125,6 +294,8 @@ class _NewsPostCardState extends State<NewsPostCard>
     with AutomaticKeepAliveClientMixin {
   ScreenshotController screenshotController = ScreenshotController();
   TextEditingController _commentController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+
   Future<File> getImageFileFromAssets(String path) async {
     final byteData = await rootBundle.load('assets/$path');
 
@@ -139,20 +310,36 @@ class _NewsPostCardState extends State<NewsPostCard>
   ScrollController _scrollController = ScrollController();
   int takeCount = 10;
   int skipCount = 0;
+
+  final List<GlobalKey> imgkey = List.generate(500, (index) => GlobalKey());
+
   @override
   bool get wantKeepAlive => true;
   @override
   void initState() {
-    _scrollController.addListener(() {
-      if (_scrollController.position.maxScrollExtent ==
-          _scrollController.position.pixels) {
-        takeCount += 10;
-        skipCount += 10;
-        context
-            .read<NewsListProvider>()
-            .getNewsPost(widget.name, mounted, takeCount, skipCount, false);
-      }
-    });
+    if (widget.noScorll == false) {
+      _scrollController.addListener(() {
+        if (_scrollController.position.maxScrollExtent ==
+            _scrollController.position.pixels) {
+          if (context.read<NewsListProvider>().getttingMorePosts == false) {
+            takeCount += 10;
+            skipCount += 10;
+            context.read<NewsListProvider>().getNewsPost(
+                widget.name,
+                mounted,
+                takeCount,
+                skipCount,
+                false,
+                null,
+                context.read<AppLanguage>().appLocal == Locale("en")
+                    ? "en"
+                    : context.read<AppLanguage>().appLocal == Locale("mr")
+                        ? "mr"
+                        : "hi");
+          }
+        }
+      });
+    }
     super.initState();
   }
 
@@ -170,8 +357,12 @@ class _NewsPostCardState extends State<NewsPostCard>
   Widget build(BuildContext context) {
     super.build(context);
     return Container(
+      height: MediaQuery.of(context).size.height,
+      width: MediaQuery.of(context).size.width,
       child: widget.newsListProvider.newsBycategory?.data?.result?.posts != null
           ? ListView.builder(
+              shrinkWrap: true,
+              physics: BouncingScrollPhysics(),
               controller: _scrollController,
               itemCount: //50,
                   widget.newsListProvider.newsBycategory!.data!.result!.posts!
@@ -179,6 +370,14 @@ class _NewsPostCardState extends State<NewsPostCard>
               itemBuilder: (context, postIndex) {
                 final newsData = widget.newsListProvider.newsBycategory!.data!
                     .result!.posts![postIndex];
+
+                if (widget.newsListProvider.getttingMorePosts == true) {
+                  return Container(
+                      height: 350,
+                      width: MediaQuery.of(context).size.width,
+                      child: NewsListLoading());
+                }
+
                 if (newsData.postId != null) {
                   return Stack(
                       alignment: AlignmentDirectional.center,
@@ -212,32 +411,57 @@ class _NewsPostCardState extends State<NewsPostCard>
                                             margin: EdgeInsets.only(right: 10),
                                             height: 50,
                                             width: 50,
-                                            child: Container(
-                                              height: 50,
-                                              width: 50,
-                                              decoration: BoxDecoration(
-                                                  shape: BoxShape.circle,
-                                                  image: DecorationImage(
-                                                      fit: BoxFit.cover,
-                                                      image:
-                                                          CachedNetworkImageProvider(
-                                                              newsData
-                                                                  .author!.image
-                                                                  .toString()))),
-                                              child: newsData.isVerified == true
-                                                  ? Stack(
-                                                      children: [
-                                                        Positioned(
-                                                            left: 0,
-                                                            child: Image.asset(
-                                                              'assets/verified.png',
-                                                              height: 15,
-                                                              width: 15,
-                                                              fit: BoxFit.cover,
-                                                            ))
-                                                      ],
-                                                    )
-                                                  : Container(),
+                                            child: GestureDetector(
+                                              onTap: () {
+                                                Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            AuthorProfile(
+                                                                authorType: newsData
+                                                                    .authorType,
+                                                                // page: 1,
+                                                                // authorType:
+                                                                //     "user",
+                                                                id: newsData
+                                                                    .author!
+                                                                    .id!,
+                                                                avatar: newsData
+                                                                    .author!
+                                                                    .image!,
+                                                                userName: newsData
+                                                                    .author!
+                                                                    .name!)));
+                                              },
+                                              child: Container(
+                                                height: 50,
+                                                width: 50,
+                                                decoration: BoxDecoration(
+                                                    shape: BoxShape.circle,
+                                                    image: DecorationImage(
+                                                        fit: BoxFit.cover,
+                                                        image: CachedNetworkImageProvider(
+                                                            newsData
+                                                                .author!.image
+                                                                .toString()))),
+                                                child: newsData.isVerified ==
+                                                        true
+                                                    ? Stack(
+                                                        children: [
+                                                          Positioned(
+                                                              left: 0,
+                                                              child:
+                                                                  Image.asset(
+                                                                'assets/verified.png',
+                                                                height: 15,
+                                                                width: 15,
+                                                                fit: BoxFit
+                                                                    .cover,
+                                                              ))
+                                                        ],
+                                                      )
+                                                    : Container(),
+                                              ),
                                             )),
                                         Column(
                                           crossAxisAlignment:
@@ -248,7 +472,7 @@ class _NewsPostCardState extends State<NewsPostCard>
                                               width: MediaQuery.of(context)
                                                       .size
                                                       .width *
-                                                  0.35,
+                                                  0.55,
                                               child: Text(
                                                 newsData.author!.name
                                                     .toString(),
@@ -257,62 +481,68 @@ class _NewsPostCardState extends State<NewsPostCard>
                                                 overflow: TextOverflow.ellipsis,
                                               ),
                                             ),
-                                            Text(
-                                                newsData.createdDate.toString())
+                                            Row(
+                                              children: [
+                                                Text(newsData.createdDate
+                                                    .toString()),
+                                                SizedBox(
+                                                  width: 8,
+                                                ),
+                                                Consumer<NewsListProvider>(
+                                                    builder: (context,
+                                                        newsProvider, _) {
+                                                  return GestureDetector(
+                                                      onTap: () {
+                                                        print(
+                                                            "is foloowed:${newsData.author!.isFollowed}---------------------");
+                                                        print(
+                                                            "post id is: ${newsData.postId}");
+                                                        if (newsData.author!
+                                                                .isFollowed ==
+                                                            true) {
+                                                          print(
+                                                              "is followed: true");
+                                                          context
+                                                              .read<
+                                                                  NewsListProvider>()
+                                                              .unfollowUser(
+                                                                  newsData
+                                                                      .author!
+                                                                      .id!
+                                                                      .toInt());
+                                                        } else if (newsData
+                                                                    .author!
+                                                                    .isFollowed ==
+                                                                false ||
+                                                            newsData.author!
+                                                                    .isFollowed ==
+                                                                null) {
+                                                          print(
+                                                              "is followed: false");
+                                                          context
+                                                              .read<
+                                                                  NewsListProvider>()
+                                                              .followUser(
+                                                                newsData
+                                                                    .author!.id!
+                                                                    .toInt(),
+                                                              );
+                                                        }
+                                                      },
+                                                      child: newsData.author!
+                                                                  .isFollowed ==
+                                                              true
+                                                          ? Text("Following",
+                                                              style: ThreeKmTextConstants
+                                                                  .tk11PXLatoGreyBold)
+                                                          : Text("Follow",
+                                                              style: ThreeKmTextConstants
+                                                                  .tk14PXPoppinsBlueMedium));
+                                                }),
+                                              ],
+                                            )
                                           ],
                                         ),
-                                        SizedBox(
-                                          width: 10,
-                                        ),
-                                        Consumer<NewsListProvider>(builder:
-                                            (context, newsProvider, _) {
-                                          return TextButton(
-                                              onPressed: () {
-                                                print(
-                                                    "is foloowed:${newsData.author!.isFollowed}---------------------");
-                                                print(
-                                                    "post id is: ${newsData.postId}");
-                                                if (newsData
-                                                        .author!.isFollowed ==
-                                                    true) {
-                                                  print("is followed: true");
-                                                  context
-                                                      .read<NewsListProvider>()
-                                                      .unfollowUser(newsData
-                                                          .author!.id!
-                                                          .toInt());
-                                                } else if (newsData
-                                                        .author!.isFollowed ==
-                                                    false) {
-                                                  print("is followed: false");
-                                                  context
-                                                      .read<NewsListProvider>()
-                                                      .followUser(
-                                                        newsData.author!.id!
-                                                            .toInt(),
-                                                      );
-                                                }
-                                              },
-                                              child: newsData
-                                                          .author!.isFollowed ==
-                                                      true
-                                                  ? Text("Following",
-                                                      style: ThreeKmTextConstants
-                                                          .tk11PXLatoGreyBold)
-                                                  : Text("Follow",
-                                                      style: ThreeKmTextConstants
-                                                          .tk14PXPoppinsBlueMedium)
-                                              // child: Text(
-                                              //   newsData.author!.isFollowed != true
-                                              //       ? "follow"
-                                              //       : "following",
-                                              //   style: newsData.author!.isFollowed == true
-                                              //       ? ThreeKmTextConstants.tk11PXLatoGreyBold
-                                              //       : ThreeKmTextConstants
-                                              //           .tk14PXPoppinsBlueMedium,
-                                              // ),
-                                              );
-                                        }),
                                         Spacer(),
                                         showPopMenu(newsData.postId.toString(),
                                             newsData)
@@ -321,35 +551,230 @@ class _NewsPostCardState extends State<NewsPostCard>
                                       ],
                                     ),
                                   ),
-                                  //pic
-                                  if (newsData.images != null &&
-                                      newsData.images!.length > 0)
-                                    CachedNetworkImage(
-                                      height: 254,
-                                      width: 338,
-                                      fit: BoxFit.fill,
-                                      imageUrl: '${newsData.images!.first}',
-                                    )
-                                  else if (newsData.videos != null &&
-                                      newsData.videos!.length > 0)
-                                    Stack(children: [
+                                  //both pics and images is present
+
+                                  newsData.images!.length > 1 ||
+                                          newsData.videos!.length > 1
+                                      ?
+                                      //video and image both
                                       Container(
-                                        height: 254,
-                                        width:
-                                            MediaQuery.of(context).size.width,
-                                        child: VideoWidget(
-                                            thubnail: newsData.videos?.first
-                                                        .thumbnail !=
-                                                    null
-                                                ? newsData
-                                                    .videos!.first.thumbnail
-                                                    .toString()
-                                                : '',
-                                            url: newsData.videos!.first.src
-                                                .toString(),
-                                            play: false),
-                                      ),
-                                    ]),
+                                          height: 400,
+                                          width: 400,
+                                          decoration: BoxDecoration(
+                                              color: Colors.black26),
+                                          child: PageView.builder(
+                                            itemCount: newsData.images!.length +
+                                                newsData.videos!.length,
+                                            // options: CarouselOptions(
+                                            //   // aspectRatio: null,
+                                            //   viewportFraction: 0.99,
+                                            // ),
+                                            itemBuilder: (
+                                              context,
+                                              index,
+                                            ) {
+                                              List<String?> videoUrls = newsData
+                                                  .videos!
+                                                  .map((e) => e.src)
+                                                  .toList();
+                                              List<String?> imgList = List.from(
+                                                  newsData.images!.toList());
+                                              List<String?> templist =
+                                                  videoUrls + imgList;
+                                              return templist != null
+                                                  ? templist[index]
+                                                          .toString()
+                                                          .contains(".mp4")
+                                                      ? SizedBox(
+                                                          height: 300,
+                                                          width: MediaQuery.of(
+                                                                  context)
+                                                              .size
+                                                              .width,
+                                                          child: VideoWidget(
+                                                              thubnail: '',
+                                                              url: templist[
+                                                                      index]
+                                                                  .toString(),
+                                                              play: false),
+                                                        )
+                                                      : CachedNetworkImage(
+                                                          height: 254,
+                                                          width: MediaQuery.of(
+                                                                  context)
+                                                              .size
+                                                              .width,
+                                                          fit: BoxFit.contain,
+                                                          imageUrl:
+                                                              templist[index]
+                                                                  .toString())
+                                                  : SizedBox(
+                                                      child: Text("null"),
+                                                    );
+                                            },
+                                          ),
+                                        )
+                                      // image or video single
+
+                                      : newsData.images != null &&
+                                              newsData.videos != null
+                                          ? Container(
+                                              child: newsData.images!.length ==
+                                                      1
+                                                  ? CachedNetworkImage(
+                                                      key: imgkey[postIndex],
+                                                      height: imgkey[postIndex]
+                                                          .currentContext
+                                                          ?.size
+                                                          ?.height,
+                                                      width:
+                                                          MediaQuery.of(context)
+                                                              .size
+                                                              .width,
+                                                      fit: BoxFit.fitWidth,
+                                                      imageUrl:
+                                                          '${newsData.images!.first}',
+                                                    )
+                                                  : newsData.videos!.length > 0
+                                                      ? VideoWidget(
+                                                          thubnail: newsData
+                                                                      .videos
+                                                                      ?.first
+                                                                      .thumbnail !=
+                                                                  null
+                                                              ? newsData
+                                                                  .videos!
+                                                                  .first
+                                                                  .thumbnail
+                                                                  .toString()
+                                                              : '',
+                                                          url: newsData
+                                                              .videos!.first.src
+                                                              .toString(),
+                                                          fromSinglePage: true,
+                                                          play: false)
+                                                      : Container(),
+                                            )
+                                          : SizedBox.shrink(),
+                                  SizedBox(
+                                    height: 5,
+                                  ),
+                                  newsData.images != null &&
+                                              newsData.images!.length > 1 &&
+                                              newsData.images!.length != 1 ||
+                                          newsData.videos != null &&
+                                              newsData.videos!.length > 1 &&
+                                              newsData.videos!.length != 1
+                                      ? Container(
+                                          height: 10,
+                                          width:
+                                              MediaQuery.of(context).size.width,
+                                          child: Builder(builder: (context) {
+                                            List videoUrls = newsData.videos!
+                                                .map((e) => e.src)
+                                                .toList();
+                                            List templist = List.from(
+                                                newsData.images!.toList())
+                                              ..addAll(videoUrls);
+                                            return Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: templist
+                                                    .asMap()
+                                                    .entries
+                                                    .map((entry) {
+                                                  return Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            left: 2),
+                                                    child: DotIndicator(
+                                                      size: 8.0,
+                                                      color: Colors.grey,
+                                                    ),
+                                                  );
+                                                }).toList());
+                                          }),
+                                          // child: ListView.builder(
+                                          //     shrinkWrap: true,
+                                          //     scrollDirection: Axis.horizontal,
+                                          //     itemCount:
+                                          //         newsData.images!.length +
+                                          //             newsData.videos!.length,
+                                          //     itemBuilder: (context, index) {
+                                          //       return Center(
+                                          //           child: DotIndicator());
+                                          //     }),
+                                        )
+                                      : SizedBox.shrink(),
+
+                                  // if (newsData.images != null &&
+                                  //     newsData.images!.length > 0)
+                                  //   newsData.images!.length == 1
+                                  //       ? CachedNetworkImage(
+                                  //           height: 254,
+                                  //           width: MediaQuery.of(context)
+                                  //               .size
+                                  //               .width,
+                                  //           fit: BoxFit.fitWidth,
+                                  //           imageUrl:
+                                  //               '${newsData.images!.first}',
+                                  //         )
+                                  //       : CarouselSlider.builder(
+                                  //           itemCount: newsData.images!.length,
+                                  //           itemBuilder: (context, index, _) {
+                                  //             return Container(
+                                  //                 child: CachedNetworkImage(
+                                  //               height: 254,
+                                  //               width: MediaQuery.of(context)
+                                  //                   .size
+                                  //                   .width,
+                                  //               fit: BoxFit.fitWidth,
+                                  //               imageUrl:
+                                  //                   '${newsData.images![index]}',
+                                  //             ));
+                                  //           },
+                                  //           options: CarouselOptions(
+                                  //             autoPlay: true,
+                                  //             viewportFraction: 0.99,
+                                  //           )),
+                                  // if (newsData.videos != null &&
+                                  //     newsData.videos!.length > 0)
+                                  //   Stack(children: [
+                                  //     Container(
+                                  //       //height: 254,
+                                  //       width:
+                                  //           MediaQuery.of(context).size.width,
+                                  //       child: newsData
+                                  //                   .videos?.first.vimeoUrl !=
+                                  //               null
+                                  //           ? Container(
+                                  //               height: 254,
+                                  //               width: MediaQuery.of(context)
+                                  //                   .size
+                                  //                   .width,
+                                  //               child: VimeoPlayer(
+                                  //                   videoId: Uri.parse(newsData
+                                  //                           .videos!
+                                  //                           .first
+                                  //                           .vimeoUrl
+                                  //                           .toString())
+                                  //                       .pathSegments
+                                  //                       .last),
+                                  //             )
+                                  //           : VideoWidget(
+                                  //               thubnail: newsData.videos?.first
+                                  //                           .thumbnail !=
+                                  //                       null
+                                  //                   ? newsData
+                                  //                       .videos!.first.thumbnail
+                                  //                       .toString()
+                                  //                   : '',
+                                  //               url: newsData.videos!.first.src
+                                  //                   .toString(),
+                                  //               play: false),
+                                  //     ),
+                                  //   ]),
+
                                   Row(children: [
                                     Padding(
                                         padding: EdgeInsets.only(
@@ -360,22 +785,19 @@ class _NewsPostCardState extends State<NewsPostCard>
                                                 newsData.postId!.toInt(),
                                                 newsData.likes);
                                           },
-                                          child: Row(
-                                            children: [
-                                              Text('👍❤️😩'),
-                                              Container(
-                                                height: 30,
-                                                width: 30,
-                                                decoration: BoxDecoration(
-                                                    shape: BoxShape.circle,
-                                                    color: Color(0xffFC5E6A)),
-                                                child: Center(
-                                                    child: Text('+' +
-                                                        newsData.likes
-                                                            .toString())),
-                                              )
-                                            ],
-                                          ),
+                                          child: newsData.likes != 0
+                                              ? Row(
+                                                  children: [
+                                                    Text('👍 ❤️ '),
+                                                    Container(
+                                                      child: Center(
+                                                          child: Text('+' +
+                                                              newsData.likes
+                                                                  .toString())),
+                                                    )
+                                                  ],
+                                                )
+                                              : SizedBox.shrink(),
                                         )),
                                     Spacer(),
                                     Padding(
@@ -385,7 +807,7 @@ class _NewsPostCardState extends State<NewsPostCard>
                                             ' Views'))
                                   ]),
                                   Text(
-                                    newsData.submittedHeadline.toString(),
+                                    newsData.headline.toString(),
                                     style: ThreeKmTextConstants
                                         .tk14PXLatoBlackMedium,
                                     textAlign: TextAlign.center,
@@ -454,9 +876,13 @@ class _NewsPostCardState extends State<NewsPostCard>
                                   height: 60,
                                   width: 60,
                                   child: IconButton(
-                                      onPressed: () {
-                                        _showCommentsBottomModalSheet(
-                                            context, newsData.postId!.toInt());
+                                      onPressed: () async {
+                                        if (await getAuthStatus()) {
+                                          _showCommentsBottomModalSheet(context,
+                                              newsData.postId!.toInt());
+                                        } else {
+                                          NaviagateToLogin(context);
+                                        }
                                       },
                                       icon: Image.asset(
                                           'assets/icons-topic.png',
@@ -486,8 +912,7 @@ class _NewsPostCardState extends State<NewsPostCard>
                                         handleShare(
                                             newsData.author!.name.toString(),
                                             newsData.author!.image.toString(),
-                                            newsData.submittedHeadline
-                                                .toString(),
+                                            newsData.headline.toString(),
                                             imgUrl,
                                             newsData.createdDate,
                                             newsData.postId.toString());
@@ -620,7 +1045,8 @@ class _NewsPostCardState extends State<NewsPostCard>
     });
   }
 
-  Widget newsDetails(newsData, context) {
+  Widget newsDetails(Post newsData, context) {
+    final _imagKey = GlobalKey();
     return Material(
       //color: Colors.black.withOpacity(0.1),
       child: Container(
@@ -677,37 +1103,59 @@ class _NewsPostCardState extends State<NewsPostCard>
                                 child: Row(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Container(
-                                        margin: EdgeInsets.only(right: 10),
-                                        height: 50,
-                                        width: 50,
-                                        child: Container(
+                                    InkWell(
+                                      onTap: () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    AuthorProfile(
+                                                        authorType:
+                                                            newsData.authorType,
+                                                        // page: 1,
+                                                        // authorType:
+                                                        //     "user",
+                                                        id: newsData
+                                                            .author!.id!,
+                                                        avatar: newsData
+                                                            .author!.image!,
+                                                        userName: newsData
+                                                            .author!.name!)));
+                                      },
+                                      child: Container(
+                                          margin: EdgeInsets.only(right: 10),
                                           height: 50,
                                           width: 50,
-                                          decoration: BoxDecoration(
-                                              shape: BoxShape.circle,
-                                              image: DecorationImage(
-                                                  fit: BoxFit.cover,
-                                                  image:
-                                                      CachedNetworkImageProvider(
-                                                          newsData.author!.image
-                                                              .toString()))),
-                                        )),
+                                          child: Container(
+                                            height: 50,
+                                            width: 50,
+                                            decoration: BoxDecoration(
+                                                shape: BoxShape.circle,
+                                                image: DecorationImage(
+                                                    fit: BoxFit.cover,
+                                                    image:
+                                                        CachedNetworkImageProvider(
+                                                            newsData
+                                                                .author!.image
+                                                                .toString()))),
+                                          )),
+                                    ),
                                     Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       //mainAxisAlignment: MainAxisAlignment.center,
                                       children: [
                                         Container(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.4,
+                                          // width: MediaQuery.of(context)
+                                          //         .size
+                                          //         .width *
+                                          //     0.4,
                                           child: Text(
                                             newsData.author!.name.toString(),
                                             style: ThreeKmTextConstants
                                                 .tk14PXPoppinsBlackBold,
-                                            overflow: TextOverflow.ellipsis,
+                                            overflow: TextOverflow.fade,
+                                            maxLines: 1,
                                           ),
                                         ),
                                         Text(newsData.createdDate.toString())
@@ -717,11 +1165,15 @@ class _NewsPostCardState extends State<NewsPostCard>
                                       width: 10,
                                     ),
                                     newsData.isVerified == true
-                                        ? Image.asset(
-                                            'assets/verified.png',
-                                            height: 15,
-                                            width: 15,
-                                            fit: BoxFit.cover,
+                                        ? Padding(
+                                            padding:
+                                                const EdgeInsets.only(top: 8),
+                                            child: Image.asset(
+                                              'assets/verified.png',
+                                              height: 15,
+                                              width: 15,
+                                              fit: BoxFit.cover,
+                                            ),
                                           )
                                         : Container(),
                                     Spacer(),
@@ -733,40 +1185,214 @@ class _NewsPostCardState extends State<NewsPostCard>
                                   ],
                                 ),
                               ),
-                              if (newsData.images != null &&
-                                  newsData.images!.length > 0)
-                                CachedNetworkImage(
-                                  height: 254,
-                                  width: 338,
-                                  fit: BoxFit.fill,
-                                  imageUrl: '${newsData.images!.first}',
-                                )
-                              else if (newsData.videos != null &&
-                                  newsData.videos!.length > 0)
-                                Stack(children: [
+                              //both pics and images is present
+                              newsData.images!.length > 1 ||
+                                      newsData.videos!.length > 1
+                                  ?
+                                  //video and image both
                                   Container(
-                                    height: 254,
-                                    width: MediaQuery.of(context).size.width,
-                                    child: VideoWidget(
-                                        thubnail: newsData
-                                                    .videos?.first.thumbnail !=
-                                                null
-                                            ? newsData.videos!.first.thumbnail
-                                                .toString()
-                                            : '',
-                                        url: newsData.videos!.first.src
-                                            .toString(),
-                                        play: true),
-                                  ),
-                                ]),
+                                      height: 400,
+                                      width: 400,
+                                      decoration:
+                                          BoxDecoration(color: Colors.black26),
+                                      child: PageView.builder(
+                                        itemCount: newsData.images!.length +
+                                            newsData.videos!.length,
+                                        // options: CarouselOptions(
+                                        //   // aspectRatio: null,
+                                        //   viewportFraction: 0.99,
+                                        // ),
+                                        itemBuilder: (
+                                          context,
+                                          index,
+                                        ) {
+                                          List<String?> videoUrls = newsData
+                                              .videos!
+                                              .map((e) => e.src)
+                                              .toList();
+                                          List<String?> imglist = List.from(
+                                              newsData.images!.toList());
+                                          List<String?> templist =
+                                              videoUrls + imglist;
+
+                                          return templist != null
+                                              ? templist[index]
+                                                      .toString()
+                                                      .contains(".mp4")
+                                                  ? SizedBox(
+                                                      height: 300,
+                                                      width:
+                                                          MediaQuery.of(context)
+                                                              .size
+                                                              .width,
+                                                      child: VideoWidget(
+                                                          thubnail: '',
+                                                          url: templist[index]
+                                                              .toString(),
+                                                          play: false),
+                                                    )
+                                                  : newsData.images!.length > 0
+                                                      ? CachedNetworkImage(
+                                                          height: 254,
+                                                          width: MediaQuery.of(
+                                                                  context)
+                                                              .size
+                                                              .width,
+                                                          fit: BoxFit.contain,
+                                                          imageUrl:
+                                                              templist[index]
+                                                                  .toString())
+                                                      : SizedBox.shrink()
+                                              : SizedBox(
+                                                  child: Text("null"),
+                                                );
+                                        },
+                                      ),
+                                    )
+                                  // image or video single
+
+                                  : Container(
+                                      child: newsData.images!.length == 1
+                                          ? CachedNetworkImage(
+                                              key: _imagKey,
+                                              height: _imagKey
+                                                  .currentContext?.size?.height,
+                                              width: MediaQuery.of(context)
+                                                  .size
+                                                  .width,
+                                              fit: BoxFit.fitWidth,
+                                              imageUrl:
+                                                  '${newsData.images!.first}',
+                                            )
+                                          : newsData.videos!.length > 0
+                                              ? VideoWidget(
+                                                  thubnail: newsData
+                                                              .videos
+                                                              ?.first
+                                                              .thumbnail !=
+                                                          null
+                                                      ? newsData.videos!.first
+                                                          .thumbnail
+                                                          .toString()
+                                                      : '',
+                                                  url: newsData
+                                                      .videos!.first.src
+                                                      .toString(),
+                                                  fromSinglePage: true,
+                                                  play: false)
+                                              : SizedBox.shrink(),
+                                    ),
+                              SizedBox(
+                                height: 5,
+                              ),
+                              newsData.images != null &&
+                                          newsData.images!.length > 1 &&
+                                          newsData.images!.length != 1 ||
+                                      newsData.videos != null &&
+                                          newsData.videos!.length > 1 &&
+                                          newsData.videos!.length != 1
+                                  ? Container(
+                                      height: 10,
+                                      width: MediaQuery.of(context).size.width,
+                                      child: Builder(builder: (context) {
+                                        List<String?> videoUrls = newsData
+                                            .videos!
+                                            .map((e) => e.src)
+                                            .toList();
+                                        List<String?> templist =
+                                            List.from(newsData.images!.toList())
+                                              ..addAll(videoUrls);
+                                        return Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: templist
+                                                .asMap()
+                                                .entries
+                                                .map((entry) {
+                                              return Padding(
+                                                padding: const EdgeInsets.only(
+                                                    left: 2),
+                                                child: DotIndicator(
+                                                  size: 8.0,
+                                                  color: Colors.grey,
+                                                ),
+                                              );
+                                            }).toList());
+                                      }),
+                                      // child: ListView.builder(
+                                      //     shrinkWrap: true,
+                                      //     scrollDirection: Axis.horizontal,
+                                      //     itemCount:
+                                      //         newsData.images!.length +
+                                      //             newsData.videos!.length,
+                                      //     itemBuilder: (context, index) {
+                                      //       return Center(
+                                      //           child: DotIndicator());
+                                      //     }),
+                                    )
+                                  : SizedBox.shrink(),
+                              // if (newsData.images != null &&
+                              //     newsData.images!.length > 0)
+                              //   newsData.images!.length > 1
+                              //       ? CarouselSlider.builder(
+                              //           itemCount: newsData.images!.length,
+                              //           itemBuilder: (context, index, _) {
+                              //             return CachedNetworkImage(
+                              //               height: 254,
+                              //               width: MediaQuery.of(context)
+                              //                   .size
+                              //                   .width,
+                              //               fit: BoxFit.fitWidth,
+                              //               imageUrl:
+                              //                   '${newsData.images![index]}',
+                              //             );
+                              //           },
+                              //           options: CarouselOptions(
+                              //               viewportFraction: 0.99,
+                              //               autoPlay: true))
+                              //       : CachedNetworkImage(
+                              //           height: 254,
+                              //           width:
+                              //               MediaQuery.of(context).size.width,
+                              //           fit: BoxFit.fitWidth,
+                              //           imageUrl: '${newsData.images!.first}',
+                              //         )
+                              // else if (newsData.videos != null &&
+                              //     newsData.videos!.length > 0)
+                              //   Stack(children: [
+                              //     Container(
+                              //       //height: 254,
+                              //       width: MediaQuery.of(context).size.width,
+                              //       child: VideoWidget(
+                              //           thubnail: newsData
+                              //                       .videos?.first.thumbnail !=
+                              //                   null
+                              //               ? newsData.videos!.first.thumbnail
+                              //                   .toString()
+                              //               : '',
+                              //           url: newsData.videos!.first.src
+                              //               .toString(),
+                              //           play: true),
+                              //     ),
+                              //   ]),
                               Row(children: [
                                 Padding(
                                     padding: EdgeInsets.only(
                                         top: 2, left: 5, bottom: 2),
                                     child: Consumer<NewsListProvider>(
                                       builder: (context, newsProvider, _) {
-                                        return Text(newsData.likes.toString() +
-                                            ' Likes');
+                                        return InkWell(
+                                          onTap: () {
+                                            _showLikedBottomModalSheet(
+                                                newsData.postId!.toInt(),
+                                                newsData.likes);
+                                          },
+                                          child: newsData.likes != 0
+                                              ? Text("👍 ❤️ " +
+                                                  newsData.likes.toString() +
+                                                  ' Likes')
+                                              : SizedBox.shrink(),
+                                        );
                                       },
                                     )),
                                 Spacer(),
@@ -778,7 +1404,7 @@ class _NewsPostCardState extends State<NewsPostCard>
                               ]),
                               SizedBox(height: 20),
                               Text(
-                                newsData.submittedHeadline.toString(),
+                                newsData.headline.toString(),
                                 style:
                                     ThreeKmTextConstants.tk14PXLatoBlackMedium,
                                 textAlign: TextAlign.center,
@@ -794,6 +1420,9 @@ class _NewsPostCardState extends State<NewsPostCard>
                                   newsData.story.toString(),
                                   textStyle: TextStyle(),
                                 ),
+                              ),
+                              SizedBox(
+                                height: 50,
                               )
                             ],
                           ),
@@ -855,9 +1484,13 @@ class _NewsPostCardState extends State<NewsPostCard>
                       height: 60,
                       width: 60,
                       child: IconButton(
-                          onPressed: () {
-                            _showCommentsBottomModalSheet(
-                                context, newsData.postId);
+                          onPressed: () async {
+                            if (await getAuthStatus()) {
+                              _showCommentsBottomModalSheet(
+                                  context, newsData.postId!);
+                            } else {
+                              NaviagateToLogin(context);
+                            }
                           },
                           icon: Image.asset('assets/icons-topic.png',
                               fit: BoxFit.cover)),
@@ -883,7 +1516,7 @@ class _NewsPostCardState extends State<NewsPostCard>
                             handleShare(
                                 newsData.author!.name.toString(),
                                 newsData.author!.image.toString(),
-                                newsData.submittedHeadline.toString(),
+                                newsData.headline.toString(),
                                 imgUrl,
                                 newsData.createdDate,
                                 newsData.postId.toString());
@@ -1157,17 +1790,30 @@ class _NewsPostCardState extends State<NewsPostCard>
                               )
                             : SizedBox();
                       }),
-                      Container(
-                        height: 116,
-                        width: 338,
-                        decoration: BoxDecoration(
-                            color: Colors.grey.shade200,
-                            borderRadius: BorderRadius.circular(20)),
-                        child: TextFormField(
-                          controller: _commentController,
-                          maxLines: null,
-                          keyboardType: TextInputType.multiline,
-                          decoration: InputDecoration(border: InputBorder.none),
+                      Form(
+                        key: _formKey,
+                        child: Container(
+                          height: 50,
+                          width: 338,
+                          decoration: BoxDecoration(
+                              color: Colors.grey.shade200,
+                              borderRadius: BorderRadius.circular(20)),
+                          child: TextFormField(
+                            autovalidateMode:
+                                AutovalidateMode.onUserInteraction,
+                            validator: (String? value) {
+                              if (value == null) {
+                                return "  Comment cant be blank";
+                              } else if (value.isEmpty) {
+                                return "  Comment cant be blank";
+                              }
+                            },
+                            controller: _commentController,
+                            maxLines: null,
+                            keyboardType: TextInputType.multiline,
+                            decoration:
+                                InputDecoration(border: InputBorder.none),
+                          ),
                         ),
                       ),
                       SizedBox(
@@ -1177,24 +1823,34 @@ class _NewsPostCardState extends State<NewsPostCard>
                         alignment: Alignment.centerLeft,
                         child: InkWell(
                           onTap: () {
-                            context
-                                .read<CommentProvider>()
-                                .postCommentApi(postId, _commentController.text)
-                                .then((value) => _commentController.clear());
+                            if (_formKey.currentState!.validate() &&
+                                context.read<CommentProvider>().isLoading ==
+                                    false) {
+                              context
+                                  .read<CommentProvider>()
+                                  .postCommentApi(
+                                      postId, _commentController.text)
+                                  .then((value) => _commentController.clear());
+                            }
                           },
                           child: Container(
+                            margin: EdgeInsets.only(left: 10),
                             height: 36,
                             width: 112,
                             decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(18),
                                 color: ThreeKmTextConstants.blue2),
-                            child: Center(
-                              child: Text(
-                                "Submit",
-                                style: ThreeKmTextConstants
-                                    .tk14PXPoppinsWhiteMedium,
-                              ),
-                            ),
+                            child: Center(child: Consumer<CommentProvider>(
+                              builder: (context, _controller, child) {
+                                return _controller.isLoading == false
+                                    ? Text(
+                                        "Submit",
+                                        style: ThreeKmTextConstants
+                                            .tk14PXPoppinsWhiteMedium,
+                                      )
+                                    : CupertinoActivityIndicator();
+                              },
+                            )),
                           ),
                         ),
                       )

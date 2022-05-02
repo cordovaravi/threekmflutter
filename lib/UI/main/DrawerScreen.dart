@@ -2,16 +2,28 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:threekm/UI/main/Profile/AuthorProfile.dart';
+import 'package:threekm/UI/Language/SelectLanguage.dart';
+import 'package:threekm/UI/main/AddPost/AddNewPost.dart';
+import 'package:threekm/UI/main/Profile/MyProfilePost.dart';
+import 'package:threekm/UI/main/Profile/Profilepage.dart';
 import 'package:threekm/UI/main/navigation.dart';
+import 'package:threekm/UI/shop/address/saved_address.dart';
+import 'package:threekm/UI/shop/cart/cart_item_list_modal.dart';
+import 'package:threekm/UI/shop/cart/wishlist.dart';
+import 'package:threekm/UI/shop/checkout/past_order.dart';
 import 'package:threekm/UI/walkthrough/splash_screen.dart';
+import 'package:threekm/localization/localize.dart';
+import 'package:threekm/providers/ProfileInfo/ProfileInfo_Provider.dart';
 import 'package:threekm/providers/main/AthorProfile_Provider.dart';
+import 'package:threekm/utils/screen_util.dart';
 import 'package:threekm/utils/threekm_textstyles.dart';
 import 'package:threekm/utils/util_methods.dart';
 import 'package:threekm/widgets/custom_button.dart';
 import 'package:provider/provider.dart';
 import '../Help_Supportpage.dart';
+import 'AddPost/ImageEdit/editImage.dart';
 
 class DrawerScreen extends StatefulWidget {
   final String userName;
@@ -30,13 +42,22 @@ class _DrawerScreenState extends State<DrawerScreen> {
     Future.delayed(Duration.zero, () {
       context.read<AutthorProfileProvider>().getSelfProfile();
     });
+    //getWishBoxData();
+    Future.microtask(
+        () => context.read<ProfileInfoProvider>().getProfileBasicData());
     super.initState();
   }
+
+  // getWishBoxData() async {
+  //   await Hive.openBox('shopWishListBox');
+  //   await Hive.openBox('businessWishListBox');
+  // }
 
   @override
   Widget build(BuildContext context) {
     //final authorPostProvider = context.watch<AutthorProfileProvider>();
-    final selfProfileProvider = context.watch<AutthorProfileProvider>();
+    //final selfProfileProvider = context.watch<AutthorProfileProvider>();
+    final ProfileData = context.watch<ProfileInfoProvider>();
     return Scaffold(
       body:
           // RotatedBox(
@@ -54,11 +75,12 @@ class _DrawerScreenState extends State<DrawerScreen> {
                   Padding(
                     padding: EdgeInsets.only(left: 19),
                     child: CustomDrawer(
-                        iconUrl: widget.avatar,
+                        iconUrl: ProfileData.Avatar ?? widget.avatar,
                         // selfProfileProvider
                         //     .selfProfile!.data.result.author.image,
                         //"https://www.pngall.com/wp-content/uploads/12/Avatar-Profile-Vector-PNG-File.png",
-                        name: widget.userName //"Raviraj"
+                        name:
+                            ProfileData.UserName ?? widget.userName //"Raviraj"
                         ),
                   ),
                   Positioned(
@@ -127,7 +149,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
         context: context,
         useRootNavigator: false,
         barrierDismissible: false,
-        builder: (context) {
+        builder: (BuildContext context) {
           return AlertDialog(
             backgroundColor: Colors.white,
             actionsPadding: EdgeInsets.all(8),
@@ -135,7 +157,8 @@ class _CustomDrawerState extends State<CustomDrawer> {
               borderRadius: BorderRadius.circular(20),
             ),
             title: Text(
-              "Logout",
+              AppLocalizations.of(context)?.translate("profile_logout_text") ??
+                  "",
               style: ThreeKmTextConstants.tk16PXPoppinsBlackSemiBold
                   .copyWith(fontSize: 20),
             ),
@@ -161,6 +184,13 @@ class _CustomDrawerState extends State<CustomDrawer> {
               CustomButton(
                 color: ThreeKmTextConstants.blue1,
                 onTap: () async {
+                  context.read<ProfileInfoProvider>().resetAll();
+                  SharedPreferences _prefs =
+                      await SharedPreferences.getInstance();
+                  await _prefs.remove("gender");
+                  await _prefs.remove("dob");
+                  await _prefs.clear();
+
                   await FirebaseAuth.instance.signOut();
                   Navigator.of(context).pop(true);
                 },
@@ -184,22 +214,17 @@ class _CustomDrawerState extends State<CustomDrawer> {
         child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        InkWell(
-          //onTap: () => Navigator.of(context).pushNamed(ProfilePage.path),
-          child: CustomDrawerHeader(
-            image: widget.iconUrl,
-            name: widget.name,
-          ),
+        CustomDrawerHeader(
+          image: widget.iconUrl,
+          name: widget.name,
         ),
         DrawerDivider(),
-        GestureDetector(
+        InkWell(
           onTap: () {
-            // var _ = Get.put(MyPostController());
-            // Navigator.of(context).pushNamed(MyPost.path);
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => AuthorProfile(
+                    builder: (context) => MyProfilePost(
                         isFromSelfProfileNavigate: true,
                         page: 1,
                         authorType: "user",
@@ -209,64 +234,87 @@ class _CustomDrawerState extends State<CustomDrawer> {
           },
           child: CustomDrawerItem(
             image: "assets/feed.png",
-            label: "My Post".toUpperCase(),
+            label: AppLocalizations.of(context)
+                    ?.translate("my_post")
+                    ?.toUpperCase() ??
+                "",
           ),
         ),
-        // SizedBox(
-        //   height: 24,
-        // ),
-        // InkWell(
-        //   // onTap: () => Navigator.of(context).pushNamed(SavedPost.path),
-        //   child: CustomDrawerItem(
-        //     icon: Icons.bookmark_outline_rounded,
-        //     label: "Saved Post".toUpperCase(),
-        //   ),
-        // ),
+        SizedBox(
+          height: 24,
+        ),
+        InkWell(
+          onTap: () {
+            //context.read<AddPostProvider>().deletImages();
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) =>
+                        //VideoCompress()
+                        AddNewPost()));
+          },
+          child: CustomDrawerItem(
+            icon: Icons.add,
+            label: AppLocalizations.of(context)
+                    ?.translate("add_post")
+                    ?.toUpperCase() ??
+                "",
+          ),
+        ),
         DrawerDivider(),
         CustomDrawerItem(
           icon: Icons.shopping_cart_outlined,
-          label: "Shopping Cart".toUpperCase(),
+          label: AppLocalizations.of(context)
+                  ?.translate("shopping_cart")
+                  ?.toUpperCase() ??
+              "",
         ).onTap(() {
-          // widget.animationController2!
-          //     .reverse()
-          //     .then((value) => showCart(context));
+          Future.microtask(() => ThreeKmScreenUtil().init(context))
+              .then((value) => viewCart(context, "shop"));
         }),
         SizedBox(
           height: 24,
         ),
         InkWell(
-          // onTap: () => Navigator.of(context).pushNamed(WishListPage.path),
+          onTap: () => Navigator.push(
+              context, MaterialPageRoute(builder: (_) => WishList())),
           child: CustomDrawerItem(
             icon: CupertinoIcons.heart,
-            label: "Wishlist".toUpperCase(),
+            label: AppLocalizations.of(context)
+                    ?.translate("profile_wishlist_text")
+                    ?.toUpperCase() ??
+                "",
           ),
         ),
         SizedBox(
           height: 24,
         ),
-        CustomDrawerItem(
-          image: "assets/inventory.png",
-          label: "Past Orders".toUpperCase(),
+        InkWell(
+          onTap: () => Navigator.of(context)
+              .push(MaterialPageRoute(builder: (context) => PastOrder())),
+          child: CustomDrawerItem(
+            image: "assets/inventory.png",
+            label: AppLocalizations.of(context)
+                    ?.translate("Orders")
+                    ?.toUpperCase() ??
+                "",
+          ),
         ),
         SizedBox(
           height: 24,
         ),
         InkWell(
-          onTap: () async {
-            // var accepted = await getLocationPermission();
-            // if (!accepted) {
-            //   // dynamic openAddressPage =
-            //   //     await Navigator.of(context).pushNamed(LocationBasePage.path);
-            //   if (openAddressPage != null && openAddressPage == true) {
-            //    // Navigator.of(context).pushNamed(LocationBasePage.path);
-            //   }
-            // } else {
-            //   //Navigator.of(context).pushNamed(LocationBasePage.path);
-            // }
+          onTap: () {
+            Future.microtask(() => ThreeKmScreenUtil().init(context)).then(
+                (value) => Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => SavedAddress())));
           },
           child: CustomDrawerItem(
             icon: Icons.place_outlined,
-            label: "Saved Addresses".toUpperCase(),
+            label: AppLocalizations.of(context)
+                    ?.translate("profile_addresses_desc")
+                    ?.toUpperCase() ??
+                "",
           ),
         ),
         DrawerDivider(),
@@ -275,7 +323,10 @@ class _CustomDrawerState extends State<CustomDrawer> {
               .push(MaterialPageRoute(builder: (context) => HelpAndSupport())),
           child: CustomDrawerItem(
             icon: Icons.contact_support_outlined,
-            label: "Help and Support".toUpperCase(),
+            label: AppLocalizations.of(context)
+                    ?.translate("profile_help_support")
+                    ?.toUpperCase() ??
+                "",
           ),
         ),
         SizedBox(
@@ -283,10 +334,28 @@ class _CustomDrawerState extends State<CustomDrawer> {
         ),
         CustomDrawerItem(
           icon: Icons.g_translate_outlined,
-          label: "Change language".toUpperCase(),
+          label: AppLocalizations.of(context)
+                  ?.translate("profile_change_language")
+                  ?.toUpperCase() ??
+              "",
         ).onTap(() {
-          // Navigator.of(context)
-          //     .pushNamedAndRemoveUntil(SelectLanguage.path, (route) => false);
+          Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => SelectLanguage()),
+              (route) => false);
+        }),
+        SizedBox(
+          height: 24,
+        ),
+        CustomDrawerItem(
+          icon: Icons.policy,
+          label: AppLocalizations.of(context)
+                  ?.translate("privacy_policy")
+                  ?.toUpperCase() ??
+              "",
+        ).onTap(() {
+          InAppBrowser.openWithSystemBrowser(
+              url: Uri.parse("https://bulbandkey.com/privacy-policy"));
         }),
         SizedBox(
           height: 24,
@@ -296,9 +365,9 @@ class _CustomDrawerState extends State<CustomDrawer> {
             bool log = await logout();
             print("$log");
             if (log) {
-              var prefs = await SharedPreferences.getInstance();
-              prefs.clear();
-              //widget.animationController2!.reverse();
+              FirebaseAuth.instance.signOut();
+              SharedPreferences prefs = await SharedPreferences.getInstance();
+              await prefs.clear();
               Navigator.pushAndRemoveUntil(
                   context,
                   MaterialPageRoute(builder: (context) => SplashScreen()),
@@ -307,8 +376,18 @@ class _CustomDrawerState extends State<CustomDrawer> {
           },
           child: CustomDrawerItem(
             icon: Icons.logout,
-            label: "Logout".toUpperCase(),
+            label: AppLocalizations.of(context)
+                    ?.translate("logout")
+                    ?.toUpperCase() ??
+                "",
           ),
+        ),
+        SizedBox(
+          height: 24,
+        ),
+        Text("version: 5.0.5"),
+        SizedBox(
+          height: 15,
         ),
       ],
     ));
@@ -321,48 +400,56 @@ class CustomDrawerHeader extends StatelessWidget {
   CustomDrawerHeader({required this.image, required this.name});
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.only(top: 67),
-      child: InkWell(
-        onTap: () {},
-        child: Row(
-          children: [
-            Container(
-              height: 60,
-              width: 60,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                image: image.isNotEmpty
-                    ? DecorationImage(image: CachedNetworkImageProvider(image))
-                    : DecorationImage(
-                        image: AssetImage("assets/avatar.png"),
-                      ),
+    return Consumer<ProfileInfoProvider>(builder: (context, controller, _) {
+      return Container(
+        margin: EdgeInsets.only(top: 67),
+        child: InkWell(
+          onTap: () {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => ProfilePage()));
+          },
+          child: Row(
+            children: [
+              Container(
+                height: 60,
+                width: 60,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  image: controller.Avatar != null
+                      ? DecorationImage(
+                          image: CachedNetworkImageProvider(controller.Avatar!))
+                      : DecorationImage(
+                          image: AssetImage("assets/avatar.png"),
+                        ),
+                ),
               ),
-            ),
-            Container(
-              margin: EdgeInsets.only(left: 12),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    name,
-                    style: ThreeKmTextConstants.tk16PXPoppinsWhiteBold
-                        .copyWith(fontWeight: FontWeight.normal),
-                  ),
-                  Text(
-                    "My Profile",
-                    style:
-                        ThreeKmTextConstants.tk12PXPoppinsWhiteRegular.copyWith(
-                      color: Color(0xFFD5D5D5),
+              Container(
+                margin: EdgeInsets.only(left: 12),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      name,
+                      style: ThreeKmTextConstants.tk16PXPoppinsWhiteBold
+                          .copyWith(fontWeight: FontWeight.normal),
                     ),
-                  ),
-                ],
+                    Text(
+                      AppLocalizations.of(context)
+                              ?.translate("profile_header_name") ??
+                          "",
+                      style: ThreeKmTextConstants.tk12PXPoppinsWhiteRegular
+                          .copyWith(
+                        color: Color(0xFFD5D5D5),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
-      ),
-    );
+      );
+    });
   }
 }
 

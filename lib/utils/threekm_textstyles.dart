@@ -45,6 +45,11 @@ class ThreeKmTextConstants {
     fontSize: 14,
   );
 
+  static TextStyle tk18PXPoppinsBlackMedium = GoogleFonts.poppins()
+      .copyWith(color: black, fontSize: 18, fontWeight: FontWeight.w600);
+
+
+
   /////////////////////// 14 /////////////////////////////////////
   static TextStyle tk14PXLatoBlueRegular = GoogleFonts.lato().copyWith(
     color: blue1,
@@ -101,6 +106,11 @@ class ThreeKmTextConstants {
       .copyWith(color: black, fontSize: 16, fontWeight: FontWeight.w600);
   static TextStyle tk16PXPoppinsWhiteBold = GoogleFonts.poppins()
       .copyWith(color: white, fontSize: 16, fontWeight: FontWeight.bold);
+
+
+  static TextStyle tk20PXPoppinsRedBold = GoogleFonts.poppins()
+      .copyWith(color: red1, fontSize: 20, fontWeight: FontWeight.bold);
+
 
   static TextStyle tk12PXPoppinsBlackSemiBold = GoogleFonts.poppins()
       .copyWith(color: black, fontSize: 12, fontWeight: FontWeight.w600);
