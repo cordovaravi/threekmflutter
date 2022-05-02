@@ -128,13 +128,13 @@ class _NewsTabState extends State<NewsTab>
             context.read<HomeSecondProvider>().getNewsSecond(requestJson);
           }).whenComplete(() => checkUpdate());
         });
-        Future.microtask(() => context.read<NewsFeedProvider>().getBottomFeed(
-              languageCode: context.read<AppLanguage>().appLocal == Locale("mr")
-                  ? "mr"
-                  : context.read<AppLanguage>().appLocal == Locale("en")
-                      ? "en"
-                      : "hi",
-            ));
+        // Future.microtask(() => context.read<NewsFeedProvider>().getBottomFeed(
+        //       languageCode: context.read<AppLanguage>().appLocal == Locale("mr")
+        //           ? "mr"
+        //           : context.read<AppLanguage>().appLocal == Locale("en")
+        //               ? "en"
+        //               : "hi",
+        //     ));
         context.read<AddPostProvider>();
       });
     }
@@ -233,7 +233,7 @@ class _NewsTabState extends State<NewsTab>
     final newsFirstProvider = context.watch<HomefirstProvider>();
     final newsSecondProvider = context.watch<HomeSecondProvider>();
     final profileProvider = context.watch<ProfileInfoProvider>();
-     final newsFeedProvider = context.watch<NewsFeedProvider>();
+    final newsFeedProvider = context.watch<NewsFeedProvider>();
 
     return RefreshIndicator(
       onRefresh: () {
@@ -1122,9 +1122,7 @@ class _NewsTabState extends State<NewsTab>
                     )
                   else
                     Container(),
-                  SizedBox(
-                    height: 150,
-                  ),
+
                   if (newsFeedProvider.newsFeedBottomModel?.data?.result?.posts
                               ?.length !=
                           0 &&
@@ -2230,7 +2228,7 @@ class NewsContainer extends StatelessWidget {
               color: Colors.white,
               child: finalPost.category?.posts != null
                   ? ListView.builder(
-                       cacheExtent: 9999,
+                      cacheExtent: 9999,
                       physics: BouncingScrollPhysics(),
                       scrollDirection: Axis.horizontal,
                       itemCount: finalPost.category!.posts!.length,
