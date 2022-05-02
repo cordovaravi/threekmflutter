@@ -255,12 +255,12 @@ class _ProductDetailsState extends State<ProductDetails> {
                   ),
                   onPressed: () {
                     log("share button ");
-                    if(product?.catalogId != null){
-                    var url ='https://3km.in/sell/${product?.name.replaceAll(RegExp("([^A-Z,^a-z,^/,^:,\n\t\r\f])+"), "")}/${product?.catalogId}';
-                    Share.share(
-                        '${Uri.parse(url)} ${product?.name} from ${product?.businessName}');
+                    if (product?.catalogId != null) {
+                      var url =
+                          'https://3km.in/sell/${product?.name.replaceAll(RegExp("([^A-Z,^a-z,^/,^:,\n\t\r\f])+"), "")}/${product?.catalogId}';
+                      Share.share(
+                          '${Uri.parse(url)} ${product?.name} from ${product?.businessName}');
                     }
-                   
                   }),
             ),
             Stack(
@@ -338,7 +338,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                         });
                       },
                       itemCount: variationid == 0
-                          ? data.result?.product.images.length != 0
+                          ? data.result?.product.images.length != 0 && data.result?.product.images.length != 1
                               ? data.result?.product.images.length
                               : [data.result?.product.image].length
                           : variation.imagesLinks.length != 0
@@ -358,11 +358,17 @@ class _ProductDetailsState extends State<ProductDetails> {
                                             builder: (_) => FullImage(
                                                   imageurl: variationid == 0
                                                       ? data
-                                                                  .result
-                                                                  ?.product
-                                                                  .images
-                                                                  .length !=
-                                                              0
+                                                                      .result
+                                                                      ?.product
+                                                                      .images
+                                                                      .length !=
+                                                                  0 &&
+                                                              data
+                                                                      .result
+                                                                      ?.product
+                                                                      .images
+                                                                      .length !=
+                                                                  1
                                                           ? '${data.result?.product.images[index]}'
                                                           : '${data.result?.product.image}'
                                                       : variation.imagesLinks
@@ -377,7 +383,8 @@ class _ProductDetailsState extends State<ProductDetails> {
                                   child: Image(
                                     image: NetworkImage(variationid == 0
                                         ? data.result?.product.images.length !=
-                                                0
+                                                0 && data.result?.product.images.length !=
+                                                1
                                             ? '${data.result?.product.images[index]}'
                                             : '${data.result?.product.image}'
                                         : variation.imagesLinks.length != 0
@@ -431,7 +438,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                         for (int i = 0;
                             i <
                                 (variationid == 0
-                                    ? data.result!.product.images.length != 0
+                                    ? data.result!.product.images.length != 0 && data.result!.product.images.length != 1
                                         ? data.result!.product.images.length
                                         : [data.result?.product.image].length
                                     : variation.imagesLinks.length != 0
