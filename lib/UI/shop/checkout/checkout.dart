@@ -219,12 +219,14 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
                                           weight,
                                           'shop');
                                 }
-                                if (currentPage == 2 &&
-                                    context
-                                            .read<CheckoutProvider>()
-                                            .getShippingRateData
-                                            .deliveryRate! !=
-                                        0) {
+                                if (currentPage == 2
+                                    //  &&
+                                    //     context
+                                    //             .read<CheckoutProvider>()
+                                    //             .getShippingRateData
+                                    //             .deliveryRate! !=
+                                    //         0
+                                    ) {
                                   _pageController.jumpToPage(1);
                                   var box = Hive.box('cartBox').values.toList();
 
@@ -959,12 +961,14 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
                             null) {
                           _pageController.jumpToPage(2);
                         }
-                      } else if (currentPage == 2 &&
-                          context
-                                  .read<CheckoutProvider>()
-                                  .getShippingRateData
-                                  .deliveryRate! !=
-                              0) {
+                      } else if (currentPage == 2
+                          //  &&
+                          //     context
+                          //             .read<CheckoutProvider>()
+                          //             .getShippingRateData
+                          //             .deliveryRate! !=
+                          //         0
+                          ) {
                         _pageController.jumpToPage(3);
                         var box = Hive.box<List<CartHiveModel>>('cartBox')
                             .values
