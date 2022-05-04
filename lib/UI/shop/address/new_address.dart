@@ -14,7 +14,7 @@ import 'package:threekm/providers/Location/locattion_Provider.dart';
 import 'package:threekm/providers/shop/address_list_provider.dart';
 import 'package:threekm/utils/api_paths.dart';
 import 'package:threekm/utils/constants.dart';
-import 'package:threekm/utils/screen_util.dart';
+
 import 'package:threekm/utils/threekm_textstyles.dart';
 
 class NewAddress extends StatefulWidget {
@@ -88,6 +88,7 @@ class _NewAddressState extends State<NewAddress> {
 
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -100,7 +101,7 @@ class _NewAddressState extends State<NewAddress> {
         ),
       ),
       body: Container(
-        height: ThreeKmScreenUtil.screenHeightDp,
+        height: size.width,
         color: Colors.white,
         //padding: EdgeInsets.only(top: 30),
         child: SingleChildScrollView(
@@ -113,7 +114,7 @@ class _NewAddressState extends State<NewAddress> {
                 Container(
                   padding: const EdgeInsets.only(
                       bottom: 20, left: 20, right: 10, top: 20),
-                  width: ThreeKmScreenUtil.screenWidthDp,
+                  width: size.width,
                   child: InkWell(
                       onTap: () {
                         Future.delayed(Duration.zero, () {

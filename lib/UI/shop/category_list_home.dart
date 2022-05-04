@@ -2,8 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:threekm/Models/shopModel/shop_home_model.dart';
 import 'package:threekm/localization/localize.dart';
-import 'package:threekm/utils/screen_util.dart';
-import 'package:threekm/utils/spacing_util.dart';
+
 import 'package:threekm/utils/threekm_textstyles.dart';
 import '../shop/all_categorylist.dart';
 import '../shop/product_listing.dart';
@@ -11,8 +10,10 @@ import '../shop/product_listing.dart';
 class CategoryListHome extends StatelessWidget {
   const CategoryListHome({Key? key, required this.category}) : super(key: key);
   final List<Trending> category;
+
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
     return Container(
       margin: const EdgeInsets.only(top: 3),
       padding: const EdgeInsets.only(top: 20),
@@ -20,8 +21,8 @@ class CategoryListHome extends StatelessWidget {
       child: Column(
         children: [
           Container(
-            width: MediaQuery.of(context).size.width,
-            height: ThreeKmScreenUtil.screenHeightDp / 3,
+            width: size.width,
+            height: size.height / 3,
             child: GridView.builder(
                 shrinkWrap: true,
                 scrollDirection: Axis.horizontal,

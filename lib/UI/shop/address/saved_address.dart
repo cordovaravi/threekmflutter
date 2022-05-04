@@ -30,11 +30,10 @@ class _SavedAddressState extends State<SavedAddress> {
     context.read<AddressListProvider>().getAddressList(mounted);
   }
 
- 
-
   @override
   Widget build(BuildContext context) {
     var data = context.watch<AddressListProvider>().getAddressListData;
+    Size size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -49,7 +48,7 @@ class _SavedAddressState extends State<SavedAddress> {
       body: data.addresses == null
           ? Container(
               margin: const EdgeInsets.only(top: 20),
-              height: ThreeKmScreenUtil.screenHeightDp / 2,
+              height: size.height / 2,
               child: Column(
                 // mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -141,7 +140,7 @@ class _SavedAddressState extends State<SavedAddress> {
               ),
             )
           : Container(
-              height: ThreeKmScreenUtil.screenHeightDp,
+              height: size.height,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
