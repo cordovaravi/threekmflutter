@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:threekm/utils/screen_util.dart';
 
 class showFullImage extends StatefulWidget {
   const showFullImage({Key? key, this.images}) : super(key: key);

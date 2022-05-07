@@ -15,6 +15,7 @@ import 'package:threekm/UI/main/News/PostView.dart';
 import 'package:threekm/UI/main/News/poll_page.dart';
 import 'package:threekm/UI/main/navigation.dart';
 import 'package:threekm/UI/Auth/signup/sign_up.dart';
+import 'package:threekm/UI/main/threekm_upper_tab.dart';
 import 'package:threekm/UI/shop/product/product_details.dart';
 import 'package:threekm/UI/shop/product_listing.dart';
 import 'package:threekm/main.dart';
@@ -219,6 +220,7 @@ class _SplashScreenState extends State<SplashScreen> {
       //handleDeepLink();
       Navigator.pushAndRemoveUntil(
           context,
+          // MaterialPageRoute(builder: (context) => ThreeKMUpperTab()),
           MaterialPageRoute(builder: (context) => TabBarNavigation()),
           (route) => false);
     } else

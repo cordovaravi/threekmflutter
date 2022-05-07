@@ -10,7 +10,7 @@ import 'package:provider/src/provider.dart';
 import 'package:threekm/providers/shop/product_listing_provider.dart';
 import 'package:threekm/Models/shopModel/product_listing_model.dart';
 import 'package:threekm/providers/shop/wish_list_provide.dart';
-import 'package:threekm/utils/screen_util.dart';
+// import 'package:threekm/utils/screen_util.dart';
 import 'package:threekm/utils/threekm_textstyles.dart';
 import '../shop/product/product_details.dart';
 

@@ -51,7 +51,7 @@ Future viewCart(BuildContext context, mode) async {
                   padding: const EdgeInsets.only(
                     top: 30,
                   ),
-                  //height: ThreeKmScreenUtil.screenHeightDp / 1.46,
+                 
                   child: Stack(
                       alignment: Alignment.topCenter,
                       clipBehavior: Clip.none,
@@ -572,7 +572,7 @@ Future viewCart(BuildContext context, mode) async {
                             : const Center(child: Text('No Item Found')),
                         Positioned(
                           top: -60,
-                          //left: ThreeKmScreenUtil.screenWidthDp / 2,
+                         
                           child: InkWell(
                             onTap: () {
                               Navigator.pop(context);

@@ -4,7 +4,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:provider/src/provider.dart';
-import 'package:threekm/UI/main/AddPost/BottomSnack.dart';
+
 import 'package:threekm/commenwidgets/CustomSnakBar.dart';
 import 'package:threekm/commenwidgets/commenwidget.dart';
 import 'package:threekm/networkservice/Api_Provider.dart';
@@ -14,7 +14,9 @@ import 'package:threekm/providers/shop/user_review_provider.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:threekm/utils/api_paths.dart';
-import 'package:threekm/utils/screen_util.dart';
+import 'package:threekm/utils/constants.dart';
+// import 'package:threekm/utils/screen_util.dart';
+import 'package:threekm/utils/constants.dart';
 
 Color textColor = Color(0xFF0F0F2D);
 
@@ -245,12 +247,12 @@ class _PostReviewState extends State<PostReview> {
   int deliveryRating = 1;
 
   final _formKey = GlobalKey<FormState>();
-
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
     return Container(
       color: Colors.transparent,
-      height: ThreeKmScreenUtil.screenHeightDp / 1.1,
+      height: size.height / 1.1,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
@@ -271,8 +273,8 @@ class _PostReviewState extends State<PostReview> {
             ),
           ),
           Container(
-            height: ThreeKmScreenUtil.screenHeightDp / 1.2,
-            width: ThreeKmScreenUtil.screenWidthDp,
+            height: size.height / 1.2,
+            width: size.width,
             padding: const EdgeInsets.all(20),
             //alignment: Alignment.bottomCenter,
             color: Colors.white,
@@ -297,7 +299,7 @@ class _PostReviewState extends State<PostReview> {
                       style: TextStyle(color: textColor, fontSize: 18),
                     ),
                     SizedBox(
-                      width: ThreeKmScreenUtil.screenWidthDp,
+                      width: size.width,
                       height: 70,
                       //color: Colors.blue,
                       child: ListView(
@@ -435,7 +437,7 @@ class _PostReviewState extends State<PostReview> {
                                   child: Icon(
                                     Icons.add_a_photo,
                                     color: Color(0xFF3E7EFF),
-                                    size: ThreeKmScreenUtil.screenWidthDp / 7,
+                                    size: size.width / 7,
                                   ),
                                 ),
                               )
@@ -495,7 +497,7 @@ class _PostReviewState extends State<PostReview> {
                       ),
                     ),
                     SizedBox(
-                      width: ThreeKmScreenUtil.screenWidthDp,
+                      width: size.width,
                       height: 70,
                       //color: Colors.blue,
                       child: ListView(

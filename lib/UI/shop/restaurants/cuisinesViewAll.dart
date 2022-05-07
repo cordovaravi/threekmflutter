@@ -83,8 +83,7 @@ class _CuisinesViewAllState extends State<CuisinesViewAll> {
                                       topRight: Radius.circular(20)),
                                   child: ColorFiltered(
                                     colorFilter: ColorFilter.mode(
-                                        restaurantdata?[i].status !=
-                                                false
+                                        restaurantdata?[i].status != false
                                             ? Colors.transparent
                                             : Colors.grey,
                                         //Colors.transparent,
@@ -94,7 +93,6 @@ class _CuisinesViewAllState extends State<CuisinesViewAll> {
                                       placeholder: (context, url) =>
                                           Container(color: Colors.grey),
                                       imageUrl: '${restaurantdata?[i].cover}',
-                                      //height: ThreeKmScreenUtil.screenHeightDp / 5,
                                       width: MediaQuery.of(context).size.width,
                                       fit: BoxFit.fill,
                                     ),

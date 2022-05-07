@@ -47,12 +47,12 @@ class _BusinessesHomeState extends State<BusinessesHome>
     final _location = context.read<LocationProvider>().getlocationData;
     return Scaffold(
       // extendBody: true,
-      appBar: AppBar(
-        elevation: 0,
-        title: Text('Businesses'),
-        backgroundColor: Colors.transparent,
-        foregroundColor: Colors.black,
-      ),
+      // appBar: AppBar(
+      //   elevation: 0,
+      //   title: Text('Businesses'),
+      //   backgroundColor: Colors.transparent,
+      //   foregroundColor: Colors.black,
+      // ),
       body: RefreshIndicator(
         onRefresh: () {
           var initJson = json.encode({
@@ -107,120 +107,120 @@ class _HomeState extends State<Home> {
       child: SingleChildScrollView(
         child: Column(
           children: [
-            Container(
-              color: Colors.white,
-              child: Padding(
-                padding: EdgeInsets.only(top: 10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    InkWell(
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => SearchPage(
-                                      tabNuber: 2,
-                                    )));
-                      },
-                      child: Container(
-                        height: 32,
-                        width: MediaQuery.of(context).size.width * 0.7,
-                        decoration: BoxDecoration(
-                            //color: Colors.white,
-                            borderRadius: BorderRadius.circular(21),
-                            border: Border.all(color: Color(0xffDFE5EE))),
-                        child: Row(
-                          children: [
-                            Padding(
-                              padding: EdgeInsets.only(left: 15),
-                              child: Icon(
-                                Icons.search_rounded,
-                                color: Colors.grey,
-                              ),
-                            ),
-                            Padding(
-                                padding: EdgeInsets.only(left: 11),
-                                child: Text(
-                                  AppLocalizations.of(context)!.translate(
-                                          'Search_Hyperlocal_Business') ??
-                                      "Search Hyperlocal Business",
-                                  style: ThreeKmTextConstants
-                                      .tk12PXLatoBlackBold
-                                      .copyWith(color: Colors.grey),
-                                ))
-                          ],
-                        ),
-                      ),
-                    ),
-                    Stack(
-                      clipBehavior: Clip.none,
-                      children: [
-                        InkWell(
-                          onTap: () => viewCart(context, 'shop'),
-                          child: Padding(
-                            padding: EdgeInsets.only(left: 12),
-                            child: Container(
-                                height: 32,
-                                width: 32,
-                                decoration: BoxDecoration(
-                                  image: DecorationImage(
-                                      image: AssetImage(
-                                          "assets/shopImg/Group 40724.png")),
-                                  shape: BoxShape.circle,
-                                  //color: Color(0xff7572ED)
-                                )),
-                          ),
-                        ),
-                        if (Hive.box('cartBox').length != 0)
-                          Positioned(
-                              top: -12,
-                              right: -6,
-                              child: Container(
-                                  decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: Colors.red),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(4.0),
-                                    child: Text(
-                                      '${Hive.box('cartBox').length}',
-                                      style: TextStyle(
-                                          fontSize: 11, color: Colors.white),
-                                    ),
-                                  )))
-                      ],
-                    ),
-                    // InkWell(
-                    //   onTap: () async {
-                    //     SharedPreferences _pref =
-                    //         await SharedPreferences.getInstance();
+            // Container(
+            //   color: Colors.white,
+            //   child: Padding(
+            //     padding: EdgeInsets.only(top: 10),
+            //     child: Row(
+            //       mainAxisAlignment: MainAxisAlignment.center,
+            //       children: [
+            //         InkWell(
+            //           onTap: () {
+            //             Navigator.push(
+            //                 context,
+            //                 MaterialPageRoute(
+            //                     builder: (context) => SearchPage(
+            //                           tabNuber: 2,
+            //                         )));
+            //           },
+            //           child: Container(
+            //             height: 32,
+            //             width: MediaQuery.of(context).size.width * 0.7,
+            //             decoration: BoxDecoration(
+            //                 //color: Colors.white,
+            //                 borderRadius: BorderRadius.circular(21),
+            //                 border: Border.all(color: Color(0xffDFE5EE))),
+            //             child: Row(
+            //               children: [
+            //                 Padding(
+            //                   padding: EdgeInsets.only(left: 15),
+            //                   child: Icon(
+            //                     Icons.search_rounded,
+            //                     color: Colors.grey,
+            //                   ),
+            //                 ),
+            //                 Padding(
+            //                     padding: EdgeInsets.only(left: 11),
+            //                     child: Text(
+            //                       AppLocalizations.of(context)!.translate(
+            //                               'Search_Hyperlocal_Business') ??
+            //                           "Search Hyperlocal Business",
+            //                       style: ThreeKmTextConstants
+            //                           .tk12PXLatoBlackBold
+            //                           .copyWith(color: Colors.grey),
+            //                     ))
+            //               ],
+            //             ),
+            //           ),
+            //         ),
+            //         Stack(
+            //           clipBehavior: Clip.none,
+            //           children: [
+            //             InkWell(
+            //               onTap: () => viewCart(context, 'shop'),
+            //               child: Padding(
+            //                 padding: EdgeInsets.only(left: 12),
+            //                 child: Container(
+            //                     height: 32,
+            //                     width: 32,
+            //                     decoration: BoxDecoration(
+            //                       image: DecorationImage(
+            //                           image: AssetImage(
+            //                               "assets/shopImg/Group 40724.png")),
+            //                       shape: BoxShape.circle,
+            //                       //color: Color(0xff7572ED)
+            //                     )),
+            //               ),
+            //             ),
+            //             if (Hive.box('cartBox').length != 0)
+            //               Positioned(
+            //                   top: -12,
+            //                   right: -6,
+            //                   child: Container(
+            //                       decoration: BoxDecoration(
+            //                           shape: BoxShape.circle,
+            //                           color: Colors.red),
+            //                       child: Padding(
+            //                         padding: const EdgeInsets.all(4.0),
+            //                         child: Text(
+            //                           '${Hive.box('cartBox').length}',
+            //                           style: TextStyle(
+            //                               fontSize: 11, color: Colors.white),
+            //                         ),
+            //                       )))
+            //           ],
+            //         ),
+            //         // InkWell(
+            //         //   onTap: () async {
+            //         //     SharedPreferences _pref =
+            //         //         await SharedPreferences.getInstance();
 
-                    //     var token = _pref.getString("token");
-                    //     token != null
-                    //         ? drawerController.open!()
-                    //         : Navigator.pushAndRemoveUntil(
-                    //             context,
-                    //             MaterialPageRoute(builder: (_) => SignUp()),
-                    //             (route) => false);
-                    //   },
-                    //   child: Padding(
-                    //     padding: EdgeInsets.only(left: 12),
-                    //     child: Container(
-                    //         height: 32,
-                    //         width: 32,
-                    //         decoration: BoxDecoration(
-                    //           image: DecorationImage(
-                    //               image:
-                    //                   AssetImage("assets/male-user.png")),
-                    //           shape: BoxShape.circle,
-                    //           //color: Color(0xffFF464B)
-                    //         )),
-                    //   ),
-                    // )
-                  ],
-                ),
-              ),
-            ),
+            //         //     var token = _pref.getString("token");
+            //         //     token != null
+            //         //         ? drawerController.open!()
+            //         //         : Navigator.pushAndRemoveUntil(
+            //         //             context,
+            //         //             MaterialPageRoute(builder: (_) => SignUp()),
+            //         //             (route) => false);
+            //         //   },
+            //         //   child: Padding(
+            //         //     padding: EdgeInsets.only(left: 12),
+            //         //     child: Container(
+            //         //         height: 32,
+            //         //         width: 32,
+            //         //         decoration: BoxDecoration(
+            //         //           image: DecorationImage(
+            //         //               image:
+            //         //                   AssetImage("assets/male-user.png")),
+            //         //           shape: BoxShape.circle,
+            //         //           //color: Color(0xffFF464B)
+            //         //         )),
+            //         //   ),
+            //         // )
+            //       ],
+            //     ),
+            //   ),
+            // ),
             Container(
               //  padding: EdgeInsets.only(left: 20),
               height: 350,

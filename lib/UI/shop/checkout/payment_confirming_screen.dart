@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/src/provider.dart';
 import 'package:threekm/Models/shopModel/address_list_model.dart';
 import 'package:threekm/providers/shop/checkout/checkout_provider.dart';
+import 'package:threekm/utils/constants.dart';
 import 'package:threekm/utils/screen_util.dart';
 import 'package:threekm/utils/threekm_textstyles.dart';
 
@@ -31,7 +32,11 @@ class _PaymentConfirmingScreenState extends State<PaymentConfirmingScreen> {
   void initState() {
     super.initState();
     context.read<CheckoutProvider>().createOrder(
-        widget.dropLocation, widget.productList, widget.shippingAmount,widget.shippingDistance, widget.mode);
+        widget.dropLocation,
+        widget.productList,
+        widget.shippingAmount,
+        widget.shippingDistance,
+        widget.mode);
   }
 
   @override
@@ -40,7 +45,7 @@ class _PaymentConfirmingScreenState extends State<PaymentConfirmingScreen> {
       body: Container(
         color: Colors.white,
         padding: EdgeInsets.all(40),
-        height: ThreeKmScreenUtil.screenHeightDp,
+        height: size(context).height,
         child: Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,

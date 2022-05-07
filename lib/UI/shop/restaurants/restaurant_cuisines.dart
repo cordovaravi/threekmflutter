@@ -7,15 +7,15 @@ import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/src/provider.dart';
 import 'package:threekm/Models/shopModel/cuisines_restaurants_list_model.dart';
-import 'package:threekm/Models/shopModel/restaurants_model.dart';
+
 import 'package:threekm/commenwidgets/CustomSnakBar.dart';
 import 'package:threekm/localization/localize.dart';
 import 'package:threekm/main.dart';
 import 'package:threekm/providers/shop/cart_provider.dart';
 import 'package:threekm/providers/shop/restaurant_menu_provider.dart';
 import 'package:threekm/Models/shopModel/restaurants_menu_model.dart';
+import 'package:threekm/utils/constants.dart';
 
-import 'package:threekm/utils/screen_util.dart';
 import 'package:threekm/utils/utils.dart';
 import '../../shop/cart/cart_item_list_modal.dart';
 import '../../shop/restaurants/checkbox.dart';
@@ -149,7 +149,7 @@ class _RestaurantCuisinesMenu extends State<RestaurantCuisinesMenu> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         SizedBox(
-                          width: ThreeKmScreenUtil.screenWidthDp / 2,
+                          width: size(context).width / 2,
                           child: Text(
                             '${widget.data?.businessName}',
                             style: const TextStyle(

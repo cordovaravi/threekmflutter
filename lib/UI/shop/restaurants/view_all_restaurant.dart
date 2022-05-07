@@ -8,6 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:hive/hive.dart';
 import 'package:provider/src/provider.dart';
 import 'package:threekm/UI/shop/cart/cart_item_list_modal.dart';
+import 'package:threekm/commenwidgets/commenwidget.dart';
 import 'package:threekm/localization/localize.dart';
 
 import 'package:threekm/providers/shop/shop_home_provider.dart';
@@ -220,7 +221,7 @@ class _AllRestaurantListState extends State<AllRestaurantList> {
                               children: [
                                 Container(
                                   alignment: Alignment.topLeft,
-                                  height: ThreeKmScreenUtil.screenHeightDp / 4,
+                                  height: size.height / 4,
                                   child: Stack(
                                     alignment: Alignment.topLeft,
                                     fit: StackFit.loose,
@@ -244,9 +245,9 @@ class _AllRestaurantListState extends State<AllRestaurantList> {
                                                 Container(color: Colors.grey),
                                             imageUrl:
                                                 '${restaurantdata[i].cover}',
-                                            //height: ThreeKmScreenUtil.screenHeightDp / 5,
+                                            
                                             width:
-                                                ThreeKmScreenUtil.screenWidthDp,
+                                               size.width,
                                             fit: BoxFit.fill,
                                           ),
                                         ),
@@ -299,7 +300,7 @@ class _AllRestaurantListState extends State<AllRestaurantList> {
                                   children: [
                                     Container(
                                       width:
-                                          ThreeKmScreenUtil.screenWidthDp / 1.9,
+                                         size.width/ 1.9,
                                       padding: EdgeInsets.all(8.0),
                                       child: Text(
                                         '${restaurantdata[i].restaurant!.cuisines?.join(", ")}',

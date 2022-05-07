@@ -1,6 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:threekm/utils/screen_util.dart';
+import 'package:threekm/utils/constants.dart';
 
 class RestaurantHomeCard extends StatelessWidget {
   const RestaurantHomeCard({
@@ -51,7 +51,7 @@ class RestaurantHomeCard extends StatelessWidget {
                       //   ),
                       // ),
                       imageUrl: cardImage,
-                      height: ThreeKmScreenUtil.screenHeightDp / 1.8,
+                      height: size(context).height / 1.8,
                       width: double.infinity,
                       fit: BoxFit.fill,
                     ),

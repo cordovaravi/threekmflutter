@@ -254,207 +254,207 @@ class _NewsTabState extends State<NewsTab>
                   SizedBox(
                     height: 5,
                   ),
-                  Row(
-                    children: [
-                      IconButton(
-                          onPressed: () {
-                            Future.delayed(Duration.zero, () {
-                              context
-                                  .read<LocationProvider>()
-                                  .getLocation()
-                                  .whenComplete(() {
-                                final _locationProvider = context
-                                    .read<LocationProvider>()
-                                    .getlocationData;
-                                final kInitialPosition = LatLng(
-                                    _locationProvider!.latitude!,
-                                    _locationProvider.longitude!);
-                                if (_locationProvider != null) {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => PlacePicker(
-                                          apiKey: GMap_Api_Key,
-                                          // initialMapType: MapType.satellite,
-                                          onPlacePicked: (result) {
-                                            //print(result.formattedAddress);
-                                            setState(() {
-                                              _selecetdAddress =
-                                                  result.formattedAddress;
-                                              print(result.geometry!.toJson());
-                                              //  _geometry = result.geometry;
-                                            });
-                                            Navigator.of(context).pop();
-                                          },
-                                          initialPosition: kInitialPosition,
-                                          useCurrentLocation: true,
-                                          selectInitialPosition: true,
-                                          usePinPointingSearch: true,
-                                          usePlaceDetailSearch: true,
-                                        ),
-                                      ));
-                                }
-                              });
-                            });
-                          },
-                          icon: Icon(
-                            Icons.location_on_outlined,
-                            color: Colors.redAccent,
-                          )),
-                      Padding(
-                        padding: EdgeInsets.only(left: 0),
-                        child: SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.85,
-                          child: GestureDetector(
-                            onTap: () {
-                              Future.delayed(Duration.zero, () {
-                                context
-                                    .read<LocationProvider>()
-                                    .getLocation()
-                                    .whenComplete(() {
-                                  final _locationProvider = context
-                                      .read<LocationProvider>()
-                                      .getlocationData;
-                                  final kInitialPosition = LatLng(
-                                      _locationProvider!.latitude!,
-                                      _locationProvider.longitude!);
-                                  if (_locationProvider != null) {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => PlacePicker(
-                                            apiKey: GMap_Api_Key,
-                                            // initialMapType: MapType.satellite,
-                                            onPlacePicked: (result) {
-                                              //print(result.formattedAddress);
-                                              setState(() {
-                                                _selecetdAddress =
-                                                    result.formattedAddress;
-                                                print(
-                                                    result.geometry!.toJson());
-                                                //  _geometry = result.geometry;
-                                              });
-                                              Navigator.of(context).pop();
-                                            },
-                                            initialPosition: kInitialPosition,
-                                            useCurrentLocation: true,
-                                            selectInitialPosition: true,
-                                            usePinPointingSearch: true,
-                                            usePlaceDetailSearch: true,
-                                          ),
-                                        ));
-                                  }
-                                });
-                              });
-                            },
-                            child: Text(
-                                _selecetdAddress ??
-                                    locationProvider.AddressFromCordinate ??
-                                    "",
-                                style: ThreeKmTextConstants
-                                    .tk12PXPoppinsBlackSemiBold,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  Container(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        InkWell(
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => SearchPage(
-                                          tabNuber: 0,
-                                        )));
-                          },
-                          child: Container(
-                            height: 32,
-                            width: MediaQuery.of(context).size.width * 0.7,
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(21),
-                                border: Border.all(color: Color(0xffDFE5EE))),
-                            child: Row(
-                              children: [
-                                Padding(
-                                  padding: EdgeInsets.only(left: 15),
-                                  child: Icon(
-                                    Icons.search_rounded,
-                                    color: Colors.grey,
-                                  ),
-                                ),
-                                Padding(
-                                    padding: EdgeInsets.only(left: 11),
-                                    child: Text(
-                                      AppLocalizations.of(context)
-                                              ?.translate("search_news") ??
-                                          "",
-                                      style: ThreeKmTextConstants
-                                          .tk12PXLatoBlackBold
-                                          .copyWith(color: Colors.grey),
-                                    ))
-                              ],
-                            ),
-                          ),
-                        ),
-                        InkWell(
-                          onTap: () {
-                            Navigator.push(context,
-                                AnimatedSizeRoute(page: Notificationpage()));
-                          },
-                          child: Padding(
-                            padding: EdgeInsets.only(left: 12),
-                            child: Container(
-                                height: 32,
-                                width: 32,
-                                decoration: BoxDecoration(
-                                  image: DecorationImage(
-                                      image: AssetImage("assets/bell.png")),
-                                  shape: BoxShape.circle,
-                                  //color: Color(0xff7572ED)
-                                )),
-                          ),
-                        ),
-                        InkWell(
-                          onTap: () async {
-                            SharedPreferences _pref =
-                                await SharedPreferences.getInstance();
+                  // Row(
+                  //   children: [
+                  //     IconButton(
+                  //         onPressed: () {
+                  //           Future.delayed(Duration.zero, () {
+                  //             context
+                  //                 .read<LocationProvider>()
+                  //                 .getLocation()
+                  //                 .whenComplete(() {
+                  //               final _locationProvider = context
+                  //                   .read<LocationProvider>()
+                  //                   .getlocationData;
+                  //               final kInitialPosition = LatLng(
+                  //                   _locationProvider!.latitude!,
+                  //                   _locationProvider.longitude!);
+                  //               if (_locationProvider != null) {
+                  //                 Navigator.push(
+                  //                     context,
+                  //                     MaterialPageRoute(
+                  //                       builder: (context) => PlacePicker(
+                  //                         apiKey: GMap_Api_Key,
+                  //                         // initialMapType: MapType.satellite,
+                  //                         onPlacePicked: (result) {
+                  //                           //print(result.formattedAddress);
+                  //                           setState(() {
+                  //                             _selecetdAddress =
+                  //                                 result.formattedAddress;
+                  //                             print(result.geometry!.toJson());
+                  //                             //  _geometry = result.geometry;
+                  //                           });
+                  //                           Navigator.of(context).pop();
+                  //                         },
+                  //                         initialPosition: kInitialPosition,
+                  //                         useCurrentLocation: true,
+                  //                         selectInitialPosition: true,
+                  //                         usePinPointingSearch: true,
+                  //                         usePlaceDetailSearch: true,
+                  //                       ),
+                  //                     ));
+                  //               }
+                  //             });
+                  //           });
+                  //         },
+                  //         icon: Icon(
+                  //           Icons.location_on_outlined,
+                  //           color: Colors.redAccent,
+                  //         )),
+                  //     Padding(
+                  //       padding: EdgeInsets.only(left: 0),
+                  //       child: SizedBox(
+                  //         width: MediaQuery.of(context).size.width * 0.85,
+                  //         child: GestureDetector(
+                  //           onTap: () {
+                  //             Future.delayed(Duration.zero, () {
+                  //               context
+                  //                   .read<LocationProvider>()
+                  //                   .getLocation()
+                  //                   .whenComplete(() {
+                  //                 final _locationProvider = context
+                  //                     .read<LocationProvider>()
+                  //                     .getlocationData;
+                  //                 final kInitialPosition = LatLng(
+                  //                     _locationProvider!.latitude!,
+                  //                     _locationProvider.longitude!);
+                  //                 if (_locationProvider != null) {
+                  //                   Navigator.push(
+                  //                       context,
+                  //                       MaterialPageRoute(
+                  //                         builder: (context) => PlacePicker(
+                  //                           apiKey: GMap_Api_Key,
+                  //                           // initialMapType: MapType.satellite,
+                  //                           onPlacePicked: (result) {
+                  //                             //print(result.formattedAddress);
+                  //                             setState(() {
+                  //                               _selecetdAddress =
+                  //                                   result.formattedAddress;
+                  //                               print(
+                  //                                   result.geometry!.toJson());
+                  //                               //  _geometry = result.geometry;
+                  //                             });
+                  //                             Navigator.of(context).pop();
+                  //                           },
+                  //                           initialPosition: kInitialPosition,
+                  //                           useCurrentLocation: true,
+                  //                           selectInitialPosition: true,
+                  //                           usePinPointingSearch: true,
+                  //                           usePlaceDetailSearch: true,
+                  //                         ),
+                  //                       ));
+                  //                 }
+                  //               });
+                  //             });
+                  //           },
+                  //           child: Text(
+                  //               _selecetdAddress ??
+                  //                   locationProvider.AddressFromCordinate ??
+                  //                   "",
+                  //               style: ThreeKmTextConstants
+                  //                   .tk12PXPoppinsBlackSemiBold,
+                  //               maxLines: 1,
+                  //               overflow: TextOverflow.ellipsis),
+                  //         ),
+                  //       ),
+                  //     ),
+                  //   ],
+                  // ),
+                  // Container(
+                  //   child: Row(
+                  //     mainAxisAlignment: MainAxisAlignment.center,
+                  //     children: [
+                  //       InkWell(
+                  //         onTap: () {
+                  //           Navigator.push(
+                  //               context,
+                  //               MaterialPageRoute(
+                  //                   builder: (context) => SearchPage(
+                  //                         tabNuber: 0,
+                  //                       )));
+                  //         },
+                  //         child: Container(
+                  //           height: 32,
+                  //           width: MediaQuery.of(context).size.width * 0.7,
+                  //           decoration: BoxDecoration(
+                  //               borderRadius: BorderRadius.circular(21),
+                  //               border: Border.all(color: Color(0xffDFE5EE))),
+                  //           child: Row(
+                  //             children: [
+                  //               Padding(
+                  //                 padding: EdgeInsets.only(left: 15),
+                  //                 child: Icon(
+                  //                   Icons.search_rounded,
+                  //                   color: Colors.grey,
+                  //                 ),
+                  //               ),
+                  //               Padding(
+                  //                   padding: EdgeInsets.only(left: 11),
+                  //                   child: Text(
+                  //                     AppLocalizations.of(context)
+                  //                             ?.translate("search_news") ??
+                  //                         "",
+                  //                     style: ThreeKmTextConstants
+                  //                         .tk12PXLatoBlackBold
+                  //                         .copyWith(color: Colors.grey),
+                  //                   ))
+                  //             ],
+                  //           ),
+                  //         ),
+                  //       ),
+                  //       InkWell(
+                  //         onTap: () {
+                  //           Navigator.push(context,
+                  //               AnimatedSizeRoute(page: Notificationpage()));
+                  //         },
+                  //         child: Padding(
+                  //           padding: EdgeInsets.only(left: 12),
+                  //           child: Container(
+                  //               height: 32,
+                  //               width: 32,
+                  //               decoration: BoxDecoration(
+                  //                 image: DecorationImage(
+                  //                     image: AssetImage("assets/bell.png")),
+                  //                 shape: BoxShape.circle,
+                  //                 //color: Color(0xff7572ED)
+                  //               )),
+                  //         ),
+                  //       ),
+                  //       InkWell(
+                  //         onTap: () async {
+                  //           SharedPreferences _pref =
+                  //               await SharedPreferences.getInstance();
 
-                            var token = _pref.getString("token");
-                            token != null
-                                ? drawerController.open!()
-                                : Navigator.pushAndRemoveUntil(
-                                    context,
-                                    MaterialPageRoute(builder: (_) => SignUp()),
-                                    (route) => false);
-                          },
-                          child: Padding(
-                            padding: EdgeInsets.only(left: 12),
-                            child: Container(
-                                height: 32,
-                                width: 32,
-                                decoration: BoxDecoration(
-                                  image: profileProvider.Avatar != null
-                                      ? DecorationImage(
-                                          image: CachedNetworkImageProvider(
-                                              profileProvider.Avatar
-                                                  .toString()))
-                                      : DecorationImage(
-                                          image: AssetImage(
-                                              "assets/male-user.png")),
-                                  shape: BoxShape.circle,
-                                  //color: Color(0xffFF464B)
-                                )),
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
+                  //           var token = _pref.getString("token");
+                  //           token != null
+                  //               ? drawerController.open!()
+                  //               : Navigator.pushAndRemoveUntil(
+                  //                   context,
+                  //                   MaterialPageRoute(builder: (_) => SignUp()),
+                  //                   (route) => false);
+                  //         },
+                  //         child: Padding(
+                  //           padding: EdgeInsets.only(left: 12),
+                  //           child: Container(
+                  //               height: 32,
+                  //               width: 32,
+                  //               decoration: BoxDecoration(
+                  //                 image: profileProvider.Avatar != null
+                  //                     ? DecorationImage(
+                  //                         image: CachedNetworkImageProvider(
+                  //                             profileProvider.Avatar
+                  //                                 .toString()))
+                  //                     : DecorationImage(
+                  //                         image: AssetImage(
+                  //                             "assets/male-user.png")),
+                  //                 shape: BoxShape.circle,
+                  //                 //color: Color(0xffFF464B)
+                  //               )),
+                  //         ),
+                  //       )
+                  //     ],
+                  //   ),
+                  // ),
                   //Add baner lokamanya Banner
                   if (newsFirstProvider.homeNewsFirst != null)
                     ListView.builder(

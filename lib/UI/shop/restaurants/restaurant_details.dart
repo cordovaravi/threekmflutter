@@ -4,6 +4,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:threekm/Models/shopModel/restaurants_menu_model.dart';
 import 'package:threekm/UI/shop/cart/cart_item_list_modal.dart';
 import 'package:threekm/commenwidgets/creatorLocation.dart';
+import 'package:threekm/utils/constants.dart';
 import 'package:threekm/utils/screen_util.dart';
 
 class RestaurantDetails extends StatefulWidget {
@@ -76,20 +77,19 @@ class _RestaurantDetailsState extends State<RestaurantDetails>
       body: Stack(
         children: [
           Container(
-              width: ThreeKmScreenUtil.screenWidthDp,
-              height: ThreeKmScreenUtil.screenWidthDp / 1.1,
+              width: size(context).width,
+              height: size(context).width / 1.1,
               child: widget.result?.creator.cover != null
                   ?
                   // Image(
                   //     image: NetworkImage('${widget.result?.creator.cover}'),
                   //     fit: BoxFit.fill,
-                  //     width: ThreeKmScreenUtil.screenWidthDp / 1.1888,
-                  //     height: ThreeKmScreenUtil.screenHeightDp / 4.7,
+                  //
                   //   )
                   CachedNetworkImage(
                       imageUrl: '${widget.result?.creator.cover}',
-                      width: ThreeKmScreenUtil.screenWidthDp / 1.1888,
-                      height: ThreeKmScreenUtil.screenHeightDp / 5,
+                      width: size(context).width / 1.1888,
+                      height: size(context).height / 5,
                       fit: BoxFit.fill,
                       placeholder: (context, url) => Transform.scale(
                         scale: 0.2,
@@ -104,10 +104,10 @@ class _RestaurantDetailsState extends State<RestaurantDetails>
                       alignment: Alignment.topCenter,
                     )),
           Container(
-            height: ThreeKmScreenUtil.screenHeightDp,
+            height: size(context).height,
             alignment: Alignment.bottomCenter,
             child: Container(
-              width: ThreeKmScreenUtil.screenWidthDp,
+              width: size(context).width,
               decoration: BoxDecoration(
                   color: Colors.white,
                   boxShadow: [
@@ -116,7 +116,7 @@ class _RestaurantDetailsState extends State<RestaurantDetails>
                   borderRadius: const BorderRadius.only(
                       topLeft: Radius.circular(40),
                       topRight: Radius.circular(40))),
-              height: ThreeKmScreenUtil.screenHeightDp / 1.6,
+              height: size(context).height / 1.6,
               child: SingleChildScrollView(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -155,7 +155,7 @@ class _RestaurantDetailsState extends State<RestaurantDetails>
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 SizedBox(
-                                  width: ThreeKmScreenUtil.screenWidthDp / 1.8,
+                                  width: size(context).width / 1.8,
                                   child: Text(
                                     '${widget.result?.creator.businessName}',
                                     style: const TextStyle(
@@ -197,7 +197,7 @@ class _RestaurantDetailsState extends State<RestaurantDetails>
                     ),
                     Container(
                         padding: EdgeInsets.all(10),
-                        width: ThreeKmScreenUtil.screenWidthDp / 2,
+                        width: size(context).width / 2,
                         child: Text('About')
                         //  TabBar(
                         //   unselectedLabelColor: Colors.grey,
@@ -223,7 +223,7 @@ class _RestaurantDetailsState extends State<RestaurantDetails>
                         // ),
                         ),
                     SizedBox(
-                      height: ThreeKmScreenUtil.screenHeightDp / 2,
+                      height: size(context).height / 2,
                       child: Container(
                           padding: EdgeInsets.all(20),
                           child: Column(
@@ -312,8 +312,7 @@ class _RestaurantDetailsState extends State<RestaurantDetails>
                                           color: Colors.white,
                                         )),
                                     SizedBox(
-                                      width: ThreeKmScreenUtil.screenWidthDp /
-                                          1.37,
+                                      width: size(context).width / 1.37,
                                       child: Text(
                                         '${widget.result?.creator.address.area}',
                                         style: const TextStyle(

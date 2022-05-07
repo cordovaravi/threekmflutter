@@ -59,7 +59,6 @@ class BuildCard extends StatelessWidget {
                           ),
                         ),
                         imageUrl: cardImage,
-                        // height: ThreeKmScreenUtil.screenHeightDp / 3,
                         width: MediaQuery.of(context).size.width,
                         fit: BoxFit.contain,
                       ),
@@ -70,10 +69,9 @@ class BuildCard extends StatelessWidget {
                       padding: EdgeInsets.all(8),
                       decoration: BoxDecoration(
                           color: Colors.green,
-                          borderRadius:
-                              BorderRadius.only(topLeft: Radius.circular(20),
-                              bottomRight: Radius.circular(20)
-                              )),
+                          borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(20),
+                              bottomRight: Radius.circular(20))),
                       child: Text(
                         '${discountType == 'percentage' || discountType == "percent" ? "" : "₹"}${discountValue}${discountType == 'percentage' || discountType == "percent" ? '%' : ''} Off',
                         style: ThreeKmTextConstants.tk12PXPoppinsWhiteRegular,

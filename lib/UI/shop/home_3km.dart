@@ -23,7 +23,7 @@ import 'package:threekm/providers/shop/shop_home_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:threekm/Models/shopModel/shop_home_model.dart';
 import 'package:threekm/utils/api_paths.dart';
-import 'package:threekm/utils/screen_util.dart';
+
 import 'package:threekm/utils/threekm_textstyles.dart';
 import '../shop/product/product_details.dart';
 import '../shop/product_listing.dart';
@@ -55,7 +55,7 @@ class _Home3KMState extends State<Home3KM> {
   void initState() {
     Future.delayed(Duration.zero, () {
       context.read<ShopHomeProvider>().getShopHome(mounted);
-      context.read<LocationProvider>().getLocation();
+      // context.read<LocationProvider>().getLocation();
     });
 
     Future.microtask(() {
@@ -234,205 +234,205 @@ class _ShopHomeState extends State<ShopHome>
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              InkWell(
-                onTap: () {
-                  Future.delayed(Duration.zero, () {
-                    context
-                        .read<LocationProvider>()
-                        .getLocation()
-                        .whenComplete(() {
-                      final _locationProvider =
-                          context.read<LocationProvider>().getlocationData;
-                      final kInitialPosition = LatLng(
-                          _locationProvider!.latitude!,
-                          _locationProvider.longitude!);
-                      if (_locationProvider != null) {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => PlacePicker(
-                                apiKey: GMap_Api_Key,
-                                // initialMapType: MapType.satellite,
-                                onPlacePicked: (result) {
-                                  //print(result.formattedAddress);
-                                  log(result.toString());
-                                  log('${result.geometry?.location.lat} ${result.geometry?.location.lng}');
+              // InkWell(
+              //   onTap: () {
+              //     Future.delayed(Duration.zero, () {
+              //       context
+              //           .read<LocationProvider>()
+              //           .getLocation()
+              //           .whenComplete(() {
+              //         final _locationProvider =
+              //             context.read<LocationProvider>().getlocationData;
+              //         final kInitialPosition = LatLng(
+              //             _locationProvider!.latitude!,
+              //             _locationProvider.longitude!);
+              //         if (_locationProvider != null) {
+              //           Navigator.push(
+              //               context,
+              //               MaterialPageRoute(
+              //                 builder: (context) => PlacePicker(
+              //                   apiKey: GMap_Api_Key,
+              //                   // initialMapType: MapType.satellite,
+              //                   onPlacePicked: (result) {
+              //                     //print(result.formattedAddress);
+              //                     log(result.toString());
+              //                     log('${result.geometry?.location.lat} ${result.geometry?.location.lng}');
 
-                                  setState(() {
-                                    _selecetedAddress = result.vicinity;
-                                    context
-                                        .read<ShopHomeProvider>()
-                                        .getRestaurants(mounted, 1,
-                                            lat: result.geometry?.location.lat,
-                                            lng: result.geometry?.location.lng);
-                                    print(result.geometry!.toJson());
-                                  });
-                                  Navigator.of(context).pop();
-                                },
-                                initialPosition: kInitialPosition,
-                                useCurrentLocation: true,
-                                selectInitialPosition: true,
-                                usePinPointingSearch: true,
-                                usePlaceDetailSearch: true,
-                              ),
-                            ));
-                      }
-                    });
-                  });
-                },
-                child: Container(
-                  color: Colors.white,
-                  padding: const EdgeInsets.only(top: 10, left: 15, right: 20),
-                  child: Row(
-                    //mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      IconButton(
-                        icon: Icon(
-                          Icons.location_on_outlined,
-                          color: Colors.red,
-                          size: 24,
-                        ),
-                        onPressed: () {},
-                      ),
-                      Container(
-                        constraints: BoxConstraints(
-                            minWidth: 40,
-                            maxWidth: MediaQuery.of(context).size.width * 0.85),
-                        child: Text(
-                          locationProvider.AddressFromCordinate ??
-                              _selecetedAddress ??
-                              "",
-                          style:
-                              ThreeKmTextConstants.tk12PXPoppinsBlackSemiBold,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              Container(
-                color: Colors.white,
-                child: Padding(
-                  padding: EdgeInsets.only(bottom: 18),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      InkWell(
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => SearchPage(
-                                        tabNuber: 1,
-                                      )));
-                        },
-                        child: Container(
-                          height: 32,
-                          width: MediaQuery.of(context).size.width * 0.7,
-                          decoration: BoxDecoration(
-                              //color: Colors.white,
-                              borderRadius: BorderRadius.circular(21),
-                              border: Border.all(color: Color(0xffDFE5EE))),
-                          child: Row(
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.only(left: 15),
-                                child: Icon(
-                                  Icons.search_rounded,
-                                  color: Colors.grey,
-                                ),
-                              ),
-                              Padding(
-                                  padding: EdgeInsets.only(left: 11),
-                                  child: Text(
-                                    AppLocalizations.of(context)!.translate(
-                                            'search_hyperlocal_product') ??
-                                        "Search Hyperlocal Products",
-                                    //"Search Hyperlocal Products",
-                                    style: ThreeKmTextConstants
-                                        .tk12PXLatoBlackBold
-                                        .copyWith(color: Colors.grey),
-                                  ))
-                            ],
-                          ),
-                        ),
-                      ),
-                      InkWell(
-                        onTap: () => viewCart(context, 'shop')
-                            .whenComplete(() => setState(() {})),
-                        child: Padding(
-                          padding: EdgeInsets.only(left: 12),
-                          child: Stack(
-                            clipBehavior: Clip.none,
-                            children: [
-                              Container(
-                                  height: 32,
-                                  width: 32,
-                                  decoration: BoxDecoration(
-                                    image: DecorationImage(
-                                        image: AssetImage(
-                                            "assets/shopImg/Group 40724.png")),
-                                    shape: BoxShape.circle,
-                                    //color: Color(0xff7572ED)
-                                  )),
-                              if (Hive.box('cartBox').length != 0)
-                                Positioned(
-                                    top: -10,
-                                    right: -8,
-                                    child: Container(
-                                        decoration: BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            color: Colors.red),
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(4.0),
-                                          child: Text(
-                                            '${Hive.box('cartBox').length}',
-                                            style: TextStyle(
-                                                fontSize: 11,
-                                                color: Colors.white),
-                                          ),
-                                        )))
-                            ],
-                          ),
-                        ),
-                      ),
-                      InkWell(
-                        onTap: () async {
-                          SharedPreferences _pref =
-                              await SharedPreferences.getInstance();
-                          var token = _pref.getString("token");
-                          token != null
-                              ? drawerController.open!()
-                              // : Navigator.push(context,
-                              //     MaterialPageRoute(builder: (_) => SignUp()));
-                              : Navigator.pushAndRemoveUntil(
-                                  context,
-                                  MaterialPageRoute(builder: (_) => SignUp()),
-                                  (route) => false);
-                        },
-                        child: Padding(
-                          padding: EdgeInsets.only(left: 12),
-                          child: Container(
-                              height: 32,
-                              width: 32,
-                              decoration: BoxDecoration(
-                                image: profileinfo.Avatar != null
-                                    ? DecorationImage(
-                                        image: CachedNetworkImageProvider(
-                                            profileinfo.Avatar.toString()))
-                                    : DecorationImage(
-                                        image:
-                                            AssetImage("assets/male-user.png")),
-                                shape: BoxShape.circle,
-                                //color: Color(0xffFF464B)
-                              )),
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-              ),
+              //                     setState(() {
+              //                       _selecetedAddress = result.vicinity;
+              //                       context
+              //                           .read<ShopHomeProvider>()
+              //                           .getRestaurants(mounted, 1,
+              //                               lat: result.geometry?.location.lat,
+              //                               lng: result.geometry?.location.lng);
+              //                       print(result.geometry!.toJson());
+              //                     });
+              //                     Navigator.of(context).pop();
+              //                   },
+              //                   initialPosition: kInitialPosition,
+              //                   useCurrentLocation: true,
+              //                   selectInitialPosition: true,
+              //                   usePinPointingSearch: true,
+              //                   usePlaceDetailSearch: true,
+              //                 ),
+              //               ));
+              //         }
+              //       });
+              //     });
+              //   },
+              //   child: Container(
+              //     color: Colors.white,
+              //     padding: const EdgeInsets.only(top: 10, left: 15, right: 20),
+              //     child: Row(
+              //       //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //       children: [
+              //         IconButton(
+              //           icon: Icon(
+              //             Icons.location_on_outlined,
+              //             color: Colors.red,
+              //             size: 24,
+              //           ),
+              //           onPressed: () {},
+              //         ),
+              //         Container(
+              //           constraints: BoxConstraints(
+              //               minWidth: 40,
+              //               maxWidth: MediaQuery.of(context).size.width * 0.85),
+              //           child: Text(
+              //             locationProvider.AddressFromCordinate ??
+              //                 _selecetedAddress ??
+              //                 "",
+              //             style:
+              //                 ThreeKmTextConstants.tk12PXPoppinsBlackSemiBold,
+              //             overflow: TextOverflow.ellipsis,
+              //           ),
+              //         ),
+              //       ],
+              //     ),
+              //   ),
+              // ),
+              // Container(
+              //   color: Colors.white,
+              //   child: Padding(
+              //     padding: EdgeInsets.only(bottom: 18),
+              //     child: Row(
+              //       mainAxisAlignment: MainAxisAlignment.center,
+              //       children: [
+              //         InkWell(
+              //           onTap: () {
+              //             Navigator.push(
+              //                 context,
+              //                 MaterialPageRoute(
+              //                     builder: (context) => SearchPage(
+              //                           tabNuber: 1,
+              //                         )));
+              //           },
+              //           child: Container(
+              //             height: 32,
+              //             width: MediaQuery.of(context).size.width * 0.7,
+              //             decoration: BoxDecoration(
+              //                 //color: Colors.white,
+              //                 borderRadius: BorderRadius.circular(21),
+              //                 border: Border.all(color: Color(0xffDFE5EE))),
+              //             child: Row(
+              //               children: [
+              //                 Padding(
+              //                   padding: EdgeInsets.only(left: 15),
+              //                   child: Icon(
+              //                     Icons.search_rounded,
+              //                     color: Colors.grey,
+              //                   ),
+              //                 ),
+              //                 Padding(
+              //                     padding: EdgeInsets.only(left: 11),
+              //                     child: Text(
+              //                       AppLocalizations.of(context)!.translate(
+              //                               'search_hyperlocal_product') ??
+              //                           "Search Hyperlocal Products",
+              //                       //"Search Hyperlocal Products",
+              //                       style: ThreeKmTextConstants
+              //                           .tk12PXLatoBlackBold
+              //                           .copyWith(color: Colors.grey),
+              //                     ))
+              //               ],
+              //             ),
+              //           ),
+              //         ),
+              //         InkWell(
+              //           onTap: () => viewCart(context, 'shop')
+              //               .whenComplete(() => setState(() {})),
+              //           child: Padding(
+              //             padding: EdgeInsets.only(left: 12),
+              //             child: Stack(
+              //               clipBehavior: Clip.none,
+              //               children: [
+              //                 Container(
+              //                     height: 32,
+              //                     width: 32,
+              //                     decoration: BoxDecoration(
+              //                       image: DecorationImage(
+              //                           image: AssetImage(
+              //                               "assets/shopImg/Group 40724.png")),
+              //                       shape: BoxShape.circle,
+              //                       //color: Color(0xff7572ED)
+              //                     )),
+              //                 if (Hive.box('cartBox').length != 0)
+              //                   Positioned(
+              //                       top: -10,
+              //                       right: -8,
+              //                       child: Container(
+              //                           decoration: BoxDecoration(
+              //                               shape: BoxShape.circle,
+              //                               color: Colors.red),
+              //                           child: Padding(
+              //                             padding: const EdgeInsets.all(4.0),
+              //                             child: Text(
+              //                               '${Hive.box('cartBox').length}',
+              //                               style: TextStyle(
+              //                                   fontSize: 11,
+              //                                   color: Colors.white),
+              //                             ),
+              //                           )))
+              //               ],
+              //             ),
+              //           ),
+              //         ),
+              //         InkWell(
+              //           onTap: () async {
+              //             SharedPreferences _pref =
+              //                 await SharedPreferences.getInstance();
+              //             var token = _pref.getString("token");
+              //             token != null
+              //                 ? drawerController.open!()
+              //                 // : Navigator.push(context,
+              //                 //     MaterialPageRoute(builder: (_) => SignUp()));
+              //                 : Navigator.pushAndRemoveUntil(
+              //                     context,
+              //                     MaterialPageRoute(builder: (_) => SignUp()),
+              //                     (route) => false);
+              //           },
+              //           child: Padding(
+              //             padding: EdgeInsets.only(left: 12),
+              //             child: Container(
+              //                 height: 32,
+              //                 width: 32,
+              //                 decoration: BoxDecoration(
+              //                   image: profileinfo.Avatar != null
+              //                       ? DecorationImage(
+              //                           image: CachedNetworkImageProvider(
+              //                               profileinfo.Avatar.toString()))
+              //                       : DecorationImage(
+              //                           image:
+              //                               AssetImage("assets/male-user.png")),
+              //                   shape: BoxShape.circle,
+              //                   //color: Color(0xffFF464B)
+              //                 )),
+              //           ),
+              //         )
+              //       ],
+              //     ),
+              //   ),
+              // ),
               InkWell(
                 onTap: () {
                   Navigator.push(context,
@@ -452,7 +452,6 @@ class _ShopHomeState extends State<ShopHome>
                 margin: const EdgeInsets.only(top: 8, bottom: 10),
                 padding: const EdgeInsets.only(top: 8, bottom: 8),
                 color: Colors.white70,
-                //width: ThreeKmScreenUtil.screenWidthDp / 1.1,
                 height: 300,
                 child: ListView.builder(
                     padding: EdgeInsets.only(right: 20),
@@ -474,9 +473,6 @@ class _ShopHomeState extends State<ShopHome>
                                 borderRadius: BorderRadius.circular(10),
                                 child: CachedNetworkImage(
                                     imageUrl: shopAdvData![i].images!.first,
-                                    // width: ThreeKmScreenUtil.screenWidthDp /
-                                    //     1.1888,
-                                    // height: ThreeKmScreenUtil.screenHeightDp / 19,
                                     fit: BoxFit.contain,
                                     placeholder: (context, url) => Container(
                                           width:
@@ -692,7 +688,7 @@ class _ShopHomeState extends State<ShopHome>
                       margin: const EdgeInsets.only(top: 8, bottom: 10),
                       padding: const EdgeInsets.only(top: 8, bottom: 8),
                       //color: Colors.white70,
-                      //width: ThreeKmScreenUtil.screenWidthDp / 1.1,
+
                       height: 190,
                       child: NotificationListener<ScrollEndNotification>(
                         child: ListView.builder(
@@ -750,7 +746,7 @@ class _ShopHomeState extends State<ShopHome>
                     //     margin: const EdgeInsets.only(top: 8, bottom: 10),
                     //     padding: const EdgeInsets.only(top: 8, bottom: 8),
                     //     //color: Colors.white70,
-                    //     //width: ThreeKmScreenUtil.screenWidthDp / 1.1,
+                    //
                     //     height: 190,
                     //     child: ListView.builder(
                     //         shrinkWrap: true,
@@ -868,7 +864,6 @@ class _ShopHomeState extends State<ShopHome>
                       Container(
                         //padding: const EdgeInsets.only(bottom: 10),
                         //margin: const EdgeInsets.only(bottom: 10),
-                        // height: ThreeKmScreenUtil.screenHeightDp / 1.58,
                         color: Color(0xFFFFFFFF),
                         // width: 300,
                         child: GridView.builder(
@@ -918,7 +913,7 @@ class _ShopHomeState extends State<ShopHome>
                                   padding: const EdgeInsets.all(10),
                                   // height: 220,
                                   // width: 160,
-                                  //     ThreeKmScreenUtil.screenHeightDp / 2.7,
+
                                   child: BuildCard(
                                     cardImage: "${data?[index].image}",
                                     context: context,
