@@ -15,6 +15,7 @@
     <uses-feature android:name="android.hardware.location.gps" android:required="true"  />
 
    <application
+        android:requestLegacyExternalStorage="true"
         android:label="3km"
         android:icon="@mipmap/ic_launcher"
         android:usesCleartextTraffic="true"
@@ -119,7 +120,7 @@
          
         <!--google maps api-->
         <meta-data android:name="com.google.android.geo.API_KEY"
-        android:value="AIzaSyCK9Q9Rt0k-q6HxqRNR5FtpssJZTXtmqsg"/>
+        android:value="AIzaSyBJ3fcJB2n5gLXdoND5PT8w7BT94QaUGXo"/>
         <!--end of gmap-->
         <!--Fcm code -->
         <meta-data
