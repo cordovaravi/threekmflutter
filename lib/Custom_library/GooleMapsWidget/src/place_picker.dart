@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_api_headers/google_api_headers.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -221,7 +222,8 @@ class PlacePicker extends StatefulWidget {
   _PlacePickerState createState() => _PlacePickerState();
 }
 
-class _PlacePickerState extends State<PlacePicker> {
+class _PlacePickerState extends State<PlacePicker>
+    with AutomaticKeepAliveClientMixin {
   GlobalKey appBarKey = GlobalKey();
   Future<PlaceProvider>? _futureProvider;
   PlaceProvider? provider;
@@ -259,6 +261,7 @@ class _PlacePickerState extends State<PlacePicker> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return WillPopScope(
         onWillPop: () {
           searchBarController.clearOverlay();
@@ -354,7 +357,13 @@ class _PlacePickerState extends State<PlacePicker> {
               searchingText: widget.searchingText,
               debounceMilliseconds: widget.autoCompleteDebounceInMilliseconds,
               onPicked: (prediction) {
-                _pickPrediction(prediction);
+                FocusScopeNode currentFocus = FocusScope.of(context);
+                if (!currentFocus.hasPrimaryFocus) {
+                  currentFocus.unfocus();
+                }
+                Future.delayed(Duration(seconds: 1), () {
+                  _pickPrediction(prediction);
+                });
               },
               onSearchFailed: (status) {
                 if (widget.onAutoCompleteFailed != null) {
@@ -400,7 +409,6 @@ class _PlacePickerState extends State<PlacePicker> {
 
     // Prevents searching again by camera movement.
     provider!.isAutoCompleteSearching = true;
-
     await _moveTo(provider!.selectedPlace!.geometry!.location.lat,
         provider!.selectedPlace!.geometry!.location.lng);
 
@@ -409,16 +417,23 @@ class _PlacePickerState extends State<PlacePicker> {
 
   _moveTo(double latitude, double longitude) async {
     GoogleMapController? controller = provider!.mapController;
+
     if (controller == null) return;
 
-    await controller.animateCamera(
-      CameraUpdate.newCameraPosition(
-        CameraPosition(
-          target: LatLng(latitude, longitude),
-          zoom: 16,
+    try {
+      await controller.animateCamera(
+        CameraUpdate.newCameraPosition(
+          CameraPosition(
+            target: LatLng(latitude, longitude),
+            zoom: 16,
+          ),
         ),
-      ),
-    );
+      );
+    } on Exception catch (e) {
+      Fluttertoast.showToast(
+          msg: "Failed to load map please try again",
+          backgroundColor: Colors.redAccent);
+    }
   }
 
   _moveToCurrentPosition() async {
@@ -429,34 +444,44 @@ class _PlacePickerState extends State<PlacePicker> {
   }
 
   Widget _buildMapWithLocation() {
-    if (widget.useCurrentLocation != null && widget.useCurrentLocation!) {
-      return FutureBuilder(
-          future: provider!
-              .updateCurrentLocation(widget.forceAndroidLocationManager),
-          builder: (context, snap) {
-            if (snap.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
-            } else {
-              if (provider!.currentPosition == null) {
-                return _buildMap(widget.initialPosition);
-              } else {
-                return _buildMap(LatLng(provider!.currentPosition!.latitude,
-                    provider!.currentPosition!.longitude));
-              }
-            }
-          });
-    } else {
-      return FutureBuilder(
-        future: Future.delayed(Duration(milliseconds: 1)),
-        builder: (context, snap) {
-          if (snap.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else {
-            return _buildMap(widget.initialPosition);
-          }
-        },
-      );
-    }
+    return FutureBuilder(
+      future: Future.delayed(Duration(milliseconds: 1)),
+      builder: (context, snap) {
+        if (snap.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        } else {
+          return _buildMap(widget.initialPosition);
+        }
+      },
+    );
+    // if (widget.useCurrentLocation != null && widget.useCurrentLocation!) {
+    //   return FutureBuilder(
+    //       future: provider!
+    //           .updateCurrentLocation(widget.forceAndroidLocationManager),
+    //       builder: (context, snap) {
+    //         if (snap.connectionState == ConnectionState.waiting) {
+    //           return const Center(child: CircularProgressIndicator());
+    //         } else {
+    //           if (provider!.currentPosition == null) {
+    //             return _buildMap(widget.initialPosition);
+    //           } else {
+    //             return _buildMap(LatLng(provider!.currentPosition!.latitude,
+    //                 provider!.currentPosition!.longitude));
+    //           }
+    //         }
+    //       });
+    // } else {
+    //   return FutureBuilder(
+    //     future: Future.delayed(Duration(milliseconds: 1)),
+    //     builder: (context, snap) {
+    //       if (snap.connectionState == ConnectionState.waiting) {
+    //         return const Center(child: CircularProgressIndicator());
+    //       } else {
+    //         return _buildMap(widget.initialPosition);
+    //       }
+    //     },
+    //   );
+    // }
   }
 
   Widget _buildMap(LatLng initialTarget) {
@@ -532,4 +557,7 @@ class _PlacePickerState extends State<PlacePicker> {
           : Container();
     });
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

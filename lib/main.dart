@@ -266,7 +266,7 @@ class MyApp extends StatelessWidget {
               create: (context) => FCMProvider()),
 
           ChangeNotifierProvider<NewsFeedProvider>(
-              create: (context) => NewsFeedProvider())
+              create: (context) => NewsFeedProvider()),
         ],
         child: Consumer<AppLanguage>(
           builder: (context, controller, child) {
