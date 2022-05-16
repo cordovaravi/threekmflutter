@@ -16,6 +16,7 @@ import 'package:threekm/UI/main/News/poll_page.dart';
 import 'package:threekm/UI/main/navigation.dart';
 import 'package:threekm/UI/Auth/signup/sign_up.dart';
 import 'package:threekm/UI/shop/product/product_details.dart';
+import 'package:threekm/UI/shop/product_listing.dart';
 import 'package:threekm/main.dart';
 import 'package:threekm/providers/FCM/fcm_sendToken_Provider.dart';
 import 'package:uni_links/uni_links.dart';
@@ -158,6 +159,18 @@ class _SplashScreenState extends State<SplashScreen> {
             Navigator.push(context, MaterialPageRoute(builder: (_) {
               return BusinessDetail(
                 id: int.parse(initialLink.split('/').last),
+              );
+            })).then((value) => Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (_) => TabBarNavigation()),
+                (route) => false));
+          });
+        } else if (initialLink.contains('/category/')) {
+          await Hive.openBox('cartBox').whenComplete(() {
+            Navigator.push(context, MaterialPageRoute(builder: (_) {
+              var initLink = initialLink.split('/');
+              return ProductListing(
+                query: '${initLink.last}',
               );
             })).then((value) => Navigator.pushAndRemoveUntil(
                 context,

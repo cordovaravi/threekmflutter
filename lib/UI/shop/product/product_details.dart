@@ -19,7 +19,7 @@ import 'package:threekm/providers/shop/cart_provider.dart';
 import 'package:threekm/providers/shop/product_details_provider.dart';
 import 'package:threekm/providers/shop/wish_list_provide.dart';
 import 'package:threekm/utility/extensions.dart';
-import 'package:threekm/utils/screen_util.dart';
+
 import 'package:threekm/utils/threekm_textstyles.dart';
 import '../../shop/cart/cart_item_list_modal.dart';
 
@@ -187,13 +187,6 @@ class _ProductDetailsState extends State<ProductDetails> {
   }
 
   @override
-  void didChangeDependencies() {
-    ThreeKmScreenUtil.getInstance();
-    ThreeKmScreenUtil.instance.init(context);
-    super.didChangeDependencies();
-  }
-
-  @override
   void deactivate() {
     log('deactivate');
     removeVariableData();
@@ -211,6 +204,7 @@ class _ProductDetailsState extends State<ProductDetails> {
 
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
     Color color = Theme.of(context).primaryColor;
     var data = context.watch<ProductDetailsProvider>().ProductDetailsData;
     var statusData = context.watch<ProductDetailsProvider>().state;
@@ -255,12 +249,12 @@ class _ProductDetailsState extends State<ProductDetails> {
                   ),
                   onPressed: () {
                     log("share button ");
-                    if(product?.catalogId != null){
-                    var url ='https://3km.in/sell/${product?.name.replaceAll(RegExp("([^A-Z,^a-z,^/,^:,\n\t\r\f])+"), "")}/${product?.catalogId}';
-                    Share.share(
-                        '${Uri.parse(url)} ${product?.name} from ${product?.businessName}');
+                    if (product?.catalogId != null) {
+                      var url =
+                          'https://3km.in/sell/${product?.name.replaceAll(RegExp("([^A-Z,^a-z,^/,^:,\n\t\r\f])+"), "")}/${product?.catalogId}';
+                      Share.share(
+                          '${Uri.parse(url)} ${product?.name} from ${product?.businessName}');
                     }
-                   
                   }),
             ),
             Stack(
@@ -338,7 +332,8 @@ class _ProductDetailsState extends State<ProductDetails> {
                         });
                       },
                       itemCount: variationid == 0
-                          ? data.result?.product.images.length != 0
+                          ? data.result?.product.images.length != 0 &&
+                                  data.result?.product.images.length != 1
                               ? data.result?.product.images.length
                               : [data.result?.product.image].length
                           : variation.imagesLinks.length != 0
@@ -358,11 +353,17 @@ class _ProductDetailsState extends State<ProductDetails> {
                                             builder: (_) => FullImage(
                                                   imageurl: variationid == 0
                                                       ? data
-                                                                  .result
-                                                                  ?.product
-                                                                  .images
-                                                                  .length !=
-                                                              0
+                                                                      .result
+                                                                      ?.product
+                                                                      .images
+                                                                      .length !=
+                                                                  0 &&
+                                                              data
+                                                                      .result
+                                                                      ?.product
+                                                                      .images
+                                                                      .length !=
+                                                                  1
                                                           ? '${data.result?.product.images[index]}'
                                                           : '${data.result?.product.image}'
                                                       : variation.imagesLinks
@@ -377,17 +378,17 @@ class _ProductDetailsState extends State<ProductDetails> {
                                   child: Image(
                                     image: NetworkImage(variationid == 0
                                         ? data.result?.product.images.length !=
-                                                0
+                                                    0 &&
+                                                data.result?.product.images
+                                                        .length !=
+                                                    1
                                             ? '${data.result?.product.images[index]}'
                                             : '${data.result?.product.image}'
                                         : variation.imagesLinks.length != 0
                                             ? variation.imagesLinks[index]
                                             : data.result?.product.image),
                                     fit: BoxFit.contain,
-                                    // width: ThreeKmScreenUtil.screenWidthDp /
-                                    //     1.1888,
-                                    // height: ThreeKmScreenUtil.screenHeightDp /
-                                    //     4.7,
+                                  
                                     errorBuilder:
                                         (context, error, stackTrace) =>
                                             Container(
@@ -431,7 +432,10 @@ class _ProductDetailsState extends State<ProductDetails> {
                         for (int i = 0;
                             i <
                                 (variationid == 0
-                                    ? data.result!.product.images.length != 0
+                                    ? data.result!.product.images.length != 0 &&
+                                            data.result!.product.images
+                                                    .length !=
+                                                1
                                         ? data.result!.product.images.length
                                         : [data.result?.product.image].length
                                     : variation.imagesLinks.length != 0
@@ -456,7 +460,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                           //     topLeft: Radius.circular(40),
                           //     topRight: Radius.circular(40))
                         ),
-                        //height: ThreeKmScreenUtil.screenHeightDp / 1.7,
+     
                         padding: const EdgeInsets.only(top: 20, bottom: 20),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -1261,7 +1265,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                             Container(
                               margin:
                                   const EdgeInsets.only(top: 20, bottom: 20),
-                              width: ThreeKmScreenUtil.screenWidthDp,
+                              width:size.width,
                               height: 20,
                               color: const Color(0xFFF4F3F8),
                             ),
@@ -1313,11 +1317,9 @@ class _ProductDetailsState extends State<ProductDetails> {
                                               child: Image(
                                                 image: NetworkImage(
                                                     '${data.result?.product.creatorDetails.logo}'),
-                                                height: ThreeKmScreenUtil
-                                                        .screenHeightDp /
+                                                height:size.height /
                                                     7,
-                                                width: ThreeKmScreenUtil
-                                                        .screenWidthDp /
+                                                width: size.width /
                                                     3.3,
                                                 fit: BoxFit.fill,
                                               ),
@@ -1330,8 +1332,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                                                 MainAxisAlignment.start,
                                             children: [
                                               SizedBox(
-                                                width: ThreeKmScreenUtil
-                                                        .screenWidthDp /
+                                                width:size.width /
                                                     1.9,
                                                 child: Text(
                                                   '${product.creatorDetails.businessName}',
@@ -1366,7 +1367,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                             Container(
                               margin:
                                   const EdgeInsets.only(top: 20, bottom: 20),
-                              width: ThreeKmScreenUtil.screenWidthDp,
+                              width: size.width,
                               height: 20,
                               color: const Color(0xFFF4F3F8),
                             ),
@@ -1399,7 +1400,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                                   Container(
                                     padding: const EdgeInsets.only(
                                         top: 30, bottom: 30),
-                                    width: ThreeKmScreenUtil.screenWidthDp,
+                                    width: size.width,
                                     child: ElevatedButton.icon(
                                         onPressed: () {
                                           showModalBottomSheet(
@@ -1475,8 +1476,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                                                 ),
                                                 Container(
                                                   //color: Colors.black,
-                                                  width: ThreeKmScreenUtil
-                                                          .screenWidthDp /
+                                                  width: size.width/
                                                       2,
                                                   padding:
                                                       const EdgeInsets.only(
@@ -1606,7 +1606,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                                       padding: const EdgeInsets.only(
                                           top: 30, bottom: 30),
                                       margin: EdgeInsets.only(bottom: 30),
-                                      width: ThreeKmScreenUtil.screenWidthDp,
+                                      width: size.width,
                                       child: ElevatedButton(
                                           onPressed: () {
                                             setState(() {
