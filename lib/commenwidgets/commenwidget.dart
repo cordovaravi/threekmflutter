@@ -47,6 +47,7 @@ void showMessage(String message) {
           )));
 }
 
+/// Accept [mode] as [param] which is a each main section i.e news, food and shop
 Widget showLayoutLoading(mode) {
   return Scaffold(
     body: Container(
@@ -54,66 +55,66 @@ Widget showLayoutLoading(mode) {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            width: size.width,
-            height: 50,
-            color: Colors.white,
-            child: Row(
-              children: [
-                Shimmer.fromColors(
-                  child: Container(
-                    width: size.width / 1.2,
-                    height: 20,
-                    color: Colors.white,
-                  ),
-                  baseColor: Colors.grey[300]!,
-                  highlightColor: Colors.grey[100]!,
-                  enabled: true,
-                ),
-              ],
-            ),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Shimmer.fromColors(
-                child: Container(
-                  decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(20)),
-                  // margin: EdgeInsets.only(top: 10, right: 10),
-                  width: size.width / 1.8,
-                  height: 30,
-                ),
-                baseColor: Colors.grey[300]!,
-                highlightColor: Colors.grey[100]!,
-                enabled: true,
-              ),
-              Shimmer.fromColors(
-                child: Container(
-                  //margin: EdgeInsets.only(right: 10),
-                  height: 40,
-                  width: 40,
-                  decoration: BoxDecoration(
-                      shape: BoxShape.circle, color: Colors.white),
-                ),
-                baseColor: Colors.grey[300]!,
-                highlightColor: Colors.grey[100]!,
-                enabled: true,
-              ),
-              Shimmer.fromColors(
-                child: Container(
-                  height: 40,
-                  width: 40,
-                  decoration: BoxDecoration(
-                      shape: BoxShape.circle, color: Colors.white),
-                ),
-                baseColor: Colors.grey[300]!,
-                highlightColor: Colors.grey[100]!,
-                enabled: true,
-              ),
-            ],
-          ),
+          // Container(
+          //   width: size.width,
+          //   height: 50,
+          //   color: Colors.white,
+          //   child: Row(
+          //     children: [
+          //       Shimmer.fromColors(
+          //         child: Container(
+          //           width: size.width / 1.2,
+          //           height: 20,
+          //           color: Colors.white,
+          //         ),
+          //         baseColor: Colors.grey[300]!,
+          //         highlightColor: Colors.grey[100]!,
+          //         enabled: true,
+          //       ),
+          //     ],
+          //   ),
+          // ),
+          // Row(
+          //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          //   children: [
+          //     Shimmer.fromColors(
+          //       child: Container(
+          //         decoration: BoxDecoration(
+          //             color: Colors.white,
+          //             borderRadius: BorderRadius.circular(20)),
+          //         // margin: EdgeInsets.only(top: 10, right: 10),
+          //         width: size.width / 1.8,
+          //         height: 30,
+          //       ),
+          //       baseColor: Colors.grey[300]!,
+          //       highlightColor: Colors.grey[100]!,
+          //       enabled: true,
+          //     ),
+          //     Shimmer.fromColors(
+          //       child: Container(
+          //         //margin: EdgeInsets.only(right: 10),
+          //         height: 40,
+          //         width: 40,
+          //         decoration: BoxDecoration(
+          //             shape: BoxShape.circle, color: Colors.white),
+          //       ),
+          //       baseColor: Colors.grey[300]!,
+          //       highlightColor: Colors.grey[100]!,
+          //       enabled: true,
+          //     ),
+          //     Shimmer.fromColors(
+          //       child: Container(
+          //         height: 40,
+          //         width: 40,
+          //         decoration: BoxDecoration(
+          //             shape: BoxShape.circle, color: Colors.white),
+          //       ),
+          //       baseColor: Colors.grey[300]!,
+          //       highlightColor: Colors.grey[100]!,
+          //       enabled: true,
+          //     ),
+          //   ],
+          // ),
           Shimmer.fromColors(
             child: Container(
                 margin: EdgeInsets.only(top: 10),

@@ -170,6 +170,10 @@ void main() async {
 
   // Directory directory = await pathProvider.getApplicationDocumentsDirectory();
   // Hive.init(directory.path);
+  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+    statusBarIconBrightness: Brightness.dark, // For Android (dark icons)
+    statusBarBrightness: Brightness.light,
+  ));
 }
 
 class MyApp extends StatelessWidget {
@@ -275,6 +279,7 @@ class MyApp extends StatelessWidget {
               DeviceOrientation.portraitUp,
               DeviceOrientation.portraitDown,
             ]);
+
             return MaterialApp(
               locale: controller.appLocal ?? appLanguage.appLocal,
               //controller.appLocal,

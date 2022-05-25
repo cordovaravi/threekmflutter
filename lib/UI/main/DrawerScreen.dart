@@ -8,7 +8,6 @@ import 'package:threekm/UI/Language/SelectLanguage.dart';
 import 'package:threekm/UI/main/AddPost/AddNewPost.dart';
 import 'package:threekm/UI/main/Profile/MyProfilePost.dart';
 import 'package:threekm/UI/main/Profile/Profilepage.dart';
-import 'package:threekm/UI/main/navigation.dart';
 import 'package:threekm/UI/shop/address/saved_address.dart';
 import 'package:threekm/UI/shop/cart/cart_item_list_modal.dart';
 import 'package:threekm/UI/shop/cart/wishlist.dart';
@@ -48,79 +47,29 @@ class _DrawerScreenState extends State<DrawerScreen> {
     super.initState();
   }
 
-  // getWishBoxData() async {
-  //   await Hive.openBox('shopWishListBox');
-  //   await Hive.openBox('businessWishListBox');
-  // }
-
   @override
   Widget build(BuildContext context) {
     //final authorPostProvider = context.watch<AutthorProfileProvider>();
     //final selfProfileProvider = context.watch<AutthorProfileProvider>();
     final ProfileData = context.watch<ProfileInfoProvider>();
     return Scaffold(
-      body:
-          // RotatedBox(
-          //   quarterTurns: 1,
-          //   child:
-          Container(
-              height: MediaQuery.of(context).size.height,
-              width: MediaQuery.of(context).size.width,
-              decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                colors: [Color(0xff645AFF), Color(0xffA573FF)],
-              )),
-              child: Stack(
-                children: [
-                  Padding(
-                    padding: EdgeInsets.only(left: 19),
-                    child: CustomDrawer(
-                        iconUrl: ProfileData.Avatar ?? widget.avatar,
-                        // selfProfileProvider
-                        //     .selfProfile!.data.result.author.image,
-                        //"https://www.pngall.com/wp-content/uploads/12/Avatar-Profile-Vector-PNG-File.png",
-                        name:
-                            ProfileData.UserName ?? widget.userName //"Raviraj"
-                        ),
-                  ),
-                  Positioned(
-                    bottom: 45,
-                    left: 0,
-                    right: 0,
-                    child: Container(
-                      width: MediaQuery.of(context).size.width,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Stack(
-                            alignment: AlignmentDirectional.bottomEnd,
-                            children: [
-                              Container(
-                                width: 38,
-                                height: 38,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: Colors.white,
-                                ),
-                              ),
-                              IconButton(
-                                padding: EdgeInsets.zero,
-                                color: Colors.white,
-                                onPressed: () => drawerController.close!(),
-                                icon: Icon(
-                                  Icons.cancel_rounded,
-                                  size: 55,
-                                  color: Colors.black,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
+      body: Container(
+          height: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
+          child: Stack(
+            children: [
+              Padding(
+                padding: EdgeInsets.only(left: 19),
+                child: CustomDrawer(
+                    iconUrl: ProfileData.Avatar ?? widget.avatar,
+                    // selfProfileProvider
+                    //     .selfProfile!.data.result.author.image,
+                    //"https://www.pngall.com/wp-content/uploads/12/Avatar-Profile-Vector-PNG-File.png",
+                    name: ProfileData.UserName ?? widget.userName //"Raviraj"
                     ),
-                  )
-                ],
-              )),
+              ),
+            ],
+          )),
       //),
     );
   }
@@ -402,51 +351,66 @@ class CustomDrawerHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<ProfileInfoProvider>(builder: (context, controller, _) {
       return Container(
-        margin: EdgeInsets.only(top: 67),
-        child: InkWell(
-          onTap: () {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => ProfilePage()));
-          },
-          child: Row(
-            children: [
-              Container(
-                height: 60,
-                width: 60,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  image: controller.Avatar != null
-                      ? DecorationImage(
-                          image: CachedNetworkImageProvider(controller.Avatar!))
-                      : DecorationImage(
-                          image: AssetImage("assets/avatar.png"),
-                        ),
-                ),
+        width: MediaQuery.of(context).size.width,
+        margin: EdgeInsets.only(top: 20),
+        child: Column(
+          children: [
+            Container(
+              height: 60,
+              width: 60,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                image: controller.Avatar != null
+                    ? DecorationImage(
+                        image: CachedNetworkImageProvider(controller.Avatar!))
+                    : DecorationImage(
+                        image: AssetImage("assets/avatar.png"),
+                      ),
               ),
-              Container(
-                margin: EdgeInsets.only(left: 12),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      name,
-                      style: ThreeKmTextConstants.tk16PXPoppinsWhiteBold
-                          .copyWith(fontWeight: FontWeight.normal),
-                    ),
-                    Text(
-                      AppLocalizations.of(context)
-                              ?.translate("profile_header_name") ??
-                          "",
-                      style: ThreeKmTextConstants.tk12PXPoppinsWhiteRegular
-                          .copyWith(
-                        color: Color(0xFFD5D5D5),
+            ),
+            Container(
+              margin: EdgeInsets.only(left: 12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    name,
+                    style: ThreeKmTextConstants.tk16PXPoppinsBlackSemiBold
+                        .copyWith(fontWeight: FontWeight.normal),
+                  ),
+                  SizedBox(
+                    height: 5,
+                  ),
+                  InkWell(
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => ProfilePage()));
+                    },
+                    child: Container(
+                      width: 142,
+                      height: 40,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                          color: Colors.blueAccent,
+                          borderRadius: BorderRadius.circular(30)),
+                      child: Text(
+                        "Edit Profile",
+                        // AppLocalizations.of(context)
+                        //         ?.translate("profile_header_name") ??
+                        //     "",
+                        style: ThreeKmTextConstants.tk16PXPoppinsWhiteBold
+                            .copyWith(
+                          color: Color(0xFFD5D5D5),
+                        ),
                       ),
                     ),
-                  ],
-                ),
+                  )
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       );
     });
@@ -464,10 +428,15 @@ class CustomDrawerItem extends StatelessWidget {
     return Row(
       children: [
         image != null
-            ? Image.asset("$image", height: 24, width: 24)
+            ? Image.asset(
+                "$image",
+                height: 24,
+                width: 24,
+                color: Colors.black,
+              )
             : Icon(
                 icon,
-                color: Colors.white,
+                color: Colors.black,
                 size: 24,
               ),
         SizedBox(
@@ -475,7 +444,7 @@ class CustomDrawerItem extends StatelessWidget {
         ),
         Text(
           label,
-          style: ThreeKmTextConstants.tk16PXPoppinsWhiteBold
+          style: ThreeKmTextConstants.tk16PXLatoBlackRegular
               .copyWith(fontWeight: FontWeight.normal, fontSize: 14),
         ),
       ],
@@ -488,10 +457,10 @@ class DrawerDivider extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: EdgeInsets.symmetric(vertical: 17),
-      width: MediaQuery.of(context).size.width * 0.65,
+      width: MediaQuery.of(context).size.width * 0.9,
       child: Divider(
         thickness: 0.5,
-        color: Colors.white.withOpacity(0.8),
+        color: Colors.black.withOpacity(0.8),
       ),
     );
   }
