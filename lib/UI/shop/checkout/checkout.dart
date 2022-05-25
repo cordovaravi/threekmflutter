@@ -46,6 +46,13 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
     super.dispose();
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    ThreeKmScreenUtil().init(context);
+    //ThreeKmScreenUtil.getInstance();
+  }
+
   deliveryAddress() async {
     var addressdata = context.read<AddressListProvider>().getAddressListData;
     var selectedAddress = await Hive.openBox('selectedAddress');

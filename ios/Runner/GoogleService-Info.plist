@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>973155372103-fh4g2osm14a3n5i2fa8fvhmf95aer1fp.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.973155372103-fh4g2osm14a3n5i2fa8fvhmf95aer1fp</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>973155372103-1oejcnaiqf3egn388vf2hj9j81kbg9gm.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyB73U52LGDhspezBsZ30g1QkZkaoR9NZ2U</string>
+	<key>GCM_SENDER_ID</key>
+	<string>973155372103</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.bulbandkey.restaurantapp</string>
+	<key>PROJECT_ID</key>
+	<string>km-production-a9806</string>
+	<key>STORAGE_BUCKET</key>
+	<string>km-production-a9806.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:973155372103:ios:8a6ad03a4a8c0139d47562</string>
+	<key>DATABASE_URL</key>
+	<string>https://km-production-a9806-default-rtdb.asia-southeast1.firebasedatabase.app</string>
+</dict>
+</plist>
