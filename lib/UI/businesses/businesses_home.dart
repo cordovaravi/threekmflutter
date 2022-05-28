@@ -10,6 +10,7 @@ import 'package:provider/src/provider.dart';
 import 'package:shimmer/shimmer.dart';
 
 import 'package:threekm/UI/Search/SearchPage.dart';
+import 'package:threekm/UI/businesses/biz_skeleton.dart';
 import 'package:threekm/UI/businesses/businesses_detail.dart';
 import 'package:threekm/UI/businesses/view_all_category_biz.dart';
 
@@ -66,8 +67,8 @@ class _BusinessesHomeState extends State<BusinessesHome>
         },
         child: Builder(builder: (context) {
           if (businessesHomeProvider.state == 'loading') {
-            return const Center(
-              child: CircularProgressIndicator(),
+            return SingleChildScrollView(
+              child: Biz_Skeleton(context),
             );
           } else if (businessesHomeProvider.state == "error") {
             context.read<BusinessesHomeProvider>().getBusinesses(mounted);

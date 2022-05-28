@@ -3,16 +3,11 @@ import 'dart:developer';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+
 import 'package:hive/hive.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:threekm/Custom_library/GooleMapsWidget/src/place_picker.dart';
-import 'package:threekm/UI/Auth/signup/sign_up.dart';
-import 'package:threekm/UI/Search/SearchPage.dart';
+
 import 'package:threekm/UI/businesses/businesses_detail.dart';
-import 'package:threekm/UI/businesses/businesses_home.dart';
-import 'package:threekm/UI/main/navigation.dart';
-import 'package:threekm/UI/shop/cart/cart_item_list_modal.dart';
+
 import 'package:threekm/commenwidgets/commenwidget.dart';
 
 import 'package:threekm/localization/localize.dart';
@@ -22,8 +17,7 @@ import 'package:threekm/providers/ProfileInfo/ProfileInfo_Provider.dart';
 import 'package:threekm/providers/shop/shop_home_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:threekm/Models/shopModel/shop_home_model.dart';
-import 'package:threekm/utils/api_paths.dart';
-import 'package:threekm/utils/screen_util.dart';
+
 import 'package:threekm/utils/threekm_textstyles.dart';
 import '../shop/product/product_details.dart';
 import '../shop/product_listing.dart';
