@@ -13,7 +13,9 @@ import 'package:threekm/Custom_library/GooleMapsWidget/src/place_picker.dart';
 import 'package:threekm/UI/main/DrawerScreen.dart';
 import 'package:threekm/UI/main/News/uppartabs.dart';
 import 'package:threekm/UI/main/Profile/MyProfilePost.dart';
+import 'package:threekm/UI/shop/checkout/past_order.dart';
 import 'package:threekm/UI/shop/home_3km.dart';
+import 'package:threekm/providers/Global/logged_in_or_not.dart';
 import 'package:threekm/providers/Location/locattion_Provider.dart';
 
 import 'package:threekm/providers/localization_Provider/appLanguage_provider.dart';
@@ -26,6 +28,9 @@ import 'Notification/NotificationPage.dart';
 import 'Profile/Profilepage.dart';
 
 final drawerController = ZoomDrawerController();
+
+String UserName = "";
+String avatar = "";
 
 class TabBarNavigation extends StatefulWidget {
   final bool? redirectedFromPost;
@@ -56,9 +61,6 @@ class _TabBarNavigationState extends State<TabBarNavigation>
     }
     return Future.value(true);
   }
-
-  String UserName = "";
-  String avatar = "";
 
   void _getConstants() async {
     SharedPreferences _prefs = await SharedPreferences.getInstance();
@@ -113,15 +115,14 @@ class _TabBarNavigationState extends State<TabBarNavigation>
 
   List<Widget> _pageList = <Widget>[
     ThreeKMUpperTab(),
-    Home3KM(),
+    PastOrder(),
     MyProfilePost(
         isFromSelfProfileNavigate: true,
         page: 1,
         authorType: "user",
         id: 39108,
-        avatar:
-            "https://images.fineartamerica.com/images-medium-large-5/neytiri-from-avtar-film-roshan-patel.jpg",
-        userName: "Raviraj testing"),
+        avatar: avatar,
+        userName: UserName),
     Notificationpage(),
     DrawerScreen(
         avatar:
@@ -134,71 +135,60 @@ class _TabBarNavigationState extends State<TabBarNavigation>
     super.build(context);
     return WillPopScope(
       onWillPop: onWillPop,
-      child: ZoomDrawer(
-        openCurve: Curves.easeIn,
-        closeCurve: Curves.easeInOut,
-        showShadow: true,
-        angle: 0.0,
-        controller: drawerController,
-        menuScreen: DrawerScreen(
-          avatar: avatar,
-          userName: UserName,
-        ),
-        mainScreen: Scaffold(
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        resizeToAvoidBottomInset: true,
+        body: SafeArea(child: _pageList[_bottomIndex]),
+        bottomNavigationBar: CustomNavigationBar(
+          currentIndex: _bottomIndex,
+          onTap: (index) {
+            setState(() {
+              _bottomIndex = index;
+            });
+            log("bottom index is $_bottomIndex");
+          },
+          iconSize: 24.0,
+          selectedColor: Colors.blue,
+          strokeColor: Colors.white,
+          unSelectedColor: Color(0xff6c788a),
           backgroundColor: Colors.white,
-          resizeToAvoidBottomInset: true,
-          body: SafeArea(child: _pageList[_bottomIndex]),
-          bottomNavigationBar: CustomNavigationBar(
-            currentIndex: _bottomIndex,
-            onTap: (index) {
-              setState(() {
-                _bottomIndex = index;
-              });
-              log("bottom index is $_bottomIndex");
-            },
-            iconSize: 24.0,
-            selectedColor: Colors.white,
-            strokeColor: Colors.white,
-            unSelectedColor: Color(0xff6c788a),
-            backgroundColor: Color(0xff040307),
-            items: [
-              CustomNavigationBarItem(
-                icon: Icon(Icons.home),
-                title: Text(
-                  "Home",
-                  style: TextStyle(fontSize: 12, color: Color(0xff7C7C7C)),
-                ),
+          items: [
+            CustomNavigationBarItem(
+              icon: Icon(Icons.home),
+              title: Text(
+                "Home",
+                style: TextStyle(fontSize: 12, color: Color(0xff7C7C7C)),
               ),
-              CustomNavigationBarItem(
-                icon: Icon(Icons.shopping_bag),
-                title: Text(
-                  "Orders",
-                  style: TextStyle(fontSize: 12, color: Color(0xff7C7C7C)),
-                ),
+            ),
+            CustomNavigationBarItem(
+              icon: Icon(Icons.shopping_bag),
+              title: Text(
+                "Orders",
+                style: TextStyle(fontSize: 12, color: Color(0xff7C7C7C)),
               ),
-              CustomNavigationBarItem(
-                icon: Icon(Icons.post_add),
-                title: Text(
-                  "My post",
-                  style: TextStyle(fontSize: 12, color: Color(0xff7C7C7C)),
-                ),
+            ),
+            CustomNavigationBarItem(
+              icon: Icon(Icons.post_add),
+              title: Text(
+                "My post",
+                style: TextStyle(fontSize: 12, color: Color(0xff7C7C7C)),
               ),
-              CustomNavigationBarItem(
-                icon: Icon(Icons.notifications_none_rounded),
-                title: Text(
-                  "Notification",
-                  style: TextStyle(fontSize: 12, color: Color(0xff7C7C7C)),
-                ),
+            ),
+            CustomNavigationBarItem(
+              icon: Icon(Icons.notifications_none_rounded),
+              title: Text(
+                "Notification",
+                style: TextStyle(fontSize: 12, color: Color(0xff7C7C7C)),
               ),
-              CustomNavigationBarItem(
-                icon: Icon(Icons.account_circle),
-                title: Text(
-                  "Profile",
-                  style: TextStyle(fontSize: 12, color: Color(0xff7C7C7C)),
-                ),
+            ),
+            CustomNavigationBarItem(
+              icon: Icon(Icons.account_circle),
+              title: Text(
+                "Profile",
+                style: TextStyle(fontSize: 12, color: Color(0xff7C7C7C)),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

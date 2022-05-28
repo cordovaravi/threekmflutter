@@ -30,9 +30,9 @@ class _NotificationpageState extends State<Notificationpage> {
 
     return Scaffold(
         appBar: AppBar(
-          backgroundColor: Colors.black,
+          backgroundColor: Colors.white,
           title: Text("Notifications",
-              style: ThreeKmTextConstants.tk14PXPoppinsWhiteMedium),
+              style: ThreeKmTextConstants.tk14PXLatoBlackSemiBold),
         ),
         // backgroundColor: Colors.green,
         body: RefreshIndicator(

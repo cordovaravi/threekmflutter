@@ -82,7 +82,6 @@ class _AuthorProfileState extends State<AuthorProfile>
   Widget build(BuildContext context) {
     final selfProfile = context.watch<AutthorProfileProvider>();
     return Scaffold(
-      backgroundColor: Color(0xFF645AFF),
       body: selfProfile.gettingAuthorprofile == true
           ? Container(
               height: MediaQuery.of(context).size.height,
@@ -701,34 +700,37 @@ class _NewsCardState extends State<NewsCard> {
                     ),
                   ]),
                 Row(children: [
-                if(newsData.posts![widget.index].likes != null && newsData.posts![widget.index].likes != 0 )  Padding(
-                      padding: EdgeInsets.only(top: 5, left: 5, bottom: 2),
-                      child: InkWell(
-                        onTap: () {
-                          _showLikedBottomModalSheet(
-                              newsData.posts![widget.index].postId!.toInt(),
-                              newsData.posts![widget.index].likes);
-                        },
-                        child: Row(
-                          children: [
-                            Text('👍 ❤️ '),
-                            Container(
-                              // height: 30,
-                              // width: 30,
-                              // decoration: BoxDecoration(
-                              //     shape: BoxShape.circle,
-                              //     color: Color(0xffFC5E6A)),
-                              child: Center(
-                                  child: newsData.posts![widget.index].likes !=
-                                          null
-                                      ? Text('+' +
-                                          newsData.posts![widget.index].likes
-                                              .toString())
-                                      : Text("+0")),
-                            )
-                          ],
-                        ),
-                      )),
+                  if (newsData.posts![widget.index].likes != null &&
+                      newsData.posts![widget.index].likes != 0)
+                    Padding(
+                        padding: EdgeInsets.only(top: 5, left: 5, bottom: 2),
+                        child: InkWell(
+                          onTap: () {
+                            _showLikedBottomModalSheet(
+                                newsData.posts![widget.index].postId!.toInt(),
+                                newsData.posts![widget.index].likes);
+                          },
+                          child: Row(
+                            children: [
+                              Text('👍 ❤️ '),
+                              Container(
+                                // height: 30,
+                                // width: 30,
+                                // decoration: BoxDecoration(
+                                //     shape: BoxShape.circle,
+                                //     color: Color(0xffFC5E6A)),
+                                child: Center(
+                                    child: newsData
+                                                .posts![widget.index].likes !=
+                                            null
+                                        ? Text('+' +
+                                            newsData.posts![widget.index].likes
+                                                .toString())
+                                        : Text("+0")),
+                              )
+                            ],
+                          ),
+                        )),
                   Spacer(),
                   Padding(
                       padding: EdgeInsets.only(top: 5, right: 5, bottom: 2),

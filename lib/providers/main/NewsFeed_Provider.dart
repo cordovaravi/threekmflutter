@@ -15,13 +15,19 @@ class NewsFeedProvider extends ChangeNotifier {
 
   NewsFeedBottomModel? get newsFeedBottomModel => _newsFeedBottomModel;
 
+  bool _isLoading = false;
+  bool get isLoading => _isLoading;
+
   Future<NewsFeedBottomModel?> getBottomFeed({String? languageCode}) async {
+    _isLoading = true;
+    notifyListeners();
     String requestJson =
         json.encode({"lat": 18.555217, "lng": 73.799742, "lang": languageCode});
     final response = await _apiProvider.post(feedApi, requestJson);
     if (response["status"] == "success") {
       print(response);
       _newsFeedBottomModel = NewsFeedBottomModel.fromJson(response);
+      _isLoading = false;
       notifyListeners();
     }
   }

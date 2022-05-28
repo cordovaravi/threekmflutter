@@ -17,6 +17,8 @@ import 'package:threekm/Custom_library/src/reaction.dart';
 import 'package:threekm/Models/SelfProfile_Model.dart';
 import 'package:threekm/UI/Animation/AnimatedSizeRoute.dart';
 import 'package:threekm/UI/Help_Supportpage.dart';
+import 'package:threekm/UI/Search/SearchPage.dart';
+import 'package:threekm/UI/main/AddPost/AddNewPost.dart';
 import 'package:threekm/UI/main/News/NewsList.dart';
 import 'package:threekm/UI/main/News/Widgets/comment_Loading.dart';
 import 'package:threekm/UI/main/News/Widgets/likes_Loading.dart';
@@ -83,7 +85,27 @@ class _MyProfilePostState extends State<MyProfilePost>
   Widget build(BuildContext context) {
     final selfProfile = context.watch<AutthorProfileProvider>();
     return Scaffold(
-      backgroundColor: Color(0xFF645AFF),
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0.0,
+        title: Text(
+          "My profile",
+          style: ThreeKmTextConstants.tk18PXLatoBlackMedium,
+        ),
+        actions: [
+          IconButton(
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => SearchPage(tabNuber: 0)));
+              },
+              icon: Icon(
+                Icons.search,
+                color: Colors.black,
+              ))
+        ],
+      ),
       body: selfProfile.isGettingSelfProfile == true
           ? Container(
               height: MediaQuery.of(context).size.height,
@@ -99,7 +121,7 @@ class _MyProfilePostState extends State<MyProfilePost>
           : Column(
               mainAxisSize: MainAxisSize.max,
               children: [
-                buildBackButton(context),
+                //  buildBackButton(context),
                 selfProfile.selfProfile != null
                     ? buildContent(context, selfProfile.selfProfile)
                     : Center(
@@ -113,15 +135,15 @@ class _MyProfilePostState extends State<MyProfilePost>
   Widget buildContent(context, SelfProfileModel? selfProfileModel) {
     return Expanded(
       child: Container(
-        clipBehavior: Clip.antiAlias,
+        //clipBehavior: Clip.antiAlias,
         width: MediaQuery.of(context).size.width,
-        padding: EdgeInsets.symmetric(horizontal: 8),
+        //padding: EdgeInsets.symmetric(horizontal: 8),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(40),
-            topRight: Radius.circular(40),
-          ),
+          // borderRadius: BorderRadius.only(
+          //   topLeft: Radius.circular(40),
+          //   topRight: Radius.circular(40),
+          // ),
         ),
         child: Stack(
           children: [
@@ -129,10 +151,11 @@ class _MyProfilePostState extends State<MyProfilePost>
               controller: controller,
               slivers: [
                 SliverAppBar(
+                  title: Text(""),
                   collapsedHeight: 0,
                   expandedHeight: addingAbout == true &&
                           selfProfileModel!.data!.result!.author!.about == null
-                      ? 350
+                      ? 320
                       : 270,
                   // widget.isFromSelfProfileNavigate != true
                   //     ? (addingAbout != true ? 250 : 300)
@@ -142,110 +165,122 @@ class _MyProfilePostState extends State<MyProfilePost>
                   flexibleSpace: FlexibleSpaceBar(
                     background: Column(
                       children: [
-                        buildAvatar,
-                        //space(height: 68),
-                        Container(
-                          //width: MediaQuery.of(context).size.width * 0.65,
-                          padding: EdgeInsets.symmetric(horizontal: 32),
-                          child: Center(
-                            child: Text(
-                              "${widget.userName}",
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: ThreeKmTextConstants
-                                  .tk14PXPoppinsBlackSemiBold
-                                  .copyWith(fontSize: 18),
+                        Row(
+                          children: [
+                            buildAvatar(selfProfileModel!),
+                            SizedBox(
+                              width: 5,
                             ),
-                          ),
-                        ),
-                        SizedBox(
-                          height: 5,
-                        ),
-                        Container(
-                          //width: 298,
-                          child: selfProfileModel!
-                                      .data!.result!.author!.about !=
-                                  null
-                              ? Consumer<AutthorProfileProvider>(
-                                  builder: (context, controller, _) {
-                                  return Column(
-                                    children: [
-                                      Text(
-                                        "${selfProfileModel.data!.result!.author!.about}",
-                                        maxLines: 2,
-                                        overflow: TextOverflow.ellipsis,
-                                        textAlign: TextAlign.center,
-                                        style: ThreeKmTextConstants
-                                            .tk14PXPoppinsBlackSemiBold
-                                            .copyWith(
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w400,
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        height: 8,
-                                      ),
-                                      Container(
-                                          height: 26,
-                                          width: 124,
-                                          decoration: BoxDecoration(
-                                              color: Color(0xff3E7EFF)
-                                                  .withOpacity(0.10),
-                                              borderRadius:
-                                                  BorderRadius.circular(14)),
-                                          child: InkWell(
-                                            onTap: () {
-                                              controller.editAgain();
-                                            },
-                                            child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                children: [
-                                                  Icon(
-                                                    Icons.edit,
-                                                    color: Color(0xff3E7EFF),
-                                                  ),
-                                                  SizedBox(
-                                                    width: 4,
-                                                  ),
-                                                  Text(
-                                                    "About Me",
+                            Column(
+                              children: [
+                                Container(
+                                  child: Center(
+                                    child: Text(
+                                      "${selfProfileModel.data!.result!.author!.name}",
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: ThreeKmTextConstants
+                                          .tk14PXPoppinsBlackSemiBold
+                                          .copyWith(fontSize: 18),
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 5,
+                                ),
+                                Container(
+                                  child: selfProfileModel
+                                              .data!.result!.author!.about !=
+                                          null
+                                      ? Consumer<AutthorProfileProvider>(
+                                          builder: (context, controller, _) {
+                                          return Column(
+                                            children: [
+                                              Text(
+                                                "${selfProfileModel.data!.result!.author!.about}",
+                                                maxLines: 2,
+                                                overflow: TextOverflow.ellipsis,
+                                                textAlign: TextAlign.center,
+                                                style: ThreeKmTextConstants
+                                                    .tk14PXPoppinsBlackSemiBold
+                                                    .copyWith(
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.w400,
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                height: 8,
+                                              ),
+                                              Container(
+                                                  height: 26,
+                                                  width: 124,
+                                                  decoration: BoxDecoration(
+                                                      color: Color(0xff3E7EFF)
+                                                          .withOpacity(0.10),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              14)),
+                                                  child: InkWell(
+                                                    onTap: () {
+                                                      controller.editAgain();
+                                                    },
+                                                    child: Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                        children: [
+                                                          Icon(
+                                                            Icons.edit,
+                                                            color: Color(
+                                                                0xff3E7EFF),
+                                                          ),
+                                                          SizedBox(
+                                                            width: 4,
+                                                          ),
+                                                          Text(
+                                                            "About Me",
+                                                            style: ThreeKmTextConstants
+                                                                .tk12PXPoppinsBlackSemiBold
+                                                                .copyWith(
+                                                                    color: Color(
+                                                                        0xff3E7EFF)),
+                                                          )
+                                                        ]),
+                                                  ))
+                                            ],
+                                          );
+                                        })
+                                      : addingAbout != true
+                                          ? InkWell(
+                                              onTap: () {
+                                                setState(() {
+                                                  addingAbout = true;
+                                                });
+                                              },
+                                              child: Container(
+                                                  height: 26,
+                                                  width: 124,
+                                                  decoration: BoxDecoration(
+                                                      color: Color(0xff3E7EFF)
+                                                          .withOpacity(0.10),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              14)),
+                                                  child: Center(
+                                                      child: Text(
+                                                    "Add About Me",
                                                     style: ThreeKmTextConstants
                                                         .tk12PXPoppinsBlackSemiBold
                                                         .copyWith(
                                                             color: Color(
                                                                 0xff3E7EFF)),
-                                                  )
-                                                ]),
-                                          ))
-                                    ],
-                                  );
-                                })
-                              : addingAbout != true
-                                  ? InkWell(
-                                      onTap: () {
-                                        setState(() {
-                                          addingAbout = true;
-                                        });
-                                      },
-                                      child: Container(
-                                          height: 26,
-                                          width: 124,
-                                          decoration: BoxDecoration(
-                                              color: Color(0xff3E7EFF)
-                                                  .withOpacity(0.10),
-                                              borderRadius:
-                                                  BorderRadius.circular(14)),
-                                          child: Center(
-                                              child: Text(
-                                            "Add About Me",
-                                            style: ThreeKmTextConstants
-                                                .tk12PXPoppinsBlackSemiBold
-                                                .copyWith(
-                                                    color: Color(0xff3E7EFF)),
-                                          ))),
-                                    )
-                                  : Container(),
+                                                  ))),
+                                            )
+                                          : Container(),
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
                         if (addingAbout &&
                             selfProfileModel.data!.result!.author!.about ==
@@ -257,7 +292,7 @@ class _MyProfilePostState extends State<MyProfilePost>
                               maxLines: 1,
                               minLines: null,
                               expands: false,
-                              maxLength: 50,
+                              maxLength: 35,
                               textAlignVertical: TextAlignVertical.top,
                               maxLengthEnforcement:
                                   MaxLengthEnforcement.enforced,
@@ -280,7 +315,7 @@ class _MyProfilePostState extends State<MyProfilePost>
                                   });
                                 });
                                 return Text(
-                                  "($aboutCount/50)",
+                                  "($aboutCount/35)",
                                   style: ThreeKmTextConstants
                                       .tk12PXPoppinsWhiteRegular
                                       .copyWith(
@@ -404,10 +439,33 @@ class _MyProfilePostState extends State<MyProfilePost>
                                     style: ThreeKmTextConstants
                                         .tk14PXPoppinsBlackSemiBold
                                         .copyWith(color: Color(0xff979EA4)),
-                                  )
+                                  ),
                                 ],
                               )
                             ],
+                          ),
+                        ),
+                        Container(
+                          height: 35,
+                          alignment: Alignment.center,
+                          width: MediaQuery.of(context).size.width,
+                          margin: EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                              color: Color(0xff3E7EFF),
+                              borderRadius: BorderRadius.circular(28)),
+                          child: InkWell(
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          //VideoCompress()
+                                          AddNewPost()));
+                            },
+                            child: Text(
+                              "Add Post",
+                              style: TextStyle(color: Colors.white),
+                            ),
                           ),
                         )
                       ],
@@ -665,7 +723,7 @@ class _MyProfilePostState extends State<MyProfilePost>
     );
   }
 
-  Widget get buildAvatar {
+  Widget buildAvatar(SelfProfileModel selfProfileModel) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -677,7 +735,8 @@ class _MyProfilePostState extends State<MyProfilePost>
             shape: BoxShape.circle,
             border: Border.all(color: Colors.white, width: 3),
             image: DecorationImage(
-              image: CachedNetworkImageProvider(widget.avatar),
+              image: CachedNetworkImageProvider(
+                  selfProfileModel.data!.result!.author!.image!),
               fit: BoxFit.fill,
             ),
           ),

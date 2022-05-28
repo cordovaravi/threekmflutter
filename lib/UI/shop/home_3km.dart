@@ -433,17 +433,17 @@ class _ShopHomeState extends State<ShopHome>
               //     ),
               //   ),
               // ),
-              InkWell(
-                onTap: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (_) => BusinessesHome()));
-                },
-                child: Image(
-                  image: AssetImage('assets/BusinessesImg/shopHomeBiz.png'),
-                  width: double.infinity,
-                  //height: 400,
-                ),
-              ),
+              // InkWell(
+              //   onTap: () {
+              //     Navigator.push(context,
+              //         MaterialPageRoute(builder: (_) => BusinessesHome()));
+              //   },
+              //   child: Image(
+              //     image: AssetImage('assets/BusinessesImg/shopHomeBiz.png'),
+              //     width: double.infinity,
+              //     //height: 400,
+              //   ),
+              // ),
               CategoryListHome(
                 category:
                     widget.shopHomeProvider.shopHomeData!.result!.trending,

@@ -160,186 +160,190 @@ class _CustomDrawerState extends State<CustomDrawer> {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
+        physics: BouncingScrollPhysics(),
         child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        CustomDrawerHeader(
-          image: widget.iconUrl,
-          name: widget.name,
-        ),
-        DrawerDivider(),
-        InkWell(
-          onTap: () {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => MyProfilePost(
-                        isFromSelfProfileNavigate: true,
-                        page: 1,
-                        authorType: "user",
-                        id: 2,
-                        avatar: widget.iconUrl,
-                        userName: widget.name)));
-          },
-          child: CustomDrawerItem(
-            image: "assets/feed.png",
-            label: AppLocalizations.of(context)
-                    ?.translate("my_post")
-                    ?.toUpperCase() ??
-                "",
-          ),
-        ),
-        SizedBox(
-          height: 24,
-        ),
-        InkWell(
-          onTap: () {
-            //context.read<AddPostProvider>().deletImages();
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) =>
-                        //VideoCompress()
-                        AddNewPost()));
-          },
-          child: CustomDrawerItem(
-            icon: Icons.add,
-            label: AppLocalizations.of(context)
-                    ?.translate("add_post")
-                    ?.toUpperCase() ??
-                "",
-          ),
-        ),
-        DrawerDivider(),
-        CustomDrawerItem(
-          icon: Icons.shopping_cart_outlined,
-          label: AppLocalizations.of(context)
-                  ?.translate("shopping_cart")
-                  ?.toUpperCase() ??
-              "",
-        ).onTap(() {
-          Future.microtask(() => ThreeKmScreenUtil().init(context))
-              .then((value) => viewCart(context, "shop"));
-        }),
-        SizedBox(
-          height: 24,
-        ),
-        InkWell(
-          onTap: () => Navigator.push(
-              context, MaterialPageRoute(builder: (_) => WishList())),
-          child: CustomDrawerItem(
-            icon: CupertinoIcons.heart,
-            label: AppLocalizations.of(context)
-                    ?.translate("profile_wishlist_text")
-                    ?.toUpperCase() ??
-                "",
-          ),
-        ),
-        SizedBox(
-          height: 24,
-        ),
-        InkWell(
-          onTap: () => Navigator.of(context)
-              .push(MaterialPageRoute(builder: (context) => PastOrder())),
-          child: CustomDrawerItem(
-            image: "assets/inventory.png",
-            label: AppLocalizations.of(context)
-                    ?.translate("Orders")
-                    ?.toUpperCase() ??
-                "",
-          ),
-        ),
-        SizedBox(
-          height: 24,
-        ),
-        InkWell(
-          onTap: () {
-            Future.microtask(() => ThreeKmScreenUtil().init(context)).then(
-                (value) => Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => SavedAddress())));
-          },
-          child: CustomDrawerItem(
-            icon: Icons.place_outlined,
-            label: AppLocalizations.of(context)
-                    ?.translate("profile_addresses_desc")
-                    ?.toUpperCase() ??
-                "",
-          ),
-        ),
-        DrawerDivider(),
-        InkWell(
-          onTap: () => Navigator.of(context)
-              .push(MaterialPageRoute(builder: (context) => HelpAndSupport())),
-          child: CustomDrawerItem(
-            icon: Icons.contact_support_outlined,
-            label: AppLocalizations.of(context)
-                    ?.translate("profile_help_support")
-                    ?.toUpperCase() ??
-                "",
-          ),
-        ),
-        SizedBox(
-          height: 24,
-        ),
-        CustomDrawerItem(
-          icon: Icons.g_translate_outlined,
-          label: AppLocalizations.of(context)
-                  ?.translate("profile_change_language")
-                  ?.toUpperCase() ??
-              "",
-        ).onTap(() {
-          Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(builder: (context) => SelectLanguage()),
-              (route) => false);
-        }),
-        SizedBox(
-          height: 24,
-        ),
-        CustomDrawerItem(
-          icon: Icons.policy,
-          label: AppLocalizations.of(context)
-                  ?.translate("privacy_policy")
-                  ?.toUpperCase() ??
-              "",
-        ).onTap(() {
-          InAppBrowser.openWithSystemBrowser(
-              url: Uri.parse("https://bulbandkey.com/privacy-policy"));
-        }),
-        SizedBox(
-          height: 24,
-        ),
-        InkWell(
-          onTap: () async {
-            bool log = await logout();
-            print("$log");
-            if (log) {
-              FirebaseAuth.instance.signOut();
-              SharedPreferences prefs = await SharedPreferences.getInstance();
-              await prefs.clear();
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            CustomDrawerHeader(
+              image: widget.iconUrl,
+              name: widget.name,
+            ),
+            DrawerDivider(),
+            InkWell(
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => MyProfilePost(
+                            isFromSelfProfileNavigate: true,
+                            page: 1,
+                            authorType: "user",
+                            id: 2,
+                            avatar: widget.iconUrl,
+                            userName: widget.name)));
+              },
+              child: CustomDrawerItem(
+                image: "assets/feed.png",
+                label: AppLocalizations.of(context)
+                        ?.translate("my_post")
+                        ?.toUpperCase() ??
+                    "",
+              ),
+            ),
+            SizedBox(
+              height: 24,
+            ),
+            InkWell(
+              onTap: () {
+                //context.read<AddPostProvider>().deletImages();
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            //VideoCompress()
+                            AddNewPost()));
+              },
+              child: CustomDrawerItem(
+                icon: Icons.add,
+                label: AppLocalizations.of(context)
+                        ?.translate("add_post")
+                        ?.toUpperCase() ??
+                    "",
+              ),
+            ),
+            DrawerDivider(),
+            CustomDrawerItem(
+              icon: Icons.shopping_cart_outlined,
+              label: AppLocalizations.of(context)
+                      ?.translate("shopping_cart")
+                      ?.toUpperCase() ??
+                  "",
+            ).onTap(() {
+              Future.microtask(() => ThreeKmScreenUtil().init(context))
+                  .then((value) => viewCart(context, "shop"));
+            }),
+            SizedBox(
+              height: 24,
+            ),
+            InkWell(
+              onTap: () => Navigator.push(
+                  context, MaterialPageRoute(builder: (_) => WishList())),
+              child: CustomDrawerItem(
+                icon: CupertinoIcons.heart,
+                label: AppLocalizations.of(context)
+                        ?.translate("profile_wishlist_text")
+                        ?.toUpperCase() ??
+                    "",
+              ),
+            ),
+            SizedBox(
+              height: 24,
+            ),
+            InkWell(
+              onTap: () => Navigator.of(context)
+                  .push(MaterialPageRoute(builder: (context) => PastOrder())),
+              child: CustomDrawerItem(
+                image: "assets/inventory.png",
+                label: AppLocalizations.of(context)
+                        ?.translate("Orders")
+                        ?.toUpperCase() ??
+                    "",
+              ),
+            ),
+            SizedBox(
+              height: 24,
+            ),
+            InkWell(
+              onTap: () {
+                Future.microtask(() => ThreeKmScreenUtil().init(context)).then(
+                    (value) => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => SavedAddress())));
+              },
+              child: CustomDrawerItem(
+                icon: Icons.place_outlined,
+                label: AppLocalizations.of(context)
+                        ?.translate("profile_addresses_desc")
+                        ?.toUpperCase() ??
+                    "",
+              ),
+            ),
+            DrawerDivider(),
+            InkWell(
+              onTap: () => Navigator.of(context).push(
+                  MaterialPageRoute(builder: (context) => HelpAndSupport())),
+              child: CustomDrawerItem(
+                icon: Icons.contact_support_outlined,
+                label: AppLocalizations.of(context)
+                        ?.translate("profile_help_support")
+                        ?.toUpperCase() ??
+                    "",
+              ),
+            ),
+            SizedBox(
+              height: 24,
+            ),
+            CustomDrawerItem(
+              icon: Icons.g_translate_outlined,
+              label: AppLocalizations.of(context)
+                      ?.translate("profile_change_language")
+                      ?.toUpperCase() ??
+                  "",
+            ).onTap(() {
               Navigator.pushAndRemoveUntil(
                   context,
-                  MaterialPageRoute(builder: (context) => SplashScreen()),
+                  MaterialPageRoute(builder: (context) => SelectLanguage()),
                   (route) => false);
-            }
-          },
-          child: CustomDrawerItem(
-            icon: Icons.logout,
-            label: AppLocalizations.of(context)
-                    ?.translate("logout")
-                    ?.toUpperCase() ??
-                "",
-          ),
-        ),
-        SizedBox(
-          height: 24,
-        ),
-        Text("version: 5.0.6"),
-        SizedBox(
-          height: 15,
-        ),
-      ],
-    ));
+            }),
+            SizedBox(
+              height: 24,
+            ),
+            CustomDrawerItem(
+              icon: Icons.policy,
+              label: AppLocalizations.of(context)
+                      ?.translate("privacy_policy")
+                      ?.toUpperCase() ??
+                  "",
+            ).onTap(() {
+              InAppBrowser.openWithSystemBrowser(
+                  url: Uri.parse("https://bulbandkey.com/privacy-policy"));
+            }),
+            SizedBox(
+              height: 24,
+            ),
+            InkWell(
+              onTap: () async {
+                bool log = await logout();
+                print("$log");
+                if (log) {
+                  FirebaseAuth.instance.signOut();
+                  SharedPreferences prefs =
+                      await SharedPreferences.getInstance();
+                  await prefs.clear();
+                  Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(builder: (context) => SplashScreen()),
+                      (route) => false);
+                }
+              },
+              child: CustomDrawerItem(
+                icon: Icons.logout,
+                label: AppLocalizations.of(context)
+                        ?.translate("logout")
+                        ?.toUpperCase() ??
+                    "",
+              ),
+            ),
+            SizedBox(
+              height: 24,
+            ),
+            Text("version: 5.0.6"),
+            SizedBox(
+              height: 15,
+            ),
+          ],
+        ));
   }
 }
 
@@ -351,6 +355,7 @@ class CustomDrawerHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<ProfileInfoProvider>(builder: (context, controller, _) {
       return Container(
+        // color: Colors.amber,
         width: MediaQuery.of(context).size.width,
         margin: EdgeInsets.only(top: 20),
         child: Column(
@@ -369,7 +374,7 @@ class CustomDrawerHeader extends StatelessWidget {
               ),
             ),
             Container(
-              margin: EdgeInsets.only(left: 12),
+              // margin: EdgeInsets.only(left: 12),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
