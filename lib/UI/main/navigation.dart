@@ -3,31 +3,23 @@ import 'dart:io';
 import 'dart:ui';
 import 'package:device_info/device_info.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+
 import 'package:provider/src/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:threekm/Custom_library/Custom_bottom_bar/custom_navigation_bar.dart';
-import 'package:threekm/Custom_library/GooleMapsWidget/src/place_picker.dart';
+import 'package:threekm/UI/DayZero/DayZeroforTabs.dart';
 import 'package:threekm/UI/main/DrawerScreen.dart';
 import 'package:threekm/UI/main/News/uppartabs.dart';
 import 'package:threekm/UI/main/Profile/MyProfilePost.dart';
 import 'package:threekm/UI/shop/checkout/past_order.dart';
-import 'package:threekm/UI/shop/home_3km.dart';
 import 'package:threekm/providers/Global/logged_in_or_not.dart';
-import 'package:threekm/providers/Location/locattion_Provider.dart';
+import 'package:threekm/providers/ProfileInfo/ProfileInfo_Provider.dart';
 
 import 'package:threekm/providers/localization_Provider/appLanguage_provider.dart';
 import 'package:threekm/providers/main/AthorProfile_Provider.dart';
-import 'package:threekm/utils/api_paths.dart';
 import 'package:threekm/utils/screen_util.dart';
-import 'package:threekm/utils/threekm_textstyles.dart';
 
 import 'Notification/NotificationPage.dart';
-import 'Profile/Profilepage.dart';
-
-final drawerController = ZoomDrawerController();
 
 String UserName = "";
 String avatar = "";
@@ -82,12 +74,16 @@ class _TabBarNavigationState extends State<TabBarNavigation>
   bool _isPostUpdated = false;
   //Locale _appLocal;
 
+  bool authStatus = false;
+
   @override
   void initState() {
     _getConstants();
+    getAuthStatus();
     Future.delayed(Duration.zero, () {
       context.read<AutthorProfileProvider>().getSelfProfile();
       context.read<AppLanguage>().fetchLocale();
+      //context.read<CheckLoginProvider>().getAuthStatus();
     });
     super.initState();
     _reload = widget.redirectedFromPost ?? false;
@@ -108,6 +104,17 @@ class _TabBarNavigationState extends State<TabBarNavigation>
     }
   }
 
+  getAuthStatus() async {
+    SharedPreferences _prefs = await SharedPreferences.getInstance();
+    String? token = _prefs.getString("token");
+    if (token != null) {
+      authStatus = true;
+      setState(() {});
+    } else {
+      authStatus = false;
+    }
+  }
+
   @override
   void dispose() {
     super.dispose();
@@ -116,6 +123,7 @@ class _TabBarNavigationState extends State<TabBarNavigation>
   List<Widget> _pageList = <Widget>[
     ThreeKMUpperTab(),
     PastOrder(),
+    Notificationpage(),
     MyProfilePost(
         isFromSelfProfileNavigate: true,
         page: 1,
@@ -123,22 +131,33 @@ class _TabBarNavigationState extends State<TabBarNavigation>
         id: 39108,
         avatar: avatar,
         userName: UserName),
-    Notificationpage(),
     DrawerScreen(
         avatar:
             "https://png.pngtree.com/png-vector/20191101/ourmid/pngtree-male-avatar-simple-cartoon-design-png-image_1934458.jpg",
         userName: "userName")
   ];
 
+  List<Widget> _dayZeroScreens = <Widget>[
+    ThreeKMUpperTab(),
+    DayZeroforTabs(ScreenName: "shop"),
+    Notificationpage(),
+    DayZeroforTabs(ScreenName: "login"),
+    DayZeroforTabs(ScreenName: "login")
+  ];
+
   @override
   Widget build(BuildContext context) {
     super.build(context);
+    //final loginProvider = context.watch<CheckLoginProvider>();
     return WillPopScope(
       onWillPop: onWillPop,
       child: Scaffold(
         backgroundColor: Colors.white,
         resizeToAvoidBottomInset: true,
-        body: SafeArea(child: _pageList[_bottomIndex]),
+        body: SafeArea(
+            child: authStatus
+                ? _pageList[_bottomIndex]
+                : _dayZeroScreens[_bottomIndex]),
         bottomNavigationBar: CustomNavigationBar(
           currentIndex: _bottomIndex,
           onTap: (index) {
@@ -168,21 +187,30 @@ class _TabBarNavigationState extends State<TabBarNavigation>
               ),
             ),
             CustomNavigationBarItem(
-              icon: Icon(Icons.post_add),
+              icon: Icon(Icons.notifications_none_outlined),
+              title: Text(
+                "Notifications",
+                style: TextStyle(fontSize: 12, color: Color(0xff7C7C7C)),
+              ),
+            ),
+            CustomNavigationBarItem(
+              icon: Icon(Icons.photo_library_rounded),
               title: Text(
                 "My post",
                 style: TextStyle(fontSize: 12, color: Color(0xff7C7C7C)),
               ),
             ),
             CustomNavigationBarItem(
-              icon: Icon(Icons.notifications_none_rounded),
-              title: Text(
-                "Notification",
-                style: TextStyle(fontSize: 12, color: Color(0xff7C7C7C)),
+              icon: Image.network(
+                context.read<ProfileInfoProvider>().Avatar ??
+                    "https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/User-avatar.svg/2048px-User-avatar.svg.png",
+                color: _bottomIndex == 4 &&
+                        context.read<ProfileInfoProvider>().Avatar == null
+                    ? Colors.blueAccent
+                    : context.read<ProfileInfoProvider>().Avatar != null
+                        ? null
+                        : Colors.grey,
               ),
-            ),
-            CustomNavigationBarItem(
-              icon: Icon(Icons.account_circle),
               title: Text(
                 "Profile",
                 style: TextStyle(fontSize: 12, color: Color(0xff7C7C7C)),

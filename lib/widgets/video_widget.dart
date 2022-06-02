@@ -3,20 +3,24 @@ import 'dart:developer';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:better_player/better_player.dart';
+import 'package:threekm/Custom_library/vimeoWeb/VimeoPlayerWeb.dart';
 
 class VideoWidget extends StatefulWidget {
   final String url;
   final bool play;
   final String? thubnail;
   final bool? fromSinglePage;
-
-  const VideoWidget(
-      {Key? key,
-      this.fromSinglePage,
-      this.thubnail,
-      required this.url,
-      required this.play})
-      : super(key: key);
+  final bool isVimeo;
+  final String? vimeoID;
+  const VideoWidget({
+    Key? key,
+    this.fromSinglePage,
+    this.thubnail,
+    this.vimeoID,
+    required this.url,
+    required this.play,
+    required this.isVimeo,
+  }) : super(key: key);
   @override
   _VideoWidgetState createState() => _VideoWidgetState();
 }
@@ -73,8 +77,10 @@ class _VideoWidgetState extends State<VideoWidget> {
   Widget build(BuildContext context) {
     log("building video context");
     return Container(
-        child:
-            _betterPlayerController?.videoPlayerController?.value.initialized ==
+        child: widget.isVimeo
+            ? VimeoPlayerWeb(videoId: widget.vimeoID!)
+            : _betterPlayerController
+                        ?.videoPlayerController?.value.initialized ==
                     true
                 ? BetterPlayer(controller: _betterPlayerController!)
                 : Container(

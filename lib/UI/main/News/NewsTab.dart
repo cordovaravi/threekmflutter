@@ -22,6 +22,7 @@ import 'package:share_plus/share_plus.dart';
 
 import 'package:threekm/Custom_library/Polls/simple_polls.dart';
 import 'package:threekm/Models/home1_model.dart';
+import 'package:threekm/UI/main/AddPost/ImageEdit/editImage.dart';
 
 import 'package:threekm/UI/main/News/NewsList.dart';
 import 'package:threekm/UI/main/News/PostView.dart';
@@ -61,9 +62,8 @@ class NewsTab extends StatefulWidget {
   _NewsTabState createState() => _NewsTabState();
 }
 
-class _NewsTabState extends State<NewsTab>
-    with AutomaticKeepAliveClientMixin, TickerProviderStateMixin {
-  late final AnimationController _controller;
+class _NewsTabState extends State<NewsTab> with AutomaticKeepAliveClientMixin {
+  //late final AnimationController _controller;
   String? requestJson;
   int? answerIndex;
   String? _selecetdAddress;
@@ -87,7 +87,7 @@ class _NewsTabState extends State<NewsTab>
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(vsync: this);
+    //_controller = AnimationController(vsync: this);
     Future.microtask(() => context.read<LocationProvider>().getLocation());
     Future.microtask(() => context.read<AppLanguage>().fetchLocale());
     if (widget.reload != true) {
@@ -206,7 +206,6 @@ class _NewsTabState extends State<NewsTab>
 
   @override
   void dispose() {
-    _controller.dispose();
     _commentController.dispose();
     _scrollController.dispose();
 
@@ -223,7 +222,7 @@ class _NewsTabState extends State<NewsTab>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    log("main building");
+    //log("main building");
     final newsFirstProvider = context.watch<HomefirstProvider>();
     final newsSecondProvider = context.watch<HomeSecondProvider>();
     return RefreshIndicator(
@@ -236,7 +235,8 @@ class _NewsTabState extends State<NewsTab>
         });
       },
       child: newsFirstProvider.state == 'loaded' &&
-              newsSecondProvider.state == 'loaded'
+              newsSecondProvider.state == 'loaded' &&
+              newsSecondProvider.homeNews?.data != null
           ? SingleChildScrollView(
               //controller: _scrollController,
               physics: BouncingScrollPhysics(),
@@ -555,13 +555,12 @@ class _NewsTabState extends State<NewsTab>
                                                             Navigator.push(
                                                                 context,
                                                                 MaterialPageRoute(
-                                                                    builder: (context) => LocalPlayer(
-                                                                        VideoURI: finalPost
-                                                                            .banners![bannerIndex]
-                                                                            .imageswcta!
-                                                                            .first
-                                                                            .video
-                                                                            .toString())
+                                                                    builder:
+                                                                        (context) =>
+                                                                            LocalPlayer(
+                                                                              VideoURI: finalPost.banners![bannerIndex].imageswcta!.first.video.toString(),
+                                                                              url: '',
+                                                                            )
                                                                     // VimeoPlayerPage(
                                                                     //     VimeoUri: finalPost
                                                                     //         .banners![
@@ -1120,327 +1119,327 @@ class _NewsTabState extends State<NewsTab>
     );
   }
 
-  _showCommentsBottomModalSheet(BuildContext context, int postId) {
-    //print("this is new :$postId");
-    context.read<CommentProvider>().getAllCommentsApi(postId);
-    showModalBottomSheet<void>(
-      backgroundColor: Colors.transparent,
-      context: context,
-      isScrollControlled: true,
-      builder: (BuildContext context) {
-        return Padding(
-          padding: MediaQuery.of(context).viewInsets,
-          child: StatefulBuilder(
-            builder: (BuildContext context, StateSetter setModalState) {
-              return ClipPath(
-                clipper: OvalTopBorderClipper(),
-                child: Container(
-                  color: Colors.white,
-                  height: MediaQuery.of(context).size.height / 2,
-                  padding: const EdgeInsets.all(15.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      Container(
-                        height: 5,
-                        width: 30,
-                        color: Colors.grey.shade300,
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Row(
-                        children: [
-                          Container(
-                              height: 20,
-                              width: 20,
-                              child: Image.asset('assets/icons-topic.png')),
-                          Padding(padding: EdgeInsets.only(left: 10)),
-                          Consumer<CommentProvider>(
-                              builder: (context, commentProvider, _) {
-                            return commentProvider.commentList?.length != null
-                                ? Text(
-                                    "${commentProvider.commentList!.length}\tComments",
-                                    style: ThreeKmTextConstants
-                                        .tk14PXPoppinsBlackSemiBold,
-                                  )
-                                : Text(
-                                    "Comments",
-                                    style: ThreeKmTextConstants
-                                        .tk14PXPoppinsBlackSemiBold,
-                                  );
-                          })
-                        ],
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Consumer<CommentProvider>(
-                          builder: (context, commentProvider, _) {
-                        return context.read<CommentProvider>().commentList !=
-                                null
-                            ? Expanded(
-                                child: commentProvider.isGettingComments == true
-                                    ? CommentsLoadingEffects()
-                                    : ListView.builder(
-                                        physics: BouncingScrollPhysics(),
-                                        shrinkWrap: true,
-                                        primary: true,
-                                        itemCount:
-                                            commentProvider.commentList!.length,
-                                        itemBuilder: (context, commentIndex) {
-                                          return Container(
-                                            margin: EdgeInsets.all(1),
-                                            decoration: BoxDecoration(
-                                              color: Colors.white,
-                                            ),
-                                            child: ListTile(
-                                              trailing: commentProvider
-                                                          .commentList![
-                                                              commentIndex]
-                                                          .isself ==
-                                                      true
-                                                  ? IconButton(
-                                                      onPressed: () {
-                                                        context
-                                                            .read<
-                                                                CommentProvider>()
-                                                            .removeComment(
-                                                                commentProvider
-                                                                    .commentList![
-                                                                        commentIndex]
-                                                                    .commentId!,
-                                                                postId);
-                                                      },
-                                                      icon: Icon(Icons.delete))
-                                                  : SizedBox(),
-                                              leading: Container(
-                                                height: 40,
-                                                width: 40,
-                                                decoration: BoxDecoration(
-                                                    image: DecorationImage(
-                                                        image: CachedNetworkImageProvider(
-                                                            commentProvider
-                                                                .commentList![
-                                                                    commentIndex]
-                                                                .avatar
-                                                                .toString()))),
-                                              ),
-                                              title: Text(
-                                                commentProvider
-                                                    .commentList![commentIndex]
-                                                    .username
-                                                    .toString(),
-                                                style: ThreeKmTextConstants
-                                                    .tk14PXPoppinsBlackSemiBold,
-                                              ),
-                                              subtitle: Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    SizedBox(
-                                                      height: 4,
-                                                    ),
-                                                    Text(
-                                                      commentProvider
-                                                          .commentList![
-                                                              commentIndex]
-                                                          .comment
-                                                          .toString(),
-                                                      style: ThreeKmTextConstants
-                                                          .tk14PXLatoBlackMedium,
-                                                    ),
-                                                    SizedBox(
-                                                      height: 2,
-                                                    ),
-                                                    Text(
-                                                        commentProvider
-                                                            .commentList![
-                                                                commentIndex]
-                                                            .timeLapsed
-                                                            .toString(),
-                                                        style: TextStyle(
-                                                            fontStyle: FontStyle
-                                                                .italic))
-                                                  ]),
-                                            ),
-                                          );
-                                        },
-                                      ),
-                              )
-                            : SizedBox();
-                      }),
-                      Form(
-                        key: _formKey,
-                        child: Container(
-                          height: 50,
-                          width: 338,
-                          decoration: BoxDecoration(
-                              color: Colors.grey.shade200,
-                              borderRadius: BorderRadius.circular(20)),
-                          child: TextFormField(
-                            autovalidateMode:
-                                AutovalidateMode.onUserInteraction,
-                            validator: (String? value) {
-                              if (value == null) {
-                                return "  Comment cant be blank";
-                              } else if (value.isEmpty) {
-                                return "  Comment cant be blank";
-                              }
-                            },
-                            controller: _commentController,
-                            maxLines: null,
-                            keyboardType: TextInputType.multiline,
-                            decoration:
-                                InputDecoration(border: InputBorder.none),
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: InkWell(
-                          onTap: () {
-                            if (_formKey.currentState!.validate() &&
-                                context.read<CommentProvider>().isLoading ==
-                                    false) {
-                              context
-                                  .read<CommentProvider>()
-                                  .postCommentApi(
-                                      postId, _commentController.text)
-                                  .then((value) => _commentController.clear());
-                            }
-                          },
-                          child: Container(
-                            margin: EdgeInsets.only(left: 10),
-                            height: 36,
-                            width: 112,
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(18),
-                                color: ThreeKmTextConstants.blue2),
-                            child: Center(child: Consumer<CommentProvider>(
-                              builder: (context, _controller, child) {
-                                return _controller.isLoading == false
-                                    ? Text(
-                                        "Submit",
-                                        style: ThreeKmTextConstants
-                                            .tk14PXPoppinsWhiteMedium,
-                                      )
-                                    : CupertinoActivityIndicator();
-                              },
-                            )),
-                          ),
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-              );
-            },
-          ),
-        );
-      },
-    );
-  }
+  // _showCommentsBottomModalSheet(BuildContext context, int postId) {
+  //   //print("this is new :$postId");
+  //   context.read<CommentProvider>().getAllCommentsApi(postId);
+  //   showModalBottomSheet<void>(
+  //     backgroundColor: Colors.transparent,
+  //     context: context,
+  //     isScrollControlled: true,
+  //     builder: (BuildContext context) {
+  //       return Padding(
+  //         padding: MediaQuery.of(context).viewInsets,
+  //         child: StatefulBuilder(
+  //           builder: (BuildContext context, StateSetter setModalState) {
+  //             return ClipPath(
+  //               clipper: OvalTopBorderClipper(),
+  //               child: Container(
+  //                 color: Colors.white,
+  //                 height: MediaQuery.of(context).size.height / 2,
+  //                 padding: const EdgeInsets.all(15.0),
+  //                 child: Column(
+  //                   crossAxisAlignment: CrossAxisAlignment.center,
+  //                   children: <Widget>[
+  //                     Container(
+  //                       height: 5,
+  //                       width: 30,
+  //                       color: Colors.grey.shade300,
+  //                     ),
+  //                     SizedBox(
+  //                       height: 10,
+  //                     ),
+  //                     Row(
+  //                       children: [
+  //                         Container(
+  //                             height: 20,
+  //                             width: 20,
+  //                             child: Image.asset('assets/icons-topic.png')),
+  //                         Padding(padding: EdgeInsets.only(left: 10)),
+  //                         Consumer<CommentProvider>(
+  //                             builder: (context, commentProvider, _) {
+  //                           return commentProvider.commentList?.length != null
+  //                               ? Text(
+  //                                   "${commentProvider.commentList!.length}\tComments",
+  //                                   style: ThreeKmTextConstants
+  //                                       .tk14PXPoppinsBlackSemiBold,
+  //                                 )
+  //                               : Text(
+  //                                   "Comments",
+  //                                   style: ThreeKmTextConstants
+  //                                       .tk14PXPoppinsBlackSemiBold,
+  //                                 );
+  //                         })
+  //                       ],
+  //                     ),
+  //                     SizedBox(
+  //                       height: 10,
+  //                     ),
+  //                     Consumer<CommentProvider>(
+  //                         builder: (context, commentProvider, _) {
+  //                       return context.read<CommentProvider>().commentList !=
+  //                               null
+  //                           ? Expanded(
+  //                               child: commentProvider.isGettingComments == true
+  //                                   ? CommentsLoadingEffects()
+  //                                   : ListView.builder(
+  //                                       physics: BouncingScrollPhysics(),
+  //                                       shrinkWrap: true,
+  //                                       primary: true,
+  //                                       itemCount:
+  //                                           commentProvider.commentList!.length,
+  //                                       itemBuilder: (context, commentIndex) {
+  //                                         return Container(
+  //                                           margin: EdgeInsets.all(1),
+  //                                           decoration: BoxDecoration(
+  //                                             color: Colors.white,
+  //                                           ),
+  //                                           child: ListTile(
+  //                                             trailing: commentProvider
+  //                                                         .commentList![
+  //                                                             commentIndex]
+  //                                                         .isself ==
+  //                                                     true
+  //                                                 ? IconButton(
+  //                                                     onPressed: () {
+  //                                                       context
+  //                                                           .read<
+  //                                                               CommentProvider>()
+  //                                                           .removeComment(
+  //                                                               commentProvider
+  //                                                                   .commentList![
+  //                                                                       commentIndex]
+  //                                                                   .commentId!,
+  //                                                               postId);
+  //                                                     },
+  //                                                     icon: Icon(Icons.delete))
+  //                                                 : SizedBox(),
+  //                                             leading: Container(
+  //                                               height: 40,
+  //                                               width: 40,
+  //                                               decoration: BoxDecoration(
+  //                                                   image: DecorationImage(
+  //                                                       image: CachedNetworkImageProvider(
+  //                                                           commentProvider
+  //                                                               .commentList![
+  //                                                                   commentIndex]
+  //                                                               .avatar
+  //                                                               .toString()))),
+  //                                             ),
+  //                                             title: Text(
+  //                                               commentProvider
+  //                                                   .commentList![commentIndex]
+  //                                                   .username
+  //                                                   .toString(),
+  //                                               style: ThreeKmTextConstants
+  //                                                   .tk14PXPoppinsBlackSemiBold,
+  //                                             ),
+  //                                             subtitle: Column(
+  //                                                 crossAxisAlignment:
+  //                                                     CrossAxisAlignment.start,
+  //                                                 children: [
+  //                                                   SizedBox(
+  //                                                     height: 4,
+  //                                                   ),
+  //                                                   Text(
+  //                                                     commentProvider
+  //                                                         .commentList![
+  //                                                             commentIndex]
+  //                                                         .comment
+  //                                                         .toString(),
+  //                                                     style: ThreeKmTextConstants
+  //                                                         .tk14PXLatoBlackMedium,
+  //                                                   ),
+  //                                                   SizedBox(
+  //                                                     height: 2,
+  //                                                   ),
+  //                                                   Text(
+  //                                                       commentProvider
+  //                                                           .commentList![
+  //                                                               commentIndex]
+  //                                                           .timeLapsed
+  //                                                           .toString(),
+  //                                                       style: TextStyle(
+  //                                                           fontStyle: FontStyle
+  //                                                               .italic))
+  //                                                 ]),
+  //                                           ),
+  //                                         );
+  //                                       },
+  //                                     ),
+  //                             )
+  //                           : SizedBox();
+  //                     }),
+  //                     Form(
+  //                       key: _formKey,
+  //                       child: Container(
+  //                         height: 50,
+  //                         width: 338,
+  //                         decoration: BoxDecoration(
+  //                             color: Colors.grey.shade200,
+  //                             borderRadius: BorderRadius.circular(20)),
+  //                         child: TextFormField(
+  //                           autovalidateMode:
+  //                               AutovalidateMode.onUserInteraction,
+  //                           validator: (String? value) {
+  //                             if (value == null) {
+  //                               return "  Comment cant be blank";
+  //                             } else if (value.isEmpty) {
+  //                               return "  Comment cant be blank";
+  //                             }
+  //                           },
+  //                           controller: _commentController,
+  //                           maxLines: null,
+  //                           keyboardType: TextInputType.multiline,
+  //                           decoration:
+  //                               InputDecoration(border: InputBorder.none),
+  //                         ),
+  //                       ),
+  //                     ),
+  //                     SizedBox(
+  //                       height: 10,
+  //                     ),
+  //                     Align(
+  //                       alignment: Alignment.centerLeft,
+  //                       child: InkWell(
+  //                         onTap: () {
+  //                           if (_formKey.currentState!.validate() &&
+  //                               context.read<CommentProvider>().isLoading ==
+  //                                   false) {
+  //                             context
+  //                                 .read<CommentProvider>()
+  //                                 .postCommentApi(
+  //                                     postId, _commentController.text)
+  //                                 .then((value) => _commentController.clear());
+  //                           }
+  //                         },
+  //                         child: Container(
+  //                           margin: EdgeInsets.only(left: 10),
+  //                           height: 36,
+  //                           width: 112,
+  //                           decoration: BoxDecoration(
+  //                               borderRadius: BorderRadius.circular(18),
+  //                               color: ThreeKmTextConstants.blue2),
+  //                           child: Center(child: Consumer<CommentProvider>(
+  //                             builder: (context, _controller, child) {
+  //                               return _controller.isLoading == false
+  //                                   ? Text(
+  //                                       "Submit",
+  //                                       style: ThreeKmTextConstants
+  //                                           .tk14PXPoppinsWhiteMedium,
+  //                                     )
+  //                                   : CupertinoActivityIndicator();
+  //                             },
+  //                           )),
+  //                         ),
+  //                       ),
+  //                     )
+  //                   ],
+  //                 ),
+  //               ),
+  //             );
+  //           },
+  //         ),
+  //       );
+  //     },
+  //   );
+  // }
 
-  _showLikedBottomModalSheet(int postId, totalLikes) {
-    context.read<LikeListProvider>().showLikes(context, postId);
-    showModalBottomSheet<void>(
-      backgroundColor: Colors.white,
-      context: context,
-      builder: (BuildContext context) {
-        final _likeProvider = context.watch<LikeListProvider>();
-        return Padding(
-            padding: EdgeInsets.zero,
-            child: StatefulBuilder(
-              builder: (context, _) {
-                return Container(
-                  color: Colors.white,
-                  height: 192,
-                  width: MediaQuery.of(context).size.width,
-                  child: _likeProvider.isLoading
-                      ? LikesLoding()
-                      : Column(
-                          mainAxisSize: MainAxisSize.max,
-                          children: [
-                            Row(
-                              children: [
-                                Padding(
-                                  padding: EdgeInsets.only(
-                                      top: 24, left: 18, bottom: 34),
-                                  child: Text(
-                                      "$totalLikes People reacted to this"),
-                                ),
-                              ],
-                            ),
-                            Container(
-                              height: 90,
-                              width: double.infinity,
-                              child: ListView.builder(
-                                scrollDirection: Axis.horizontal,
-                                itemCount: _likeProvider
-                                    .likeList!.data!.result!.users!.length,
-                                shrinkWrap: true,
-                                itemBuilder: (context, index) {
-                                  return Container(
-                                      margin: EdgeInsets.only(
-                                        left: 21,
-                                      ),
-                                      height: 85,
-                                      width: 85,
-                                      decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          image: DecorationImage(
-                                              fit: BoxFit.cover,
-                                              image: NetworkImage(_likeProvider
-                                                  .likeList!
-                                                  .data!
-                                                  .result!
-                                                  .users![index]
-                                                  .avatar
-                                                  .toString()))),
-                                      child: Stack(
-                                        children: [
-                                          Positioned(
-                                              right: 0,
-                                              child: Image.asset(
-                                                'assets/fblike2x.png',
-                                                height: 15,
-                                                width: 15,
-                                                fit: BoxFit.cover,
-                                              )),
-                                          _likeProvider
-                                                      .likeList!
-                                                      .data!
-                                                      .result!
-                                                      .users![index]
-                                                      .isUnknown !=
-                                                  null
-                                              ? Center(
-                                                  child: Text(
-                                                      "+${_likeProvider.likeList!.data!.result!.anonymousCount}",
-                                                      style: TextStyle(
-                                                          fontSize: 17,
-                                                          color: Colors.white),
-                                                      textAlign:
-                                                          TextAlign.center),
-                                                )
-                                              : SizedBox.shrink()
-                                        ],
-                                      ));
-                                },
-                              ),
-                            ),
-                          ],
-                        ),
-                );
-              },
-            ));
-      },
-    );
-  }
+  // _showLikedBottomModalSheet(int postId, totalLikes) {
+  //   context.read<LikeListProvider>().showLikes(context, postId);
+  //   showModalBottomSheet<void>(
+  //     backgroundColor: Colors.white,
+  //     context: context,
+  //     builder: (BuildContext context) {
+  //       final _likeProvider = context.watch<LikeListProvider>();
+  //       return Padding(
+  //           padding: EdgeInsets.zero,
+  //           child: StatefulBuilder(
+  //             builder: (context, _) {
+  //               return Container(
+  //                 color: Colors.white,
+  //                 height: 192,
+  //                 width: MediaQuery.of(context).size.width,
+  //                 child: _likeProvider.isLoading
+  //                     ? LikesLoding()
+  //                     : Column(
+  //                         mainAxisSize: MainAxisSize.max,
+  //                         children: [
+  //                           Row(
+  //                             children: [
+  //                               Padding(
+  //                                 padding: EdgeInsets.only(
+  //                                     top: 24, left: 18, bottom: 34),
+  //                                 child: Text(
+  //                                     "$totalLikes People reacted to this"),
+  //                               ),
+  //                             ],
+  //                           ),
+  //                           Container(
+  //                             height: 90,
+  //                             width: double.infinity,
+  //                             child: ListView.builder(
+  //                               scrollDirection: Axis.horizontal,
+  //                               itemCount: _likeProvider
+  //                                   .likeList!.data!.result!.users!.length,
+  //                               shrinkWrap: true,
+  //                               itemBuilder: (context, index) {
+  //                                 return Container(
+  //                                     margin: EdgeInsets.only(
+  //                                       left: 21,
+  //                                     ),
+  //                                     height: 85,
+  //                                     width: 85,
+  //                                     decoration: BoxDecoration(
+  //                                         shape: BoxShape.circle,
+  //                                         image: DecorationImage(
+  //                                             fit: BoxFit.cover,
+  //                                             image: NetworkImage(_likeProvider
+  //                                                 .likeList!
+  //                                                 .data!
+  //                                                 .result!
+  //                                                 .users![index]
+  //                                                 .avatar
+  //                                                 .toString()))),
+  //                                     child: Stack(
+  //                                       children: [
+  //                                         Positioned(
+  //                                             right: 0,
+  //                                             child: Image.asset(
+  //                                               'assets/fblike2x.png',
+  //                                               height: 15,
+  //                                               width: 15,
+  //                                               fit: BoxFit.cover,
+  //                                             )),
+  //                                         _likeProvider
+  //                                                     .likeList!
+  //                                                     .data!
+  //                                                     .result!
+  //                                                     .users![index]
+  //                                                     .isUnknown !=
+  //                                                 null
+  //                                             ? Center(
+  //                                                 child: Text(
+  //                                                     "+${_likeProvider.likeList!.data!.result!.anonymousCount}",
+  //                                                     style: TextStyle(
+  //                                                         fontSize: 17,
+  //                                                         color: Colors.white),
+  //                                                     textAlign:
+  //                                                         TextAlign.center),
+  //                                               )
+  //                                             : SizedBox.shrink()
+  //                                       ],
+  //                                     ));
+  //                               },
+  //                             ),
+  //                           ),
+  //                         ],
+  //                       ),
+  //               );
+  //             },
+  //           ));
+  //     },
+  //   );
+  // }
 
   PopupMenuButton showPopMenu(String postID, newsData) {
     return PopupMenuButton(

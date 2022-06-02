@@ -255,6 +255,8 @@ class _PostviewState extends State<Postview> {
                                                                       .size
                                                                       .width,
                                                               child: VideoWidget(
+                                                                  isVimeo:
+                                                                      false,
                                                                   thubnail: '',
                                                                   url: templist[
                                                                           index]
@@ -301,6 +303,7 @@ class _PostviewState extends State<Postview> {
                                                           '${newsData.images!.first}',
                                                     )
                                                   : VideoWidget(
+                                                      isVimeo: false,
                                                       thubnail: newsData
                                                                   .videos
                                                                   ?.first
@@ -412,19 +415,20 @@ class _PostviewState extends State<Postview> {
                                       //     child: Text("no data"),
                                       //   ),
                                       Row(children: [
-                                      if(newsData.likes != 0)  InkWell(
-                                          onTap: () {
-                                            _showLikedBottomModalSheet(
-                                                newsData.postId!.toInt(),
-                                                newsData.likes);
-                                          },
-                                          child: Padding(
-                                              padding: EdgeInsets.only(
-                                                  top: 2, left: 5, bottom: 2),
-                                              child: Text('👍 ❤️ ' +
-                                                  newsData.likes.toString() +
-                                                  ' Likes')),
-                                        ),
+                                        if (newsData.likes != 0)
+                                          InkWell(
+                                            onTap: () {
+                                              _showLikedBottomModalSheet(
+                                                  newsData.postId!.toInt(),
+                                                  newsData.likes);
+                                            },
+                                            child: Padding(
+                                                padding: EdgeInsets.only(
+                                                    top: 2, left: 5, bottom: 2),
+                                                child: Text('👍 ❤️ ' +
+                                                    newsData.likes.toString() +
+                                                    ' Likes')),
+                                          ),
                                         Spacer(),
                                         Padding(
                                             padding: EdgeInsets.only(

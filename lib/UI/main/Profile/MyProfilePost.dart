@@ -56,7 +56,6 @@ class MyProfilePost extends StatefulWidget {
 
 class _MyProfilePostState extends State<MyProfilePost>
     with TickerProviderStateMixin {
-  late TabController _tabController;
   ScrollController controller = ScrollController();
 
   int index = 0;
@@ -65,20 +64,10 @@ class _MyProfilePostState extends State<MyProfilePost>
   TextEditingController _aboutTextController = TextEditingController();
   @override
   void initState() {
-    _tabController = TabController(length: 1, vsync: this);
-    if (widget.isFromSelfProfileNavigate) {
-      Future.delayed(Duration.zero, () {
-        context.read<AutthorProfileProvider>().getSelfProfile();
-      });
-    }
     super.initState();
-  }
-
-  @override
-  void dispose() {
-    //Get.delete<AuthorProfileController>();
-    controller.dispose();
-    super.dispose();
+    Future.delayed(Duration.zero, () {
+      context.read<AutthorProfileProvider>().getSelfProfile();
+    });
   }
 
   @override
@@ -106,7 +95,8 @@ class _MyProfilePostState extends State<MyProfilePost>
               ))
         ],
       ),
-      body: selfProfile.isGettingSelfProfile == true
+      body: selfProfile.isGettingSelfProfile == true &&
+              selfProfile.selfProfile?.data == null
           ? Container(
               height: MediaQuery.of(context).size.height,
               width: MediaQuery.of(context).size.width,
@@ -445,23 +435,23 @@ class _MyProfilePostState extends State<MyProfilePost>
                             ],
                           ),
                         ),
-                        Container(
-                          height: 35,
-                          alignment: Alignment.center,
-                          width: MediaQuery.of(context).size.width,
-                          margin: EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                              color: Color(0xff3E7EFF),
-                              borderRadius: BorderRadius.circular(28)),
-                          child: InkWell(
-                            onTap: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          //VideoCompress()
-                                          AddNewPost()));
-                            },
+                        InkWell(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        //VideoCompress()
+                                        AddNewPost()));
+                          },
+                          child: Container(
+                            height: 35,
+                            alignment: Alignment.center,
+                            width: MediaQuery.of(context).size.width,
+                            margin: EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                                color: Color(0xff3E7EFF),
+                                borderRadius: BorderRadius.circular(28)),
                             child: Text(
                               "Add Post",
                               style: TextStyle(color: Colors.white),
@@ -632,39 +622,39 @@ class _MyProfilePostState extends State<MyProfilePost>
     );
   }
 
-  Widget get buildTabBar {
-    return Container(
-      height: 48,
-      width: double.infinity,
-      padding: EdgeInsets.all(4),
-      margin: EdgeInsets.symmetric(horizontal: 28),
-      // .add(
-      //   EdgeInsets.only(bottom: 24),
-      // ),
-      decoration: BoxDecoration(
-        color: Color(0xFFF4F3F8),
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: TabBar(
-        labelColor: Colors.blue,
-        unselectedLabelColor: Colors.black,
-        indicatorSize: TabBarIndicatorSize.tab,
-        indicator: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(8),
-        ),
-        tabs: [
-          Tab(
-            icon: Icon(CupertinoIcons.rectangle_grid_1x2_fill),
-          ),
-          // Tab(
-          //   child: Icon(CupertinoIcons.rectangle_grid_2x2_fill),
-          // ),
-        ],
-        controller: _tabController,
-      ),
-    );
-  }
+  // Widget get buildTabBar {
+  //   return Container(
+  //     height: 48,
+  //     width: double.infinity,
+  //     padding: EdgeInsets.all(4),
+  //     margin: EdgeInsets.symmetric(horizontal: 28),
+  //     // .add(
+  //     //   EdgeInsets.only(bottom: 24),
+  //     // ),
+  //     decoration: BoxDecoration(
+  //       color: Color(0xFFF4F3F8),
+  //       borderRadius: BorderRadius.circular(10),
+  //     ),
+  //     child: TabBar(
+  //       labelColor: Colors.blue,
+  //       unselectedLabelColor: Colors.black,
+  //       indicatorSize: TabBarIndicatorSize.tab,
+  //       indicator: BoxDecoration(
+  //         color: Colors.white,
+  //         borderRadius: BorderRadius.circular(8),
+  //       ),
+  //       tabs: [
+  //         Tab(
+  //           icon: Icon(CupertinoIcons.rectangle_grid_1x2_fill),
+  //         ),
+  //         // Tab(
+  //         //   child: Icon(CupertinoIcons.rectangle_grid_2x2_fill),
+  //         // ),
+  //       ],
+  //       controller: _tabController,
+  //     ),
+  //   );
+  // }
 
   Widget buildFollowingItem({required String text, required String value}) {
     return Column(

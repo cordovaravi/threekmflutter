@@ -688,14 +688,26 @@ class _NewsCardState extends State<NewsCard> {
                       height: 254,
                       width: MediaQuery.of(context).size.width,
                       child: VideoWidget(
+                          isVimeo: newsData.posts![widget.index].videos!.first
+                                      .player ==
+                                  "vimeo"
+                              ? true
+                              : false,
+                          vimeoID: newsData.posts![widget.index].videos!.first
+                                      .player ==
+                                  "vimeo"
+                              ? newsData
+                                  .posts![widget.index].videos!.first.vimeoUrl!
+                                  .split("/")
+                                  .last
+                              : "",
                           thubnail: newsData.posts![widget.index].videos!.first
                                   .thumbnail!.isNotEmpty
                               ? newsData
                                   .posts![widget.index].videos!.first.thumbnail
                                   .toString()
                               : '',
-                          url: newsData.posts![widget.index].videos!.first.src
-                              .toString(),
+                          url: newsData.posts![widget.index].videos!.first.src.toString(),
                           play: false),
                     ),
                   ]),

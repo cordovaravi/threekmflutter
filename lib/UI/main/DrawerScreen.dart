@@ -4,7 +4,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:threekm/UI/Language/SelectLanguage.dart';
 import 'package:threekm/UI/main/AddPost/AddNewPost.dart';
 import 'package:threekm/UI/main/Profile/MyProfilePost.dart';
 import 'package:threekm/UI/main/Profile/Profilepage.dart';
@@ -14,6 +13,7 @@ import 'package:threekm/UI/shop/cart/wishlist.dart';
 import 'package:threekm/UI/shop/checkout/past_order.dart';
 import 'package:threekm/UI/walkthrough/splash_screen.dart';
 import 'package:threekm/localization/localize.dart';
+import 'package:threekm/providers/Global/logged_in_or_not.dart';
 import 'package:threekm/providers/ProfileInfo/ProfileInfo_Provider.dart';
 import 'package:threekm/providers/main/AthorProfile_Provider.dart';
 import 'package:threekm/utils/screen_util.dart';
@@ -281,21 +281,21 @@ class _CustomDrawerState extends State<CustomDrawer> {
                     "",
               ),
             ),
-            SizedBox(
-              height: 24,
-            ),
-            CustomDrawerItem(
-              icon: Icons.g_translate_outlined,
-              label: AppLocalizations.of(context)
-                      ?.translate("profile_change_language")
-                      ?.toUpperCase() ??
-                  "",
-            ).onTap(() {
-              Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(builder: (context) => SelectLanguage()),
-                  (route) => false);
-            }),
+            // SizedBox(
+            //   height: 24,
+            // ),
+            // CustomDrawerItem(
+            //   icon: Icons.g_translate_outlined,
+            //   label: AppLocalizations.of(context)
+            //           ?.translate("profile_change_language")
+            //           ?.toUpperCase() ??
+            //       "",
+            // ).onTap(() {
+            //   Navigator.pushAndRemoveUntil(
+            //       context,
+            //       MaterialPageRoute(builder: (context) => SelectLanguage()),
+            //       (route) => false);
+            // }),
             SizedBox(
               height: 24,
             ),
@@ -321,6 +321,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                   SharedPreferences prefs =
                       await SharedPreferences.getInstance();
                   await prefs.clear();
+
                   Navigator.pushAndRemoveUntil(
                       context,
                       MaterialPageRoute(builder: (context) => SplashScreen()),

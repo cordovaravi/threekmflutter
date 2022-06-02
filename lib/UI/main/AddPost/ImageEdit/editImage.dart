@@ -187,7 +187,8 @@ class _EditImageState extends State<EditImage> {
 
 class LocalPlayer extends StatefulWidget {
   final String url;
-  LocalPlayer({required this.url, Key? key}) : super(key: key);
+  LocalPlayer({required this.url, Key? key, required String VideoURI})
+      : super(key: key);
 
   @override
   _LocalPlayerState createState() => _LocalPlayerState();

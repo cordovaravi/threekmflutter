@@ -592,6 +592,26 @@ class _NewsPostCardState extends State<NewsPostCard>
                                                               .size
                                                               .width,
                                                           child: VideoWidget(
+                                                              isVimeo: newsData
+                                                                          .videos!
+                                                                          .first
+                                                                          .player ==
+                                                                      "vimeo"
+                                                                  ? true
+                                                                  : false,
+                                                              vimeoID: newsData
+                                                                          .videos!
+                                                                          .first
+                                                                          .player ==
+                                                                      "vimeo"
+                                                                  ? newsData
+                                                                      .videos!
+                                                                      .first
+                                                                      .vimeoUrl!
+                                                                      .split(
+                                                                          "/")
+                                                                      .last
+                                                                  : "",
                                                               thubnail: '',
                                                               url: templist[
                                                                       index]
@@ -637,6 +657,25 @@ class _NewsPostCardState extends State<NewsPostCard>
                                                     )
                                                   : newsData.videos!.length > 0
                                                       ? VideoWidget(
+                                                          isVimeo: newsData
+                                                                      .videos!
+                                                                      .first
+                                                                      .player ==
+                                                                  "vimeo"
+                                                              ? true
+                                                              : false,
+                                                          vimeoID: newsData
+                                                                      .videos!
+                                                                      .first
+                                                                      .player ==
+                                                                  "vimeo"
+                                                              ? newsData
+                                                                  .videos!
+                                                                  .first
+                                                                  .vimeoUrl!
+                                                                  .split("/")
+                                                                  .last
+                                                              : "",
                                                           thubnail: newsData
                                                                       .videos
                                                                       ?.first
@@ -1226,6 +1265,25 @@ class _NewsPostCardState extends State<NewsPostCard>
                                                               .size
                                                               .width,
                                                       child: VideoWidget(
+                                                          isVimeo: newsData
+                                                                      .videos!
+                                                                      .first
+                                                                      .player ==
+                                                                  "vimeo"
+                                                              ? true
+                                                              : false,
+                                                          vimeoID: newsData
+                                                                      .videos!
+                                                                      .first
+                                                                      .player ==
+                                                                  "vimeo"
+                                                              ? newsData
+                                                                  .videos!
+                                                                  .first
+                                                                  .vimeoUrl!
+                                                                  .split("/")
+                                                                  .last
+                                                              : "",
                                                           thubnail: '',
                                                           url: templist[index]
                                                               .toString(),
@@ -1266,6 +1324,19 @@ class _NewsPostCardState extends State<NewsPostCard>
                                             )
                                           : newsData.videos!.length > 0
                                               ? VideoWidget(
+                                                  isVimeo: newsData.videos!
+                                                              .first.player ==
+                                                          "vimeo"
+                                                      ? true
+                                                      : false,
+                                                  vimeoID: newsData.videos!
+                                                              .first.player ==
+                                                          "vimeo"
+                                                      ? newsData.videos!.first
+                                                          .vimeoUrl!
+                                                          .split("/")
+                                                          .last
+                                                      : "",
                                                   thubnail: newsData
                                                               .videos
                                                               ?.first

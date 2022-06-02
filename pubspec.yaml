@@ -50,8 +50,8 @@ dependencies:
   image_editor: ^1.0.2
   hive: ^2.0.5
   timeago: ^3.1.0
-  flutter_zoom_drawer: ^2.1.2
-  hidden_drawer_menu: ^3.0.1
+  #flutter_zoom_drawer: ^2.1.2
+ # hidden_drawer_menu: ^3.0.1
   light_compressor: ^1.2.2
   sliding_up_panel: ^2.0.0+1
   #firebase
@@ -90,6 +90,10 @@ dependencies:
   flutter_rating_bar:
   timelines:
   positioned_tap_detector_2: ^1.0.4
+  webview_flutter: 
+  flutter_html:
+  lazy_load_scrollview: ^1.3.0
+  
 
 dev_dependencies:
   flutter_test:
@@ -116,6 +120,7 @@ flutter:
     - i18n/mr.json
     - assets/shopImg/
     - assets/BusinessesImg/
+    - assets/dayzero/
     #- buzzer.mp3
 
   # An image asset can refer to one or more resolution-specific "variants", see

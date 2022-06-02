@@ -19,6 +19,7 @@ import 'package:threekm/UI/shop/product/product_details.dart';
 import 'package:threekm/UI/shop/product_listing.dart';
 import 'package:threekm/main.dart';
 import 'package:threekm/providers/FCM/fcm_sendToken_Provider.dart';
+import 'package:threekm/providers/Global/logged_in_or_not.dart';
 import 'package:uni_links/uni_links.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
@@ -71,6 +72,7 @@ class _SplashScreenState extends State<SplashScreen> {
     Future.microtask(() {
       getDeviceId();
       openBox();
+      context.read<CheckLoginProvider>().getAuthStatus();
     });
     super.initState();
     handleDeepLink();

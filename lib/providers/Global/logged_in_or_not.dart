@@ -14,3 +14,17 @@ Future<bool> getAuthStatus() async {
 NaviagateToLogin(BuildContext context) {
   Navigator.push(context, MaterialPageRoute(builder: (context) => SignUp()));
 }
+
+class CheckLoginProvider extends ChangeNotifier {
+  bool _isLogedIn = false;
+  bool get isLogedIn => _isLogedIn;
+
+  Future<Null> getAuthStatus() async {
+    SharedPreferences _prefs = await SharedPreferences.getInstance();
+    String? token = _prefs.getString("token");
+    if (token != null) {
+      _isLogedIn = true;
+      notifyListeners();
+    }
+  }
+}
