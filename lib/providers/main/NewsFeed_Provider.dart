@@ -25,8 +25,8 @@ class NewsFeedProvider extends ChangeNotifier {
         json.encode({"lat": 18.555217, "lng": 73.799742, "lang": languageCode});
     final response = await _apiProvider.post(feedApi, requestJson);
     if (response["status"] == "success") {
-      print(response);
-      _newsFeedBottomModel = NewsFeedBottomModel.fromJson(response);
+      _newsFeedBottomModel = await NewsFeedBottomModel.fromJson(response);
+      print(response['data']['result']['posts'][0]);
       _isLoading = false;
       notifyListeners();
     }
