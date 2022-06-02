@@ -116,14 +116,14 @@ class SinglePostLoading extends StatelessWidget {
                     ),
                   ],
                 ),
-                Positioned(
-                  bottom: 0,
-                  child: Container(
-                    color: Colors.blueAccent,
-                    height: MediaQuery.of(context).size.height * 0.1,
-                    width: MediaQuery.of(context).size.width,
-                  ),
-                ),
+                // Positioned(
+                //   bottom: 0,
+                //   child: Container(
+                //     color: Colors.blueAccent,
+                //     height: MediaQuery.of(context).size.height * 0.1,
+                //     width: MediaQuery.of(context).size.width,
+                //   ),
+                // ),
                 Positioned(
                   bottom: MediaQuery.of(context).size.height * 0.06,
                   child: Container(

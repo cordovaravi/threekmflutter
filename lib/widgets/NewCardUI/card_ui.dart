@@ -34,7 +34,7 @@ import 'package:threekm/widgets/NewCardUI/image_layout.dart';
 
 class CardUI extends StatefulWidget {
   const CardUI({Key? key, required this.data}) : super(key: key);
-  final Post data;
+  final data;
 
   @override
   State<CardUI> createState() => _CardUIState();
@@ -145,9 +145,13 @@ class _CardUIState extends State<CardUI> {
                           if (await getAuthStatus()) {
                             if (data.author!.isFollowed == false ||
                                 data.author!.isFollowed == null) {
-                              newsFeedProvider.followUser(
-                                data.author!.id!.toInt(),
-                              );
+                              newsFeedProvider
+                                  .followUser(
+                                    data.author!.id!.toInt(),
+                                  )
+                                  .whenComplete(() => setState(() {
+                                        data.author?.isFollowed = true;
+                                      }));
                             }
                           } else {
                             NaviagateToLogin(
@@ -207,7 +211,7 @@ class _CardUIState extends State<CardUI> {
           ),
           data.submittedStory!.length > 170
               ? HtmlWidget(
-                  '${data.submittedStory!.characters.take(170)}<a id="seemore" href="#"> ....See More</a>',
+                  '${data.submittedStory!.substring(0, 170)}<a id="seemore" href="#"> ....See More</a>',
                   onTapUrl: (string) {
                     Navigator.push(context,
                         MaterialPageRoute(builder: (BuildContext context) {
