@@ -83,6 +83,7 @@ class _TabBarNavigationState extends State<TabBarNavigation>
     Future.delayed(Duration.zero, () {
       context.read<AutthorProfileProvider>().getSelfProfile();
       context.read<AppLanguage>().fetchLocale();
+      context.read<ProfileInfoProvider>().getProfileBasicData();
       //context.read<CheckLoginProvider>().getAuthStatus();
     });
     super.initState();
