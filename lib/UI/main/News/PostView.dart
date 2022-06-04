@@ -128,6 +128,7 @@ class _PostviewState extends State<Postview> {
                         ),
                         child: SingleChildScrollView(
                           child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Padding(
                                 padding: EdgeInsets.only(
@@ -389,11 +390,16 @@ class _PostviewState extends State<Postview> {
                               //   ),
 
                               SizedBox(height: 20),
-                              Text(
-                                newsData.submittedHeadline.toString(),
-                                style:
-                                    ThreeKmTextConstants.tk14PXLatoBlackMedium,
-                                textAlign: TextAlign.center,
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  left: 16,
+                                ),
+                                child: Text(
+                                  newsData.submittedHeadline.toString(),
+                                  style: ThreeKmTextConstants
+                                      .tk14PXPoppinsBlackSemiBold,
+                                  textAlign: TextAlign.left,
+                                ),
                               ),
                               Padding(
                                 padding: EdgeInsets.only(
@@ -453,9 +459,10 @@ class _PostviewState extends State<Postview> {
                                         top: 2, right: 16, bottom: 2),
                                     child: Row(
                                       children: [
-                                        Text(newsData.comments!.length
-                                                .toString() +
-                                            ' Comments'),
+                                        if (newsData.comments!.length > 0)
+                                          Text(newsData.comments!.length
+                                                  .toString() +
+                                              ' Comments'),
                                         SizedBox(
                                           width: 10,
                                         ),
