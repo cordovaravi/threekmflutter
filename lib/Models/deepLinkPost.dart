@@ -168,14 +168,26 @@ class Video {
   Video({
     this.src,
     this.thumbnail,
+    this.player,
+    this.vimeoUrl,
+    this.width,
+    this.height,
   });
 
   String? src;
   String? thumbnail;
+  String? player;
+  String? vimeoUrl;
+  int? width;
+  int? height;
 
   factory Video.fromJson(Map<String, dynamic> json) => Video(
-        src: json["src"],
-        thumbnail: json["thumbnail"],
+        src: json["src"] == null ? null : json["src"],
+        thumbnail: json["thumbnail"] == null ? null : json["thumbnail"],
+        player: json["player"] == null ? null : json["player"],
+        vimeoUrl: json["vimeo_url"] == null ? null : json["vimeo_url"],
+        width: json["width"] == null ? null : json["width"],
+        height: json["height"] == null ? null : json["height"],
       );
 }
 

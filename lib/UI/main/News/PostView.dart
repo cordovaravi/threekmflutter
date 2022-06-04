@@ -247,10 +247,21 @@ class _PostviewState extends State<Postview> {
                                                               .size
                                                               .width,
                                                       child: VideoWidget(
-                                                          isVimeo: false,
+                                                          isVimeo: newsData
+                                                                      .videos?[
+                                                                          index]
+                                                                      .vimeoUrl !=
+                                                                  null
+                                                              ? true
+                                                              : false,
                                                           thubnail: '',
                                                           url: templist[index]
                                                               .toString(),
+                                                          vimeoID: newsData
+                                                              .videos?[index]
+                                                              .vimeoUrl
+                                                              ?.split("/")
+                                                              .last,
                                                           play: false),
                                                     )
                                                   : CachedNetworkImage(
@@ -285,7 +296,11 @@ class _PostviewState extends State<Postview> {
                                                   '${newsData.images!.first}',
                                             )
                                           : VideoWidget(
-                                              isVimeo: false,
+                                              isVimeo: newsData.videos?.first
+                                                          .vimeoUrl !=
+                                                      null
+                                                  ? true
+                                                  : false,
                                               thubnail: newsData.videos?.first
                                                           .thumbnail !=
                                                       null
@@ -296,6 +311,10 @@ class _PostviewState extends State<Postview> {
                                               url: newsData.videos!.first.src
                                                   .toString(),
                                               fromSinglePage: true,
+                                              vimeoID: newsData
+                                                  .videos?.first.vimeoUrl
+                                                  ?.split("/")
+                                                  .last,
                                               play: false),
                                     ),
                               newsData.images != null &&

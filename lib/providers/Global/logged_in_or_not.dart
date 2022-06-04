@@ -12,7 +12,8 @@ Future<bool> getAuthStatus() async {
 }
 
 NaviagateToLogin(BuildContext context) {
-  Navigator.push(context, MaterialPageRoute(builder: (context) => SignUp()));
+  Navigator.pushReplacement(
+      context, MaterialPageRoute(builder: (context) => SignUp()));
 }
 
 class CheckLoginProvider extends ChangeNotifier {

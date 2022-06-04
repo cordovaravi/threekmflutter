@@ -44,6 +44,7 @@ import 'package:provider/provider.dart';
 import 'package:threekm/providers/main/home2_provider.dart';
 
 import 'package:threekm/utils/threekm_textstyles.dart';
+import 'package:threekm/widgets/video_widget.dart';
 import 'package:threekm/widgets/vimeoPlayer.dart';
 
 import 'Widgets/Adspopup.dart';
@@ -557,9 +558,11 @@ class _NewsTabState extends State<NewsTab> with AutomaticKeepAliveClientMixin {
                                                                 MaterialPageRoute(
                                                                     builder:
                                                                         (context) =>
-                                                                            LocalPlayer(
-                                                                              VideoURI: finalPost.banners![bannerIndex].imageswcta!.first.video.toString(),
-                                                                              url: '',
+                                                                            VideoWidget(
+                                                                              url: finalPost.banners![bannerIndex].imageswcta!.first.video.toString(),
+                                                                              play: false,
+                                                                              isVimeo: finalPost.banners?[bannerIndex].imageswcta?.first.vimeoUrl != null ? true : false,
+                                                                              vimeoID: finalPost.banners?[bannerIndex].imageswcta?.first.vimeoUrl?.split("/").last,
                                                                             )
                                                                     // VimeoPlayerPage(
                                                                     //     VimeoUri: finalPost

@@ -13,7 +13,6 @@ import 'package:threekm/UI/shop/cart/wishlist.dart';
 import 'package:threekm/UI/shop/checkout/past_order.dart';
 import 'package:threekm/UI/walkthrough/splash_screen.dart';
 import 'package:threekm/localization/localize.dart';
-import 'package:threekm/providers/Global/logged_in_or_not.dart';
 import 'package:threekm/providers/ProfileInfo/ProfileInfo_Provider.dart';
 import 'package:threekm/providers/main/AthorProfile_Provider.dart';
 import 'package:threekm/utils/screen_util.dart';
@@ -22,7 +21,6 @@ import 'package:threekm/utils/util_methods.dart';
 import 'package:threekm/widgets/custom_button.dart';
 import 'package:provider/provider.dart';
 import '../Help_Supportpage.dart';
-import 'AddPost/ImageEdit/editImage.dart';
 
 class DrawerScreen extends StatefulWidget {
   final String userName;
@@ -339,7 +337,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
             SizedBox(
               height: 24,
             ),
-            Text("version: 5.0.6"),
+            Text("version: 5.0.7"),
             SizedBox(
               height: 15,
             ),

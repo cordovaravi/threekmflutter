@@ -12,7 +12,6 @@ import 'package:threekm/UI/main/DrawerScreen.dart';
 import 'package:threekm/UI/main/News/uppartabs.dart';
 import 'package:threekm/UI/main/Profile/MyProfilePost.dart';
 import 'package:threekm/UI/shop/checkout/past_order.dart';
-import 'package:threekm/providers/Global/logged_in_or_not.dart';
 import 'package:threekm/providers/ProfileInfo/ProfileInfo_Provider.dart';
 
 import 'package:threekm/providers/localization_Provider/appLanguage_provider.dart';
