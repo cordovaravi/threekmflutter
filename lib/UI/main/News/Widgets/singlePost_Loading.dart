@@ -25,7 +25,9 @@ class SinglePostLoading extends StatelessWidget {
                       height: 44,
                     ),
                     InkWell(
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
                       child: Container(
                         height: 40,
                         width: 40,

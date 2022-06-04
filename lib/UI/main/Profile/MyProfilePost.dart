@@ -27,6 +27,7 @@ import 'package:threekm/commenwidgets/commenwidget.dart';
 import 'package:threekm/providers/main/AthorProfile_Provider.dart';
 import 'package:threekm/providers/main/LikeList_Provider.dart';
 import 'package:threekm/providers/main/comment_Provider.dart';
+import 'package:threekm/widgets/NewCardUI/card_ui.dart';
 import 'package:threekm/widgets/reactions_assets.dart' as reactionAssets;
 
 import 'package:threekm/utils/utils.dart';
@@ -753,289 +754,300 @@ class _NewsCardState extends State<NewsCard> {
   Widget build(BuildContext context) {
     final newsData = widget.selfProfileModel.data!.result;
     return Stack(alignment: AlignmentDirectional.center, children: [
-      Padding(
-        padding: EdgeInsets.only(left: 10, right: 10, top: 8, bottom: 8),
-        child: Column(mainAxisSize: MainAxisSize.min, children: [
-          Container(
-            margin: EdgeInsets.only(bottom: 10),
-            decoration: BoxDecoration(
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(color: Color(0xff32335E26), blurRadius: 8),
-                ],
-                borderRadius: BorderRadius.circular(10)),
-            child: Container(
-                decoration: BoxDecoration(
-                    color: newsData!.posts![widget.index].status == "rejected"
-                        ? Color(0xff0F0F2D).withOpacity(0.75)
-                        : Colors.white,
-                    borderRadius: BorderRadius.circular(10)),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(10.0),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                              margin: EdgeInsets.only(right: 10),
-                              height: 50,
-                              width: 50,
-                              child: Container(
-                                  height: 50,
-                                  width: 50,
-                                  decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      image: DecorationImage(
-                                          fit: BoxFit.cover,
-                                          image: CachedNetworkImageProvider(
-                                              newsData.author!.image.toString())
-                                          //newsData.author!.image.toString())
-                                          )),
-                                  child:
-                                      //newsData.isVerified == true
-                                      Stack(
-                                    alignment: AlignmentDirectional.center,
-                                    children: [
-                                      // newsData.author!.isVerified == true
-                                      //     ? Positioned(
-                                      //         left: -10,
-                                      //         child: Image.asset(
-                                      //           'assets/verified.png',
-                                      //           height: 15,
-                                      //           width: 15,
-                                      //           fit: BoxFit.cover,
-                                      //         ))
-                                      //     : SizedBox.shrink(),
-                                      newsData.posts![widget.index].status ==
-                                              "rejected"
-                                          ? Container(
-                                              height: 50,
-                                              width: 50,
-                                              decoration: BoxDecoration(
-                                                shape: BoxShape.circle,
-                                                color: Color(0xff0F0F2D)
-                                                    .withOpacity(0.75),
-                                              ),
-                                            )
-                                          : SizedBox.shrink()
-                                    ],
-                                  )
-                                  //: Container(),
-                                  )),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            //mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Container(
-                                width: MediaQuery.of(context).size.width * 0.35,
-                                child: Text(
-                                  newsData.author!.name.toString(),
-                                  style: ThreeKmTextConstants
-                                      .tk14PXPoppinsBlackBold,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                              Text(newsData.posts![widget.index].createdDate
-                                      .toString()
-                                  //newsData.createdDate.toString()
-                                  )
-                            ],
-                          ),
-                          SizedBox(
-                            width: 10,
-                          ),
-                          Spacer(),
-                          showPopMenu(
-                              newsData.posts![widget.index].postId.toString(),
-                              newsData)
-                        ],
-                      ),
-                    ),
-                    //pic
-                    if (newsData.posts![widget.index].images != null &&
-                        newsData.posts![widget.index].images!.length > 0)
-                      CachedNetworkImage(
-                        color:
-                            newsData.posts![widget.index].status == "rejected"
-                                ? Color(0xff0F0F2D).withOpacity(0.75)
-                                : null,
-                        height: 254,
-                        width: 338,
-                        fit: BoxFit.fill,
-                        imageUrl:
-                            '${newsData.posts![widget.index].images!.first}',
-                      )
-                    else if (newsData.posts![widget.index].videos != null &&
-                        newsData.posts![widget.index].videos!.length > 0)
-                      Stack(children: [
-                        Container(
-                          height: 254,
-                          width: MediaQuery.of(context).size.width,
-                          color: Color(0xff0F0F2D).withOpacity(0.75),
-                        ),
-                      ]),
-                    Row(children: [
-                      newsData.posts![widget.index].status != "rejected" &&
-                              newsData.posts![widget.index].likes != 0
-                          ? Padding(
-                              padding:
-                                  EdgeInsets.only(top: 5, left: 5, bottom: 2),
-                              child: InkWell(
-                                onTap: () {
-                                  _showLikedBottomModalSheet(
-                                      newsData.posts![widget.index].postId!
-                                          .toInt(),
-                                      newsData.posts![widget.index].likes);
-                                },
-                                child: Row(
-                                  children: [
-                                    Text('👍 ❤️ '),
-                                    Container(
-                                      height: 30,
-                                      width: 30,
-                                      decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          color: Color(0xffFC5E6A)),
-                                      child: Center(
-                                          child: Text('+' +
-                                              newsData
-                                                  .posts![widget.index].likes
-                                                  .toString())),
-                                    )
-                                  ],
-                                ),
-                              ))
-                          : SizedBox.shrink(),
-                      Spacer(),
-                      Padding(
-                          padding: EdgeInsets.only(top: 5, right: 5, bottom: 2),
-                          child: Text(
-                              newsData.posts![widget.index].views.toString() +
-                                  ' Views'))
-                    ]),
-                    Text(
-                      newsData.posts![widget.index].submittedHeadline
-                          .toString(),
-                      style: ThreeKmTextConstants.tk14PXLatoBlackMedium,
-                      textAlign: TextAlign.center,
-                    ),
-                    SizedBox(
-                      height: 8,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: HtmlWidget(newsData
-                          .posts![widget.index].submittedStory
-                          .toString()),
-                    ),
+      CardUI(data: newsData!.posts![widget.index], isfollow: false),
+      if (newsData.posts![widget.index].status == "rejected")
+        Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(8),
+            color: Color(0xff0F0F2D).withOpacity(0.75),
+          ),
+          margin: EdgeInsets.only(top: 20, left: 20, right: 20),
+          width: double.infinity,
+          height: 550,
+        ),
+      // Padding(
+      //   padding: EdgeInsets.only(left: 10, right: 10, top: 8, bottom: 8),
+      //   child: Column(mainAxisSize: MainAxisSize.min, children: [
+      //     Container(
+      //       margin: EdgeInsets.only(bottom: 10),
+      //       decoration: BoxDecoration(
+      //           color: Colors.white,
+      //           boxShadow: [
+      //             BoxShadow(color: Color(0xff32335E26), blurRadius: 8),
+      //           ],
+      //           borderRadius: BorderRadius.circular(10)),
+      //       child: Container(
+      //           decoration: BoxDecoration(
+      //               color: newsData!.posts![widget.index].status == "rejected"
+      //                   ? Color(0xff0F0F2D).withOpacity(0.75)
+      //                   : Colors.white,
+      //               borderRadius: BorderRadius.circular(10)),
+      //           child: Column(
+      //             mainAxisAlignment: MainAxisAlignment.start,
+      //             children: [
+      //               Padding(
+      //                 padding: const EdgeInsets.all(10.0),
+      //                 child: Row(
+      //                   crossAxisAlignment: CrossAxisAlignment.start,
+      //                   children: [
+      //                     Container(
+      //                         margin: EdgeInsets.only(right: 10),
+      //                         height: 50,
+      //                         width: 50,
+      //                         child: Container(
+      //                             height: 50,
+      //                             width: 50,
+      //                             decoration: BoxDecoration(
+      //                                 shape: BoxShape.circle,
+      //                                 image: DecorationImage(
+      //                                     fit: BoxFit.cover,
+      //                                     image: CachedNetworkImageProvider(
+      //                                         newsData.author!.image.toString())
+      //                                     //newsData.author!.image.toString())
+      //                                     )),
+      //                             child:
+      //                                 //newsData.isVerified == true
+      //                                 Stack(
+      //                               alignment: AlignmentDirectional.center,
+      //                               children: [
+      //                                 // newsData.author!.isVerified == true
+      //                                 //     ? Positioned(
+      //                                 //         left: -10,
+      //                                 //         child: Image.asset(
+      //                                 //           'assets/verified.png',
+      //                                 //           height: 15,
+      //                                 //           width: 15,
+      //                                 //           fit: BoxFit.cover,
+      //                                 //         ))
+      //                                 //     : SizedBox.shrink(),
+      //                                 newsData.posts![widget.index].status ==
+      //                                         "rejected"
+      //                                     ? Container(
+      //                                         height: 50,
+      //                                         width: 50,
+      //                                         decoration: BoxDecoration(
+      //                                           shape: BoxShape.circle,
+      //                                           color: Color(0xff0F0F2D)
+      //                                               .withOpacity(0.75),
+      //                                         ),
+      //                                       )
+      //                                     : SizedBox.shrink()
+      //                               ],
+      //                             )
+      //                             //: Container(),
+      //                             )),
+      //                     Column(
+      //                       crossAxisAlignment: CrossAxisAlignment.start,
+      //                       //mainAxisAlignment: MainAxisAlignment.center,
+      //                       children: [
+      //                         Container(
+      //                           width: MediaQuery.of(context).size.width * 0.35,
+      //                           child: Text(
+      //                             newsData.author!.name.toString(),
+      //                             style: ThreeKmTextConstants
+      //                                 .tk14PXPoppinsBlackBold,
+      //                             overflow: TextOverflow.ellipsis,
+      //                           ),
+      //                         ),
+      //                         Text(newsData.posts![widget.index].createdDate
+      //                                 .toString()
+      //                             //newsData.createdDate.toString()
+      //                             )
+      //                       ],
+      //                     ),
+      //                     SizedBox(
+      //                       width: 10,
+      //                     ),
+      //                     Spacer(),
+      //                     showPopMenu(
+      //                         newsData.posts![widget.index].postId.toString(),
+      //                         newsData)
+      //                   ],
+      //                 ),
+      //               ),
+      //               //pic
+      //               if (newsData.posts![widget.index].images != null &&
+      //                   newsData.posts![widget.index].images!.length > 0)
+      //                 CachedNetworkImage(
+      //                   color:
+      //                       newsData.posts![widget.index].status == "rejected"
+      //                           ? Color(0xff0F0F2D).withOpacity(0.75)
+      //                           : null,
+      //                   height: 254,
+      //                   width: 338,
+      //                   fit: BoxFit.fill,
+      //                   imageUrl:
+      //                       '${newsData.posts![widget.index].images!.first}',
+      //                 )
+      //               else if (newsData.posts![widget.index].videos != null &&
+      //                   newsData.posts![widget.index].videos!.length > 0)
+      //                 Stack(children: [
+      //                   Container(
+      //                     height: 254,
+      //                     width: MediaQuery.of(context).size.width,
+      //                     color: Color(0xff0F0F2D).withOpacity(0.75),
+      //                   ),
+      //                 ]),
+      //               Row(children: [
+      //                 newsData.posts![widget.index].status != "rejected" &&
+      //                         newsData.posts![widget.index].likes != 0
+      //                     ? Padding(
+      //                         padding:
+      //                             EdgeInsets.only(top: 5, left: 5, bottom: 2),
+      //                         child: InkWell(
+      //                           onTap: () {
+      //                             _showLikedBottomModalSheet(
+      //                                 newsData.posts![widget.index].postId!
+      //                                     .toInt(),
+      //                                 newsData.posts![widget.index].likes);
+      //                           },
+      //                           child: Row(
+      //                             children: [
+      //                               Text('👍 ❤️ '),
+      //                               Container(
+      //                                 height: 30,
+      //                                 width: 30,
+      //                                 decoration: BoxDecoration(
+      //                                     shape: BoxShape.circle,
+      //                                     color: Color(0xffFC5E6A)),
+      //                                 child: Center(
+      //                                     child: Text('+' +
+      //                                         newsData
+      //                                             .posts![widget.index].likes
+      //                                             .toString())),
+      //                               )
+      //                             ],
+      //                           ),
+      //                         ))
+      //                     : SizedBox.shrink(),
+      //                 Spacer(),
+      //                 Padding(
+      //                     padding: EdgeInsets.only(top: 5, right: 5, bottom: 2),
+      //                     child: Text(
+      //                         newsData.posts![widget.index].views.toString() +
+      //                             ' Views'))
+      //               ]),
+      //               Text(
+      //                 newsData.posts![widget.index].submittedHeadline
+      //                     .toString(),
+      //                 style: ThreeKmTextConstants.tk14PXLatoBlackMedium,
+      //                 textAlign: TextAlign.center,
+      //               ),
+      //               SizedBox(
+      //                 height: 8,
+      //               ),
+      //               Padding(
+      //                 padding: const EdgeInsets.all(16.0),
+      //                 child: HtmlWidget(newsData
+      //                     .posts![widget.index].submittedStory
+      //                     .toString()),
+      //               ),
 
-                    SizedBox(
-                      height: 35,
-                    ),
-                  ],
-                )),
-          )
-        ]),
-      ),
-      newsData.posts![widget.index].status != "rejected"
-          ? Positioned(
-              bottom: 0,
-              child: Container(
-                height: 60,
-                width: 230,
-                child: ButtonBar(children: [
-                  Container(
-                    height: 60,
-                    width: 60,
-                    child: AuthorEmotionButton(
-                        isLiked: newsData.posts![widget.index].isLiked!,
-                        initalReaction: newsData.posts![widget.index].isLiked!
-                            ? Reaction(
-                                icon: Image.asset("assets/thumbs_up_red.png"))
-                            : Reaction(
-                                icon: Image.asset("assets/thumbs-up.png")),
-                        selectedReaction: newsData.posts![widget.index].isLiked!
-                            ? Reaction(
-                                icon: Image.asset("assets/thumbs_up_red.png"))
-                            : Reaction(
-                                icon: Image.asset("assets/thumbs-up.png")),
-                        postId: newsData.posts![widget.index].postId!.toInt(),
-                        reactions: reactionAssets.reactions),
-                    decoration: BoxDecoration(
-                        color: Colors.white,
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black26,
-                            blurRadius: 8,
-                          )
-                        ]),
-                  ),
-                  Container(
-                    height: 60,
-                    width: 60,
-                    child: IconButton(
-                        onPressed: () {
-                          _showCommentsBottomModalSheet(context,
-                              newsData.posts![widget.index].postId!.toInt());
-                        },
-                        icon: Image.asset('assets/icons-topic.png',
-                            fit: BoxFit.cover)),
-                    decoration: BoxDecoration(
-                        color: Colors.white,
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black26,
-                            blurRadius: 8,
-                          )
-                        ]),
-                  ),
-                  Container(
-                    height: 60,
-                    width: 60,
-                    child: IconButton(
-                        onPressed: () async {
-                          // showLoading();
-                          String imgUrl =
-                              newsData.posts![widget.index].images != null &&
-                                      newsData.posts![widget.index].images!
-                                              .length >
-                                          0
-                                  ? newsData.posts![widget.index].images!.first
-                                      .toString()
-                                  : newsData.posts![widget.index].videos!.first
-                                      .thumbnail
-                                      .toString();
-                          handleShare(
-                              newsData.author!.name.toString(),
-                              newsData.author!.image.toString(),
-                              newsData.posts![widget.index].submittedHeadline
-                                  .toString(),
-                              imgUrl,
-                              newsData.posts![widget.index].createdDate
-                                  .toString(),
-                              newsData.posts![widget.index].postId.toString());
-                        },
-                        icon: Center(
-                          child: Image.asset('assets/icons-share.png',
-                              fit: BoxFit.contain),
-                        )),
-                    decoration: BoxDecoration(
-                        color: Colors.white,
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black26,
-                            blurRadius: 8,
-                          )
-                        ]),
-                  ),
-                ]),
-              ))
-          : SizedBox.shrink(),
+      //               SizedBox(
+      //                 height: 35,
+      //               ),
+      //             ],
+      //           )),
+      //     )
+      //   ]),
+      // ),
+      // newsData.posts![widget.index].status != "rejected"
+      //     ? Positioned(
+      //         bottom: 0,
+      //         child: Container(
+      //           height: 60,
+      //           width: 230,
+      //           child: ButtonBar(children: [
+      //             Container(
+      //               height: 60,
+      //               width: 60,
+      //               child: AuthorEmotionButton(
+      //                   isLiked: newsData.posts![widget.index].isLiked!,
+      //                   initalReaction: newsData.posts![widget.index].isLiked!
+      //                       ? Reaction(
+      //                           icon: Image.asset("assets/thumbs_up_red.png"))
+      //                       : Reaction(
+      //                           icon: Image.asset("assets/thumbs-up.png")),
+      //                   selectedReaction: newsData.posts![widget.index].isLiked!
+      //                       ? Reaction(
+      //                           icon: Image.asset("assets/thumbs_up_red.png"))
+      //                       : Reaction(
+      //                           icon: Image.asset("assets/thumbs-up.png")),
+      //                   postId: newsData.posts![widget.index].postId!.toInt(),
+      //                   reactions: reactionAssets.reactions),
+      //               decoration: BoxDecoration(
+      //                   color: Colors.white,
+      //                   shape: BoxShape.circle,
+      //                   boxShadow: [
+      //                     BoxShadow(
+      //                       color: Colors.black26,
+      //                       blurRadius: 8,
+      //                     )
+      //                   ]),
+      //             ),
+      //             Container(
+      //               height: 60,
+      //               width: 60,
+      //               child: IconButton(
+      //                   onPressed: () {
+      //                     _showCommentsBottomModalSheet(context,
+      //                         newsData.posts![widget.index].postId!.toInt());
+      //                   },
+      //                   icon: Image.asset('assets/icons-topic.png',
+      //                       fit: BoxFit.cover)),
+      //               decoration: BoxDecoration(
+      //                   color: Colors.white,
+      //                   shape: BoxShape.circle,
+      //                   boxShadow: [
+      //                     BoxShadow(
+      //                       color: Colors.black26,
+      //                       blurRadius: 8,
+      //                     )
+      //                   ]),
+      //             ),
+      //             Container(
+      //               height: 60,
+      //               width: 60,
+      //               child: IconButton(
+      //                   onPressed: () async {
+      //                     // showLoading();
+      //                     String imgUrl =
+      //                         newsData.posts![widget.index].images != null &&
+      //                                 newsData.posts![widget.index].images!
+      //                                         .length >
+      //                                     0
+      //                             ? newsData.posts![widget.index].images!.first
+      //                                 .toString()
+      //                             : newsData.posts![widget.index].videos!.first
+      //                                 .thumbnail
+      //                                 .toString();
+      //                     handleShare(
+      //                         newsData.author!.name.toString(),
+      //                         newsData.author!.image.toString(),
+      //                         newsData.posts![widget.index].submittedHeadline
+      //                             .toString(),
+      //                         imgUrl,
+      //                         newsData.posts![widget.index].createdDate
+      //                             .toString(),
+      //                         newsData.posts![widget.index].postId.toString());
+      //                   },
+      //                   icon: Center(
+      //                     child: Image.asset('assets/icons-share.png',
+      //                         fit: BoxFit.contain),
+      //                   )),
+      //               decoration: BoxDecoration(
+      //                   color: Colors.white,
+      //                   shape: BoxShape.circle,
+      //                   boxShadow: [
+      //                     BoxShadow(
+      //                       color: Colors.black26,
+      //                       blurRadius: 8,
+      //                     )
+      //                   ]),
+      //             ),
+      //           ]),
+      //         ))
+      //     : SizedBox.shrink(),
       newsData.posts![widget.index].status == "rejected"
           ? Container(
               width: 235,
