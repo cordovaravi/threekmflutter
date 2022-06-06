@@ -33,8 +33,9 @@ import 'package:threekm/widgets/NewCardUI/image_layout.dart';
 // import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 
 class CardUI extends StatefulWidget {
-  const CardUI({Key? key, required this.data}) : super(key: key);
+  const CardUI({Key? key, required this.data, this.isfollow}) : super(key: key);
   final data;
+  final isfollow;
 
   @override
   State<CardUI> createState() => _CardUIState();
@@ -44,15 +45,6 @@ class _CardUIState extends State<CardUI> {
   final _formKey = GlobalKey<FormState>();
   TextEditingController _commentController = TextEditingController();
   ScreenshotController screenshotController = ScreenshotController();
-  List<String> imgdemo = [
-    "https://bakdocdn.sgp1.cdn.digitaloceanspaces.com/general/0/c4952010-db65-11ec-821e-ef41c94e4686.png",
-    "https://bakdocdn.sgp1.cdn.digitaloceanspaces.com/general/0/58f16770-dbd7-11ec-a853-c917454e9eb7.png",
-    "https://bakdocdn.sgp1.cdn.digitaloceanspaces.com/general/0/380a31f0-dc1c-11ec-9195-41f59e28f45a.png",
-    "https://bakdocdn.sgp1.cdn.digitaloceanspaces.com/general/0/d823d190-dc3b-11ec-a9e8-e913160274aa.png",
-    "https://bakdocdn.sgp1.cdn.digitaloceanspaces.com/post/0/8507d400-dc06-11ec-ad63-0f73ee49e705.png",
-    "https://bakdocdn.sgp1.cdn.digitaloceanspaces.com/post/0/84f0a280-dc06-11ec-83fd-f96bffb79d4e.png",
-    "https://bakdocdn.sgp1.cdn.digitaloceanspaces.com/post/0/82dc1a60-dc06-11ec-8ad6-1f2866c84187.png"
-  ];
 
   @override
   Widget build(BuildContext context) {
@@ -69,6 +61,7 @@ class _CardUIState extends State<CardUI> {
       padding: const EdgeInsets.only(top: 20, left: 10, right: 10),
       margin: const EdgeInsets.only(top: 20, left: 20, right: 20),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
@@ -135,16 +128,17 @@ class _CardUIState extends State<CardUI> {
                               color: Colors.black, shape: BoxShape.circle),
                         ),
                       ),
-                      InkWell(
-                        onTap: () async {
-                          // if (data.author!.isFollowed == true) {
-                          //   // print("is followed: true");
-                          //   // newsFeedProvider
-                          //   //     .unfollowUser(data.author!.id!.toInt());
-                          // } else
-                          if (await getAuthStatus()) {
-                            if (data.author!.isFollowed == false ||
-                                data.author!.isFollowed == null) {
+                      if (widget.isfollow != false)
+                        InkWell(
+                          onTap: () async {
+                            // if (data.author!.isFollowed == true) {
+                            //   // print("is followed: true");
+                            //   // newsFeedProvider
+                            //   //     .unfollowUser(data.author!.id!.toInt());
+                            // } else
+                            if (await getAuthStatus()) {
+                              // if (data.author!.isFollowed == false ||
+                              //     data.author!.isFollowed == null) {
                               newsFeedProvider
                                   .followUser(
                                     data.author!.id!.toInt(),
@@ -152,22 +146,24 @@ class _CardUIState extends State<CardUI> {
                                   .whenComplete(() => setState(() {
                                         data.author?.isFollowed = true;
                                       }));
+                              // }
+                            } else {
+                              NaviagateToLogin(
+                                context,
+                              );
                             }
-                          } else {
-                            NaviagateToLogin(
-                              context,
-                            );
-                          }
-                        },
-                        child: Text(
-                            data.author?.isFollowed == true
-                                ? 'Following'
-                                : 'Follow',
-                            style: data.author?.isFollowed == true
-                                ? ThreeKmTextConstants.tk14PXPoppinsBlackMedium
-                                    .copyWith(color: Colors.grey)
-                                : ThreeKmTextConstants.tk14PXPoppinsBlueMedium),
-                      )
+                          },
+                          child: Text(
+                              data.author?.isFollowed == true
+                                  ? 'Following'
+                                  : 'Follow',
+                              style: data.author?.isFollowed == true
+                                  ? ThreeKmTextConstants
+                                      .tk14PXPoppinsBlackMedium
+                                      .copyWith(color: Colors.grey)
+                                  : ThreeKmTextConstants
+                                      .tk14PXPoppinsBlueMedium),
+                        )
                     ],
                   )
                 ],
@@ -252,77 +248,85 @@ class _CardUIState extends State<CardUI> {
           const Divider(
             thickness: 2,
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              TextButton.icon(
-                  style: ButtonStyle(
-                      foregroundColor: MaterialStateProperty.all(Colors.black)),
-                  onPressed: () async {
-                    if (await getAuthStatus()) {
-                      if (data.isLiked == true) {
-                        newsFeedProvider.postUnLike(data.postId.toString());
+          if (data.status != "rejected")
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                TextButton.icon(
+                    style: ButtonStyle(
+                        foregroundColor:
+                            MaterialStateProperty.all(Colors.black)),
+                    onPressed: () async {
+                      if (await getAuthStatus()) {
+                        if (data.isLiked == true) {
+                          newsFeedProvider.postUnLike(data.postId.toString());
+                        } else {
+                          newsFeedProvider
+                              .postLike(data.postId.toString(), null)
+                              .whenComplete(() => setState(() {
+                                    data.isLiked = true;
+                                  }));
+                        }
                       } else {
-                        newsFeedProvider.postLike(data.postId.toString(), null);
+                        NaviagateToLogin(context);
                       }
-                    } else {
-                      NaviagateToLogin(context);
-                    }
-                  },
-                  icon: data.isLiked!
-                      ? Image.asset(
-                          "assets/like_icon.png",
-                          width: 22,
-                          height: 19,
-                        )
-                      : Image.asset(
-                          "assets/un_like_icon.png",
-                          width: 22,
-                          height: 19,
-                        ),
-                  label: Text(
-                    'Like',
-                    style: ThreeKmTextConstants.tk12PXPoppinsBlackSemiBold,
-                  )),
-              TextButton.icon(
-                  style: ButtonStyle(
-                      foregroundColor: MaterialStateProperty.all(Colors.black)),
-                  onPressed: () async {
-                    if (await getAuthStatus()) {
-                      showCommentsBottomModalSheet(
-                          context, data.postId!.toInt());
-                    } else {
-                      NaviagateToLogin(context);
-                    }
-                  },
-                  icon: Icon(Icons.comment_outlined),
-                  label: Text(
-                    'Comment',
-                    style: ThreeKmTextConstants.tk12PXPoppinsBlackSemiBold,
-                  )),
-              TextButton.icon(
-                  style: ButtonStyle(
-                      foregroundColor: MaterialStateProperty.all(Colors.black)),
-                  onPressed: () {
-                    String imgUrl =
-                        data.images != null && data.images!.length > 0
-                            ? data.images!.first.toString()
-                            : data.videos!.first.thumbnail.toString();
-                    handleShare(
-                        data.author!.name.toString(),
-                        data.author!.image.toString(),
-                        data.headline.toString(),
-                        imgUrl,
-                        data.createdDate,
-                        data.postId.toString());
-                  },
-                  icon: Icon(Icons.share_outlined),
-                  label: Text(
-                    'Share',
-                    style: ThreeKmTextConstants.tk12PXPoppinsBlackSemiBold,
-                  ))
-            ],
-          )
+                    },
+                    icon: data.isLiked!
+                        ? Image.asset(
+                            "assets/like_icon.png",
+                            width: 22,
+                            height: 19,
+                          )
+                        : Image.asset(
+                            "assets/un_like_icon.png",
+                            width: 22,
+                            height: 19,
+                          ),
+                    label: Text(
+                      'Like',
+                      style: ThreeKmTextConstants.tk12PXPoppinsBlackSemiBold,
+                    )),
+                TextButton.icon(
+                    style: ButtonStyle(
+                        foregroundColor:
+                            MaterialStateProperty.all(Colors.black)),
+                    onPressed: () async {
+                      if (await getAuthStatus()) {
+                        showCommentsBottomModalSheet(
+                            context, data.postId!.toInt());
+                      } else {
+                        NaviagateToLogin(context);
+                      }
+                    },
+                    icon: Icon(Icons.comment_outlined),
+                    label: Text(
+                      'Comment',
+                      style: ThreeKmTextConstants.tk12PXPoppinsBlackSemiBold,
+                    )),
+                TextButton.icon(
+                    style: ButtonStyle(
+                        foregroundColor:
+                            MaterialStateProperty.all(Colors.black)),
+                    onPressed: () {
+                      String imgUrl =
+                          data.images != null && data.images!.length > 0
+                              ? data.images!.first.toString()
+                              : data.videos!.first.thumbnail.toString();
+                      handleShare(
+                          data.author!.name.toString(),
+                          data.author!.image.toString(),
+                          data.headline.toString(),
+                          imgUrl,
+                          data.createdDate,
+                          data.postId.toString());
+                    },
+                    icon: Icon(Icons.share_outlined),
+                    label: Text(
+                      'Share',
+                      style: ThreeKmTextConstants.tk12PXPoppinsBlackSemiBold,
+                    ))
+              ],
+            )
         ],
       ),
     );
@@ -791,7 +795,7 @@ class _CardUIState extends State<CardUI> {
         File file = await File('${documentDirectory!.path}/image.png').create();
         file.writeAsBytesSync(capturedImage);
         Share.shareFiles([file.path],
-                text: 'https://3km.in/post-detail?id=$postId&lang=en')
+                text: '$headLine https://3km.in/post-detail?id=$postId&lang=en')
             .then((value) => hideLoading());
       } on Exception catch (e) {
         hideLoading();

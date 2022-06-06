@@ -82,6 +82,7 @@ class _TabBarNavigationState extends State<TabBarNavigation>
     Future.delayed(Duration.zero, () {
       context.read<AutthorProfileProvider>().getSelfProfile();
       context.read<AppLanguage>().fetchLocale();
+      context.read<ProfileInfoProvider>().getProfileBasicData();
       //context.read<CheckLoginProvider>().getAuthStatus();
     });
     super.initState();
@@ -200,15 +201,18 @@ class _TabBarNavigationState extends State<TabBarNavigation>
               ),
             ),
             CustomNavigationBarItem(
-              icon: Image.network(
-                context.read<ProfileInfoProvider>().Avatar ??
-                    "https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/User-avatar.svg/2048px-User-avatar.svg.png",
-                color: _bottomIndex == 4 &&
-                        context.read<ProfileInfoProvider>().Avatar == null
-                    ? Colors.blueAccent
-                    : context.read<ProfileInfoProvider>().Avatar != null
-                        ? null
-                        : Colors.grey,
+              icon: ClipRRect(
+                borderRadius: BorderRadius.circular(20),
+                child: Image.network(
+                  context.read<ProfileInfoProvider>().Avatar ??
+                      "https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/User-avatar.svg/2048px-User-avatar.svg.png",
+                  color: _bottomIndex == 4 &&
+                          context.read<ProfileInfoProvider>().Avatar == null
+                      ? Colors.blueAccent
+                      : context.read<ProfileInfoProvider>().Avatar != null
+                          ? null
+                          : Colors.grey,
+                ),
               ),
               title: Text(
                 "Profile",

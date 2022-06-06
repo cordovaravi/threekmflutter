@@ -45,7 +45,9 @@ class NewsFeedProvider extends ChangeNotifier {
     });
     final response = await _apiProvider.post(like, requestJson);
     print(response);
-    if (response != null && response["status"] == "success") {}
+    if (response != null && response["status"] == "success") {
+      notifyListeners();
+    }
   }
 
   Future<Null> postUnLike(String postId) async {
@@ -73,16 +75,16 @@ class NewsFeedProvider extends ChangeNotifier {
     });
     final response = await _apiProvider.post(follow_User, requestJson);
     print(response);
-    notifyListeners();
+    //  notifyListeners();
     try {
       if (response != null && response["status"] == "success") {
-        _newsFeedBottomModel!.data!.result!.posts!.forEach((element) {
-          if (element.author?.id == autherId) {
-            element.author!.isFollowed = true;
-            notifyListeners();
-            print(element.author!.isFollowed);
-          }
-        });
+        // _newsFeedBottomModel!.data!.result!.posts!.forEach((element) {
+        //   if (element.author?.id == autherId) {
+        //     element.author!.isFollowed = true;
+        //     notifyListeners();
+        //     print(element.author!.isFollowed);
+        //   }
+        // });
         notifyListeners();
       } else {
         CustomSnackBar(navigatorKey.currentContext!,
