@@ -3,40 +3,26 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+
 import 'package:lazy_load_scrollview/lazy_load_scrollview.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/src/provider.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:threekm/Custom_library/GooleMapsWidget/src/place_picker.dart';
-import 'package:threekm/UI/Search/SearchPage.dart';
-import 'package:threekm/UI/businesses/businesses_home.dart';
-import 'package:threekm/UI/main/News/NewsTab.dart';
-import 'package:threekm/UI/main/News/PostView.dart';
-import 'package:threekm/UI/main/Profile/AuthorProfile.dart';
-import 'package:threekm/UI/shop/home_3km.dart';
-import 'package:threekm/UI/shop/restaurants/restaurants_home_page.dart';
+
 import 'package:threekm/commenwidgets/CustomSnakBar.dart';
 import 'package:threekm/commenwidgets/commenwidget.dart';
-import 'package:threekm/providers/Global/logged_in_or_not.dart';
-import 'package:threekm/providers/Location/locattion_Provider.dart';
+
 import 'package:threekm/providers/localization_Provider/appLanguage_provider.dart';
 import 'package:threekm/providers/main/LikeList_Provider.dart';
 import 'package:threekm/providers/main/NewsFeed_Provider.dart';
 import 'package:threekm/providers/main/comment_Provider.dart';
-import 'package:threekm/providers/main/newsList_provider.dart';
-import 'package:threekm/utils/api_paths.dart';
-import 'package:threekm/utils/constants.dart';
+
 import 'package:threekm/utils/threekm_textstyles.dart';
 import 'package:threekm/widgets/NewCardUI/card_ui.dart';
-import 'package:threekm/widgets/video_widget.dart';
-import 'package:timelines/timelines.dart';
 
 import 'NewsList.dart';
 import 'Widgets/comment_Loading.dart';

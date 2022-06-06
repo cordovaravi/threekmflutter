@@ -61,12 +61,14 @@ class Finalpost {
       this.category,
       this.business,
       this.quiz,
+      this.hoardings,
       this.quizCarosal});
 
   String? type;
   String? bannertype;
   List<Banner>? banners;
   Category? category;
+  List<String>? hoardings;
   Quiz? quiz;
   QuizCarosal? quizCarosal;
   Business? business;
@@ -80,6 +82,9 @@ class Finalpost {
         category: json["category"] == null
             ? null
             : Category.fromJson(json["category"]),
+        hoardings: json["hoardings"] == null
+            ? null
+            : List<String>.from(json["hoardings"].map((x) => x)),
         quiz: json["quiz"] == null
             ? null
             : json["type"] == "quiz"

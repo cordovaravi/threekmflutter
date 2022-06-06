@@ -459,6 +459,7 @@ class _NewsTabState extends State<NewsTab> with AutomaticKeepAliveClientMixin {
                       itemBuilder: (context, index) {
                         final finalPost = newsFirstProvider
                             .homeNewsFirst!.data!.result!.finalposts![index];
+
                         if (finalPost.type == "banner" &&
                             finalPost.banners != null &&
                             finalPost.banners?.length != 0) {
@@ -655,6 +656,10 @@ class _NewsTabState extends State<NewsTab> with AutomaticKeepAliveClientMixin {
                                         ],
                                       )
                                     : Container();
+
+                                /// BillBoard At Top
+                                ///
+                                ///
                               }
                               //if condiation not true return empty
                               return Container();
@@ -662,6 +667,41 @@ class _NewsTabState extends State<NewsTab> with AutomaticKeepAliveClientMixin {
                           );
                         } else if (finalPost.type == "news_cat") {
                           return NewsContainer(finalPost: finalPost);
+                        } else if (finalPost.type == "billboard" &&
+                            finalPost.hoardings != null) {
+                          return Container(
+                              margin: EdgeInsets.only(bottom: 5),
+                              child: CarouselSlider(
+                                options: CarouselOptions(
+                                  aspectRatio: 0.7,
+                                  enlargeCenterPage: true,
+                                  scrollDirection: Axis.horizontal,
+                                  autoPlay: true,
+                                ),
+                                items: finalPost.hoardings!
+                                    .map((items) => GestureDetector(
+                                          child: Container(
+                                            child: CachedNetworkImage(
+                                              fit: BoxFit.contain,
+                                              imageUrl: items.toString(),
+                                              imageBuilder:
+                                                  (context, imageProvider) =>
+                                                      Container(
+                                                decoration: BoxDecoration(
+                                                  image: DecorationImage(
+                                                    image: imageProvider,
+                                                    fit: BoxFit.cover,
+                                                  ),
+                                                ),
+                                              ),
+                                              errorWidget:
+                                                  (context, url, error) =>
+                                                      Icon(Icons.error),
+                                            ),
+                                          ),
+                                        ))
+                                    .toList(),
+                              ));
                         } else {
                           return Container();
                         }

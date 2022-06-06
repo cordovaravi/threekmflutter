@@ -375,7 +375,7 @@ class CustomDrawerHeader extends StatelessWidget {
             Container(
               // margin: EdgeInsets.only(left: 12),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
                     name,
