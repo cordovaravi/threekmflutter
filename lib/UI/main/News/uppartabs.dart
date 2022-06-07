@@ -46,8 +46,7 @@ class ThreeKMUpperTab extends StatefulWidget {
   State<ThreeKMUpperTab> createState() => _ThreeKMUpperTabState();
 }
 
-class _ThreeKMUpperTabState extends State<ThreeKMUpperTab>
-    with AutomaticKeepAliveClientMixin {
+class _ThreeKMUpperTabState extends State<ThreeKMUpperTab> with AutomaticKeepAliveClientMixin {
   @override
   bool get wantKeepAlive => true;
 
@@ -85,8 +84,7 @@ class _ThreeKMUpperTabState extends State<ThreeKMUpperTab>
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Container(
-                                padding: EdgeInsets.only(
-                                    top: 8, right: 8, bottom: 8),
+                                padding: EdgeInsets.only(top: 8, right: 8, bottom: 8),
                                 height: 45,
                                 width: 50,
                                 child: Image.asset("assets/icon_light.png"),
@@ -101,8 +99,7 @@ class _ThreeKMUpperTabState extends State<ThreeKMUpperTab>
                                     onTap: () => Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                            builder: (context) =>
-                                                SearchPage(tabNuber: 0))),
+                                            builder: (context) => SearchPage(tabNuber: 0))),
                                     child: Padding(
                                       padding: const EdgeInsets.all(8.0),
                                       child: Row(
@@ -147,8 +144,7 @@ class _ThreeKMUpperTabState extends State<ThreeKMUpperTab>
                               Padding(
                                 padding: EdgeInsets.only(left: 0, top: 5),
                                 child: SizedBox(
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.88,
+                                  width: MediaQuery.of(context).size.width * 0.88,
                                   child: GestureDetector(
                                     onTap: () {
                                       Future.delayed(Duration.zero, () {
@@ -156,9 +152,8 @@ class _ThreeKMUpperTabState extends State<ThreeKMUpperTab>
                                             .read<LocationProvider>()
                                             .getLocation()
                                             .whenComplete(() {
-                                          final _locationProvider = context
-                                              .read<LocationProvider>()
-                                              .getlocationData;
+                                          final _locationProvider =
+                                              context.read<LocationProvider>().getlocationData;
                                           final kInitialPosition = LatLng(
                                               _locationProvider!.latitude!,
                                               _locationProvider.longitude!);
@@ -166,24 +161,19 @@ class _ThreeKMUpperTabState extends State<ThreeKMUpperTab>
                                             Navigator.push(
                                                 context,
                                                 MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      PlacePicker(
+                                                  builder: (context) => PlacePicker(
                                                     apiKey: GMap_Api_Key,
                                                     // initialMapType: MapType.satellite,
                                                     onPlacePicked: (result) {
                                                       //print(result.formattedAddress);
                                                       setState(() {
-                                                        _selecetdAddress = result
-                                                            .formattedAddress;
-                                                        print(result.geometry!
-                                                            .toJson());
+                                                        _selecetdAddress = result.formattedAddress;
+                                                        print(result.geometry!.toJson());
                                                         //  _geometry = result.geometry;
                                                       });
-                                                      Navigator.of(context)
-                                                          .pop();
+                                                      Navigator.of(context).pop();
                                                     },
-                                                    initialPosition:
-                                                        kInitialPosition,
+                                                    initialPosition: kInitialPosition,
                                                     useCurrentLocation: true,
                                                     selectInitialPosition: true,
                                                     usePinPointingSearch: true,
@@ -196,11 +186,9 @@ class _ThreeKMUpperTabState extends State<ThreeKMUpperTab>
                                     },
                                     child: Text(
                                         _selecetdAddress ??
-                                            locationProvider
-                                                .AddressFromCordinate ??
+                                            locationProvider.AddressFromCordinate ??
                                             "",
-                                        style: ThreeKmTextConstants
-                                            .tk12PXPoppinsBlackSemiBold
+                                        style: ThreeKmTextConstants.tk12PXPoppinsBlackSemiBold
                                             .copyWith(color: Color(0xffABABAB)),
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis),
@@ -248,20 +236,18 @@ class _ThreeKMUpperTabState extends State<ThreeKMUpperTab>
                             ]),
                       ),
                       Flexible(
-                        child: TabBarView(
-                            dragStartBehavior: DragStartBehavior.down,
-                            children: [
-                              NewsTab(
-                                reload: false, //widget.redirectedFromPost
-                                isPostUploaded: false, // widget.isPostUploaded,
-                                appLanguage: languageProvider.appLocal,
-                              ),
-                              FeedPage(),
-                              //Container(),
-                              RestaurantsHome(),
-                              Home3KM(),
-                              BusinessesHome(),
-                            ]),
+                        child: TabBarView(dragStartBehavior: DragStartBehavior.down, children: [
+                          NewsTab(
+                            reload: false, //widget.redirectedFromPost
+                            isPostUploaded: false, // widget.isPostUploaded,
+                            appLanguage: languageProvider.appLocal,
+                          ),
+                          FeedPage(),
+                          //Container(),
+                          RestaurantsHome(),
+                          Home3KM(),
+                          BusinessesHome(),
+                        ]),
                       )
                     ],
                   ),
