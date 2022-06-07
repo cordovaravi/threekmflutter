@@ -111,6 +111,7 @@ const String Get_Notification = "notification/list";
 
 // Send fcm
 const String attchToekn = "user/attachtokenwithoutuser";
+const String attachTokenWithUser = "user/attachtoken";
 
 //single page navigation
 const String activePollApi = "quiz/getactivepoll";

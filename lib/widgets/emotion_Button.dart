@@ -45,7 +45,11 @@ class EmotionButton extends StatelessWidget {
               } else {
                 print("emotion like");
                 print("emotion is : ${reaction!.id}");
-                if (reaction.id! == 1) {
+                if (reaction.id == null) {
+                  context
+                      .read<NewsListProvider>()
+                      .postLike(this.postId.toString(), "like");
+                } else if (reaction.id! == 1) {
                   context
                       .read<NewsListProvider>()
                       .postLike(this.postId.toString(), "like");

@@ -36,17 +36,17 @@ class NewsFeedProvider extends ChangeNotifier {
     String requestJson = json.encode(
         {"module": "news_post", "entity_id": postId, "emotion": "$emotion"});
     _newsFeedBottomModel!.data!.result!.posts!.forEach((element) {
-      if (element.postId.toString() == postId) {
+      if (element.postId.toString() == postId && element.isLiked == false) {
         element.likes = element.likes! + 1;
         element.isLiked = true;
-        notifyListeners();
       }
       //notifyListeners();
     });
+    notifyListeners();
     final response = await _apiProvider.post(like, requestJson);
     print(response);
     if (response != null && response["status"] == "success") {
-      notifyListeners();
+      // notifyListeners();
     }
   }
 
@@ -54,12 +54,12 @@ class NewsFeedProvider extends ChangeNotifier {
     String requestJson =
         json.encode({"module": "news_post", "entity_id": postId});
     _newsFeedBottomModel!.data!.result!.posts!.forEach((element) {
-      if (element.postId.toString() == postId) {
+      if (element.postId.toString() == postId && element.isLiked == true) {
         element.isLiked = false;
         element.likes = element.likes! - 1;
-        notifyListeners();
       }
     });
+    notifyListeners();
     final response = await _apiProvider.post(unlike, requestJson);
     print(response);
     if (response != null && response["status"] == "success") {}
