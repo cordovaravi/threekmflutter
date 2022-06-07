@@ -15,6 +15,7 @@ import 'package:provider/src/provider.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:threekm/Custom_library/src/reaction.dart';
 import 'package:threekm/Models/FeedPost/HomenewsBottomModel.dart';
 import 'package:threekm/UI/main/News/NewsList.dart';
 import 'package:threekm/UI/main/News/News_FeedPage.dart';
@@ -30,6 +31,8 @@ import 'package:threekm/providers/main/NewsFeed_Provider.dart';
 import 'package:threekm/providers/main/comment_Provider.dart';
 import 'package:threekm/utils/threekm_textstyles.dart';
 import 'package:threekm/widgets/NewCardUI/image_layout.dart';
+import 'package:threekm/widgets/reactions_assets.dart' as reactionAssets;
+import '../emotion_Button.dart';
 // import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 
 class CardUI extends StatefulWidget {
@@ -271,17 +274,48 @@ class _CardUIState extends State<CardUI> {
                         NaviagateToLogin(context);
                       }
                     },
-                    icon: data.isLiked!
-                        ? Image.asset(
-                            "assets/like_icon.png",
-                            width: 22,
-                            height: 19,
-                          )
-                        : Image.asset(
-                            "assets/un_like_icon.png",
-                            width: 22,
-                            height: 19,
-                          ),
+                    icon: EmotionButton(
+                        isLiked: data.isLiked!,
+                        initalReaction: data.isLiked!
+                            ? Reaction(
+                                icon: Image.asset(
+                                  "assets/like_icon.png",
+                                  width: 22,
+                                  height: 19,
+                                ),
+                              )
+                            : Reaction(
+                                icon: Image.asset(
+                                "assets/un_like_icon.png",
+                                width: 22,
+                                height: 19,
+                              )),
+                        selectedReaction: data.isLiked!
+                            ? Reaction(
+                                icon: Image.asset(
+                                "assets/like_icon.png",
+                                width: 22,
+                                height: 19,
+                              ))
+                            : Reaction(
+                                icon: Image.asset(
+                                "assets/un_like_icon.png",
+                                width: 22,
+                                height: 19,
+                              )),
+                        postId: data.postId!.toInt(),
+                        reactions: reactionAssets.reactions),
+                    // data.isLiked!
+                    //     ? Image.asset(
+                    //         "assets/like_icon.png",
+                    //         width: 22,
+                    //         height: 19,
+                    //       )
+                    //     : Image.asset(
+                    //         "assets/un_like_icon.png",
+                    //         width: 22,
+                    //         height: 19,
+                    //       ),
                     label: Text(
                       'Like',
                       style: ThreeKmTextConstants.tk12PXPoppinsBlackSemiBold,

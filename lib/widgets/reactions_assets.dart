@@ -3,23 +3,23 @@ import 'package:threekm/Custom_library/flutter_reaction_button.dart';
 
 final defaultInitialReaction = Reaction(
   id: null,
-  icon: _buildIcon('assets/thumbs-up.png'),
+  icon: _buildIcon('assets/un_like_icon.png'),
 );
 
 final defaulLikeReaction = Reaction(
   id: 9,
-  icon: _buildIcon('assets/thumbs_up_red.png'),
+  icon: _buildIcon('assets/like_icon.png'),
 );
 
 final reactions = [
   Reaction(
-    id: 1,
-    //title: _buildTitle('Like'),
-    previewIcon: _buildReactionsPreviewIcon('assets/icons8-facebook-like.gif'),
-    icon: _buildReactionsIcon(
-      'assets/icons8-facebook-like-96.png',
-    ),
-  ),
+      id: 1,
+      previewIcon:
+          _buildReactionsPreviewIcon('assets/icons8-facebook-like.gif'),
+      icon: _buildReactionsIcon(
+        'assets/icons8-facebook-like-96.png',
+      ),
+      title: Text('likess')),
   Reaction(
     id: 2,
     title: _buildTitle('Heart'),

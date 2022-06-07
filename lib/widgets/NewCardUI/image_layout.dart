@@ -381,12 +381,13 @@ class ImageWidget extends StatelessWidget {
             height: height,
             fit: fit,
           ),
-          if (imagesList is! String)
-            Center(
-              child: SvgPicture.asset(
-                "assets/playicon.svg",
-              ),
-            )
+          imagesList is String == false
+              ? Center(
+                  child: SvgPicture.asset(
+                    "assets/playicon.svg",
+                  ),
+                )
+              : SizedBox()
         ],
       ),
     );

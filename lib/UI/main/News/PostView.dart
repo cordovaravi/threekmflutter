@@ -10,6 +10,7 @@ import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:threekm/Custom_library/flutter_reaction_button.dart';
+import 'package:threekm/Models/deepLinkPost.dart';
 import 'package:threekm/UI/main/News/NewsList.dart';
 import 'package:threekm/UI/main/News/Widgets/singlePost_Loading.dart';
 import 'package:threekm/UI/main/Profile/AuthorProfile.dart';
@@ -74,7 +75,12 @@ class _PostviewState extends State<Postview> {
   Widget build(BuildContext context) {
     final postData = context.watch<SinglePostProvider>();
     final newsData = postData.postDetails?.data?.result?.post;
-    return postData.isLoading != true
+    List videoUrls =
+        newsData != null ? newsData.videos!.map((e) => e.src).toList() : [];
+    List templist = newsData != null
+        ? (List.from(newsData.images!.toList())..addAll(videoUrls))
+        : [];
+    return postData.isLoading != true && newsData != null
         ? Scaffold(
             appBar: AppBar(
               elevation: 0,
@@ -143,9 +149,9 @@ class _PostviewState extends State<Postview> {
                                             MaterialPageRoute(
                                                 builder: (context) =>
                                                     AuthorProfile(
-                                                        authorType: newsData
-                                                            ?.authorType,
-                                                        id: newsData!
+                                                        authorType:
+                                                            newsData.authorType,
+                                                        id: newsData
                                                             .author!.id!,
                                                         avatar: newsData
                                                             .author!.image!,
@@ -165,7 +171,7 @@ class _PostviewState extends State<Postview> {
                                                     fit: BoxFit.cover,
                                                     image:
                                                         CachedNetworkImageProvider(
-                                                            newsData!
+                                                            newsData
                                                                 .author!.image
                                                                 .toString()))),
                                           )),
@@ -213,115 +219,122 @@ class _PostviewState extends State<Postview> {
                                   ],
                                 ),
                               ),
-                              newsData.images!.length > 1 ||
-                                      newsData.videos!.length > 1
-                                  ?
-                                  //video and image both
-                                  Container(
-                                      height: 400,
-                                      width: 400,
-                                      child: PageView.builder(
-                                        itemCount: newsData.images!.length +
-                                            newsData.videos!.length,
-                                        // options: CarouselOptions(
-                                        //   // aspectRatio: null,
-                                        //   viewportFraction: 0.99,
-                                        // ),
-                                        itemBuilder: (
-                                          context,
-                                          index,
-                                        ) {
-                                          List videoUrls = newsData.videos!
-                                              .map((e) => e.src)
-                                              .toList();
-                                          List templist = List.from(
-                                              newsData.images!.toList())
-                                            ..addAll(videoUrls);
-                                          return templist != null
-                                              ? templist[index]
+                              // newsData.images!.length > 1 ||
+                              //         newsData.videos!.length > 1
+                              templist.length == 0
+                                  ? SizedBox(
+                                      child: Text("null"),
+                                    )
+                                  : templist.length > 1
+                                      ?
+                                      //video and image both
+                                      Container(
+                                          height: 400,
+                                          width: 400,
+                                          child: PageView.builder(
+                                            itemCount: templist.length,
+                                            //newsData.images!.length +
+                                            //newsData.videos!.length,
+                                            // options: CarouselOptions(
+                                            //   // aspectRatio: null,
+                                            //   viewportFraction: 0.99,
+                                            // ),
+                                            itemBuilder: (
+                                              context,
+                                              index,
+                                            ) {
+                                              // List videoUrls = newsData.videos!
+                                              //     .map((e) => e.src)
+                                              //     .toList();
+                                              // List templist = List.from(
+                                              //     newsData.images!.toList())
+                                              //   ..addAll(videoUrls);
+                                              return templist[index]
                                                       .toString()
                                                       .contains(".mp4")
                                                   ? SizedBox(
+                                                      height: 300,
+                                                      width: double.infinity,
+                                                      child: VideoWidget(
+                                                          isVimeo: false,
+                                                          // newsData
+                                                          //             .videos?[
+                                                          //                 index]
+                                                          //             .vimeoUrl !=
+                                                          //         null
+                                                          //     ? true
+                                                          //     : false,
+                                                          thubnail: '',
+                                                          url: templist[index]
+                                                              .toString(),
+                                                          // vimeoID: newsData
+                                                          //     .videos?[index]
+                                                          //     .vimeoUrl
+                                                          //     ?.split("/")
+                                                          //     .last,
+                                                          play: false),
+                                                    )
+                                                  : CachedNetworkImage(
+                                                      key: _imagKey,
                                                       height: 300,
                                                       width:
                                                           MediaQuery.of(context)
                                                               .size
                                                               .width,
-                                                      child: VideoWidget(
-                                                          isVimeo: newsData
-                                                                      .videos?[
-                                                                          index]
-                                                                      .vimeoUrl !=
-                                                                  null
-                                                              ? true
-                                                              : false,
-                                                          thubnail: '',
-                                                          url: templist[index]
-                                                              .toString(),
-                                                          vimeoID: newsData
-                                                              .videos?[index]
-                                                              .vimeoUrl
-                                                              ?.split("/")
-                                                              .last,
-                                                          play: false),
-                                                    )
-                                                  : CachedNetworkImage(
-                                                      key: _imagKey,
-                                                      height: _imagKey
-                                                          .currentContext
-                                                          ?.size
-                                                          ?.height,
-                                                      width:
-                                                          MediaQuery.of(context)
-                                                              .size
-                                                              .width,
                                                       fit: BoxFit.contain,
-                                                      imageUrl: templist[index])
-                                              : SizedBox(
-                                                  child: Text("null"),
-                                                );
-                                        },
-                                      ),
-                                    )
-                                  // image or video
-                                  : Container(
-                                      child: newsData.images!.length == 1
-                                          ? CachedNetworkImage(
-                                              height: _imagKey
-                                                  .currentContext?.size?.height,
-                                              width: MediaQuery.of(context)
-                                                  .size
-                                                  .width,
-                                              fit: BoxFit.fitWidth,
-                                              imageUrl:
-                                                  '${newsData.images!.first}',
-                                            )
-                                          : VideoWidget(
-                                              isVimeo: newsData.videos?.first
-                                                          .vimeoUrl !=
-                                                      null
-                                                  ? true
-                                                  : false,
-                                              thubnail: newsData.videos?.first
-                                                          .thumbnail !=
-                                                      null
-                                                  ? newsData
-                                                      .videos!.first.thumbnail
-                                                      .toString()
-                                                  : '',
-                                              url: newsData.videos!.first.src
-                                                  .toString(),
-                                              fromSinglePage: true,
-                                              vimeoID: newsData
-                                                  .videos?.first.vimeoUrl
-                                                  ?.split("/")
-                                                  .last,
-                                              play: false),
-                                    ),
-                              newsData.images != null &&
-                                          newsData.images!.length > 1 ||
-                                      newsData.videos != null &&
-                                          newsData.videos!.length > 1
+                                                      imageUrl:
+                                                          templist[index]);
+                                            },
+                                          ),
+                                        )
+                                      // image or video
+                                      : Container(
+                                          child: newsData.images!.length == 1
+                                              ? CachedNetworkImage(
+                                                  height: _imagKey
+                                                      .currentContext
+                                                      ?.size
+                                                      ?.height,
+                                                  width: MediaQuery.of(context)
+                                                      .size
+                                                      .width,
+                                                  fit: BoxFit.fitWidth,
+                                                  imageUrl:
+                                                      '${newsData.images!.first}',
+                                                )
+                                              : VideoWidget(
+                                                  isVimeo: newsData
+                                                              .videos
+                                                              ?.first
+                                                              .vimeoUrl !=
+                                                          null
+                                                      ? true
+                                                      : false,
+                                                  thubnail: newsData
+                                                              .videos
+                                                              ?.first
+                                                              .thumbnail !=
+                                                          null
+                                                      ? newsData.videos!.first
+                                                          .thumbnail
+                                                          .toString()
+                                                      : '',
+                                                  url: newsData
+                                                      .videos!.first.src
+                                                      .toString(),
+                                                  fromSinglePage: true,
+                                                  vimeoID: newsData
+                                                      .videos?.first.vimeoUrl
+                                                      ?.split("/")
+                                                      .last,
+                                                  play: false),
+                                        ),
+
+                              // newsData.images != null &&
+                              //             newsData.images!.length > 1 ||
+                              //         newsData.videos != null &&
+                              //             newsData.videos!.length > 1
+                              templist.length > 1
                                   ? Container(
                                       height: 10,
                                       width: MediaQuery.of(context).size.width,
