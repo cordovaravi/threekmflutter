@@ -668,12 +668,12 @@ class _NewsTabState extends State<NewsTab> with AutomaticKeepAliveClientMixin {
                         } else if (finalPost.type == "news_cat") {
                           return NewsContainer(finalPost: finalPost);
                         } else if (finalPost.type == "billboard" &&
-                            finalPost.hoardings != null) {
+                            finalPost.hoardings?.length != 0) {
                           return Container(
                               margin: EdgeInsets.only(bottom: 5),
                               child: CarouselSlider(
                                 options: CarouselOptions(
-                                  aspectRatio: 0.7,
+                                  aspectRatio: 0.8,
                                   enlargeCenterPage: true,
                                   scrollDirection: Axis.horizontal,
                                   autoPlay: true,
@@ -690,7 +690,7 @@ class _NewsTabState extends State<NewsTab> with AutomaticKeepAliveClientMixin {
                                                 decoration: BoxDecoration(
                                                   image: DecorationImage(
                                                     image: imageProvider,
-                                                    fit: BoxFit.cover,
+                                                    fit: BoxFit.contain,
                                                   ),
                                                 ),
                                               ),
@@ -703,7 +703,9 @@ class _NewsTabState extends State<NewsTab> with AutomaticKeepAliveClientMixin {
                                     .toList(),
                               ));
                         } else {
-                          return Container();
+                          return Container(
+                            height: 0,
+                          );
                         }
                       },
                     )

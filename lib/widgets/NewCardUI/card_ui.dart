@@ -349,7 +349,7 @@ class _CardUIState extends State<CardUI> {
                       handleShare(
                           data.author!.name.toString(),
                           data.author!.image.toString(),
-                          data.headline.toString(),
+                          data.slugHeadline,
                           imgUrl,
                           data.createdDate,
                           data.postId.toString());
@@ -827,9 +827,12 @@ class _CardUIState extends State<CardUI> {
             ? await getExternalStorageDirectory()
             : await getApplicationDocumentsDirectory();
         File file = await File('${documentDirectory!.path}/image.png').create();
+        String slug =
+            headLine.replaceAll(RegExp(r"[\s]+", multiLine: true), "-");
+        log(slug);
         file.writeAsBytesSync(capturedImage);
         Share.shareFiles([file.path],
-                text: '$headLine https://3km.in/post-detail?id=$postId&lang=en')
+                text: 'https://3km.in/post-detail/$slug/$postId')
             .then((value) => hideLoading());
       } on Exception catch (e) {
         hideLoading();

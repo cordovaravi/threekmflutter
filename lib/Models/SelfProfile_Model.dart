@@ -146,7 +146,8 @@ class Post {
   String? itemType;
 
   factory Post.fromJson(Map<String, dynamic> json) {
-    log('${json["post_id"]}');
+    log('${json["videos"].runtimeType is List<dynamic>}================');
+
     return Post(
       postId: json["post_id"] == null ? null : json["post_id"],
       submittedHeadline: json["submitted_headline"] == null
