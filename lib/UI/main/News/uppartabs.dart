@@ -1,41 +1,27 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:path_provider/path_provider.dart';
+
 import 'package:provider/provider.dart';
 import 'package:provider/src/provider.dart';
-import 'package:screenshot/screenshot.dart';
-import 'package:share_plus/share_plus.dart';
+
 import 'package:threekm/Custom_library/GooleMapsWidget/src/place_picker.dart';
 import 'package:threekm/UI/Search/SearchPage.dart';
 import 'package:threekm/UI/businesses/businesses_home.dart';
 import 'package:threekm/UI/main/News/NewsTab.dart';
-import 'package:threekm/UI/main/News/PostView.dart';
-import 'package:threekm/UI/main/Profile/AuthorProfile.dart';
+
 import 'package:threekm/UI/shop/home_3km.dart';
 import 'package:threekm/UI/shop/restaurants/restaurants_home_page.dart';
-import 'package:threekm/commenwidgets/CustomSnakBar.dart';
-import 'package:threekm/commenwidgets/commenwidget.dart';
-import 'package:threekm/providers/Global/logged_in_or_not.dart';
+
 import 'package:threekm/providers/Location/locattion_Provider.dart';
 import 'package:threekm/providers/localization_Provider/appLanguage_provider.dart';
-import 'package:threekm/providers/main/LikeList_Provider.dart';
-import 'package:threekm/providers/main/NewsFeed_Provider.dart';
-import 'package:threekm/providers/main/comment_Provider.dart';
-import 'package:threekm/providers/main/newsList_provider.dart';
 import 'package:threekm/utils/api_paths.dart';
-import 'package:threekm/utils/constants.dart';
 import 'package:threekm/utils/threekm_textstyles.dart';
-import 'package:threekm/widgets/video_widget.dart';
-import 'package:timelines/timelines.dart';
 
-import 'NewsList.dart';
 import 'News_FeedPage.dart';
-import 'Widgets/comment_Loading.dart';
-import 'Widgets/likes_Loading.dart';
 
 ValueNotifier<bool> showAppBarGlobalSC = ValueNotifier(true);
 
@@ -138,76 +124,69 @@ class _ThreeKMUpperTabState extends State<ThreeKMUpperTab>
                             color: Colors.blueAccent,
                             size: 22,
                           ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              // Text("Your Location",
-                              //     style: TextStyle(
-                              //         color: Colors.blueAccent, fontSize: 15)),
-                              Padding(
-                                padding: EdgeInsets.only(left: 0, top: 5),
-                                child: SizedBox(
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.88,
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      Future.delayed(Duration.zero, () {
-                                        context
-                                            .read<LocationProvider>()
-                                            .getLocation()
-                                            .whenComplete(() {
-                                          final _locationProvider = context
-                                              .read<LocationProvider>()
-                                              .getlocationData;
-                                          final kInitialPosition = LatLng(
-                                              _locationProvider!.latitude!,
-                                              _locationProvider.longitude!);
-                                          if (_locationProvider != null) {
-                                            Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      PlacePicker(
-                                                    apiKey: GMap_Api_Key,
-                                                    // initialMapType: MapType.satellite,
-                                                    onPlacePicked: (result) {
-                                                      //print(result.formattedAddress);
-                                                      setState(() {
-                                                        _selecetdAddress = result
-                                                            .formattedAddress;
-                                                        print(result.geometry!
-                                                            .toJson());
-                                                        //  _geometry = result.geometry;
-                                                      });
-                                                      Navigator.of(context)
-                                                          .pop();
-                                                    },
-                                                    initialPosition:
-                                                        kInitialPosition,
-                                                    useCurrentLocation: true,
-                                                    selectInitialPosition: true,
-                                                    usePinPointingSearch: true,
-                                                    usePlaceDetailSearch: true,
-                                                  ),
-                                                ));
-                                          }
-                                        });
-                                      });
-                                    },
-                                    child: Text(
-                                        _selecetdAddress ??
-                                            locationProvider
-                                                .AddressFromCordinate ??
-                                            "",
-                                        style: ThreeKmTextConstants
-                                            .tk12PXPoppinsBlackSemiBold
-                                            .copyWith(color: Color(0xffABABAB)),
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis),
-                                  ),
-                                ),
+                          Padding(
+                            padding: EdgeInsets.only(left: 0, top: 5),
+                            child: SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.88,
+                              child: GestureDetector(
+                                onTap: () {
+                                  Future.delayed(Duration.zero, () {
+                                    context
+                                        .read<LocationProvider>()
+                                        .getLocation()
+                                        .whenComplete(() {
+                                      final _locationProvider = context
+                                          .read<LocationProvider>()
+                                          .getlocationData;
+                                      final kInitialPosition = LatLng(
+                                          _locationProvider!.latitude!,
+                                          _locationProvider.longitude!);
+                                      if (_locationProvider.latitude != null) {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) => PlacePicker(
+                                                apiKey: GMap_Api_Key,
+                                                // initialMapType: MapType.satellite,
+                                                onPlacePicked: (result) {
+                                                  //print(result.formattedAddress);
+                                                  setState(() {
+                                                    _selecetdAddress =
+                                                        result.formattedAddress;
+                                                    print(result.geometry!
+                                                        .toJson());
+                                                    //  _geometry = result.geometry;
+                                                  });
+                                                  Navigator.of(context).pop();
+                                                },
+                                                initialPosition:
+                                                    kInitialPosition,
+                                                useCurrentLocation: true,
+                                                selectInitialPosition: true,
+                                                usePinPointingSearch: true,
+                                                usePlaceDetailSearch: true,
+                                              ),
+                                            ));
+                                      } else {
+                                        Fluttertoast.showToast(
+                                            msg:
+                                                "Something went wrong. Please try later!",
+                                            backgroundColor: Colors.red);
+                                      }
+                                    });
+                                  });
+                                },
+                                child: Text(
+                                    _selecetdAddress ??
+                                        locationProvider.AddressFromCordinate ??
+                                        "Click here to select location!",
+                                    style: ThreeKmTextConstants
+                                        .tk12PXPoppinsBlackSemiBold
+                                        .copyWith(color: Color(0xffABABAB)),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis),
                               ),
-                            ],
+                            ),
                           )
                         ],
                       ),

@@ -41,6 +41,7 @@ class LocationProvider extends ChangeNotifier {
           return;
         } else if (_ispermmitionGranted == PermissionStatus.granted) {
           _ispermmitionGranted = true;
+          notifyListeners();
         }
       }
       _locationData = await location.getLocation();

@@ -36,22 +36,16 @@ import 'package:threekm/providers/Global/logged_in_or_not.dart';
 import 'package:threekm/providers/Location/locattion_Provider.dart';
 import 'package:threekm/providers/localization_Provider/appLanguage_provider.dart';
 import 'package:threekm/providers/main/AddPost_Provider.dart';
-import 'package:threekm/providers/main/LikeList_Provider.dart';
 import 'package:threekm/providers/main/Quiz_Provider.dart';
-import 'package:threekm/providers/main/comment_Provider.dart';
 import 'package:threekm/providers/main/home1_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:threekm/providers/main/home2_provider.dart';
 
 import 'package:threekm/utils/threekm_textstyles.dart';
 import 'package:threekm/widgets/video_widget.dart';
-import 'package:threekm/widgets/vimeoPlayer.dart';
 
 import 'Widgets/Adspopup.dart';
 import 'package:flutter_svg/svg.dart';
-
-import 'Widgets/comment_Loading.dart';
-import 'Widgets/likes_Loading.dart';
 
 class NewsTab extends StatefulWidget {
   final String? deviceId;
@@ -79,7 +73,7 @@ class _NewsTabState extends State<NewsTab> with AutomaticKeepAliveClientMixin {
   //PanelController _slidingUpPanelcontroller = PanelController();
 
   ///scroll of main
-  ScrollController _scrollController = ScrollController();
+  // ScrollController _scrollController = ScrollController();
   ScreenshotController screenshotController = ScreenshotController();
 
   ///Post for bottom
@@ -89,7 +83,7 @@ class _NewsTabState extends State<NewsTab> with AutomaticKeepAliveClientMixin {
   void initState() {
     super.initState();
     //_controller = AnimationController(vsync: this);
-    Future.microtask(() => context.read<LocationProvider>().getLocation());
+    // Future.microtask(() => context.read<LocationProvider>().getLocation());
     Future.microtask(() => context.read<AppLanguage>().fetchLocale());
     if (widget.reload != true) {
       Future.delayed(Duration.zero, () async {
@@ -148,22 +142,22 @@ class _NewsTabState extends State<NewsTab> with AutomaticKeepAliveClientMixin {
     });
 
     // for bottom feed
-    _scrollController.addListener(() {
-      if (_scrollController.position.maxScrollExtent ==
-          _scrollController.position.pixels) {
-        postCount += 10;
-        log("reached bottom");
-        setState(() {});
-      }
-      if (_scrollController.position.userScrollDirection ==
-          ScrollDirection.reverse) {
-        showAppBarGlobalSC.value = false;
-      }
-      if (_scrollController.position.userScrollDirection ==
-          ScrollDirection.forward) {
-        showAppBarGlobalSC.value = true;
-      }
-    });
+    // _scrollController.addListener(() {
+    //   if (_scrollController.position.maxScrollExtent ==
+    //       _scrollController.position.pixels) {
+    //     postCount += 10;
+    //     log("reached bottom");
+    //     setState(() {});
+    //   }
+    //   if (_scrollController.position.userScrollDirection ==
+    //       ScrollDirection.reverse) {
+    //     showAppBarGlobalSC.value = false;
+    //   }
+    //   if (_scrollController.position.userScrollDirection ==
+    //       ScrollDirection.forward) {
+    //     showAppBarGlobalSC.value = true;
+    //   }
+    // });
   }
 
   void checkUpdate() {
@@ -208,7 +202,7 @@ class _NewsTabState extends State<NewsTab> with AutomaticKeepAliveClientMixin {
   @override
   void dispose() {
     _commentController.dispose();
-    _scrollController.dispose();
+    //_scrollController.dispose();
 
     super.dispose();
   }
