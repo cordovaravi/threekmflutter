@@ -230,7 +230,7 @@ class _NewsTabState extends State<NewsTab> with AutomaticKeepAliveClientMixin {
         });
       },
       child: newsFirstProvider.state == 'loaded' &&
-              newsSecondProvider.state == 'loaded' &&
+                  newsSecondProvider.state == 'loaded' ||
               newsSecondProvider.homeNews?.data != null
           ? SingleChildScrollView(
               //controller: _scrollController,

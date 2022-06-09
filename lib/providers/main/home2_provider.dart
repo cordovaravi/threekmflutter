@@ -27,7 +27,9 @@ class HomeSecondProvider extends ChangeNotifier {
     if (await _apiProvider.getConnectivityStatus()) {
       try {
         // _homeModel = null;
-        _state = 'loading';
+        if (_homeModel == null) {
+          _state = 'loading';
+        }
         notifyListeners();
         // showLoading();
 
@@ -35,7 +37,9 @@ class HomeSecondProvider extends ChangeNotifier {
             await _apiProvider.post(getHomePage + "second", requestJson);
         if (response != null) {
           // hideLoading();
-          _state = 'loaded';
+          if (_homeModel == null) {
+            _state = 'loaded';
+          }
           _homeModel = NewsHomeModel.fromJson(response);
           _prefs.remove("homeModel2");
           String offlineStringObj = json.encode(response);

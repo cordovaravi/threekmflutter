@@ -17,7 +17,7 @@ class PastOrderProvider extends ChangeNotifier {
   getPastShopOrderList(mounted) async {
     if (mounted) {
       _state = 'loading';
-      showLoading();
+      //showLoading();
 
       try {
         final response = await _apiProvider.get(shopPastOrder);
@@ -25,12 +25,12 @@ class PastOrderProvider extends ChangeNotifier {
           _shopPastOrderList = PastOrderModel.fromJson(response);
           getPastMenuOrderList(mounted);
           _state = 'loaded';
-          hideLoading();
+          //hideLoading();
           notifyListeners();
         }
       } catch (e) {
         _state = 'error';
-        hideLoading();
+        // hideLoading();
         notifyListeners();
       }
     }
@@ -39,19 +39,19 @@ class PastOrderProvider extends ChangeNotifier {
   getPastMenuOrderList(mounted) async {
     if (mounted) {
       _state = 'loading';
-      showLoading();
+      //showLoading();
 
       try {
         final response = await _apiProvider.get(menuPastOrder);
         if (response != null) {
           _menuPastOrderList = PastOrderModel.fromJson(response);
           _state = 'loaded';
-          hideLoading();
+          // hideLoading();
           notifyListeners();
         }
       } catch (e) {
         _state = 'error';
-        hideLoading();
+        // hideLoading();
         notifyListeners();
       }
     }
