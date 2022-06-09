@@ -538,12 +538,7 @@ class MenuTile extends StatelessWidget {
                         ),
                         Row(
                           children: [
-                            Text(
-                              '₹${menu.price}',
-                              style: ThreeKmTextConstants.tk14PXLatoBlackMedium
-                                  .copyWith(height: 2),
-                            ),
-                            if (menu.displayPrice > menu.price)
+                             if (menu.displayPrice > menu.price)
                               Text(
                                 '₹${menu.displayPrice}',
                                 style: ThreeKmTextConstants
@@ -553,6 +548,15 @@ class MenuTile extends StatelessWidget {
                                         decoration: TextDecoration.lineThrough,
                                         color: Colors.red),
                               ),
+                            
+                             SizedBox(
+                              width: 10,
+                            ),
+                           Text(
+                              '₹${menu.price}',
+                              style: ThreeKmTextConstants.tk14PXLatoBlackMedium
+                                  .copyWith(height: 2),
+                            ),
                           ],
                         ),
                       ],
