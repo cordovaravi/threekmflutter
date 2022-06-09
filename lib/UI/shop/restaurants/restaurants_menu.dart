@@ -2,6 +2,7 @@ import 'dart:math';
 import 'dart:ui';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -537,14 +538,6 @@ class MenuTile extends StatelessWidget {
                         ),
                         Row(
                           children: [
-                            Text(
-                              '₹${menu.price}',
-                              style: ThreeKmTextConstants.tk14PXLatoBlackMedium
-                                  .copyWith(height: 2),
-                            ),
-                            SizedBox(
-                              width: 10,
-                            ),
                             if (menu.displayPrice > menu.price)
                               Text(
                                 '₹${menu.displayPrice}',
@@ -553,8 +546,17 @@ class MenuTile extends StatelessWidget {
                                     .copyWith(
                                         height: 2,
                                         decoration: TextDecoration.lineThrough,
-                                        color: Colors.red),
+                                        color: Colors.red,
+                                        fontWeight: FontWeight.w100),
                               ),
+                            SizedBox(
+                              width: 10,
+                            ),
+                            Text(
+                              '₹${menu.price}',
+                              style: ThreeKmTextConstants.tk14PXLatoBlackMedium
+                                  .copyWith(height: 2),
+                            ),
                           ],
                         ),
                       ],
