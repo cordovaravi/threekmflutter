@@ -87,6 +87,7 @@ class Post {
     this.shares,
     this.attachedBusiness,
     this.itemType,
+    this.slugHeadline,
   });
 
   int? postId;
@@ -122,46 +123,47 @@ class Post {
   int? shares;
   List<dynamic>? attachedBusiness;
   String? itemType;
+  String? slugHeadline;
 
   factory Post.fromJson(Map<String, dynamic> json) => Post(
-        postId: json["post_id"],
-        submittedHeadline: json["submitted_headline"],
-        submittedStory: json["submitted_story"],
-        headline: json["headline"],
-        story: json["story"],
-        images: List<String>.from(json["images"].map((x) => x)),
-        videos: List<Video>.from(json["videos"].map((x) => Video.fromJson(x))),
-        type: json["type"],
-        tags: List<String>.from(json["tags"].map((x) => x)),
-        areas: json["areas"],
-        cities: List<dynamic>.from(json["cities"].map((x) => x)),
-        states: List<dynamic>.from(json["states"].map((x) => x)),
-        latitude: json["latitude"] != null ? json["latitude"].toDouble() : null,
-        longitude:
-            json["longitude"] != null ? json["longitude"].toDouble() : null,
-        location: json["location"],
-        author: Author.fromJson(json["author"]),
-        authorType: json["author_type"],
-        authorClassification: json["author_classification"],
-        //approver: Approver.fromJson(json["approver"]),
-        business: List<dynamic>.from(json["business"].map((x) => x)),
-        products: List<dynamic>.from(json["products"].map((x) => x)),
-        impressions: json["impressions"],
-        views: json["views"],
-        postCreatedDate: DateTime.parse(json["post_created_date"]),
-        isUgc: json["is_ugc"],
-        likes: json["likes"],
-        comments: List<Comment>.from(
-            json["comments"].map((x) => Comment.fromJson(x))),
-        locations: List<Location>.from(
-            json["locations"].map((x) => Location.fromJson(x))),
-        id: json["id"],
-        isLiked: json["is_liked"],
-        shares: json["shares"],
-        attachedBusiness:
-            List<dynamic>.from(json["attached_business"].map((x) => x)),
-        itemType: json["item_type"],
-      );
+      postId: json["post_id"],
+      submittedHeadline: json["submitted_headline"],
+      submittedStory: json["submitted_story"],
+      headline: json["headline"],
+      story: json["story"],
+      images: List<String>.from(json["images"].map((x) => x)),
+      videos: List<Video>.from(json["videos"].map((x) => Video.fromJson(x))),
+      type: json["type"],
+      tags: List<String>.from(json["tags"].map((x) => x)),
+      areas: json["areas"],
+      cities: List<dynamic>.from(json["cities"].map((x) => x)),
+      states: List<dynamic>.from(json["states"].map((x) => x)),
+      latitude: json["latitude"] != null ? json["latitude"].toDouble() : null,
+      longitude:
+          json["longitude"] != null ? json["longitude"].toDouble() : null,
+      location: json["location"],
+      author: Author.fromJson(json["author"]),
+      authorType: json["author_type"],
+      authorClassification: json["author_classification"],
+      //approver: Approver.fromJson(json["approver"]),
+      business: List<dynamic>.from(json["business"].map((x) => x)),
+      products: List<dynamic>.from(json["products"].map((x) => x)),
+      impressions: json["impressions"],
+      views: json["views"],
+      postCreatedDate: DateTime.parse(json["post_created_date"]),
+      isUgc: json["is_ugc"],
+      likes: json["likes"],
+      comments:
+          List<Comment>.from(json["comments"].map((x) => Comment.fromJson(x))),
+      locations: List<Location>.from(
+          json["locations"].map((x) => Location.fromJson(x))),
+      id: json["id"],
+      isLiked: json["is_liked"],
+      shares: json["shares"],
+      attachedBusiness:
+          List<dynamic>.from(json["attached_business"].map((x) => x)),
+      itemType: json["item_type"],
+      slugHeadline: json["slug_headline"]);
 }
 
 class Video {

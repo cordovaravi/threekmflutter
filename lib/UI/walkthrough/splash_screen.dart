@@ -192,10 +192,11 @@ class _SplashScreenState extends State<SplashScreen> {
         } else {
           Navigator.push(context,
               MaterialPageRoute(builder: (BuildContext context) {
-            return Postview(
-                postId: initialLink
-                    .substring(30, initialLink.length)
-                    .replaceAll('&lang=en', ''));
+            return Postview(postId: "${int.parse(initialLink.split('/').last)}"
+                // initialLink
+                //     .substring(30, initialLink.length)
+                //     .replaceAll('&lang=en', '')
+                );
           })).then((value) => Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(builder: (_) => TabBarNavigation()),

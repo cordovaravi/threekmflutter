@@ -592,7 +592,10 @@ class _NewsCardState extends State<NewsCard> {
   @override
   Widget build(BuildContext context) {
     final newsData = widget.authorProfileModel.data.result;
-    return CardUI(data: newsData?.posts?[widget.index]);
+    return CardUI(
+      data: newsData?.posts?[widget.index],
+      providerType: 'AutthorProfileProvider',
+    );
     // return Stack(alignment: AlignmentDirectional.center, children: [
     //   Padding(
     //     padding: EdgeInsets.only(left: 10, right: 10, top: 8, bottom: 8),

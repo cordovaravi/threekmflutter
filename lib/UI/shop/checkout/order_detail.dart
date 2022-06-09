@@ -83,7 +83,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                           borderRadius: BorderRadius.circular(20)),
                       child: InkWell(
                         onTap: () {
-                          launch(('tel://9765599649'));
+                          launch(('tel://9359611138'));
                         },
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -102,7 +102,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                   height: 32,
                                   width: 32,
                                 ),
-                                Text('9765599649'),
+                                Text('9359611138'),
                               ],
                             ),
                             Text(
@@ -113,6 +113,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                         ),
                       ),
                     ),
+                    
                     Container(
                       margin: EdgeInsets.all(5),
                       padding: EdgeInsets.all(10),
@@ -159,7 +160,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                           borderRadius: BorderRadius.circular(20)),
                       child: InkWell(
                         onTap: () {
-                          launch(('tel://9370778837'));
+                          launch(('tel://8055059296'));
                         },
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -178,7 +179,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                   height: 32,
                                   width: 32,
                                 ),
-                                Text('9370778837'),
+                                Text('8055059296'),
                               ],
                             ),
                             Text(
