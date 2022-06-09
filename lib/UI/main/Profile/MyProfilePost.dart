@@ -718,20 +718,27 @@ class _MyProfilePostState extends State<MyProfilePost>
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Container(
-          height: 120,
-          width: 120,
-          //margin: EdgeInsets.only(top: 44),
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            border: Border.all(color: Colors.white, width: 3),
-            image: DecorationImage(
-              image: CachedNetworkImageProvider(
-                  selfProfileModel.data!.result!.author!.image!),
-              fit: BoxFit.fill,
-            ),
-          ),
-        ),
+        selfProfileModel.data!.result!.author!.image != null
+            ? Container(
+                height: 120,
+                width: 120,
+                //margin: EdgeInsets.only(top: 44),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(color: Colors.white, width: 3),
+                  image: DecorationImage(
+                    image: CachedNetworkImageProvider(
+                        selfProfileModel.data!.result!.author!.image!),
+                    fit: BoxFit.fill,
+                  ),
+                ),
+              )
+            : Container(
+                width: 120,
+                height: 120,
+                decoration:
+                    BoxDecoration(shape: BoxShape.circle, color: Colors.grey),
+              ),
       ],
     );
   }
@@ -754,7 +761,11 @@ class _NewsCardState extends State<NewsCard> {
   Widget build(BuildContext context) {
     final newsData = widget.selfProfileModel.data!.result;
     return Stack(alignment: AlignmentDirectional.center, children: [
-      CardUI(data: newsData!.posts![widget.index], isfollow: false),
+      CardUI(
+        data: newsData!.posts![widget.index],
+        isfollow: false,
+        providerType: 'AutthorProfileProvider',
+      ),
       if (newsData.posts![widget.index].status == "rejected")
         Container(
           decoration: BoxDecoration(

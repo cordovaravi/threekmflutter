@@ -13,16 +13,28 @@ class EmotionButton extends StatelessWidget {
   final Reaction? selectedReaction;
   final List<Reaction> reactions;
 
+  final String providerType;
+
   EmotionButton(
       {required this.postId,
       required this.reactions,
       required this.isLiked,
       this.initalReaction,
-      this.selectedReaction});
-
+      this.selectedReaction,
+      required this.providerType});
   @override
   Widget build(BuildContext context) {
     //super.build(context);
+    postlike(label) {
+      providerType == "NewsListProvider"
+          ? context
+              .read<NewsListProvider>()
+              .postLike(this.postId.toString(), label)
+          : context
+              .read<AutthorProfileProvider>()
+              .postLike(this.postId.toString(), label);
+    }
+
     return FittedBox(
       child: FlutterReactionButtonCheck(
           boxAlignment: Alignment.center,
@@ -39,40 +51,48 @@ class EmotionButton extends StatelessWidget {
                     .postUnLike(this.postId.toString());
               } else if (isChecked == true && index == -1) {
                 print("Like");
-                context
-                    .read<NewsListProvider>()
-                    .postLike(this.postId.toString(), null);
+                postlike(null);
+                // context
+                //     .read<NewsListProvider>()
+                //     .postLike(this.postId.toString(), null);
               } else {
                 print("emotion like");
                 print("emotion is : ${reaction!.id}");
                 if (reaction.id == null) {
-                  context
-                      .read<NewsListProvider>()
-                      .postLike(this.postId.toString(), "like");
+                  postlike('like');
+                  // context
+                  //     .read<NewsListProvider>()
+                  //     .postLike(this.postId.toString(), "like");
                 } else if (reaction.id! == 1) {
-                  context
-                      .read<NewsListProvider>()
-                      .postLike(this.postId.toString(), "like");
+                  postlike('like');
+                  // context
+                  //     .read<NewsListProvider>()
+                  //     .postLike(this.postId.toString(), "like");
                 } else if (reaction.id == 2) {
-                  context
-                      .read<NewsListProvider>()
-                      .postLike(this.postId.toString(), "heart");
+                  postlike('heart');
+                  // context
+                  //     .read<NewsListProvider>()
+                  //     .postLike(this.postId.toString(), "heart");
                 } else if (reaction.id == 3) {
-                  context
-                      .read<NewsListProvider>()
-                      .postLike(this.postId.toString(), "trust");
+                  postlike('trust');
+                  // context
+                  //     .read<NewsListProvider>()
+                  //     .postLike(this.postId.toString(), "trust");
                 } else if (reaction.id == 4) {
-                  context
-                      .read<NewsListProvider>()
-                      .postLike(this.postId.toString(), "sad");
+                  postlike('sad');
+                  // context
+                  //     .read<NewsListProvider>()
+                  //     .postLike(this.postId.toString(), "sad");
                 } else if (reaction.id == 5) {
-                  context
-                      .read<NewsListProvider>()
-                      .postLike(this.postId.toString(), "lol");
+                  postlike('lol');
+                  // context
+                  //     .read<NewsListProvider>()
+                  //     .postLike(this.postId.toString(), "lol");
                 } else if (reaction.id == 6) {
-                  context
-                      .read<NewsListProvider>()
-                      .postLike(this.postId.toString(), "wink");
+                  postlike('wink');
+                  // context
+                  //     .read<NewsListProvider>()
+                  //     .postLike(this.postId.toString(), "wink");
                 }
                 // context
                 //     .read<NewsListProvider>()

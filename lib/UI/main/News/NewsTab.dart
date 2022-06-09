@@ -667,7 +667,8 @@ class _NewsTabState extends State<NewsTab> with AutomaticKeepAliveClientMixin {
                               margin: EdgeInsets.only(bottom: 5),
                               child: CarouselSlider(
                                 options: CarouselOptions(
-                                  aspectRatio: 0.8,
+                                  viewportFraction: 0.75,
+                                  aspectRatio: 0.95,
                                   enlargeCenterPage: true,
                                   scrollDirection: Axis.horizontal,
                                   autoPlay: true,
@@ -1480,154 +1481,154 @@ class _NewsTabState extends State<NewsTab> with AutomaticKeepAliveClientMixin {
   //   );
   // }
 
-  PopupMenuButton showPopMenu(String postID, newsData) {
-    return PopupMenuButton(
-      icon: Icon(Icons.more_vert),
-      itemBuilder: (BuildContext context) => <PopupMenuEntry>[
-        PopupMenuItem(
-          child: ListTile(
-            title: Text('Copy link'),
-            onTap: () {
-              Clipboard.setData(ClipboardData(
-                      text: "https://3km.in/post-detail?id=$postID&lang=en"))
-                  .then((value) => CustomSnackBar(
-                      context, Text("Link has been coppied to clipboard")))
-                  .whenComplete(() => Navigator.pop(context));
-            },
-          ),
-        ),
-        PopupMenuItem(
-          child: ListTile(
-            onTap: () {
-              String imgUrl =
-                  newsData.images != null && newsData.images!.length > 0
-                      ? newsData.images!.first.toString()
-                      : newsData.videos!.first.thumbnail.toString();
-              handleShare(
-                  newsData.author!.name.toString(),
-                  newsData.author!.image.toString(),
-                  newsData.submittedHeadline.toString(),
-                  imgUrl,
-                  newsData.createdDate,
-                  newsData.postId.toString());
-            },
-            title: Text('Share to..',
-                style: ThreeKmTextConstants.tk16PXLatoBlackRegular),
-          ),
-        ),
-        PopupMenuItem(
-          child: ListTile(
-            onTap: () {
-              Navigator.pop(context);
-            },
-            title: Text(
-              'Cancel',
-              style: ThreeKmTextConstants.tk16PXPoppinsRedSemiBold,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
+  // PopupMenuButton showPopMenu(String postID, newsData) {
+  //   return PopupMenuButton(
+  //     icon: Icon(Icons.more_vert),
+  //     itemBuilder: (BuildContext context) => <PopupMenuEntry>[
+  //       PopupMenuItem(
+  //         child: ListTile(
+  //           title: Text('Copy link'),
+  //           onTap: () {
+  //             Clipboard.setData(ClipboardData(
+  //                     text: "https://3km.in/post-detail?id=$postID&lang=en"))
+  //                 .then((value) => CustomSnackBar(
+  //                     context, Text("Link has been coppied to clipboard")))
+  //                 .whenComplete(() => Navigator.pop(context));
+  //           },
+  //         ),
+  //       ),
+  //       PopupMenuItem(
+  //         child: ListTile(
+  //           onTap: () {
+  //             String imgUrl =
+  //                 newsData.images != null && newsData.images!.length > 0
+  //                     ? newsData.images!.first.toString()
+  //                     : newsData.videos!.first.thumbnail.toString();
+  //             handleShare(
+  //                 newsData.author!.name.toString(),
+  //                 newsData.author!.image.toString(),
+  //                 newsData.submittedHeadline.toString(),
+  //                 imgUrl,
+  //                 newsData.createdDate,
+  //                 newsData.postId.toString());
+  //           },
+  //           title: Text('Share to..',
+  //               style: ThreeKmTextConstants.tk16PXLatoBlackRegular),
+  //         ),
+  //       ),
+  //       PopupMenuItem(
+  //         child: ListTile(
+  //           onTap: () {
+  //             Navigator.pop(context);
+  //           },
+  //           title: Text(
+  //             'Cancel',
+  //             style: ThreeKmTextConstants.tk16PXPoppinsRedSemiBold,
+  //           ),
+  //         ),
+  //       ),
+  //     ],
+  //   );
+  // }
 
-  handleShare(String authorName, String authorProfile, String headLine,
-      String thumbnail, date, String postId) async {
-    showLoading();
-    screenshotController
-        .captureFromWidget(Container(
-      padding: EdgeInsets.only(top: 15, bottom: 15),
-      color: Colors.white,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Row(
-            //mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                  margin: EdgeInsets.only(right: 10),
-                  height: 50,
-                  width: 50,
-                  child: Container(
-                    height: 50,
-                    width: 50,
-                    decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        image: DecorationImage(
-                            fit: BoxFit.cover,
-                            image: CachedNetworkImageProvider(authorProfile))),
-                  )),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    child: Text(
-                      authorName,
-                      style: ThreeKmTextConstants.tk14PXPoppinsBlackBold,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  Text(
-                    date,
-                    style: ThreeKmTextConstants.tk12PXLatoBlackBold,
-                  )
-                ],
-              ),
-              // SizedBox(
-              //   width: 10,
-              // ),
-            ],
-          ),
-          Container(
-              height: 254,
-              width: MediaQuery.of(context).size.width,
-              child: CachedNetworkImage(imageUrl: thumbnail)),
-          Text(
-            headLine,
-            style: ThreeKmTextConstants.tk14PXPoppinsBlackBold,
-            textAlign: TextAlign.center,
-          ),
-          Padding(
-            padding: EdgeInsets.only(top: 5),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Container(
-                  height: 30,
-                  width: 250,
-                  child: Image.asset(
-                    'assets/playstore.jpg',
-                    fit: BoxFit.fitHeight,
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(right: 15),
-                  child: Container(
-                      height: 30,
-                      width: 30,
-                      child: Image.asset('assets/icon_light.png')),
-                )
-              ],
-            ),
-          )
-        ],
-      ),
-    ))
-        .then((capturedImage) async {
-      try {
-        var documentDirectory = Platform.isAndroid
-            ? await getExternalStorageDirectory()
-            : await getApplicationDocumentsDirectory();
-        File file = await File('${documentDirectory!.path}/image.png').create();
-        file.writeAsBytesSync(capturedImage);
-        Share.shareFiles([file.path],
-                text: 'https://3km.in/post-detail?id=$postId&lang=en')
-            .then((value) => hideLoading());
-      } on Exception catch (e) {
-        hideLoading();
-      }
-    });
-  }
+  // handleShare(String authorName, String authorProfile, String headLine,
+  //     String thumbnail, date, String postId) async {
+  //   showLoading();
+  //   screenshotController
+  //       .captureFromWidget(Container(
+  //     padding: EdgeInsets.only(top: 15, bottom: 15),
+  //     color: Colors.white,
+  //     child: Column(
+  //       mainAxisSize: MainAxisSize.min,
+  //       children: [
+  //         Row(
+  //           //mainAxisAlignment: MainAxisAlignment.center,
+  //           crossAxisAlignment: CrossAxisAlignment.start,
+  //           children: [
+  //             Container(
+  //                 margin: EdgeInsets.only(right: 10),
+  //                 height: 50,
+  //                 width: 50,
+  //                 child: Container(
+  //                   height: 50,
+  //                   width: 50,
+  //                   decoration: BoxDecoration(
+  //                       shape: BoxShape.circle,
+  //                       image: DecorationImage(
+  //                           fit: BoxFit.cover,
+  //                           image: CachedNetworkImageProvider(authorProfile))),
+  //                 )),
+  //             Column(
+  //               crossAxisAlignment: CrossAxisAlignment.start,
+  //               children: [
+  //                 Container(
+  //                   child: Text(
+  //                     authorName,
+  //                     style: ThreeKmTextConstants.tk14PXPoppinsBlackBold,
+  //                     overflow: TextOverflow.ellipsis,
+  //                   ),
+  //                 ),
+  //                 Text(
+  //                   date,
+  //                   style: ThreeKmTextConstants.tk12PXLatoBlackBold,
+  //                 )
+  //               ],
+  //             ),
+  //             // SizedBox(
+  //             //   width: 10,
+  //             // ),
+  //           ],
+  //         ),
+  //         Container(
+  //             height: 254,
+  //             width: MediaQuery.of(context).size.width,
+  //             child: CachedNetworkImage(imageUrl: thumbnail)),
+  //         Text(
+  //           headLine,
+  //           style: ThreeKmTextConstants.tk14PXPoppinsBlackBold,
+  //           textAlign: TextAlign.center,
+  //         ),
+  //         Padding(
+  //           padding: EdgeInsets.only(top: 5),
+  //           child: Row(
+  //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //             children: [
+  //               Container(
+  //                 height: 30,
+  //                 width: 250,
+  //                 child: Image.asset(
+  //                   'assets/playstore.jpg',
+  //                   fit: BoxFit.fitHeight,
+  //                 ),
+  //               ),
+  //               Padding(
+  //                 padding: EdgeInsets.only(right: 15),
+  //                 child: Container(
+  //                     height: 30,
+  //                     width: 30,
+  //                     child: Image.asset('assets/icon_light.png')),
+  //               )
+  //             ],
+  //           ),
+  //         )
+  //       ],
+  //     ),
+  //   ))
+  //       .then((capturedImage) async {
+  //     try {
+  //       var documentDirectory = Platform.isAndroid
+  //           ? await getExternalStorageDirectory()
+  //           : await getApplicationDocumentsDirectory();
+  //       File file = await File('${documentDirectory!.path}/image.png').create();
+  //       file.writeAsBytesSync(capturedImage);
+  //       Share.shareFiles([file.path],
+  //               text: 'https://3km.in/post-detail?id=$postId&lang=en')
+  //           .then((value) => hideLoading());
+  //     } on Exception catch (e) {
+  //       hideLoading();
+  //     }
+  //   });
+  // }
 
   @override
   bool get wantKeepAlive => true;

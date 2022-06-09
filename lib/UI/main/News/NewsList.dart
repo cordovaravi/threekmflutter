@@ -22,6 +22,7 @@ import 'package:threekm/providers/localization_Provider/appLanguage_provider.dar
 import 'package:threekm/providers/main/LikeList_Provider.dart';
 import 'package:threekm/providers/main/comment_Provider.dart';
 import 'package:threekm/providers/main/newsList_provider.dart';
+import 'package:threekm/utils/slugUrl.dart';
 import 'package:threekm/utils/threekm_textstyles.dart';
 import 'package:provider/provider.dart';
 import 'package:threekm/widgets/NewCardUI/card_ui.dart';
@@ -382,6 +383,7 @@ class _NewsPostCardState extends State<NewsPostCard>
                 if (newsData.postId != null) {
                   return newsData != null
                       ? CardUI(
+                          providerType: 'NewsListProvider',
                           data: newsData,
                         )
                       : Container();
@@ -1082,7 +1084,7 @@ class _NewsPostCardState extends State<NewsPostCard>
         File file = await File('${documentDirectory!.path}/image.png').create();
         file.writeAsBytesSync(capturedImage);
         Share.shareFiles([file.path],
-                text: 'https://3km.in/post-detail?id=$postId&lang=en')
+                text: '${slugUrl(headLine: headLine, postId: postId)}')
             .then((value) => hideLoading());
       } on Exception catch (e) {
         hideLoading();
@@ -1528,6 +1530,7 @@ class _NewsPostCardState extends State<NewsPostCard>
                       child: Consumer<NewsListProvider>(
                         builder: (context, newslistProvider, _) {
                           return EmotionButton(
+                              providerType: 'NewsListProvider',
                               isLiked: newsData.isLiked!,
                               initalReaction: newsData.isLiked!
                                   ? Reaction(
@@ -1593,7 +1596,9 @@ class _NewsPostCardState extends State<NewsPostCard>
                             handleShare(
                                 newsData.author!.name.toString(),
                                 newsData.author!.image.toString(),
-                                newsData.headline.toString(),
+                                newsData.headline ??
+                                    newsData.submittedHeadline ??
+                                    "",
                                 imgUrl,
                                 newsData.createdDate,
                                 newsData.postId.toString());
@@ -1951,7 +1956,8 @@ class _NewsPostCardState extends State<NewsPostCard>
             title: Text('Copy link'),
             onTap: () {
               Clipboard.setData(ClipboardData(
-                      text: "https://3km.in/post-detail?id=$postID&lang=en"))
+                      text:
+                          "${slugUrl(headLine: newsData.slugHeadline ?? newsData.submittedHeadline, postId: postID)}"))
                   .then((value) => CustomSnackBar(
                       context, Text("Link has been coppied to clipboard")))
                   .whenComplete(() => Navigator.pop(context));
@@ -1968,7 +1974,7 @@ class _NewsPostCardState extends State<NewsPostCard>
               handleShare(
                   newsData.author!.name.toString(),
                   newsData.author!.image.toString(),
-                  newsData.submittedHeadline.toString(),
+                  newsData.slugHeadline ?? newsData.submittedHeadline,
                   imgUrl,
                   newsData.createdDate,
                   newsData.postId.toString());

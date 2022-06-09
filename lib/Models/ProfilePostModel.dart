@@ -86,32 +86,33 @@ class Author {
 }
 
 class Post {
-  Post({
-    this.postId,
-    this.submittedHeadline,
-    this.submittedStory,
-    this.headline,
-    this.story,
-    this.images,
-    this.videos,
-    this.type,
-    this.tags,
-    this.author,
-    this.authorType,
-    this.authorClassification,
-    this.status,
-    this.views,
-    this.createdDate,
-    this.context,
-    this.likes,
-    //this.comments,
-    this.id,
-    this.isVerified,
-    this.isLiked,
-    this.itemType,
-  });
+  Post(
+      {this.postId,
+      this.submittedHeadline,
+      this.submittedStory,
+      this.headline,
+      this.story,
+      this.images,
+      this.videos,
+      this.type,
+      this.tags,
+      this.author,
+      this.authorType,
+      this.authorClassification,
+      this.status,
+      this.views,
+      this.createdDate,
+      this.context,
+      this.likes,
+      //this.comments,
+      this.id,
+      this.isVerified,
+      this.isLiked,
+      this.itemType,
+      this.slugHeadline});
 
   int? postId;
+  String? slugHeadline;
   String? submittedHeadline;
   String? submittedStory;
   String? headline;
@@ -135,40 +136,40 @@ class Post {
   String? itemType;
 
   factory Post.fromJson(Map<String, dynamic> json) => Post(
-        postId: json["post_id"] == null ? null : json["post_id"],
-        submittedHeadline: json["submitted_headline"] == null
-            ? null
-            : json["submitted_headline"],
-        submittedStory:
-            json["submitted_story"] == null ? null : json["submitted_story"],
-        headline: json["headline"] == null ? null : json["headline"],
-        story: json["story"] == null ? null : json["story"],
-        images: json["images"] == null
-            ? null
-            : List<String>.from(json["images"].map((x) => x)),
-        videos: json["videos"] == null
-            ? null
-            : List<Video>.from(json["videos"].map((x) => Video.fromJson(x))),
-        type: json["type"] == null ? null : json["type"],
-        tags: json["tags"] == null
-            ? null
-            : List<String>.from(json["tags"].map((x) => x)),
-        author: json["author"] == null ? null : Author.fromJson(json["author"]),
-        authorType: json["author_type"] == null ? null : json["author_type"],
-        authorClassification: json["author_classification"] == null
-            ? null
-            : json["author_classification"],
-        status: json["status"] == null ? null : json["status"],
-        views: json["views"] == null ? null : json["views"],
-        createdDate: json["created_date"] == null ? null : json["created_date"],
-        context: json["context"],
-        likes: json["likes"] == null ? null : json["likes"],
-        //comments: json["comments"] == null ? null : json["comments"],
-        id: json["id"],
-        isVerified: json["is_verified"] == null ? null : json["is_verified"],
-        isLiked: json["is_liked"] == null ? null : json["is_liked"],
-        itemType: json["item_type"] == null ? null : json["item_type"],
-      );
+      postId: json["post_id"] == null ? null : json["post_id"],
+      submittedHeadline: json["submitted_headline"] == null
+          ? null
+          : json["submitted_headline"],
+      submittedStory:
+          json["submitted_story"] == null ? null : json["submitted_story"],
+      headline: json["headline"] == null ? null : json["headline"],
+      story: json["story"] == null ? null : json["story"],
+      images: json["images"] == null
+          ? null
+          : List<String>.from(json["images"].map((x) => x)),
+      videos: json["videos"] == null
+          ? null
+          : List<Video>.from(json["videos"].map((x) => Video.fromJson(x))),
+      type: json["type"] == null ? null : json["type"],
+      tags: json["tags"] == null
+          ? null
+          : List<String>.from(json["tags"].map((x) => x)),
+      author: json["author"] == null ? null : Author.fromJson(json["author"]),
+      authorType: json["author_type"] == null ? null : json["author_type"],
+      authorClassification: json["author_classification"] == null
+          ? null
+          : json["author_classification"],
+      status: json["status"] == null ? null : json["status"],
+      views: json["views"] == null ? null : json["views"],
+      createdDate: json["created_date"] == null ? null : json["created_date"],
+      context: json["context"],
+      likes: json["likes"] == null ? null : json["likes"],
+      //comments: json["comments"] == null ? null : json["comments"],
+      id: json["id"],
+      isVerified: json["is_verified"] == null ? null : json["is_verified"],
+      isLiked: json["is_liked"] == null ? null : json["is_liked"],
+      itemType: json["item_type"] == null ? null : json["item_type"],
+      slugHeadline: json["slug_headline"]);
 }
 
 class Video {

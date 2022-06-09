@@ -29,6 +29,7 @@ import 'package:threekm/providers/Global/logged_in_or_not.dart';
 import 'package:threekm/providers/main/LikeList_Provider.dart';
 import 'package:threekm/providers/main/NewsFeed_Provider.dart';
 import 'package:threekm/providers/main/comment_Provider.dart';
+import 'package:threekm/utils/slugUrl.dart';
 import 'package:threekm/utils/threekm_textstyles.dart';
 import 'package:threekm/widgets/NewCardUI/image_layout.dart';
 import 'package:threekm/widgets/reactions_assets.dart' as reactionAssets;
@@ -36,7 +37,11 @@ import '../emotion_Button.dart';
 // import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 
 class CardUI extends StatefulWidget {
-  const CardUI({Key? key, required this.data, this.isfollow}) : super(key: key);
+  final providerType;
+
+  const CardUI(
+      {Key? key, required this.data, this.isfollow, required this.providerType})
+      : super(key: key);
   final data;
   final isfollow;
 
@@ -275,6 +280,7 @@ class _CardUIState extends State<CardUI> {
                       }
                     },
                     icon: EmotionButton(
+                        providerType: widget.providerType,
                         isLiked: data.isLiked!,
                         initalReaction: data.isLiked!
                             ? Reaction(
@@ -349,7 +355,9 @@ class _CardUIState extends State<CardUI> {
                       handleShare(
                           data.author!.name.toString(),
                           data.author!.image.toString(),
-                          data.slugHeadline,
+                          data.slugHeadline != null || data.slugHeadline != ""
+                              ? data.slugHeadline
+                              : data.submittedHeadline,
                           imgUrl,
                           data.createdDate,
                           data.postId.toString());
@@ -697,7 +705,8 @@ class _CardUIState extends State<CardUI> {
             title: Text('Copy link'),
             onTap: () {
               Clipboard.setData(ClipboardData(
-                      text: "https://3km.in/post-detail?id=$postID&lang=en"))
+                      text:
+                          "${slugUrl(headLine: newsData.slugHeadline.toString(), postId: postID)}"))
                   .then((value) => CustomSnackBar(
                       context, Text("Link has been coppied to clipboard")))
                   .whenComplete(() => Navigator.pop(context));
@@ -714,7 +723,9 @@ class _CardUIState extends State<CardUI> {
               handleShare(
                   newsData.author!.name.toString(),
                   newsData.author!.image.toString(),
-                  newsData.submittedHeadline.toString(),
+                  newsData.slugHeadline != null || newsData.slugHeadline != ""
+                      ? newsData.slugHeadline
+                      : newsData.submittedHeadline,
                   imgUrl,
                   newsData.createdDate,
                   newsData.postId.toString());
@@ -827,12 +838,10 @@ class _CardUIState extends State<CardUI> {
             ? await getExternalStorageDirectory()
             : await getApplicationDocumentsDirectory();
         File file = await File('${documentDirectory!.path}/image.png').create();
-        String slug =
-            headLine.replaceAll(RegExp(r"[\s]+", multiLine: true), "-");
-        log(slug);
+        log(slugUrl(headLine: headLine, postId: postId));
         file.writeAsBytesSync(capturedImage);
         Share.shareFiles([file.path],
-                text: 'https://3km.in/post-detail/$slug/$postId')
+                text: '${slugUrl(headLine: headLine, postId: postId)}')
             .then((value) => hideLoading());
       } on Exception catch (e) {
         hideLoading();
