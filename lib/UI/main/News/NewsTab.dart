@@ -28,6 +28,7 @@ import 'package:threekm/UI/main/News/NewsList.dart';
 import 'package:threekm/UI/main/News/PostView.dart';
 import 'package:threekm/UI/main/News/Widgets/HeighLightPost.dart';
 import 'package:threekm/UI/main/News/uppartabs.dart';
+import 'package:threekm/UI/shop/showOrderStatus.dart';
 
 import 'package:threekm/commenwidgets/CustomSnakBar.dart';
 import 'package:threekm/commenwidgets/commenwidget.dart';
@@ -120,6 +121,7 @@ class _NewsTabState extends State<NewsTab> with AutomaticKeepAliveClientMixin {
         context.read<AddPostProvider>();
       });
     }
+    ShowOrderStaus();
     if (widget.isPostUploaded ?? false) {
       // Future.delayed(Duration(seconds: 1), () {
       //   CustomSnackBar(context, Text("Post has been submmitted"));

@@ -14,6 +14,7 @@ import 'package:threekm/main.dart';
 import 'package:threekm/providers/shop/cart_provider.dart';
 import 'package:threekm/providers/shop/restaurant_menu_provider.dart';
 import 'package:threekm/Models/shopModel/restaurants_menu_model.dart';
+import 'package:threekm/utils/constants.dart';
 
 import 'package:threekm/utils/screen_util.dart';
 import 'package:threekm/utils/utils.dart';
@@ -149,9 +150,9 @@ class _RestaurantMenuState extends State<RestaurantMenu> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         SizedBox(
-                          width: ThreeKmScreenUtil.screenWidthDp / 2,
+                          width: size(context).width / 2,
                           child: Text(
-                            '${widget.data.businessName}',
+                            '${data.result?.creator.businessName ?? ""}',
                             style: const TextStyle(
                                 color: Color(0xFF0F0F2D),
                                 fontSize: 18,
@@ -164,7 +165,7 @@ class _RestaurantMenuState extends State<RestaurantMenu> {
                               maxWidth:
                                   MediaQuery.of(context).size.width / 1.7),
                           child: Text(
-                            '${widget.data.restaurant?.cuisines?.join(", ")}',
+                            '${data.result?.creator.restaurant?.cuisines?.join(", ") ?? ""}',
                             style: const TextStyle(
                                 color: Color(0xFF555C64),
                                 fontSize: 16,
@@ -172,7 +173,7 @@ class _RestaurantMenuState extends State<RestaurantMenu> {
                           ),
                         ),
                         Text(
-                            '${widget.data.address?.serviceArea}, ${widget.data.address?.city}')
+                            '${data.result?.creator.address.serviceArea ?? ""}, ${data.result?.creator.address.city ?? ""}')
                       ],
                     ),
                     Stack(children: [
@@ -182,7 +183,8 @@ class _RestaurantMenuState extends State<RestaurantMenu> {
                               MaterialPageRoute(builder: (_) {
                             return RestaurantDetails(
                               result: data.result,
-                              tags: widget.data.restaurant?.cuisines,
+                              tags: data.result?.creator.restaurant?.cuisines ??
+                                  [],
                             );
                           }));
                         },
