@@ -78,8 +78,8 @@ class _PastOrderState extends State<PastOrder> {
                         itemCount: Menudata.length,
                         itemBuilder: (_, i) {
                           var order = Menudata[i];
-                          var StatusColor = order.centerColor.split('rgba')[1];
-                          log(StatusColor);
+                          // var StatusColor = order.centerColor.split('rgba')[1];
+                          // log(StatusColor);
                           return Container(
                             decoration: BoxDecoration(
                               border: Border.all(

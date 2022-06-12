@@ -1535,17 +1535,17 @@ class _NewsPostCardState extends State<NewsPostCard>
                               initalReaction: newsData.isLiked!
                                   ? Reaction(
                                       icon: Image.asset(
-                                          "assets/thumbs_up_red.png"))
+                                          "assets/like_icon.png"))
                                   : Reaction(
                                       icon:
-                                          Image.asset("assets/thumbs-up.png")),
+                                          Image.asset("assets/un_like_icon.png")),
                               selectedReaction: newsData.isLiked!
                                   ? Reaction(
                                       icon: Image.asset(
-                                          "assets/thumbs_up_red.png"))
+                                          "assets/like_icon.png"))
                                   : Reaction(
                                       icon:
-                                          Image.asset("assets/thumbs-up.png")),
+                                          Image.asset("assets/un_like_icon.png")),
                               postId: newsData.postId!.toInt(),
                               reactions: reactionAssets.reactions);
                         },
