@@ -10,6 +10,7 @@ import 'package:flutter/services.dart';
 import 'package:hive/hive.dart';
 import 'package:provider/src/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:threekm/Models/shopModel/restaurants_model.dart';
 import 'package:threekm/UI/businesses/businesses_detail.dart';
 import 'package:threekm/UI/main/News/PostView.dart';
 import 'package:threekm/UI/main/News/poll_page.dart';
@@ -17,6 +18,7 @@ import 'package:threekm/UI/main/navigation.dart';
 import 'package:threekm/UI/Auth/signup/sign_up.dart';
 import 'package:threekm/UI/shop/product/product_details.dart';
 import 'package:threekm/UI/shop/product_listing.dart';
+import 'package:threekm/UI/shop/restaurants/restaurants_menu.dart';
 import 'package:threekm/main.dart';
 import 'package:threekm/providers/FCM/fcm_sendToken_Provider.dart';
 import 'package:threekm/providers/Global/logged_in_or_not.dart';
@@ -189,6 +191,19 @@ class _SplashScreenState extends State<SplashScreen> {
               context,
               MaterialPageRoute(builder: (_) => TabBarNavigation()),
               (route) => false));
+        } else if (initialLink.contains("/food/restaurant/")) {
+          await Hive.openBox('restroCartBox').whenComplete(() {
+            Navigator.push(context, MaterialPageRoute(builder: (_) {
+              return RestaurantMenu(
+                  data: Creators(
+                      creatorId: int.parse(initialLink.split('/').last))
+                  //{creatorId: "${int.parse(initialLink.split('/').last)}"},
+                  );
+            })).then((value) => Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (_) => TabBarNavigation()),
+                (route) => false));
+          });
         } else {
           Navigator.push(context,
               MaterialPageRoute(builder: (BuildContext context) {
