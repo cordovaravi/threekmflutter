@@ -178,7 +178,10 @@ class _PastOrderState extends State<PastOrder> {
                             ),
                           );
                         })
-                    : Container(),
+                    : Container(
+                        alignment: Alignment.center,
+                        child: CircularProgressIndicator(),
+                      ),
               ),
               // second tab
               Container(
@@ -284,7 +287,10 @@ class _PastOrderState extends State<PastOrder> {
                             ),
                           );
                         })
-                    : Container(),
+                    : Container(
+                        alignment: Alignment.center,
+                        child: CircularProgressIndicator(),
+                      ),
               ),
               //second Tab
             ],
