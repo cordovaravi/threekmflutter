@@ -693,43 +693,46 @@ class Result {
 }
 
 class Post {
-  Post({
-    this.postId,
-    this.submittedHeadline,
-    this.submittedStory,
-    this.headline,
-    this.story,
-    this.images,
-    this.videos,
-    this.type,
-    this.tags,
-    this.publishFrom,
-    this.author,
-    this.authorType,
-    this.authorClassification,
-    this.status,
-    this.originalLanguage,
-    this.impressions,
-    this.views,
-    this.postCreatedDate,
-    this.createdDate,
-    this.context,
-    this.isUgc,
-    this.likes,
-    this.comments,
-    this.locations,
-    this.userDetails,
-    this.creatorDetails,
-    this.id,
-    this.isVerified,
-    this.isLiked,
-    this.areas,
-    this.slugHeadline,
-    this.shares,
-    this.origHeadline,
-    this.origStory,
-    this.itemType,
-  });
+  Post(
+      {this.postId,
+      this.submittedHeadline,
+      this.submittedStory,
+      this.headline,
+      this.story,
+      this.images,
+      this.videos,
+      this.type,
+      this.tags,
+      this.publishFrom,
+      this.author,
+      this.authorType,
+      this.authorClassification,
+      this.status,
+      this.originalLanguage,
+      this.impressions,
+      this.views,
+      this.postCreatedDate,
+      this.createdDate,
+      this.context,
+      this.isUgc,
+      this.likes,
+      this.comments,
+      this.locations,
+      this.userDetails,
+      this.creatorDetails,
+      this.id,
+      this.isVerified,
+      this.isLiked,
+      this.areas,
+      this.slugHeadline,
+      this.shares,
+      this.origHeadline,
+      this.origStory,
+      this.itemType,
+      this.preheaderLike,
+      this.preheaderComment,
+      this.latestComment
+      });
 
   int? postId;
   String? submittedHeadline;
@@ -766,71 +769,75 @@ class Post {
   String? origHeadline;
   String? origStory;
   String? itemType;
+  String? preheaderLike;
+  String? preheaderComment;
+  LatestComment? latestComment;
 
   factory Post.fromJson(Map<String, dynamic> json) => Post(
-        postId: json["post_id"] == null ? null : json["post_id"],
-        submittedHeadline: json["submitted_headline"] == null
-            ? null
-            : json["submitted_headline"],
-        submittedStory:
-            json["submitted_story"] == null ? null : json["submitted_story"],
-        headline: json["headline"] == null ? null : json["headline"],
-        story: json["story"] == null ? null : json["story"],
-        images: json["images"] == null
-            ? null
-            : List<String>.from(json["images"].map((x) => x)),
-        videos: json["videos"] == null
-            ? null
-            : List<Video>.from(json["videos"].map((x) => Video.fromJson(x))),
-        type: json["type"] == null ? null : json["type"],
-        tags: json["tags"] == null
-            ? null
-            : List<String>.from(json["tags"].map((x) => x)),
-        publishFrom: json["publish_from"] == null
-            ? null
-            : DateTime.parse(json["publish_from"]),
-        author: json["author"] == null ? null : Author.fromJson(json["author"]),
-        authorType: json["author_type"] == null ? null : json["author_type"],
-        authorClassification: json["author_classification"] == null
-            ? null
-            : json["author_classification"],
-        status: json["status"] == null ? null : json["status"],
-        originalLanguage: json["original_language"] == null
-            ? null
-            : json["original_language"],
-        impressions: json["impressions"] == null ? null : json["impressions"],
-        views: json["views"] == null ? null : json["views"],
-        postCreatedDate: json["post_created_date"] == null
-            ? null
-            : DateTime.parse(json["post_created_date"]),
-        createdDate: json["created_date"] == null ? null : json["created_date"],
-        context: json["context"],
-        isUgc: json["is_ugc"] == null ? null : json["is_ugc"],
-        likes: json["likes"] == null ? null : json["likes"],
-        comments: json["comments"] == null ? null : json["comments"],
-        locations: json["locations"] == null
-            ? null
-            : List<Location>.from(
-                json["locations"].map((x) => Location.fromJson(x))),
-        userDetails: json["user_details"] == null
-            ? null
-            : List<UserDetail>.from(
-                json["user_details"].map((x) => UserDetail.fromJson(x))),
-        creatorDetails: json["creator_details"] == null
-            ? null
-            : List<dynamic>.from(json["creator_details"].map((x) => x)),
-        id: json["id"],
-        isVerified: json["is_verified"] == null ? null : json["is_verified"],
-        isLiked: json["is_liked"] == null ? null : json["is_liked"],
-        areas: json["areas"] == null ? null : json["areas"],
-        slugHeadline:
-            json["slug_headline"] == null ? null : json["slug_headline"],
-        shares: json["shares"] == null ? null : json["shares"],
-        origHeadline:
-            json["orig_headline"] == null ? null : json["orig_headline"],
-        origStory: json["orig_story"] == null ? null : json["orig_story"],
-        itemType: json["item_type"] == null ? null : json["item_type"],
-      );
+      postId: json["post_id"] == null ? null : json["post_id"],
+      submittedHeadline: json["submitted_headline"] == null
+          ? null
+          : json["submitted_headline"],
+      submittedStory:
+          json["submitted_story"] == null ? null : json["submitted_story"],
+      headline: json["headline"] == null ? null : json["headline"],
+      story: json["story"] == null ? null : json["story"],
+      images: json["images"] == null
+          ? null
+          : List<String>.from(json["images"].map((x) => x)),
+      videos: json["videos"] == null
+          ? null
+          : List<Video>.from(json["videos"].map((x) => Video.fromJson(x))),
+      type: json["type"] == null ? null : json["type"],
+      tags: json["tags"] == null
+          ? null
+          : List<String>.from(json["tags"].map((x) => x)),
+      publishFrom: json["publish_from"] == null
+          ? null
+          : DateTime.parse(json["publish_from"]),
+      author: json["author"] == null ? null : Author.fromJson(json["author"]),
+      authorType: json["author_type"] == null ? null : json["author_type"],
+      authorClassification: json["author_classification"] == null
+          ? null
+          : json["author_classification"],
+      status: json["status"] == null ? null : json["status"],
+      originalLanguage:
+          json["original_language"] == null ? null : json["original_language"],
+      impressions: json["impressions"] == null ? null : json["impressions"],
+      views: json["views"] == null ? null : json["views"],
+      postCreatedDate: json["post_created_date"] == null
+          ? null
+          : DateTime.parse(json["post_created_date"]),
+      createdDate: json["created_date"] == null ? null : json["created_date"],
+      context: json["context"],
+      isUgc: json["is_ugc"] == null ? null : json["is_ugc"],
+      likes: json["likes"] == null ? null : json["likes"],
+      comments: json["comments"] == null ? null : json["comments"],
+      locations: json["locations"] == null
+          ? null
+          : List<Location>.from(
+              json["locations"].map((x) => Location.fromJson(x))),
+      userDetails: json["user_details"] == null
+          ? null
+          : List<UserDetail>.from(
+              json["user_details"].map((x) => UserDetail.fromJson(x))),
+      creatorDetails: json["creator_details"] == null
+          ? null
+          : List<dynamic>.from(json["creator_details"].map((x) => x)),
+      id: json["id"],
+      isVerified: json["is_verified"] == null ? null : json["is_verified"],
+      isLiked: json["is_liked"] == null ? null : json["is_liked"],
+      areas: json["areas"] == null ? null : json["areas"],
+      slugHeadline:
+          json["slug_headline"] == null ? null : json["slug_headline"],
+      shares: json["shares"] == null ? null : json["shares"],
+      origHeadline:
+          json["orig_headline"] == null ? null : json["orig_headline"],
+      origStory: json["orig_story"] == null ? null : json["orig_story"],
+      itemType: json["item_type"] == null ? null : json["item_type"],
+      preheaderLike: json["preheader_like"],
+      preheaderComment: json["preheader_comment"],
+      latestComment: LatestComment.fromJson(json['latest_comment']));
 }
 
 class Author {
@@ -939,4 +946,50 @@ class Video {
         width: json["width"] == null ? null : json["width"],
         height: json["height"] == null ? null : json["height"],
       );
+}
+
+class LatestComment {
+  LatestComment({
+    this.comment,
+    this.user,
+  });
+  String? comment;
+  User? user;
+
+  LatestComment.fromJson(Map<String, dynamic> json) {
+    comment = json['comment'] ?? "";
+    user = json['user'] != null ? User.fromJson(json['user']) : null;
+  }
+
+  Map<String, dynamic> toJson() {
+    final _data = <String, dynamic>{};
+    _data['comment'] = comment;
+    _data['user'] = user?.toJson();
+    return _data;
+  }
+}
+
+class User {
+  User({
+    required this.userId,
+    required this.name,
+    required this.avatar,
+  });
+  late final int userId;
+  late final String name;
+  late final String avatar;
+
+  User.fromJson(Map<String, dynamic> json) {
+    userId = json['user_id'];
+    name = json['name'];
+    avatar = json['avatar'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final _data = <String, dynamic>{};
+    _data['user_id'] = userId;
+    _data['name'] = name;
+    _data['avatar'] = avatar;
+    return _data;
+  }
 }

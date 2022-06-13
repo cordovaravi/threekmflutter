@@ -9,16 +9,17 @@ import 'package:provider/src/provider.dart';
 import 'package:threekm/Models/shopModel/address_list_model.dart';
 import 'package:threekm/Models/shopModel/cart_hive_model.dart';
 import 'package:threekm/Models/shopModel/shipping_rate_model.dart';
-import 'package:threekm/UI/shop/address/new_address.dart';
+
 import 'package:threekm/UI/shop/address/openMap.dart';
 import 'package:threekm/commenwidgets/CustomSnakBar.dart';
 import 'package:threekm/localization/localize.dart';
 import 'package:threekm/providers/shop/address_list_provider.dart';
 import 'package:threekm/providers/shop/cart_provider.dart';
 import 'package:threekm/providers/shop/checkout/checkout_provider.dart';
-import 'package:threekm/utils/screen_util.dart';
+// import 'package:threekm/utils/screen_util.dart';
 import 'package:threekm/utils/threekm_textstyles.dart';
 import '../../shop/checkout/payment_confirming_screen.dart';
+import 'package:threekm/utils/constants.dart';
 
 class RestaurantsCheckOutScreen extends StatefulWidget {
   const RestaurantsCheckOutScreen({Key? key}) : super(key: key);
@@ -123,7 +124,7 @@ class _RestaurantsCheckOutScreenState extends State<RestaurantsCheckOutScreen> {
                       child: Column(
                         children: [
                           SizedBox(
-                            width: ThreeKmScreenUtil.screenWidthDp / 1.15,
+                            width: size(context).width / 1.15,
                             child: Row(
                               // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
@@ -207,7 +208,7 @@ class _RestaurantsCheckOutScreenState extends State<RestaurantsCheckOutScreen> {
                           ),
                           Container(
                             padding: EdgeInsets.only(left: 20, right: 20),
-                            height: ThreeKmScreenUtil.screenHeightDp - 241,
+                            height: size(context).height - 241,
                             child: PageView(
                               physics: const NeverScrollableScrollPhysics(),
                               controller: _pageController,
@@ -565,9 +566,8 @@ class _RestaurantsCheckOutScreenState extends State<RestaurantsCheckOutScreen> {
                                           : Container(
                                               //color: Colors.red,
 
-                                              height: ThreeKmScreenUtil
-                                                      .screenHeightDp /
-                                                  1.5,
+                                              height:
+                                                  size(context).height / 1.5,
                                               child: SingleChildScrollView(
                                                 child: Column(children: [
                                                   ListView.builder(
