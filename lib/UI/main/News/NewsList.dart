@@ -255,7 +255,7 @@ class _NewsListPageState extends State<NewsListPage> {
                   );
                 } else if (newsProvider.state == "error") {
                   return Center(
-                    child: Lottie.asset("assets/Caterror.json"),
+                    child: Lottie.asset("assets/newsListError.json"),
                   );
                 } else if (newsProvider.state == "loaded") {
                   return newsProvider.newsBycategory != null
@@ -1534,18 +1534,16 @@ class _NewsPostCardState extends State<NewsPostCard>
                               isLiked: newsData.isLiked!,
                               initalReaction: newsData.isLiked!
                                   ? Reaction(
-                                      icon: Image.asset(
-                                          "assets/like_icon.png"))
+                                      icon: Image.asset("assets/like_icon.png"))
                                   : Reaction(
-                                      icon:
-                                          Image.asset("assets/un_like_icon.png")),
+                                      icon: Image.asset(
+                                          "assets/un_like_icon.png")),
                               selectedReaction: newsData.isLiked!
                                   ? Reaction(
-                                      icon: Image.asset(
-                                          "assets/like_icon.png"))
+                                      icon: Image.asset("assets/like_icon.png"))
                                   : Reaction(
-                                      icon:
-                                          Image.asset("assets/un_like_icon.png")),
+                                      icon: Image.asset(
+                                          "assets/un_like_icon.png")),
                               postId: newsData.postId!.toInt(),
                               reactions: reactionAssets.reactions);
                         },
