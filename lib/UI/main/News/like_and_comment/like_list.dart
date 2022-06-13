@@ -55,24 +55,44 @@ class _LikeListState extends State<LikeList> {
                                 provider: provider,
                                 index: index,
                               ),
-                              leading: Container(
-                                  height: 45,
-                                  width: 45,
-                                  decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      image: DecorationImage(
-                                          fit: BoxFit.cover,
-                                          image: NetworkImage(
-                                              provider.users[index].avatar.toString()))),
-                                  child: provider.users[index].isUnknown != null
-                                      ? Center(
-                                          child: Text(
-                                              "+${provider.likeList!.data!.result!.anonymousCount}",
-                                              style: TextStyle(fontSize: 12, color: Colors.white),
-                                              textAlign: TextAlign.center),
-                                        )
-                                      : SizedBox.shrink()),
-                              title: Text('${provider.users[index].name}'),
+                              leading: Stack(
+                                children: [
+                                  Container(
+                                      height: 45,
+                                      width: 45,
+                                      decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          image: (index < provider.usersCount!)
+                                              ? DecorationImage(
+                                                  fit: BoxFit.cover,
+                                                  image: NetworkImage(
+                                                      provider.users[index].avatar.toString()))
+                                              : null),
+                                      child: provider.users[index].isUnknown != null
+                                          ? Center(
+                                              child: Text(
+                                                  // "+${provider.likeList!.data!.result!.anonymousCount}",
+                                                  "+",
+                                                  style:
+                                                      TextStyle(fontSize: 22, color: Colors.white),
+                                                  textAlign: TextAlign.center),
+                                            )
+                                          : SizedBox.shrink()),
+                                  Positioned(
+                                    right: 0,
+                                    top: 0,
+                                    child: Image.asset(
+                                      'assets/reactions/${provider.users[index].isUnknown != null ? 'like' : (provider.users[index].emotion ?? 'like')}.png',
+                                      height: 15,
+                                      width: 15,
+                                      // color: Colors.blue,
+                                    ),
+                                  )
+                                ],
+                              ),
+                              title: Text(provider.users[index].name != 'anonymous'
+                                  ? provider.users[index].name.toString()
+                                  : '...and ${provider.likeList?.data?.result?.anonymousCount} more'),
                             )),
                 if (provider.likeCount != 0)
                   ListView.builder(
@@ -392,16 +412,15 @@ class _LikeListState extends State<LikeList> {
         Duration.zero, () => context.read<LikeListProvider>().showLikes(context, widget.postId));
   }
 
-  // TODO: Implement Call to user's profile when authortype becomes available in response
   goToProfile({required LikeListProvider provider, required int index}) {
-    // Navigator.push(
-    //     context,
-    //     MaterialPageRoute(
-    //         builder: (context) => AuthorProfile(
-    //               authorType: provider.users[index].authorType,
-    //               id: provider.users[index].id!,
-    //               avatar: provider.users[index].avatar ?? '',
-    //               userName: provider.users[index].name ?? '',
-    //             )));
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => AuthorProfile(
+                  authorType: provider.users[index].userType,
+                  id: provider.users[index].id!,
+                  avatar: provider.users[index].avatar ?? '',
+                  userName: provider.users[index].name ?? '',
+                )));
   }
 }

@@ -31,6 +31,7 @@ import 'package:threekm/providers/main/comment_Provider.dart';
 import 'package:threekm/utils/threekm_textstyles.dart';
 import 'package:threekm/widgets/NewCardUI/image_layout.dart';
 
+import '../../UI/main/News/like_and_comment/comment_section.dart';
 import '../../UI/main/News/like_and_comment/like_list.dart';
 // import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 
@@ -291,7 +292,13 @@ class _CardUIState extends State<CardUI> {
                     style: ButtonStyle(foregroundColor: MaterialStateProperty.all(Colors.black)),
                     onPressed: () async {
                       if (await getAuthStatus()) {
-                        showCommentsBottomModalSheet(context, data.postId!.toInt());
+                        context.read<CommentProvider>().getAllCommentsApi(data.postId!.toInt());
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    CommentSection(postId: data.postId!.toInt())));
+                        // showCommentsBottomModalSheet(context, data.postId!.toInt());
                       } else {
                         NaviagateToLogin(context);
                       }
@@ -362,9 +369,9 @@ class _CardUIState extends State<CardUI> {
                               height: 20, width: 20, child: Image.asset('assets/icons-topic.png')),
                           Padding(padding: EdgeInsets.only(left: 10)),
                           Consumer<CommentProvider>(builder: (context, commentProvider, _) {
-                            return commentProvider.commentList?.length != null
+                            return commentProvider.allComments.length != null
                                 ? Text(
-                                    "${commentProvider.commentList!.length}\tComments",
+                                    "${commentProvider.allComments.length}\tComments",
                                     style: ThreeKmTextConstants.tk14PXPoppinsBlackSemiBold,
                                   )
                                 : Text(
@@ -378,7 +385,7 @@ class _CardUIState extends State<CardUI> {
                         height: 10,
                       ),
                       Consumer<CommentProvider>(builder: (context, commentProvider, _) {
-                        return context.read<CommentProvider>().commentList != null
+                        return context.read<CommentProvider>().allComments != null
                             ? Expanded(
                                 child: commentProvider.isGettingComments == true
                                     ? CommentsLoadingEffects()
@@ -386,7 +393,7 @@ class _CardUIState extends State<CardUI> {
                                         physics: BouncingScrollPhysics(),
                                         shrinkWrap: true,
                                         primary: true,
-                                        itemCount: commentProvider.commentList!.length,
+                                        itemCount: commentProvider.allComments.length,
                                         itemBuilder: (context, commentIndex) {
                                           return Container(
                                             margin: EdgeInsets.all(1),
@@ -395,7 +402,7 @@ class _CardUIState extends State<CardUI> {
                                             ),
                                             child: ListTile(
                                               trailing: commentProvider
-                                                          .commentList![commentIndex].isself ==
+                                                          .allComments[commentIndex].isself ==
                                                       true
                                                   ? IconButton(
                                                       onPressed: () {
@@ -403,7 +410,7 @@ class _CardUIState extends State<CardUI> {
                                                             .read<CommentProvider>()
                                                             .removeComment(
                                                                 commentProvider
-                                                                    .commentList![commentIndex]
+                                                                    .allComments[commentIndex]
                                                                     .commentId!,
                                                                 postId);
                                                       },
@@ -416,11 +423,11 @@ class _CardUIState extends State<CardUI> {
                                                     image: DecorationImage(
                                                         image: CachedNetworkImageProvider(
                                                             commentProvider
-                                                                .commentList![commentIndex].avatar
+                                                                .allComments[commentIndex].avatar
                                                                 .toString()))),
                                               ),
                                               title: Text(
-                                                commentProvider.commentList![commentIndex].username
+                                                commentProvider.allComments[commentIndex].username
                                                     .toString(),
                                                 style:
                                                     ThreeKmTextConstants.tk14PXPoppinsBlackSemiBold,
@@ -433,7 +440,7 @@ class _CardUIState extends State<CardUI> {
                                                     ),
                                                     Text(
                                                       commentProvider
-                                                          .commentList![commentIndex].comment
+                                                          .allComments[commentIndex].comment
                                                           .toString(),
                                                       style: ThreeKmTextConstants
                                                           .tk14PXLatoBlackMedium,
@@ -443,7 +450,7 @@ class _CardUIState extends State<CardUI> {
                                                     ),
                                                     Text(
                                                         commentProvider
-                                                            .commentList![commentIndex].timeLapsed
+                                                            .allComments[commentIndex].timeLapsed
                                                             .toString(),
                                                         style:
                                                             TextStyle(fontStyle: FontStyle.italic))

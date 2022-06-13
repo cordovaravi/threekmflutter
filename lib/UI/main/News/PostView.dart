@@ -12,6 +12,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:threekm/Custom_library/flutter_reaction_button.dart';
 import 'package:threekm/UI/main/News/NewsList.dart';
 import 'package:threekm/UI/main/News/Widgets/singlePost_Loading.dart';
+import 'package:threekm/UI/main/News/like_and_comment/comment_section.dart';
 import 'package:threekm/UI/main/Profile/AuthorProfile.dart';
 import 'package:threekm/commenwidgets/CustomSnakBar.dart';
 import 'package:threekm/commenwidgets/commenwidget.dart';
@@ -478,8 +479,14 @@ class _PostviewState extends State<Postview> {
                                                 MaterialStateProperty.all(Colors.black)),
                                         onPressed: () async {
                                           if (await getAuthStatus()) {
-                                            _showCommentsBottomModalSheet(
-                                                context, newsData.postId!.toInt());
+                                            context
+                                                .read<CommentProvider>()
+                                                .getAllCommentsApi(newsData.postId!.toInt());
+                                            Navigator.of(context).push(MaterialPageRoute(
+                                                builder: (context) =>
+                                                    CommentSection(postId: newsData.postId!)));
+                                            // _showCommentsBottomModalSheet(
+                                            //     context, newsData.postId!.toInt());
                                           } else {
                                             NaviagateToLogin(context);
                                           }
@@ -832,9 +839,9 @@ class _PostviewState extends State<Postview> {
                               height: 20, width: 20, child: Image.asset('assets/icons-topic.png')),
                           Padding(padding: EdgeInsets.only(left: 10)),
                           Consumer<CommentProvider>(builder: (context, commentProvider, _) {
-                            return commentProvider.commentList?.length != null
+                            return commentProvider.allComments.length != 0
                                 ? Text(
-                                    "${commentProvider.commentList!.length}\tComments",
+                                    "${commentProvider.allComments.length}\tComments",
                                     style: ThreeKmTextConstants.tk14PXPoppinsBlackSemiBold,
                                   )
                                 : Text(
@@ -848,7 +855,7 @@ class _PostviewState extends State<Postview> {
                         height: 10,
                       ),
                       Consumer<CommentProvider>(builder: (context, commentProvider, _) {
-                        return context.read<CommentProvider>().commentList != null
+                        return context.read<CommentProvider>().allComments != 0
                             ? Expanded(
                                 child: commentProvider.isGettingComments == true
                                     ? CommentsLoadingEffects()
@@ -856,7 +863,7 @@ class _PostviewState extends State<Postview> {
                                         physics: BouncingScrollPhysics(),
                                         shrinkWrap: true,
                                         primary: true,
-                                        itemCount: commentProvider.commentList!.length,
+                                        itemCount: commentProvider.allComments.length,
                                         itemBuilder: (context, commentIndex) {
                                           return Container(
                                             margin: EdgeInsets.all(1),
@@ -865,7 +872,7 @@ class _PostviewState extends State<Postview> {
                                             ),
                                             child: ListTile(
                                               trailing: commentProvider
-                                                          .commentList![commentIndex].isself ==
+                                                          .allComments[commentIndex].isself ==
                                                       true
                                                   ? IconButton(
                                                       onPressed: () {
@@ -873,7 +880,7 @@ class _PostviewState extends State<Postview> {
                                                             .read<CommentProvider>()
                                                             .removeComment(
                                                                 commentProvider
-                                                                    .commentList![commentIndex]
+                                                                    .allComments[commentIndex]
                                                                     .commentId!,
                                                                 postId);
                                                       },
@@ -886,11 +893,11 @@ class _PostviewState extends State<Postview> {
                                                     image: DecorationImage(
                                                         image: CachedNetworkImageProvider(
                                                             commentProvider
-                                                                .commentList![commentIndex].avatar
+                                                                .allComments[commentIndex].avatar
                                                                 .toString()))),
                                               ),
                                               title: Text(
-                                                commentProvider.commentList![commentIndex].username
+                                                commentProvider.allComments[commentIndex].username
                                                     .toString(),
                                                 style:
                                                     ThreeKmTextConstants.tk14PXPoppinsBlackSemiBold,
@@ -903,7 +910,7 @@ class _PostviewState extends State<Postview> {
                                                     ),
                                                     Text(
                                                       commentProvider
-                                                          .commentList![commentIndex].comment
+                                                          .allComments[commentIndex].comment
                                                           .toString(),
                                                       style: ThreeKmTextConstants
                                                           .tk14PXLatoBlackMedium,
@@ -913,7 +920,7 @@ class _PostviewState extends State<Postview> {
                                                     ),
                                                     Text(
                                                         commentProvider
-                                                            .commentList![commentIndex].timeLapsed
+                                                            .allComments[commentIndex].timeLapsed
                                                             .toString(),
                                                         style:
                                                             TextStyle(fontStyle: FontStyle.italic))

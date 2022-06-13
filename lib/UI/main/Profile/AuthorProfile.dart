@@ -49,8 +49,7 @@ class AuthorProfile extends StatefulWidget {
   _AuthorProfileState createState() => _AuthorProfileState();
 }
 
-class _AuthorProfileState extends State<AuthorProfile>
-    with TickerProviderStateMixin {
+class _AuthorProfileState extends State<AuthorProfile> with TickerProviderStateMixin {
   late TabController _tabController;
   ScrollController controller = ScrollController();
 
@@ -141,17 +140,14 @@ class _AuthorProfileState extends State<AuthorProfile>
                               "${widget.userName}",
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: ThreeKmTextConstants
-                                  .tk14PXPoppinsBlackSemiBold
+                              style: ThreeKmTextConstants.tk14PXPoppinsBlackSemiBold
                                   .copyWith(fontSize: 24),
                             ),
                           ),
                         ),
                         Container(
                             //width: 298,
-                            child: authorProfile.data.result!.author!.about
-                                        .toString() !=
-                                    "null"
+                            child: authorProfile.data.result!.author!.about.toString() != "null"
                                 ? Column(
                                     children: [
                                       Text(
@@ -159,8 +155,7 @@ class _AuthorProfileState extends State<AuthorProfile>
                                         maxLines: 2,
                                         overflow: TextOverflow.ellipsis,
                                         textAlign: TextAlign.center,
-                                        style: ThreeKmTextConstants
-                                            .tk14PXPoppinsBlackSemiBold
+                                        style: ThreeKmTextConstants.tk14PXPoppinsBlackSemiBold
                                             .copyWith(
                                           fontSize: 12,
                                           fontWeight: FontWeight.w400,
@@ -185,61 +180,48 @@ class _AuthorProfileState extends State<AuthorProfile>
                         //   ],
                         // ),
                         Padding(
-                          padding: EdgeInsets.symmetric(
-                              vertical: 18, horizontal: 18),
+                          padding: EdgeInsets.symmetric(vertical: 18, horizontal: 18),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Column(
                                 children: [
-                                  Text(
-                                      authorProfile
-                                          .data.result!.author!.followers
-                                          .toString(),
+                                  Text(authorProfile.data.result!.author!.followers.toString(),
                                       style: GoogleFonts.poppins(
                                           color: Colors.black,
                                           fontWeight: FontWeight.w500,
                                           fontSize: 18)),
                                   Text(
                                     "Followers",
-                                    style: ThreeKmTextConstants
-                                        .tk14PXPoppinsBlackSemiBold
+                                    style: ThreeKmTextConstants.tk14PXPoppinsBlackSemiBold
                                         .copyWith(color: Color(0xff979EA4)),
                                   )
                                 ],
                               ),
                               Column(
                                 children: [
-                                  Text(
-                                      authorProfile
-                                          .data.result!.author!.totalPosts
-                                          .toString(),
+                                  Text(authorProfile.data.result!.author!.totalPosts.toString(),
                                       style: GoogleFonts.poppins(
                                           color: Colors.black,
                                           fontWeight: FontWeight.w500,
                                           fontSize: 18)),
                                   Text(
                                     "Posts",
-                                    style: ThreeKmTextConstants
-                                        .tk14PXPoppinsBlackSemiBold
+                                    style: ThreeKmTextConstants.tk14PXPoppinsBlackSemiBold
                                         .copyWith(color: Color(0xff979EA4)),
                                   )
                                 ],
                               ),
                               Column(
                                 children: [
-                                  Text(
-                                      authorProfile
-                                          .data.result!.author!.following
-                                          .toString(),
+                                  Text(authorProfile.data.result!.author!.following.toString(),
                                       style: GoogleFonts.poppins(
                                           color: Colors.black,
                                           fontWeight: FontWeight.w500,
                                           fontSize: 18)),
                                   Text(
                                     "Following",
-                                    style: ThreeKmTextConstants
-                                        .tk14PXPoppinsBlackSemiBold
+                                    style: ThreeKmTextConstants.tk14PXPoppinsBlackSemiBold
                                         .copyWith(color: Color(0xff979EA4)),
                                   )
                                 ],
@@ -248,13 +230,12 @@ class _AuthorProfileState extends State<AuthorProfile>
                           ),
                         ),
                         space(height: 10),
-                        Consumer<AutthorProfileProvider>(
-                            builder: (context, controller, _) {
+                        Consumer<AutthorProfileProvider>(builder: (context, controller, _) {
                           return buildFollowingButton(
                               isLoading: controller.followLoading,
                               authorId: authorProfile.data.result!.author!.id!,
-                              isFollowed: controller.authorProfilePostData!.data
-                                  .result!.author!.isFollowed!);
+                              isFollowed: controller
+                                  .authorProfilePostData!.data.result!.author!.isFollowed!);
                         })
                       ],
                     ),
@@ -401,9 +382,7 @@ class _AuthorProfileState extends State<AuthorProfile>
   }
 
   Widget buildFollowingButton(
-      {required bool isFollowed,
-      required int authorId,
-      required bool isLoading}) {
+      {required bool isFollowed, required int authorId, required bool isLoading}) {
     return GestureDetector(
       onTap: () async {
         if (await getAuthStatus()) {
@@ -438,15 +417,13 @@ class _AuthorProfileState extends State<AuthorProfile>
                     Text(
                       "Following", //: "Follow".toUpperCase(),
                       style: ThreeKmTextConstants.tk14PXPoppinsBlackSemiBold
-                          .copyWith(
-                              color: Colors.white, fontWeight: FontWeight.w500),
+                          .copyWith(color: Colors.white, fontWeight: FontWeight.w500),
                     )
                   } else ...{
                     Text(
                       "Follow", //: "Follow".toUpperCase(),
                       style: ThreeKmTextConstants.tk14PXPoppinsBlackSemiBold
-                          .copyWith(
-                              color: Colors.white, fontWeight: FontWeight.w500),
+                          .copyWith(color: Colors.white, fontWeight: FontWeight.w500),
                     )
                   }
                 ],
@@ -494,8 +471,7 @@ class _AuthorProfileState extends State<AuthorProfile>
       children: [
         Text(
           value,
-          style: ThreeKmTextConstants.tk14PXPoppinsBlackSemiBold
-              .copyWith(fontSize: 18),
+          style: ThreeKmTextConstants.tk14PXPoppinsBlackSemiBold.copyWith(fontSize: 18),
         ),
         Text(
           text,
@@ -623,8 +599,7 @@ class _NewsCardState extends State<NewsCard> {
                                 shape: BoxShape.circle,
                                 image: DecorationImage(
                                     fit: BoxFit.cover,
-                                    image:
-                                        CachedNetworkImageProvider(widget.avtar)
+                                    image: CachedNetworkImageProvider(widget.avtar)
                                     //newsData.author!.image.toString())
                                     )),
                             // child: newsData.author!.isVerified == true
@@ -651,13 +626,11 @@ class _NewsCardState extends State<NewsCard> {
                             width: MediaQuery.of(context).size.width * 0.35,
                             child: Text(
                               widget.authorName,
-                              style:
-                                  ThreeKmTextConstants.tk14PXPoppinsBlackBold,
+                              style: ThreeKmTextConstants.tk14PXPoppinsBlackBold,
                               overflow: TextOverflow.ellipsis,
                             ),
                           ),
-                          Text(newsData!.posts![widget.index].createdDate
-                                  .toString()
+                          Text(newsData!.posts![widget.index].createdDate.toString()
                               //newsData.createdDate.toString()
                               )
                         ],
@@ -666,9 +639,7 @@ class _NewsCardState extends State<NewsCard> {
                         width: 10,
                       ),
                       Spacer(),
-                      showPopMenu(
-                          newsData.posts![widget.index].postId.toString(),
-                          newsData)
+                      showPopMenu(newsData.posts![widget.index].postId.toString(), newsData)
                     ],
                   ),
                 ),
@@ -688,25 +659,18 @@ class _NewsCardState extends State<NewsCard> {
                       height: 254,
                       width: MediaQuery.of(context).size.width,
                       child: VideoWidget(
-                          isVimeo: newsData.posts![widget.index].videos!.first
-                                      .player ==
-                                  "vimeo"
+                          isVimeo: newsData.posts![widget.index].videos!.first.player == "vimeo"
                               ? true
                               : false,
-                          vimeoID: newsData.posts![widget.index].videos!.first
-                                      .player ==
-                                  "vimeo"
-                              ? newsData
-                                  .posts![widget.index].videos!.first.vimeoUrl!
+                          vimeoID: newsData.posts![widget.index].videos!.first.player == "vimeo"
+                              ? newsData.posts![widget.index].videos!.first.vimeoUrl!
                                   .split("/")
                                   .last
                               : "",
-                          thubnail: newsData.posts![widget.index].videos!.first
-                                  .thumbnail!.isNotEmpty
-                              ? newsData
-                                  .posts![widget.index].videos!.first.thumbnail
-                                  .toString()
-                              : '',
+                          thubnail:
+                              newsData.posts![widget.index].videos!.first.thumbnail!.isNotEmpty
+                                  ? newsData.posts![widget.index].videos!.first.thumbnail.toString()
+                                  : '',
                           url: newsData.posts![widget.index].videos!.first.src.toString(),
                           play: false),
                     ),
@@ -732,12 +696,8 @@ class _NewsCardState extends State<NewsCard> {
                                 //     shape: BoxShape.circle,
                                 //     color: Color(0xffFC5E6A)),
                                 child: Center(
-                                    child: newsData
-                                                .posts![widget.index].likes !=
-                                            null
-                                        ? Text('+' +
-                                            newsData.posts![widget.index].likes
-                                                .toString())
+                                    child: newsData.posts![widget.index].likes != null
+                                        ? Text('+' + newsData.posts![widget.index].likes.toString())
                                         : Text("+0")),
                               )
                             ],
@@ -746,9 +706,7 @@ class _NewsCardState extends State<NewsCard> {
                   Spacer(),
                   Padding(
                       padding: EdgeInsets.only(top: 5, right: 5, bottom: 2),
-                      child: Text(
-                          newsData.posts![widget.index].views.toString() +
-                              ' Views'))
+                      child: Text(newsData.posts![widget.index].views.toString() + ' Views'))
                 ]),
                 Text(
                   newsData.posts![widget.index].headline.toString(),
@@ -760,8 +718,7 @@ class _NewsCardState extends State<NewsCard> {
                 ),
                 Padding(
                   padding: const EdgeInsets.all(16.0),
-                  child: HtmlWidget(
-                      newsData.posts![widget.index].story.toString()),
+                  child: HtmlWidget(newsData.posts![widget.index].story.toString()),
                 ),
 
                 SizedBox(
@@ -784,44 +741,35 @@ class _NewsCardState extends State<NewsCard> {
                 child: PostAuthorEmotionButton(
                     isLiked: newsData.posts![widget.index].isLiked!,
                     initalReaction: newsData.posts![widget.index].isLiked!
-                        ? Reaction(
-                            icon: Image.asset("assets/thumbs_up_red.png"))
+                        ? Reaction(icon: Image.asset("assets/thumbs_up_red.png"))
                         : Reaction(icon: Image.asset("assets/thumbs-up.png")),
                     selectedReaction: newsData.posts![widget.index].isLiked!
-                        ? Reaction(
-                            icon: Image.asset("assets/thumbs_up_red.png"))
+                        ? Reaction(icon: Image.asset("assets/thumbs_up_red.png"))
                         : Reaction(icon: Image.asset("assets/thumbs-up.png")),
                     postId: newsData.posts![widget.index].postId!.toInt(),
                     reactions: reactionAssets.reactions),
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black26,
-                        blurRadius: 8,
-                      )
-                    ]),
+                decoration: BoxDecoration(color: Colors.white, shape: BoxShape.circle, boxShadow: [
+                  BoxShadow(
+                    color: Colors.black26,
+                    blurRadius: 8,
+                  )
+                ]),
               ),
               Container(
                 height: 60,
                 width: 60,
                 child: IconButton(
                     onPressed: () {
-                      _showCommentsBottomModalSheet(context,
-                          newsData.posts![widget.index].postId!.toInt());
+                      _showCommentsBottomModalSheet(
+                          context, newsData.posts![widget.index].postId!.toInt());
                     },
-                    icon: Image.asset('assets/icons-topic.png',
-                        fit: BoxFit.cover)),
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black26,
-                        blurRadius: 8,
-                      )
-                    ]),
+                    icon: Image.asset('assets/icons-topic.png', fit: BoxFit.cover)),
+                decoration: BoxDecoration(color: Colors.white, shape: BoxShape.circle, boxShadow: [
+                  BoxShadow(
+                    color: Colors.black26,
+                    blurRadius: 8,
+                  )
+                ]),
               ),
               Container(
                 height: 60,
@@ -829,36 +777,27 @@ class _NewsCardState extends State<NewsCard> {
                 child: IconButton(
                     onPressed: () async {
                       // showLoading();
-                      String imgUrl = newsData
-                                  .posts![widget.index].images!.isNotEmpty &&
+                      String imgUrl = newsData.posts![widget.index].images!.isNotEmpty &&
                               newsData.posts![widget.index].images!.length > 0
-                          ? newsData.posts![widget.index].images!.first
-                              .toString()
-                          : newsData
-                              .posts![widget.index].videos!.first.thumbnail
-                              .toString();
+                          ? newsData.posts![widget.index].images!.first.toString()
+                          : newsData.posts![widget.index].videos!.first.thumbnail.toString();
                       handleShare(
                           newsData.author!.name.toString(),
                           newsData.author!.image.toString(),
-                          newsData.posts![widget.index].submittedHeadline
-                              .toString(),
+                          newsData.posts![widget.index].submittedHeadline.toString(),
                           imgUrl,
                           newsData.posts![widget.index].createdDate.toString(),
                           newsData.posts![widget.index].postId.toString());
                     },
                     icon: Center(
-                      child: Image.asset('assets/icons-share.png',
-                          fit: BoxFit.contain),
+                      child: Image.asset('assets/icons-share.png', fit: BoxFit.contain),
                     )),
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black26,
-                        blurRadius: 8,
-                      )
-                    ]),
+                decoration: BoxDecoration(color: Colors.white, shape: BoxShape.circle, boxShadow: [
+                  BoxShadow(
+                    color: Colors.black26,
+                    blurRadius: 8,
+                  )
+                ]),
               ),
             ]),
           )),
@@ -888,10 +827,8 @@ class _NewsCardState extends State<NewsCard> {
                             Row(
                               children: [
                                 Padding(
-                                  padding: EdgeInsets.only(
-                                      top: 24, left: 18, bottom: 34),
-                                  child: Text(
-                                      "$totalLikes People reacted to this"),
+                                  padding: EdgeInsets.only(top: 24, left: 18, bottom: 34),
+                                  child: Text("$totalLikes People reacted to this"),
                                 ),
                               ],
                             ),
@@ -900,8 +837,7 @@ class _NewsCardState extends State<NewsCard> {
                               width: double.infinity,
                               child: ListView.builder(
                                 scrollDirection: Axis.horizontal,
-                                itemCount: _likeProvider
-                                    .likeList!.data!.result!.users!.length,
+                                itemCount: _likeProvider.likeList!.data!.result!.users!.length,
                                 shrinkWrap: true,
                                 itemBuilder: (context, index) {
                                   return Container(
@@ -915,11 +851,7 @@ class _NewsCardState extends State<NewsCard> {
                                           image: DecorationImage(
                                               fit: BoxFit.cover,
                                               image: NetworkImage(_likeProvider
-                                                  .likeList!
-                                                  .data!
-                                                  .result!
-                                                  .users![index]
-                                                  .avatar
+                                                  .likeList!.data!.result!.users![index].avatar
                                                   .toString()))),
                                       child: Stack(
                                         children: [
@@ -931,21 +863,15 @@ class _NewsCardState extends State<NewsCard> {
                                                 width: 15,
                                                 fit: BoxFit.cover,
                                               )),
-                                          _likeProvider
-                                                      .likeList!
-                                                      .data!
-                                                      .result!
-                                                      .users![index]
+                                          _likeProvider.likeList!.data!.result!.users![index]
                                                       .isUnknown !=
                                                   null
                                               ? Center(
                                                   child: Text(
                                                       "+${_likeProvider.likeList!.data!.result!.anonymousCount}",
                                                       style: TextStyle(
-                                                          fontSize: 17,
-                                                          color: Colors.white),
-                                                      textAlign:
-                                                          TextAlign.center),
+                                                          fontSize: 17, color: Colors.white),
+                                                      textAlign: TextAlign.center),
                                                 )
                                               : SizedBox.shrink()
                                         ],
@@ -994,22 +920,17 @@ class _NewsCardState extends State<NewsCard> {
                       Row(
                         children: [
                           Container(
-                              height: 20,
-                              width: 20,
-                              child: Image.asset('assets/icons-topic.png')),
+                              height: 20, width: 20, child: Image.asset('assets/icons-topic.png')),
                           Padding(padding: EdgeInsets.only(left: 10)),
-                          Consumer<CommentProvider>(
-                              builder: (context, commentProvider, _) {
-                            return commentProvider.commentList?.length != null
+                          Consumer<CommentProvider>(builder: (context, commentProvider, _) {
+                            return commentProvider.allComments.length != null
                                 ? Text(
-                                    "${commentProvider.commentList!.length}\tComments",
-                                    style: ThreeKmTextConstants
-                                        .tk14PXPoppinsBlackSemiBold,
+                                    "${commentProvider.allComments.length}\tComments",
+                                    style: ThreeKmTextConstants.tk14PXPoppinsBlackSemiBold,
                                   )
                                 : Text(
                                     "Comments",
-                                    style: ThreeKmTextConstants
-                                        .tk14PXPoppinsBlackSemiBold,
+                                    style: ThreeKmTextConstants.tk14PXPoppinsBlackSemiBold,
                                   );
                           })
                         ],
@@ -1017,10 +938,8 @@ class _NewsCardState extends State<NewsCard> {
                       SizedBox(
                         height: 10,
                       ),
-                      Consumer<CommentProvider>(
-                          builder: (context, commentProvider, _) {
-                        return context.read<CommentProvider>().commentList !=
-                                null
+                      Consumer<CommentProvider>(builder: (context, commentProvider, _) {
+                        return context.read<CommentProvider>().allComments != null
                             ? Expanded(
                                 child: commentProvider.isGettingComments == true
                                     ? CommentsLoadingEffects()
@@ -1028,8 +947,7 @@ class _NewsCardState extends State<NewsCard> {
                                         physics: BouncingScrollPhysics(),
                                         shrinkWrap: true,
                                         primary: true,
-                                        itemCount:
-                                            commentProvider.commentList!.length,
+                                        itemCount: commentProvider.allComments.length,
                                         itemBuilder: (context, commentIndex) {
                                           return Container(
                                             margin: EdgeInsets.all(1),
@@ -1038,19 +956,15 @@ class _NewsCardState extends State<NewsCard> {
                                             ),
                                             child: ListTile(
                                               trailing: commentProvider
-                                                          .commentList![
-                                                              commentIndex]
-                                                          .isself ==
+                                                          .allComments[commentIndex].isself ==
                                                       true
                                                   ? IconButton(
                                                       onPressed: () {
                                                         context
-                                                            .read<
-                                                                CommentProvider>()
+                                                            .read<CommentProvider>()
                                                             .removeComment(
                                                                 commentProvider
-                                                                    .commentList![
-                                                                        commentIndex]
+                                                                    .allComments[commentIndex]
                                                                     .commentId!,
                                                                 postId);
                                                       },
@@ -1063,31 +977,24 @@ class _NewsCardState extends State<NewsCard> {
                                                     image: DecorationImage(
                                                         image: CachedNetworkImageProvider(
                                                             commentProvider
-                                                                .commentList![
-                                                                    commentIndex]
-                                                                .avatar
+                                                                .allComments[commentIndex].avatar
                                                                 .toString()))),
                                               ),
                                               title: Text(
-                                                commentProvider
-                                                    .commentList![commentIndex]
-                                                    .username
+                                                commentProvider.allComments[commentIndex].username
                                                     .toString(),
-                                                style: ThreeKmTextConstants
-                                                    .tk14PXPoppinsBlackSemiBold,
+                                                style:
+                                                    ThreeKmTextConstants.tk14PXPoppinsBlackSemiBold,
                                               ),
                                               subtitle: Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
                                                   children: [
                                                     SizedBox(
                                                       height: 4,
                                                     ),
                                                     Text(
                                                       commentProvider
-                                                          .commentList![
-                                                              commentIndex]
-                                                          .comment
+                                                          .allComments[commentIndex].comment
                                                           .toString(),
                                                       style: ThreeKmTextConstants
                                                           .tk14PXLatoBlackMedium,
@@ -1097,13 +1004,10 @@ class _NewsCardState extends State<NewsCard> {
                                                     ),
                                                     Text(
                                                         commentProvider
-                                                            .commentList![
-                                                                commentIndex]
-                                                            .timeLapsed
+                                                            .allComments[commentIndex].timeLapsed
                                                             .toString(),
-                                                        style: TextStyle(
-                                                            fontStyle: FontStyle
-                                                                .italic))
+                                                        style:
+                                                            TextStyle(fontStyle: FontStyle.italic))
                                                   ]),
                                             ),
                                           );
@@ -1116,8 +1020,7 @@ class _NewsCardState extends State<NewsCard> {
                         height: 116,
                         width: 338,
                         decoration: BoxDecoration(
-                            color: Colors.grey.shade200,
-                            borderRadius: BorderRadius.circular(20)),
+                            color: Colors.grey.shade200, borderRadius: BorderRadius.circular(20)),
                         child: TextFormField(
                           controller: _commentController,
                           maxLines: null,
@@ -1146,8 +1049,7 @@ class _NewsCardState extends State<NewsCard> {
                             child: Center(
                               child: Text(
                                 "Submit",
-                                style: ThreeKmTextConstants
-                                    .tk14PXPoppinsWhiteMedium,
+                                style: ThreeKmTextConstants.tk14PXPoppinsWhiteMedium,
                               ),
                             ),
                           ),
@@ -1172,10 +1074,10 @@ class _NewsCardState extends State<NewsCard> {
           child: ListTile(
             title: Text('Copy link'),
             onTap: () {
-              Clipboard.setData(ClipboardData(
-                      text: "https://3km.in/post-detail?id=$postID&lang=en"))
-                  .then((value) => CustomSnackBar(
-                      context, Text("Link has been coppied to clipboard")))
+              Clipboard.setData(
+                      ClipboardData(text: "https://3km.in/post-detail?id=$postID&lang=en"))
+                  .then((value) =>
+                      CustomSnackBar(context, Text("Link has been coppied to clipboard")))
                   .whenComplete(() => Navigator.pop(context));
             },
           ),
@@ -1215,8 +1117,8 @@ class _NewsCardState extends State<NewsCard> {
   }
 
   // previous param String imgUrl, String name, String newsHeadLine, int index
-  handleShare(String authorName, String authorProfile, String headLine,
-      String thumbnail, date, String postId) async {
+  handleShare(String authorName, String authorProfile, String headLine, String thumbnail, date,
+      String postId) async {
     showLoading();
     screenshotController
         .captureFromWidget(Container(
@@ -1239,8 +1141,7 @@ class _NewsCardState extends State<NewsCard> {
                     decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         image: DecorationImage(
-                            fit: BoxFit.cover,
-                            image: CachedNetworkImageProvider(authorProfile))),
+                            fit: BoxFit.cover, image: CachedNetworkImageProvider(authorProfile))),
                   )),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -1287,10 +1188,8 @@ class _NewsCardState extends State<NewsCard> {
                 ),
                 Padding(
                   padding: EdgeInsets.only(right: 15),
-                  child: Container(
-                      height: 30,
-                      width: 30,
-                      child: Image.asset('assets/icon_light.png')),
+                  child:
+                      Container(height: 30, width: 30, child: Image.asset('assets/icon_light.png')),
                 )
               ],
             ),
@@ -1305,8 +1204,7 @@ class _NewsCardState extends State<NewsCard> {
             : await getApplicationDocumentsDirectory();
         File file = await File('${documentDirectory!.path}/image.png').create();
         file.writeAsBytesSync(capturedImage);
-        Share.shareFiles([file.path],
-                text: 'https://3km.in/post-detail?id=$postId&lang=en')
+        Share.shareFiles([file.path], text: 'https://3km.in/post-detail?id=$postId&lang=en')
             .then((value) => hideLoading());
       } on Exception catch (e) {
         hideLoading();

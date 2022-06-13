@@ -11,6 +11,7 @@ class LikeListProvider extends ChangeNotifier {
   LikeListModel? get likeList => _likeList;
 
   List<User> get users => _likeList?.data?.result?.users ?? <User>[];
+  int? get usersCount => users.length;
 
   List<User> get likeUsers =>
       _likeList?.data?.result?.users?.where((element) => element.emotion == 'like').toList() ??
