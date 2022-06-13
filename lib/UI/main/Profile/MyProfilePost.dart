@@ -774,7 +774,7 @@ class _NewsCardState extends State<NewsCard> {
           ),
           margin: EdgeInsets.only(top: 20, left: 20, right: 20),
           width: double.infinity,
-          height: 550,
+          height: 600,
         ),
       // Padding(
       //   padding: EdgeInsets.only(left: 10, right: 10, top: 8, bottom: 8),
