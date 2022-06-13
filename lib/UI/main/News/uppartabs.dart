@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:device_info/device_info.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -37,11 +40,27 @@ class _ThreeKMUpperTabState extends State<ThreeKMUpperTab>
   @override
   bool get wantKeepAlive => true;
 
+  String? deviceId;
+
   String? _selecetdAddress;
   @override
   void initState() {
     super.initState();
     Future.microtask(() => context.read<LocationProvider>().getLocation());
+    getInfo();
+  }
+
+  getInfo() async {
+    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+    if (Platform.isAndroid) {
+      await deviceInfo.androidInfo.then((value) {
+        deviceId = value.androidId;
+      });
+    } else if (Platform.isIOS) {
+      await deviceInfo.iosInfo.then((value) {
+        deviceId = value.identifierForVendor;
+      });
+    }
   }
 
   @override
@@ -234,6 +253,7 @@ class _ThreeKMUpperTabState extends State<ThreeKMUpperTab>
                                 reload: false, //widget.redirectedFromPost
                                 isPostUploaded: false, // widget.isPostUploaded,
                                 appLanguage: languageProvider.appLocal,
+                                deviceId: deviceId,
                               ),
                               FeedPage(),
                               //Container(),
