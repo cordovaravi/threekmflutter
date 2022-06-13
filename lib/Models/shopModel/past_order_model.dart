@@ -52,6 +52,7 @@ class Orders {
     required this.deliveryLogs,
     required this.hasDelivery,
     required this.orderType,
+    required this.restro,
   });
   late final int projectId;
   late final List<LineItems> lineItems;
@@ -67,6 +68,7 @@ class Orders {
   late final List<dynamic> deliveryLogs;
   late final bool hasDelivery;
   late final String orderType;
+  late final Restro restro;
 
   Orders.fromJson(Map<String, dynamic> json) {
     projectId = json['project_id'];
@@ -85,6 +87,7 @@ class Orders {
     deliveryLogs = List.castFrom<dynamic, dynamic>(json['delivery_logs']);
     hasDelivery = json['has_delivery'] ?? false;
     orderType = json['order_type'];
+    if (json['restro'] != null) restro = Restro.fromJson(json['restro']);
   }
 
   Map<String, dynamic> toJson() {
@@ -181,6 +184,31 @@ class Delivery {
     _data['paid_by'] = paidBy;
     _data['status'] = status;
     _data['color'] = color;
+    return _data;
+  }
+}
+
+class Restro {
+  Restro({
+    required this.status,
+    required this.leadTime,
+    required this.pickupTime,
+  });
+  late final String status;
+  late final int leadTime;
+  late final String pickupTime;
+
+  Restro.fromJson(Map<String, dynamic> json) {
+    status = json['status'];
+    leadTime = json['lead_time'];
+    pickupTime = '${json['pickup_time']}';
+  }
+
+  Map<String, dynamic> toJson() {
+    final _data = <String, dynamic>{};
+    _data['status'] = status;
+    _data['lead_time'] = leadTime;
+    _data['pickup_time'] = pickupTime;
     return _data;
   }
 }

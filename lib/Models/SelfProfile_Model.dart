@@ -97,30 +97,32 @@ class Author {
 }
 
 class Post {
-  Post({
-    this.postId,
-    this.submittedHeadline,
-    this.submittedStory,
-    this.headline,
-    this.story,
-    this.images,
-    this.videos,
-    this.type,
-    this.tags,
-    this.author,
-    this.authorType,
-    this.authorClassification,
-    this.status,
-    this.views,
-    this.createdDate,
-    this.context,
-    this.likes,
-    this.comments,
-    this.id,
-    this.isVerified,
-    this.isLiked,
-    this.itemType,
-  });
+  Post(
+      {this.postId,
+      this.submittedHeadline,
+      this.submittedStory,
+      this.headline,
+      this.story,
+      this.images,
+      this.videos,
+      this.type,
+      this.tags,
+      this.author,
+      this.authorType,
+      this.authorClassification,
+      this.status,
+      this.views,
+      this.createdDate,
+      this.context,
+      this.likes,
+      this.comments,
+      this.id,
+      this.isVerified,
+      this.isLiked,
+      this.itemType,
+      this.preheaderLike,
+      this.preheaderComment,
+      this.latestComment});
 
   int? postId;
   String? submittedHeadline;
@@ -144,6 +146,9 @@ class Post {
   bool? isVerified;
   bool? isLiked;
   String? itemType;
+  String? preheaderLike;
+  String? preheaderComment;
+  LatestComment? latestComment;
 
   factory Post.fromJson(Map<String, dynamic> json) {
     log('${json["videos"].runtimeType is List<dynamic>}================');
@@ -184,6 +189,11 @@ class Post {
       isVerified: json["is_verified"] == null ? null : json["is_verified"],
       isLiked: json["is_liked"] == null ? null : json["is_liked"],
       itemType: json["item_type"] == null ? null : json["item_type"],
+      preheaderLike: json["preheader_like"],
+      preheaderComment: json["preheader_comment"],
+      latestComment: json['latest_comment'] == null
+          ? null
+          : LatestComment.fromJson(json['latest_comment']),
     );
   }
 }
@@ -213,4 +223,50 @@ class Video {
         width: json["width"] == null ? null : json["width"],
         height: json["height"] == null ? null : json["height"],
       );
+}
+
+class LatestComment {
+  LatestComment({
+    this.comment,
+    this.user,
+  });
+  String? comment;
+  User? user;
+
+  LatestComment.fromJson(Map<String, dynamic> json) {
+    comment = json['comment'] ?? "";
+    user = json['user'] != null ? User.fromJson(json['user']) : null;
+  }
+
+  Map<String, dynamic> toJson() {
+    final _data = <String, dynamic>{};
+    _data['comment'] = comment;
+    _data['user'] = user?.toJson();
+    return _data;
+  }
+}
+
+class User {
+  User({
+    required this.userId,
+    required this.name,
+    required this.avatar,
+  });
+  late final int userId;
+  late final String name;
+  late final String avatar;
+
+  User.fromJson(Map<String, dynamic> json) {
+    userId = json['user_id'];
+    name = json['name'];
+    avatar = json['avatar'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final _data = <String, dynamic>{};
+    _data['user_id'] = userId;
+    _data['name'] = name;
+    _data['avatar'] = avatar;
+    return _data;
+  }
 }

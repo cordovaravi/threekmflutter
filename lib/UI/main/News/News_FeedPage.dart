@@ -62,7 +62,18 @@ class _FeedPageState extends State<FeedPage>
         ? newsFeedProvider.newsFeedBottomModel!.data!.result!.posts!
         : null;
     return newsFeedProvider.isLoading == true
-        ? Container(child: FeedPostLoadingWidget())
+        ? RefreshIndicator(
+            onRefresh: () {
+              return context.read<NewsFeedProvider>().getBottomFeed(
+                    languageCode: context.read<AppLanguage>().appLocal ==
+                            Locale("mr")
+                        ? "mr"
+                        : context.read<AppLanguage>().appLocal == Locale("en")
+                            ? "en"
+                            : "hi",
+                  );
+            },
+            child: Container(child: FeedPostLoadingWidget()))
         : LazyLoadScrollView(
             onEndOfPage: () {
               setState(() {
