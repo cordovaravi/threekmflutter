@@ -7,8 +7,20 @@ import 'package:threekm/localization/localize.dart';
 
 import 'package:threekm/providers/shop/cart_provider.dart';
 
-Future clearAndAddToCartModal(context, image, name, quantity, price, creatorId,
-    id, variationId, weight,masterStock,manageStock, creatorName, mode) async {
+Future clearAndAddToCartModal(
+    context,
+    image,
+    name,
+    quantity,
+    price,
+    creatorId,
+    id,
+    variationId,
+    weight,
+    masterStock,
+    manageStock,
+    creatorName,
+    mode) async {
   return showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -23,8 +35,9 @@ Future clearAndAddToCartModal(context, image, name, quantity, price, creatorId,
             TextButton(
               // FlatButton widget is used to make a text to work like a button
 
-              onPressed:
-                  () {}, // function used to perform after pressing the button
+              onPressed: () {
+                Navigator.pop(context);
+              }, // function used to perform after pressing the button
               child:
                   Text(AppLocalizations.of(context)!.translate('NO') ?? 'NO'),
             ),
@@ -49,7 +62,7 @@ Future clearAndAddToCartModal(context, image, name, quantity, price, creatorId,
                                 variationId: 0,
                                 weight: weight,
                                 masterStock: masterStock,
-                                manageStock:manageStock,
+                                manageStock: manageStock,
                                 creatorName: creatorName);
                           })));
 

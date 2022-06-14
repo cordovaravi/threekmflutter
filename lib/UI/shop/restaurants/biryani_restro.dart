@@ -16,7 +16,7 @@ class BiryaniRestro extends StatefulWidget {
 class _BiryaniRestroState extends State<BiryaniRestro> {
   @override
   void initState() {
-    Future.microtask(
+    Future.delayed(Duration.zero,
         () => context.read<ShopHomeProvider>().BiryaniRestro(mounted));
 
     super.initState();
@@ -24,8 +24,9 @@ class _BiryaniRestroState extends State<BiryaniRestro> {
 
   @override
   Widget build(BuildContext context) {
-    var data = context.watch<ShopHomeProvider>().biryaniRestroData?.result;
-    var state = context.watch<ShopHomeProvider>().state;
+    var provider = context.watch<ShopHomeProvider>();
+    var data = provider.biryaniRestroData?.result;
+    var state = provider.state;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -53,7 +54,9 @@ class _BiryaniRestroState extends State<BiryaniRestro> {
                 style: ThreeKmTextConstants.tk16PXPoppinsBlackMedium,
               ),
             ),
-            state == 'loaded' ? CreatorCard(data: data) : ShowRestroLoading()
+            state == 'loaded' && data != null
+                ? CreatorCard(data: data)
+                : ShowRestroLoading()
           ],
         ),
       ),

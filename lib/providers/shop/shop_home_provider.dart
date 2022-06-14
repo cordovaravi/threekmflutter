@@ -157,8 +157,15 @@ class ShopHomeProvider extends ChangeNotifier {
   BiryaniRestro(mounted) async {
     if (mounted) {
       _state = 'loading';
+      final _location =
+          navigatorKey.currentContext!.read<LocationProvider>().getlocationData;
       try {
-        final response = await _apiProvider.post(biryaniRestroAPI, null);
+        final response = await _apiProvider.post(
+            biryaniRestroAPI,
+            json.encode({
+              "lat": _location?.latitude ?? '',
+              "lng": _location?.longitude ?? ''
+            }));
         if (response != null && response['StatusCode'] == 200) {
           _biryaniRestroData =
               BiryaniModel.BiryaniRestroModel.fromJson(response);
