@@ -4,6 +4,7 @@ import 'package:provider/src/provider.dart';
 import 'package:threekm/UI/shop/restaurants/creator_card.dart';
 import 'package:threekm/commenwidgets/commenwidget.dart';
 import 'package:threekm/providers/shop/shop_home_provider.dart';
+import 'package:threekm/utils/constants.dart';
 import 'package:threekm/utils/threekm_textstyles.dart';
 
 class BiryaniRestro extends StatefulWidget {
@@ -42,9 +43,13 @@ class _BiryaniRestroState extends State<BiryaniRestro> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             CachedNetworkImage(
-              imageUrl:
-                  "https://bakdocdn.sgp1.cdn.digitaloceanspaces.com/general/0/ad38e580-eada-11ec-838e-bd9a9b233f78.png",
+              imageUrl: "${data?.banner.first}",
               height: 200,
+              errorWidget: (context, url, error) => Container(
+                color: Color(0xFFf2f2f2),
+                height: 200,
+                width: MediaQuery.of(context).size.width,
+              ),
               // fit: BoxFit.contain,
             ),
             Padding(

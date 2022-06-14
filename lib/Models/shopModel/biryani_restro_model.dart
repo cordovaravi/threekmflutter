@@ -24,17 +24,21 @@ class BiryaniRestroModel {
 class Result {
   Result({
     required this.creators,
+     required this.banner,
   });
   late final List<Creators> creators;
+  late final List<String> banner;
 
   Result.fromJson(Map<String, dynamic> json) {
     creators =
         List.from(json['creators']).map((e) => Creators.fromJson(e)).toList();
+         banner = List.castFrom<dynamic, String>(json['banner']);
   }
 
   Map<String, dynamic> toJson() {
     final _data = <String, dynamic>{};
     _data['creators'] = creators.map((e) => e.toJson()).toList();
+     _data['banner'] = banner;
     return _data;
   }
 }
