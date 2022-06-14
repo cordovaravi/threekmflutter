@@ -96,6 +96,7 @@ const String restaurantMenu = "restaurent/menu";
 const String restaurantMenuCheckout = "menu/checkout";
 const String cuisinesListAPI = "restaurant/cuisines/trending/list";
 const String cuisinesOnClickAPI = "restaurant/list";
+const String biryaniRestroAPI = "menu/biryani_restaurants";
 
 // Search
 const String Search_Business = "business/geolist";

@@ -5,6 +5,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/src/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:threekm/Models/shopModel/biryani_restro_model.dart'
+    as BiryaniModel;
 import 'package:threekm/commenwidgets/commenwidget.dart';
 import 'package:threekm/main.dart';
 
@@ -26,6 +28,10 @@ class ShopHomeProvider extends ChangeNotifier {
   // getter for shopHome Data
   ShopHomeModel? _shopHomeData;
   ShopHomeModel? get shopHomeData => _shopHomeData;
+
+  // getter for biryani restro Data
+  BiryaniModel.BiryaniRestroModel? _biryaniRestroData;
+  BiryaniModel.BiryaniRestroModel? get biryaniRestroData => _biryaniRestroData;
 
   List<Creators>? _allCreators = [];
   List<Creators>? get allCreators => _allCreators;
@@ -144,6 +150,24 @@ class ShopHomeProvider extends ChangeNotifier {
         // notifyListeners();
       } else {
         _allCreators = [];
+      }
+    }
+  }
+
+  BiryaniRestro(mounted) async {
+    if (mounted) {
+      _state = 'loading';
+      try {
+        final response = await _apiProvider.post(biryaniRestroAPI, null);
+        if (response != null && response['StatusCode'] == 200) {
+          _biryaniRestroData =
+              BiryaniModel.BiryaniRestroModel.fromJson(response);
+          _state = 'loaded';
+          notifyListeners();
+        }
+      } catch (e) {
+        _state = 'error';
+        notifyListeners();
       }
     }
   }

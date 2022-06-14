@@ -18,6 +18,7 @@ import 'package:threekm/UI/main/navigation.dart';
 import 'package:threekm/UI/Auth/signup/sign_up.dart';
 import 'package:threekm/UI/shop/product/product_details.dart';
 import 'package:threekm/UI/shop/product_listing.dart';
+import 'package:threekm/UI/shop/restaurants/biryani_restro.dart';
 import 'package:threekm/UI/shop/restaurants/restaurants_menu.dart';
 import 'package:threekm/main.dart';
 import 'package:threekm/providers/FCM/fcm_sendToken_Provider.dart';
@@ -191,7 +192,7 @@ class _SplashScreenState extends State<SplashScreen> {
               context,
               MaterialPageRoute(builder: (_) => TabBarNavigation()),
               (route) => false));
-        } else if (initialLink.contains("/food/restaurant/")) {
+        } else if (initialLink.contains("/food/restaurant/menu/")) {
           await Hive.openBox('restroCartBox').whenComplete(() {
             Navigator.push(context, MaterialPageRoute(builder: (_) {
               return RestaurantMenu(
@@ -199,6 +200,15 @@ class _SplashScreenState extends State<SplashScreen> {
                       creatorId: int.parse(initialLink.split('/').last))
                   //{creatorId: "${int.parse(initialLink.split('/').last)}"},
                   );
+            })).then((value) => Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (_) => TabBarNavigation()),
+                (route) => false));
+          });
+        } else if (initialLink.contains("/food/restaurant/list/")) {
+          await Hive.openBox('restroCartBox').whenComplete(() {
+            Navigator.push(context, MaterialPageRoute(builder: (_) {
+              return BiryaniRestro();
             })).then((value) => Navigator.pushAndRemoveUntil(
                 context,
                 MaterialPageRoute(builder: (_) => TabBarNavigation()),

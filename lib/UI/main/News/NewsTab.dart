@@ -28,6 +28,7 @@ import 'package:threekm/UI/main/News/NewsList.dart';
 import 'package:threekm/UI/main/News/PostView.dart';
 import 'package:threekm/UI/main/News/Widgets/HeighLightPost.dart';
 import 'package:threekm/UI/main/News/uppartabs.dart';
+import 'package:threekm/UI/shop/restaurants/biryani_restro.dart';
 import 'package:threekm/UI/shop/showOrderStatus.dart';
 
 import 'package:threekm/commenwidgets/CustomSnakBar.dart';
@@ -534,6 +535,7 @@ class _NewsTabState extends State<NewsTab> with AutomaticKeepAliveClientMixin {
                                                                   .first
                                                                   .post !=
                                                               null) {
+                                                            log("bbbbbbbbbbbbbbbbb");
                                                             Navigator.push(
                                                                 context,
                                                                 MaterialPageRoute(
@@ -550,6 +552,7 @@ class _NewsTabState extends State<NewsTab> with AutomaticKeepAliveClientMixin {
                                                                   .first
                                                                   .video !=
                                                               null) {
+                                                            log("aaaaaaaaaaaaaaaaaaaaaaaaaaa");
                                                             Navigator.push(
                                                                 context,
                                                                 MaterialPageRoute(
@@ -570,6 +573,28 @@ class _NewsTabState extends State<NewsTab> with AutomaticKeepAliveClientMixin {
                                                                     //         .vimeoUrl
                                                                     //         .toString())
                                                                     ));
+                                                          } else if (finalPost
+                                                                  .banners![
+                                                                      bannerIndex]
+                                                                  .imageswcta!
+                                                                  .first
+                                                                  .type !=
+                                                              null) {
+                                                            log(">>>>>>>>>>>>>>${finalPost.banners![bannerIndex].imageswcta!.first.type}");
+                                                            if (finalPost
+                                                                    .banners![
+                                                                        bannerIndex]
+                                                                    .imageswcta!
+                                                                    .first
+                                                                    .type ==
+                                                                'biryanifest') {
+                                                              Navigator.push(
+                                                                  context,
+                                                                  MaterialPageRoute(
+                                                                      builder:
+                                                                          (context) =>
+                                                                              BiryaniRestro()));
+                                                            }
                                                           }
                                                         },
                                                         child: Container(
