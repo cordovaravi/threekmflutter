@@ -49,7 +49,7 @@ class AddressListProvider extends ChangeNotifier {
             getAddressList(mounted);
             selectedAddress.put('address', response['choosen_address']);
             navigatorKey.currentState?.pop();
-            navigatorKey.currentState?.pop();
+            //navigatorKey.currentState?.pop();
             notifyListeners();
           } else {
             showMessage(response['message']);

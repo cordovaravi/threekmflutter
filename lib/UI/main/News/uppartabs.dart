@@ -54,11 +54,15 @@ class _ThreeKMUpperTabState extends State<ThreeKMUpperTab>
     DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
     if (Platform.isAndroid) {
       await deviceInfo.androidInfo.then((value) {
-        deviceId = value.androidId;
+        setState(() {
+          deviceId = value.androidId;
+        });
       });
     } else if (Platform.isIOS) {
       await deviceInfo.iosInfo.then((value) {
-        deviceId = value.identifierForVendor;
+        setState(() {
+          deviceId = value.identifierForVendor;
+        });
       });
     }
   }

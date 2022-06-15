@@ -6,16 +6,20 @@ import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/src/provider.dart';
+import 'package:threekm/Custom_library/location2.0/lib/place_picker.dart';
 import 'package:threekm/Models/shopModel/address_list_model.dart';
 import 'package:threekm/Models/shopModel/cart_hive_model.dart';
 import 'package:threekm/Models/shopModel/shipping_rate_model.dart';
-
+import 'package:threekm/UI/shop/address/new_address.dart';
 import 'package:threekm/UI/shop/address/openMap.dart';
+
 import 'package:threekm/commenwidgets/CustomSnakBar.dart';
 import 'package:threekm/localization/localize.dart';
+import 'package:threekm/providers/Location/locattion_Provider.dart';
 import 'package:threekm/providers/shop/address_list_provider.dart';
 import 'package:threekm/providers/shop/cart_provider.dart';
 import 'package:threekm/providers/shop/checkout/checkout_provider.dart';
+import 'package:threekm/utils/api_paths.dart';
 // import 'package:threekm/utils/screen_util.dart';
 import 'package:threekm/utils/threekm_textstyles.dart';
 import '../../shop/checkout/payment_confirming_screen.dart';
@@ -103,6 +107,7 @@ class _RestaurantsCheckOutScreenState extends State<RestaurantsCheckOutScreen> {
     deliveryAddress();
     var data = context.read<AddressListProvider>().getAddressListData;
     var state = context.watch<AddressListProvider>().state;
+
     return Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.white,
@@ -290,12 +295,50 @@ class _RestaurantsCheckOutScreenState extends State<RestaurantsCheckOutScreen> {
                                             left: 17, bottom: 10),
                                         child: TextButton.icon(
                                             onPressed: () {
-                                              OpenMap(context);
-                                              // Navigator.push(
-                                              //     context,
-                                              //     MaterialPageRoute(
-                                              //         builder: (_) =>
-                                              //             NewAddress()));
+                                              context
+                                                  .read<LocationProvider>()
+                                                  .getLocation()
+                                                  .whenComplete(() async {
+                                                final _locationProvider =
+                                                    context
+                                                        .read<
+                                                            LocationProvider>()
+                                                        .getlocationData;
+                                                final kInitialPosition = LatLng(
+                                                    _locationProvider
+                                                            ?.latitude ??
+                                                        5.6037,
+                                                    _locationProvider
+                                                            ?.longitude ??
+                                                        0.1870);
+                                                // OpenMap(context);
+                                                LocationResult? result = await Navigator
+                                                        .of(context)
+                                                    .push(MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            PlacePicker(
+                                                                GMap_Api_Key,
+                                                                displayLocation:
+                                                                    kInitialPosition)));
+                                                log("Addres name :${result?.name}");
+                                                log("Addres admin level1 :${result?.administrativeAreaLevel1?.name}");
+                                                log("Addres admin leve2 :${result?.administrativeAreaLevel2?.name}");
+                                                log("Addres locality :${result?.locality}");
+                                                log("Addres sublocality :${result?.subLocalityLevel1?.name}");
+                                                log("Addres sublocality level2 :${result?.subLocalityLevel2?.name}");
+                                                log("Addres from new Plugin is :${result?.formattedAddress}");
+                                                print(result);
+                                                if (result != null) {
+                                                  Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                          builder: (_) =>
+                                                              NewAddress(
+                                                                locationResult:
+                                                                    result,
+                                                              )));
+                                                }
+                                              });
                                             },
                                             icon: const Icon(Icons.add,
                                                 color: Color(0xFF3E7EFF)),
