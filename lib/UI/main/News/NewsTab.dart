@@ -28,6 +28,8 @@ import 'package:threekm/UI/main/News/NewsList.dart';
 import 'package:threekm/UI/main/News/PostView.dart';
 import 'package:threekm/UI/main/News/Widgets/HeighLightPost.dart';
 import 'package:threekm/UI/main/News/uppartabs.dart';
+import 'package:threekm/UI/shop/restaurants/biryani_restro.dart';
+import 'package:threekm/UI/shop/showOrderStatus.dart';
 
 import 'package:threekm/commenwidgets/CustomSnakBar.dart';
 import 'package:threekm/commenwidgets/commenwidget.dart';
@@ -36,22 +38,16 @@ import 'package:threekm/providers/Global/logged_in_or_not.dart';
 import 'package:threekm/providers/Location/locattion_Provider.dart';
 import 'package:threekm/providers/localization_Provider/appLanguage_provider.dart';
 import 'package:threekm/providers/main/AddPost_Provider.dart';
-import 'package:threekm/providers/main/LikeList_Provider.dart';
 import 'package:threekm/providers/main/Quiz_Provider.dart';
-import 'package:threekm/providers/main/comment_Provider.dart';
 import 'package:threekm/providers/main/home1_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:threekm/providers/main/home2_provider.dart';
 
 import 'package:threekm/utils/threekm_textstyles.dart';
 import 'package:threekm/widgets/video_widget.dart';
-import 'package:threekm/widgets/vimeoPlayer.dart';
 
 import 'Widgets/Adspopup.dart';
 import 'package:flutter_svg/svg.dart';
-
-import 'Widgets/comment_Loading.dart';
-import 'Widgets/likes_Loading.dart';
 
 class NewsTab extends StatefulWidget {
   final String? deviceId;
@@ -79,7 +75,7 @@ class _NewsTabState extends State<NewsTab> with AutomaticKeepAliveClientMixin {
   //PanelController _slidingUpPanelcontroller = PanelController();
 
   ///scroll of main
-  ScrollController _scrollController = ScrollController();
+  // ScrollController _scrollController = ScrollController();
   ScreenshotController screenshotController = ScreenshotController();
 
   ///Post for bottom
@@ -89,7 +85,7 @@ class _NewsTabState extends State<NewsTab> with AutomaticKeepAliveClientMixin {
   void initState() {
     super.initState();
     //_controller = AnimationController(vsync: this);
-    Future.microtask(() => context.read<LocationProvider>().getLocation());
+    // Future.microtask(() => context.read<LocationProvider>().getLocation());
     Future.microtask(() => context.read<AppLanguage>().fetchLocale());
     if (widget.reload != true) {
       Future.delayed(Duration.zero, () async {
@@ -126,6 +122,7 @@ class _NewsTabState extends State<NewsTab> with AutomaticKeepAliveClientMixin {
         context.read<AddPostProvider>();
       });
     }
+    ShowOrderStaus();
     if (widget.isPostUploaded ?? false) {
       // Future.delayed(Duration(seconds: 1), () {
       //   CustomSnackBar(context, Text("Post has been submmitted"));
@@ -148,22 +145,22 @@ class _NewsTabState extends State<NewsTab> with AutomaticKeepAliveClientMixin {
     });
 
     // for bottom feed
-    _scrollController.addListener(() {
-      if (_scrollController.position.maxScrollExtent ==
-          _scrollController.position.pixels) {
-        postCount += 10;
-        log("reached bottom");
-        setState(() {});
-      }
-      if (_scrollController.position.userScrollDirection ==
-          ScrollDirection.reverse) {
-        showAppBarGlobalSC.value = false;
-      }
-      if (_scrollController.position.userScrollDirection ==
-          ScrollDirection.forward) {
-        showAppBarGlobalSC.value = true;
-      }
-    });
+    // _scrollController.addListener(() {
+    //   if (_scrollController.position.maxScrollExtent ==
+    //       _scrollController.position.pixels) {
+    //     postCount += 10;
+    //     log("reached bottom");
+    //     setState(() {});
+    //   }
+    //   if (_scrollController.position.userScrollDirection ==
+    //       ScrollDirection.reverse) {
+    //     showAppBarGlobalSC.value = false;
+    //   }
+    //   if (_scrollController.position.userScrollDirection ==
+    //       ScrollDirection.forward) {
+    //     showAppBarGlobalSC.value = true;
+    //   }
+    // });
   }
 
   void checkUpdate() {
@@ -208,7 +205,7 @@ class _NewsTabState extends State<NewsTab> with AutomaticKeepAliveClientMixin {
   @override
   void dispose() {
     _commentController.dispose();
-    _scrollController.dispose();
+    //_scrollController.dispose();
 
     super.dispose();
   }
@@ -236,7 +233,7 @@ class _NewsTabState extends State<NewsTab> with AutomaticKeepAliveClientMixin {
         });
       },
       child: newsFirstProvider.state == 'loaded' &&
-              newsSecondProvider.state == 'loaded' &&
+                  newsSecondProvider.state == 'loaded' ||
               newsSecondProvider.homeNews?.data != null
           ? SingleChildScrollView(
               //controller: _scrollController,
@@ -538,6 +535,7 @@ class _NewsTabState extends State<NewsTab> with AutomaticKeepAliveClientMixin {
                                                                   .first
                                                                   .post !=
                                                               null) {
+                                                            log("bbbbbbbbbbbbbbbbb");
                                                             Navigator.push(
                                                                 context,
                                                                 MaterialPageRoute(
@@ -554,6 +552,7 @@ class _NewsTabState extends State<NewsTab> with AutomaticKeepAliveClientMixin {
                                                                   .first
                                                                   .video !=
                                                               null) {
+                                                            log("aaaaaaaaaaaaaaaaaaaaaaaaaaa");
                                                             Navigator.push(
                                                                 context,
                                                                 MaterialPageRoute(
@@ -574,6 +573,28 @@ class _NewsTabState extends State<NewsTab> with AutomaticKeepAliveClientMixin {
                                                                     //         .vimeoUrl
                                                                     //         .toString())
                                                                     ));
+                                                          } else if (finalPost
+                                                                  .banners![
+                                                                      bannerIndex]
+                                                                  .imageswcta!
+                                                                  .first
+                                                                  .type !=
+                                                              null) {
+                                                            log(">>>>>>>>>>>>>>${finalPost.banners![bannerIndex].imageswcta!.first.type}");
+                                                            if (finalPost
+                                                                    .banners![
+                                                                        bannerIndex]
+                                                                    .imageswcta!
+                                                                    .first
+                                                                    .type ==
+                                                                'biryanifest') {
+                                                              Navigator.push(
+                                                                  context,
+                                                                  MaterialPageRoute(
+                                                                      builder:
+                                                                          (context) =>
+                                                                              BiryaniRestro()));
+                                                            }
                                                           }
                                                         },
                                                         child: Container(
@@ -668,12 +689,13 @@ class _NewsTabState extends State<NewsTab> with AutomaticKeepAliveClientMixin {
                         } else if (finalPost.type == "news_cat") {
                           return NewsContainer(finalPost: finalPost);
                         } else if (finalPost.type == "billboard" &&
-                            finalPost.hoardings != null) {
+                            finalPost.hoardings?.length != 0) {
                           return Container(
                               margin: EdgeInsets.only(bottom: 5),
                               child: CarouselSlider(
                                 options: CarouselOptions(
-                                  aspectRatio: 0.7,
+                                  viewportFraction: 0.75,
+                                  aspectRatio: 0.95,
                                   enlargeCenterPage: true,
                                   scrollDirection: Axis.horizontal,
                                   autoPlay: true,
@@ -690,7 +712,7 @@ class _NewsTabState extends State<NewsTab> with AutomaticKeepAliveClientMixin {
                                                 decoration: BoxDecoration(
                                                   image: DecorationImage(
                                                     image: imageProvider,
-                                                    fit: BoxFit.cover,
+                                                    fit: BoxFit.contain,
                                                   ),
                                                 ),
                                               ),
@@ -703,7 +725,9 @@ class _NewsTabState extends State<NewsTab> with AutomaticKeepAliveClientMixin {
                                     .toList(),
                               ));
                         } else {
-                          return Container();
+                          return Container(
+                            height: 0,
+                          );
                         }
                       },
                     )
@@ -1484,154 +1508,154 @@ class _NewsTabState extends State<NewsTab> with AutomaticKeepAliveClientMixin {
   //   );
   // }
 
-  PopupMenuButton showPopMenu(String postID, newsData) {
-    return PopupMenuButton(
-      icon: Icon(Icons.more_vert),
-      itemBuilder: (BuildContext context) => <PopupMenuEntry>[
-        PopupMenuItem(
-          child: ListTile(
-            title: Text('Copy link'),
-            onTap: () {
-              Clipboard.setData(ClipboardData(
-                      text: "https://3km.in/post-detail?id=$postID&lang=en"))
-                  .then((value) => CustomSnackBar(
-                      context, Text("Link has been coppied to clipboard")))
-                  .whenComplete(() => Navigator.pop(context));
-            },
-          ),
-        ),
-        PopupMenuItem(
-          child: ListTile(
-            onTap: () {
-              String imgUrl =
-                  newsData.images != null && newsData.images!.length > 0
-                      ? newsData.images!.first.toString()
-                      : newsData.videos!.first.thumbnail.toString();
-              handleShare(
-                  newsData.author!.name.toString(),
-                  newsData.author!.image.toString(),
-                  newsData.submittedHeadline.toString(),
-                  imgUrl,
-                  newsData.createdDate,
-                  newsData.postId.toString());
-            },
-            title: Text('Share to..',
-                style: ThreeKmTextConstants.tk16PXLatoBlackRegular),
-          ),
-        ),
-        PopupMenuItem(
-          child: ListTile(
-            onTap: () {
-              Navigator.pop(context);
-            },
-            title: Text(
-              'Cancel',
-              style: ThreeKmTextConstants.tk16PXPoppinsRedSemiBold,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
+  // PopupMenuButton showPopMenu(String postID, newsData) {
+  //   return PopupMenuButton(
+  //     icon: Icon(Icons.more_vert),
+  //     itemBuilder: (BuildContext context) => <PopupMenuEntry>[
+  //       PopupMenuItem(
+  //         child: ListTile(
+  //           title: Text('Copy link'),
+  //           onTap: () {
+  //             Clipboard.setData(ClipboardData(
+  //                     text: "https://3km.in/post-detail?id=$postID&lang=en"))
+  //                 .then((value) => CustomSnackBar(
+  //                     context, Text("Link has been coppied to clipboard")))
+  //                 .whenComplete(() => Navigator.pop(context));
+  //           },
+  //         ),
+  //       ),
+  //       PopupMenuItem(
+  //         child: ListTile(
+  //           onTap: () {
+  //             String imgUrl =
+  //                 newsData.images != null && newsData.images!.length > 0
+  //                     ? newsData.images!.first.toString()
+  //                     : newsData.videos!.first.thumbnail.toString();
+  //             handleShare(
+  //                 newsData.author!.name.toString(),
+  //                 newsData.author!.image.toString(),
+  //                 newsData.submittedHeadline.toString(),
+  //                 imgUrl,
+  //                 newsData.createdDate,
+  //                 newsData.postId.toString());
+  //           },
+  //           title: Text('Share to..',
+  //               style: ThreeKmTextConstants.tk16PXLatoBlackRegular),
+  //         ),
+  //       ),
+  //       PopupMenuItem(
+  //         child: ListTile(
+  //           onTap: () {
+  //             Navigator.pop(context);
+  //           },
+  //           title: Text(
+  //             'Cancel',
+  //             style: ThreeKmTextConstants.tk16PXPoppinsRedSemiBold,
+  //           ),
+  //         ),
+  //       ),
+  //     ],
+  //   );
+  // }
 
-  handleShare(String authorName, String authorProfile, String headLine,
-      String thumbnail, date, String postId) async {
-    showLoading();
-    screenshotController
-        .captureFromWidget(Container(
-      padding: EdgeInsets.only(top: 15, bottom: 15),
-      color: Colors.white,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Row(
-            //mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                  margin: EdgeInsets.only(right: 10),
-                  height: 50,
-                  width: 50,
-                  child: Container(
-                    height: 50,
-                    width: 50,
-                    decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        image: DecorationImage(
-                            fit: BoxFit.cover,
-                            image: CachedNetworkImageProvider(authorProfile))),
-                  )),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    child: Text(
-                      authorName,
-                      style: ThreeKmTextConstants.tk14PXPoppinsBlackBold,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  Text(
-                    date,
-                    style: ThreeKmTextConstants.tk12PXLatoBlackBold,
-                  )
-                ],
-              ),
-              // SizedBox(
-              //   width: 10,
-              // ),
-            ],
-          ),
-          Container(
-              height: 254,
-              width: MediaQuery.of(context).size.width,
-              child: CachedNetworkImage(imageUrl: thumbnail)),
-          Text(
-            headLine,
-            style: ThreeKmTextConstants.tk14PXPoppinsBlackBold,
-            textAlign: TextAlign.center,
-          ),
-          Padding(
-            padding: EdgeInsets.only(top: 5),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Container(
-                  height: 30,
-                  width: 250,
-                  child: Image.asset(
-                    'assets/playstore.jpg',
-                    fit: BoxFit.fitHeight,
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(right: 15),
-                  child: Container(
-                      height: 30,
-                      width: 30,
-                      child: Image.asset('assets/icon_light.png')),
-                )
-              ],
-            ),
-          )
-        ],
-      ),
-    ))
-        .then((capturedImage) async {
-      try {
-        var documentDirectory = Platform.isAndroid
-            ? await getExternalStorageDirectory()
-            : await getApplicationDocumentsDirectory();
-        File file = await File('${documentDirectory!.path}/image.png').create();
-        file.writeAsBytesSync(capturedImage);
-        Share.shareFiles([file.path],
-                text: 'https://3km.in/post-detail?id=$postId&lang=en')
-            .then((value) => hideLoading());
-      } on Exception catch (e) {
-        hideLoading();
-      }
-    });
-  }
+  // handleShare(String authorName, String authorProfile, String headLine,
+  //     String thumbnail, date, String postId) async {
+  //   showLoading();
+  //   screenshotController
+  //       .captureFromWidget(Container(
+  //     padding: EdgeInsets.only(top: 15, bottom: 15),
+  //     color: Colors.white,
+  //     child: Column(
+  //       mainAxisSize: MainAxisSize.min,
+  //       children: [
+  //         Row(
+  //           //mainAxisAlignment: MainAxisAlignment.center,
+  //           crossAxisAlignment: CrossAxisAlignment.start,
+  //           children: [
+  //             Container(
+  //                 margin: EdgeInsets.only(right: 10),
+  //                 height: 50,
+  //                 width: 50,
+  //                 child: Container(
+  //                   height: 50,
+  //                   width: 50,
+  //                   decoration: BoxDecoration(
+  //                       shape: BoxShape.circle,
+  //                       image: DecorationImage(
+  //                           fit: BoxFit.cover,
+  //                           image: CachedNetworkImageProvider(authorProfile))),
+  //                 )),
+  //             Column(
+  //               crossAxisAlignment: CrossAxisAlignment.start,
+  //               children: [
+  //                 Container(
+  //                   child: Text(
+  //                     authorName,
+  //                     style: ThreeKmTextConstants.tk14PXPoppinsBlackBold,
+  //                     overflow: TextOverflow.ellipsis,
+  //                   ),
+  //                 ),
+  //                 Text(
+  //                   date,
+  //                   style: ThreeKmTextConstants.tk12PXLatoBlackBold,
+  //                 )
+  //               ],
+  //             ),
+  //             // SizedBox(
+  //             //   width: 10,
+  //             // ),
+  //           ],
+  //         ),
+  //         Container(
+  //             height: 254,
+  //             width: MediaQuery.of(context).size.width,
+  //             child: CachedNetworkImage(imageUrl: thumbnail)),
+  //         Text(
+  //           headLine,
+  //           style: ThreeKmTextConstants.tk14PXPoppinsBlackBold,
+  //           textAlign: TextAlign.center,
+  //         ),
+  //         Padding(
+  //           padding: EdgeInsets.only(top: 5),
+  //           child: Row(
+  //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //             children: [
+  //               Container(
+  //                 height: 30,
+  //                 width: 250,
+  //                 child: Image.asset(
+  //                   'assets/playstore.jpg',
+  //                   fit: BoxFit.fitHeight,
+  //                 ),
+  //               ),
+  //               Padding(
+  //                 padding: EdgeInsets.only(right: 15),
+  //                 child: Container(
+  //                     height: 30,
+  //                     width: 30,
+  //                     child: Image.asset('assets/icon_light.png')),
+  //               )
+  //             ],
+  //           ),
+  //         )
+  //       ],
+  //     ),
+  //   ))
+  //       .then((capturedImage) async {
+  //     try {
+  //       var documentDirectory = Platform.isAndroid
+  //           ? await getExternalStorageDirectory()
+  //           : await getApplicationDocumentsDirectory();
+  //       File file = await File('${documentDirectory!.path}/image.png').create();
+  //       file.writeAsBytesSync(capturedImage);
+  //       Share.shareFiles([file.path],
+  //               text: 'https://3km.in/post-detail?id=$postId&lang=en')
+  //           .then((value) => hideLoading());
+  //     } on Exception catch (e) {
+  //       hideLoading();
+  //     }
+  //   });
+  // }
 
   @override
   bool get wantKeepAlive => true;

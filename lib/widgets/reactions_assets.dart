@@ -3,63 +3,62 @@ import 'package:threekm/Custom_library/flutter_reaction_button.dart';
 
 final defaultInitialReaction = Reaction(
   id: null,
-  icon: _buildIcon('assets/thumbs-up.png'),
+  icon: _buildIcon('assets/un_like_icon.png'),
 );
 
 final defaulLikeReaction = Reaction(
   id: 9,
-  icon: _buildIcon('assets/thumbs_up_red.png'),
+  icon: _buildIcon('assets/like_icon.png'),
 );
 
 final reactions = [
   Reaction(
-    id: 1,
-    //title: _buildTitle('Like'),
-    previewIcon: _buildReactionsPreviewIcon('assets/icons8-facebook-like.gif'),
-    icon: _buildReactionsIcon(
-      'assets/icons8-facebook-like-96.png',
-    ),
-  ),
+      id: 1,
+      previewIcon: _buildReactionsPreviewIcon('assets/like_icon.png'),
+      icon: _buildReactionsIcon(
+        'assets/like_icon.png',
+      ),
+      title: Text('likes')),
   Reaction(
     id: 2,
-    title: _buildTitle('Heart'),
-    previewIcon: _buildReactionsPreviewIcon('assets/icons8-heart.gif'),
+    title: _buildTitle('Love'),
+    previewIcon: _buildReactionsPreviewIcon('assets/love.png'),
     icon: Image.asset(
-      'assets/icons8-heart-96.png',
+      'assets/love.png',
       height: 30,
       width: 30,
     ),
   ),
   Reaction(
     id: 3,
-    title: _buildTitle('Trust'),
-    previewIcon: _buildReactionsPreviewIcon('assets/icons8-trust.gif'),
+    title: _buildTitle('Care'),
+    previewIcon: _buildReactionsPreviewIcon('assets/care.png'),
     icon: _buildReactionsIcon(
-      'assets/icons8-trust-96.png',
+      'assets/care.png',
     ),
   ),
   Reaction(
     id: 4,
-    title: _buildTitle('Sad'),
-    previewIcon: _buildReactionsPreviewIcon('assets/icons8-disappointed.gif'),
+    title: _buildTitle('laugh'),
+    previewIcon: _buildReactionsPreviewIcon('assets/laugh.png'),
     icon: _buildReactionsIcon(
-      'assets/icons8-disappointed-96.png',
+      'assets/laugh.png',
     ),
   ),
   Reaction(
     id: 5,
-    title: _buildTitle('Lol'),
-    previewIcon: _buildReactionsPreviewIcon('assets/icons8-lol.gif'),
+    title: _buildTitle('sad'),
+    previewIcon: _buildReactionsPreviewIcon('assets/sad.png'),
     icon: _buildReactionsIcon(
-      'assets/icons8-lol-96.png',
+      'assets/sad.png',
     ),
   ),
   Reaction(
     id: 6,
-    title: _buildTitle('wink'),
-    previewIcon: _buildReactionsPreviewIcon('assets/icons8-wink.gif'),
+    title: _buildTitle('angry'),
+    previewIcon: _buildReactionsPreviewIcon('assets/angry.png'),
     icon: _buildReactionsIcon(
-      'assets/icons8-wink-96.png',
+      'assets/angry.png',
     ),
   ),
 ];

@@ -49,7 +49,8 @@ class AuthorProfile extends StatefulWidget {
   _AuthorProfileState createState() => _AuthorProfileState();
 }
 
-class _AuthorProfileState extends State<AuthorProfile> with TickerProviderStateMixin {
+class _AuthorProfileState extends State<AuthorProfile>
+    with TickerProviderStateMixin {
   late TabController _tabController;
   ScrollController controller = ScrollController();
 
@@ -140,14 +141,17 @@ class _AuthorProfileState extends State<AuthorProfile> with TickerProviderStateM
                               "${widget.userName}",
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: ThreeKmTextConstants.tk14PXPoppinsBlackSemiBold
+                              style: ThreeKmTextConstants
+                                  .tk14PXPoppinsBlackSemiBold
                                   .copyWith(fontSize: 24),
                             ),
                           ),
                         ),
                         Container(
                             //width: 298,
-                            child: authorProfile.data.result!.author!.about.toString() != "null"
+                            child: authorProfile.data.result!.author!.about
+                                        .toString() !=
+                                    "null"
                                 ? Column(
                                     children: [
                                       Text(
@@ -155,7 +159,8 @@ class _AuthorProfileState extends State<AuthorProfile> with TickerProviderStateM
                                         maxLines: 2,
                                         overflow: TextOverflow.ellipsis,
                                         textAlign: TextAlign.center,
-                                        style: ThreeKmTextConstants.tk14PXPoppinsBlackSemiBold
+                                        style: ThreeKmTextConstants
+                                            .tk14PXPoppinsBlackSemiBold
                                             .copyWith(
                                           fontSize: 12,
                                           fontWeight: FontWeight.w400,
@@ -180,48 +185,61 @@ class _AuthorProfileState extends State<AuthorProfile> with TickerProviderStateM
                         //   ],
                         // ),
                         Padding(
-                          padding: EdgeInsets.symmetric(vertical: 18, horizontal: 18),
+                          padding: EdgeInsets.symmetric(
+                              vertical: 18, horizontal: 18),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Column(
                                 children: [
-                                  Text(authorProfile.data.result!.author!.followers.toString(),
+                                  Text(
+                                      authorProfile
+                                          .data.result!.author!.followers
+                                          .toString(),
                                       style: GoogleFonts.poppins(
                                           color: Colors.black,
                                           fontWeight: FontWeight.w500,
                                           fontSize: 18)),
                                   Text(
                                     "Followers",
-                                    style: ThreeKmTextConstants.tk14PXPoppinsBlackSemiBold
+                                    style: ThreeKmTextConstants
+                                        .tk14PXPoppinsBlackSemiBold
                                         .copyWith(color: Color(0xff979EA4)),
                                   )
                                 ],
                               ),
                               Column(
                                 children: [
-                                  Text(authorProfile.data.result!.author!.totalPosts.toString(),
+                                  Text(
+                                      authorProfile
+                                          .data.result!.author!.totalPosts
+                                          .toString(),
                                       style: GoogleFonts.poppins(
                                           color: Colors.black,
                                           fontWeight: FontWeight.w500,
                                           fontSize: 18)),
                                   Text(
                                     "Posts",
-                                    style: ThreeKmTextConstants.tk14PXPoppinsBlackSemiBold
+                                    style: ThreeKmTextConstants
+                                        .tk14PXPoppinsBlackSemiBold
                                         .copyWith(color: Color(0xff979EA4)),
                                   )
                                 ],
                               ),
                               Column(
                                 children: [
-                                  Text(authorProfile.data.result!.author!.following.toString(),
+                                  Text(
+                                      authorProfile
+                                          .data.result!.author!.following
+                                          .toString(),
                                       style: GoogleFonts.poppins(
                                           color: Colors.black,
                                           fontWeight: FontWeight.w500,
                                           fontSize: 18)),
                                   Text(
                                     "Following",
-                                    style: ThreeKmTextConstants.tk14PXPoppinsBlackSemiBold
+                                    style: ThreeKmTextConstants
+                                        .tk14PXPoppinsBlackSemiBold
                                         .copyWith(color: Color(0xff979EA4)),
                                   )
                                 ],
@@ -230,12 +248,13 @@ class _AuthorProfileState extends State<AuthorProfile> with TickerProviderStateM
                           ),
                         ),
                         space(height: 10),
-                        Consumer<AutthorProfileProvider>(builder: (context, controller, _) {
+                        Consumer<AutthorProfileProvider>(
+                            builder: (context, controller, _) {
                           return buildFollowingButton(
                               isLoading: controller.followLoading,
                               authorId: authorProfile.data.result!.author!.id!,
-                              isFollowed: controller
-                                  .authorProfilePostData!.data.result!.author!.isFollowed!);
+                              isFollowed: controller.authorProfilePostData!.data
+                                  .result!.author!.isFollowed!);
                         })
                       ],
                     ),
@@ -382,7 +401,9 @@ class _AuthorProfileState extends State<AuthorProfile> with TickerProviderStateM
   }
 
   Widget buildFollowingButton(
-      {required bool isFollowed, required int authorId, required bool isLoading}) {
+      {required bool isFollowed,
+      required int authorId,
+      required bool isLoading}) {
     return GestureDetector(
       onTap: () async {
         if (await getAuthStatus()) {
@@ -417,13 +438,15 @@ class _AuthorProfileState extends State<AuthorProfile> with TickerProviderStateM
                     Text(
                       "Following", //: "Follow".toUpperCase(),
                       style: ThreeKmTextConstants.tk14PXPoppinsBlackSemiBold
-                          .copyWith(color: Colors.white, fontWeight: FontWeight.w500),
+                          .copyWith(
+                              color: Colors.white, fontWeight: FontWeight.w500),
                     )
                   } else ...{
                     Text(
                       "Follow", //: "Follow".toUpperCase(),
                       style: ThreeKmTextConstants.tk14PXPoppinsBlackSemiBold
-                          .copyWith(color: Colors.white, fontWeight: FontWeight.w500),
+                          .copyWith(
+                              color: Colors.white, fontWeight: FontWeight.w500),
                     )
                   }
                 ],
@@ -471,7 +494,8 @@ class _AuthorProfileState extends State<AuthorProfile> with TickerProviderStateM
       children: [
         Text(
           value,
-          style: ThreeKmTextConstants.tk14PXPoppinsBlackSemiBold.copyWith(fontSize: 18),
+          style: ThreeKmTextConstants.tk14PXPoppinsBlackSemiBold
+              .copyWith(fontSize: 18),
         ),
         Text(
           text,
@@ -1117,8 +1141,8 @@ class _NewsCardState extends State<NewsCard> {
   }
 
   // previous param String imgUrl, String name, String newsHeadLine, int index
-  handleShare(String authorName, String authorProfile, String headLine, String thumbnail, date,
-      String postId) async {
+  handleShare(String authorName, String authorProfile, String headLine,
+      String thumbnail, date, String postId) async {
     showLoading();
     screenshotController
         .captureFromWidget(Container(
@@ -1141,7 +1165,8 @@ class _NewsCardState extends State<NewsCard> {
                     decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         image: DecorationImage(
-                            fit: BoxFit.cover, image: CachedNetworkImageProvider(authorProfile))),
+                            fit: BoxFit.cover,
+                            image: CachedNetworkImageProvider(authorProfile))),
                   )),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -1188,8 +1213,10 @@ class _NewsCardState extends State<NewsCard> {
                 ),
                 Padding(
                   padding: EdgeInsets.only(right: 15),
-                  child:
-                      Container(height: 30, width: 30, child: Image.asset('assets/icon_light.png')),
+                  child: Container(
+                      height: 30,
+                      width: 30,
+                      child: Image.asset('assets/icon_light.png')),
                 )
               ],
             ),
@@ -1204,7 +1231,8 @@ class _NewsCardState extends State<NewsCard> {
             : await getApplicationDocumentsDirectory();
         File file = await File('${documentDirectory!.path}/image.png').create();
         file.writeAsBytesSync(capturedImage);
-        Share.shareFiles([file.path], text: 'https://3km.in/post-detail?id=$postId&lang=en')
+        Share.shareFiles([file.path],
+                text: 'https://3km.in/post-detail?id=$postId&lang=en')
             .then((value) => hideLoading());
       } on Exception catch (e) {
         hideLoading();

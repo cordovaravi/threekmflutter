@@ -59,7 +59,7 @@ class ImageLayout extends StatelessWidget {
                       //   ],
                       // ),
                       ImageWidget(
-                        imagesList: imagesList[3],
+                        imagesList: imagesList[0],
                         //height: constraints.maxHeight/2,
                         width: constraints.maxWidth / 2.02,
                         fit: BoxFit.cover,
@@ -208,7 +208,7 @@ class ImageLayout extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               ImageWidget(
-                imagesList: imagesList[2],
+                imagesList: imagesList[0],
                 height: constraints.maxHeight,
                 width: constraints.maxWidth / 2.017,
                 fit: BoxFit.cover,
@@ -381,12 +381,13 @@ class ImageWidget extends StatelessWidget {
             height: height,
             fit: fit,
           ),
-          if (imagesList is! String)
-            Center(
-              child: SvgPicture.asset(
-                "assets/playicon.svg",
-              ),
-            )
+          imagesList is String == false
+              ? Center(
+                  child: SvgPicture.asset(
+                    "assets/playicon.svg",
+                  ),
+                )
+              : SizedBox()
         ],
       ),
     );

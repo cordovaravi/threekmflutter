@@ -536,10 +536,28 @@ class MenuTile extends StatelessWidget {
                                 ThreeKmTextConstants.tk14PXPoppinsBlackMedium,
                           ),
                         ),
-                        Text(
-                          '₹${menu.price}',
-                          style: ThreeKmTextConstants.tk14PXLatoBlackMedium
-                              .copyWith(height: 2),
+                        Row(
+                          children: [
+                             if (menu.displayPrice > menu.price)
+                              Text(
+                                '₹${menu.displayPrice}',
+                                style: ThreeKmTextConstants
+                                    .tk12PXPoppinsBlackSemiBold
+                                    .copyWith(
+                                        height: 2,
+                                        decoration: TextDecoration.lineThrough,
+                                        color: Colors.red),
+                              ),
+                            
+                             SizedBox(
+                              width: 10,
+                            ),
+                           Text(
+                              '₹${menu.price}',
+                              style: ThreeKmTextConstants.tk14PXLatoBlackMedium
+                                  .copyWith(height: 2),
+                            ),
+                          ],
                         ),
                       ],
                     ),
@@ -557,7 +575,7 @@ class MenuTile extends StatelessWidget {
                                               creatorId: menu.creatorId,
                                               image: menu.image,
                                               name: menu.name,
-                                              price: menu.displayPrice,
+                                              price: menu.price,
                                               quantity: 1,
                                               id: menu.menuId,
                                               variationId: 0,

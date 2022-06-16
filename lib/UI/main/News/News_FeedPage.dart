@@ -35,7 +35,8 @@ class FeedPage extends StatefulWidget {
   _FeedPageState createState() => _FeedPageState();
 }
 
-class _FeedPageState extends State<FeedPage> with AutomaticKeepAliveClientMixin {
+class _FeedPageState extends State<FeedPage>
+    with AutomaticKeepAliveClientMixin {
   int postCount = 10;
   final _formKey = GlobalKey<FormState>();
   TextEditingController _commentController = TextEditingController();
@@ -71,7 +72,8 @@ class _FeedPageState extends State<FeedPage> with AutomaticKeepAliveClientMixin 
             child: RefreshIndicator(
               onRefresh: () {
                 return context.read<NewsFeedProvider>().getBottomFeed(
-                      languageCode: context.read<AppLanguage>().appLocal == Locale("mr")
+                      languageCode: context.read<AppLanguage>().appLocal ==
+                              Locale("mr")
                           ? "mr"
                           : context.read<AppLanguage>().appLocal == Locale("en")
                               ? "en"
@@ -81,8 +83,12 @@ class _FeedPageState extends State<FeedPage> with AutomaticKeepAliveClientMixin 
               child: SingleChildScrollView(
                 child: Column(
                   children: [
-                    if (newsFeedProvider.newsFeedBottomModel?.data?.result?.posts?.length != 0 &&
-                        newsFeedProvider.newsFeedBottomModel?.data?.result?.posts != null) ...{
+                    if (newsFeedProvider.newsFeedBottomModel?.data?.result
+                                ?.posts?.length !=
+                            0 &&
+                        newsFeedProvider
+                                .newsFeedBottomModel?.data?.result?.posts !=
+                            null) ...{
                       ListView.builder(
                         cacheExtent: 999,
                         primary: true,
@@ -92,8 +98,8 @@ class _FeedPageState extends State<FeedPage> with AutomaticKeepAliveClientMixin 
                         //    .newsFeedBottomModel!.data!.result!.posts!.length,
                         itemCount: postCount,
                         itemBuilder: (context, index) {
-                          final newsData =
-                              newsFeedProvider.newsFeedBottomModel!.data!.result!.posts![index];
+                          final newsData = newsFeedProvider
+                              .newsFeedBottomModel!.data!.result!.posts![index];
                           return newsData != null
                               ? CardUI(
                                   data: newsData,
@@ -685,17 +691,22 @@ class _FeedPageState extends State<FeedPage> with AutomaticKeepAliveClientMixin 
                       Row(
                         children: [
                           Container(
-                              height: 20, width: 20, child: Image.asset('assets/icons-topic.png')),
+                              height: 20,
+                              width: 20,
+                              child: Image.asset('assets/icons-topic.png')),
                           Padding(padding: EdgeInsets.only(left: 10)),
-                          Consumer<CommentProvider>(builder: (context, commentProvider, _) {
-                            return commentProvider.allComments.length != null
+                          Consumer<CommentProvider>(
+                              builder: (context, commentProvider, _) {
+                            return commentProvider.commentList?.length != null
                                 ? Text(
-                                    "${commentProvider.allComments.length}\tComments",
-                                    style: ThreeKmTextConstants.tk14PXPoppinsBlackSemiBold,
+                                    "${commentProvider.commentList!.length}\tComments",
+                                    style: ThreeKmTextConstants
+                                        .tk14PXPoppinsBlackSemiBold,
                                   )
                                 : Text(
                                     "Comments",
-                                    style: ThreeKmTextConstants.tk14PXPoppinsBlackSemiBold,
+                                    style: ThreeKmTextConstants
+                                        .tk14PXPoppinsBlackSemiBold,
                                   );
                           })
                         ],
@@ -703,8 +714,10 @@ class _FeedPageState extends State<FeedPage> with AutomaticKeepAliveClientMixin 
                       SizedBox(
                         height: 10,
                       ),
-                      Consumer<CommentProvider>(builder: (context, commentProvider, _) {
-                        return context.read<CommentProvider>().allComments != null
+                      Consumer<CommentProvider>(
+                          builder: (context, commentProvider, _) {
+                        return context.read<CommentProvider>().commentList !=
+                                null
                             ? Expanded(
                                 child: commentProvider.isGettingComments == true
                                     ? CommentsLoadingEffects()
@@ -712,7 +725,8 @@ class _FeedPageState extends State<FeedPage> with AutomaticKeepAliveClientMixin 
                                         physics: BouncingScrollPhysics(),
                                         shrinkWrap: true,
                                         primary: true,
-                                        itemCount: commentProvider.allComments.length,
+                                        itemCount:
+                                            commentProvider.commentList!.length,
                                         itemBuilder: (context, commentIndex) {
                                           return Container(
                                             margin: EdgeInsets.all(1),
@@ -721,15 +735,19 @@ class _FeedPageState extends State<FeedPage> with AutomaticKeepAliveClientMixin 
                                             ),
                                             child: ListTile(
                                               trailing: commentProvider
-                                                          .allComments[commentIndex].isself ==
+                                                          .commentList![
+                                                              commentIndex]
+                                                          .isself ==
                                                       true
                                                   ? IconButton(
                                                       onPressed: () {
                                                         context
-                                                            .read<CommentProvider>()
+                                                            .read<
+                                                                CommentProvider>()
                                                             .removeComment(
                                                                 commentProvider
-                                                                    .allComments[commentIndex]
+                                                                    .commentList![
+                                                                        commentIndex]
                                                                     .commentId!,
                                                                 postId);
                                                       },
@@ -742,24 +760,31 @@ class _FeedPageState extends State<FeedPage> with AutomaticKeepAliveClientMixin 
                                                     image: DecorationImage(
                                                         image: CachedNetworkImageProvider(
                                                             commentProvider
-                                                                .allComments[commentIndex].avatar
+                                                                .commentList![
+                                                                    commentIndex]
+                                                                .avatar
                                                                 .toString()))),
                                               ),
                                               title: Text(
-                                                commentProvider.allComments[commentIndex].username
+                                                commentProvider
+                                                    .commentList![commentIndex]
+                                                    .username
                                                     .toString(),
-                                                style:
-                                                    ThreeKmTextConstants.tk14PXPoppinsBlackSemiBold,
+                                                style: ThreeKmTextConstants
+                                                    .tk14PXPoppinsBlackSemiBold,
                                               ),
                                               subtitle: Column(
-                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
                                                   children: [
                                                     SizedBox(
                                                       height: 4,
                                                     ),
                                                     Text(
                                                       commentProvider
-                                                          .allComments[commentIndex].comment
+                                                          .commentList![
+                                                              commentIndex]
+                                                          .comment
                                                           .toString(),
                                                       style: ThreeKmTextConstants
                                                           .tk14PXLatoBlackMedium,
@@ -769,10 +794,13 @@ class _FeedPageState extends State<FeedPage> with AutomaticKeepAliveClientMixin 
                                                     ),
                                                     Text(
                                                         commentProvider
-                                                            .allComments[commentIndex].timeLapsed
+                                                            .commentList![
+                                                                commentIndex]
+                                                            .timeLapsed
                                                             .toString(),
-                                                        style:
-                                                            TextStyle(fontStyle: FontStyle.italic))
+                                                        style: TextStyle(
+                                                            fontStyle: FontStyle
+                                                                .italic))
                                                   ]),
                                             ),
                                           );
@@ -787,9 +815,11 @@ class _FeedPageState extends State<FeedPage> with AutomaticKeepAliveClientMixin 
                           height: 50,
                           width: 338,
                           decoration: BoxDecoration(
-                              color: Colors.grey.shade200, borderRadius: BorderRadius.circular(20)),
+                              color: Colors.grey.shade200,
+                              borderRadius: BorderRadius.circular(20)),
                           child: TextFormField(
-                            autovalidateMode: AutovalidateMode.onUserInteraction,
+                            autovalidateMode:
+                                AutovalidateMode.onUserInteraction,
                             validator: (String? value) {
                               if (value == null) {
                                 return "  Comment cant be blank";
@@ -800,7 +830,8 @@ class _FeedPageState extends State<FeedPage> with AutomaticKeepAliveClientMixin 
                             controller: _commentController,
                             maxLines: null,
                             keyboardType: TextInputType.multiline,
-                            decoration: InputDecoration(border: InputBorder.none),
+                            decoration:
+                                InputDecoration(border: InputBorder.none),
                           ),
                         ),
                       ),
@@ -812,10 +843,12 @@ class _FeedPageState extends State<FeedPage> with AutomaticKeepAliveClientMixin 
                         child: InkWell(
                           onTap: () {
                             if (_formKey.currentState!.validate() &&
-                                context.read<CommentProvider>().isLoading == false) {
+                                context.read<CommentProvider>().isLoading ==
+                                    false) {
                               context
                                   .read<CommentProvider>()
-                                  .postCommentApi(postId, _commentController.text)
+                                  .postCommentApi(
+                                      postId, _commentController.text)
                                   .then((value) => _commentController.clear());
                             }
                           },
@@ -831,7 +864,8 @@ class _FeedPageState extends State<FeedPage> with AutomaticKeepAliveClientMixin 
                                 return _controller.isLoading == false
                                     ? Text(
                                         "Submit",
-                                        style: ThreeKmTextConstants.tk14PXPoppinsWhiteMedium,
+                                        style: ThreeKmTextConstants
+                                            .tk14PXPoppinsWhiteMedium,
                                       )
                                     : CupertinoActivityIndicator();
                               },
@@ -873,8 +907,10 @@ class _FeedPageState extends State<FeedPage> with AutomaticKeepAliveClientMixin 
                             Row(
                               children: [
                                 Padding(
-                                  padding: EdgeInsets.only(top: 24, left: 18, bottom: 34),
-                                  child: Text("$totalLikes People reacted to this"),
+                                  padding: EdgeInsets.only(
+                                      top: 24, left: 18, bottom: 34),
+                                  child: Text(
+                                      "$totalLikes People reacted to this"),
                                 ),
                               ],
                             ),
@@ -883,7 +919,8 @@ class _FeedPageState extends State<FeedPage> with AutomaticKeepAliveClientMixin 
                               width: double.infinity,
                               child: ListView.builder(
                                 scrollDirection: Axis.horizontal,
-                                itemCount: _likeProvider.likeList!.data!.result!.users!.length,
+                                itemCount: _likeProvider
+                                    .likeList!.data!.result!.users!.length,
                                 shrinkWrap: true,
                                 itemBuilder: (context, index) {
                                   return Container(
@@ -897,7 +934,11 @@ class _FeedPageState extends State<FeedPage> with AutomaticKeepAliveClientMixin 
                                           image: DecorationImage(
                                               fit: BoxFit.cover,
                                               image: NetworkImage(_likeProvider
-                                                  .likeList!.data!.result!.users![index].avatar
+                                                  .likeList!
+                                                  .data!
+                                                  .result!
+                                                  .users![index]
+                                                  .avatar
                                                   .toString()))),
                                       child: Stack(
                                         children: [
@@ -909,15 +950,21 @@ class _FeedPageState extends State<FeedPage> with AutomaticKeepAliveClientMixin 
                                                 width: 15,
                                                 fit: BoxFit.cover,
                                               )),
-                                          _likeProvider.likeList!.data!.result!.users![index]
+                                          _likeProvider
+                                                      .likeList!
+                                                      .data!
+                                                      .result!
+                                                      .users![index]
                                                       .isUnknown !=
                                                   null
                                               ? Center(
                                                   child: Text(
                                                       "+${_likeProvider.likeList!.data!.result!.anonymousCount}",
                                                       style: TextStyle(
-                                                          fontSize: 17, color: Colors.white),
-                                                      textAlign: TextAlign.center),
+                                                          fontSize: 17,
+                                                          color: Colors.white),
+                                                      textAlign:
+                                                          TextAlign.center),
                                                 )
                                               : SizedBox.shrink()
                                         ],
@@ -982,6 +1029,104 @@ class _FeedPageState extends State<FeedPage> with AutomaticKeepAliveClientMixin 
     );
   }
 
+  // handleShare(String authorName, String authorProfile, String headLine,
+  //     String thumbnail, date, String postId) async {
+  //   showLoading();
+  //   screenshotController
+  //       .captureFromWidget(Container(
+  //     padding: EdgeInsets.only(top: 15, bottom: 15),
+  //     color: Colors.white,
+  //     child: Column(
+  //       mainAxisSize: MainAxisSize.min,
+  //       children: [
+  //         Row(
+  //           //mainAxisAlignment: MainAxisAlignment.center,
+  //           crossAxisAlignment: CrossAxisAlignment.start,
+  //           children: [
+  //             Container(
+  //                 margin: EdgeInsets.only(right: 10),
+  //                 height: 50,
+  //                 width: 50,
+  //                 child: Container(
+  //                   height: 50,
+  //                   width: 50,
+  //                   decoration: BoxDecoration(
+  //                       shape: BoxShape.circle,
+  //                       image: DecorationImage(
+  //                           fit: BoxFit.cover,
+  //                           image: CachedNetworkImageProvider(authorProfile))),
+  //                 )),
+  //             Column(
+  //               crossAxisAlignment: CrossAxisAlignment.start,
+  //               children: [
+  //                 Container(
+  //                   child: Text(
+  //                     authorName,
+  //                     style: ThreeKmTextConstants.tk14PXPoppinsBlackBold,
+  //                     overflow: TextOverflow.ellipsis,
+  //                   ),
+  //                 ),
+  //                 Text(
+  //                   date,
+  //                   style: ThreeKmTextConstants.tk12PXLatoBlackBold,
+  //                 )
+  //               ],
+  //             ),
+  //             // SizedBox(
+  //             //   width: 10,
+  //             // ),
+  //           ],
+  //         ),
+  //         Container(
+  //             height: 254,
+  //             width: MediaQuery.of(context).size.width,
+  //             child: CachedNetworkImage(imageUrl: thumbnail)),
+  //         Text(
+  //           headLine,
+  //           style: ThreeKmTextConstants.tk14PXPoppinsBlackBold,
+  //           textAlign: TextAlign.center,
+  //         ),
+  //         Padding(
+  //           padding: EdgeInsets.only(top: 5),
+  //           child: Row(
+  //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //             children: [
+  //               Container(
+  //                 height: 30,
+  //                 width: 250,
+  //                 child: Image.asset(
+  //                   'assets/playstore.jpg',
+  //                   fit: BoxFit.fitHeight,
+  //                 ),
+  //               ),
+  //               Padding(
+  //                 padding: EdgeInsets.only(right: 15),
+  //                 child: Container(
+  //                     height: 30,
+  //                     width: 30,
+  //                     child: Image.asset('assets/icon_light.png')),
+  //               )
+  //             ],
+  //           ),
+  //         )
+  //       ],
+  //     ),
+  //   ))
+  //       .then((capturedImage) async {
+  //     try {
+  //       var documentDirectory = Platform.isAndroid
+  //           ? await getExternalStorageDirectory()
+  //           : await getApplicationDocumentsDirectory();
+  //       File file = await File('${documentDirectory!.path}/image.png').create();
+  //       file.writeAsBytesSync(capturedImage);
+  //       Share.shareFiles([file.path],
+  //               text: '$headLine https://3km.in/post-detail?id=$postId&lang=en')
+  //           .then((value) => hideLoading());
+  //     } on Exception catch (e) {
+  //       hideLoading();
+  //     }
+  //   });
+  // }
   handleShare(String authorName, String authorProfile, String headLine, String thumbnail, date,
       String postId) async {
     showLoading();

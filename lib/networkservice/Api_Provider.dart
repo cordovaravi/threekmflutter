@@ -81,7 +81,7 @@ class ApiProvider {
           .timeout(Duration(seconds: 25))
           .onError((error, stackTrace) {
             CustomSnackBar(
-                navigatorKey.currentContext!, Text("Please wait a movement"));
+                navigatorKey.currentContext!, Text("Some thing went wrong!"));
             throw error!;
           });
       responseJson = _response(response);

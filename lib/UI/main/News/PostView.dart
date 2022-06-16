@@ -10,16 +10,18 @@ import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:threekm/Custom_library/flutter_reaction_button.dart';
+import 'package:threekm/Models/deepLinkPost.dart';
 import 'package:threekm/UI/main/News/NewsList.dart';
 import 'package:threekm/UI/main/News/Widgets/singlePost_Loading.dart';
-import 'package:threekm/UI/main/News/like_and_comment/comment_section.dart';
 import 'package:threekm/UI/main/Profile/AuthorProfile.dart';
 import 'package:threekm/commenwidgets/CustomSnakBar.dart';
 import 'package:threekm/commenwidgets/commenwidget.dart';
 import 'package:threekm/providers/Global/logged_in_or_not.dart';
 import 'package:threekm/providers/localization_Provider/appLanguage_provider.dart';
+import 'package:threekm/providers/main/LikeList_Provider.dart';
 import 'package:threekm/providers/main/comment_Provider.dart';
 import 'package:threekm/providers/main/singlePost_provider.dart';
+import 'package:threekm/utils/slugUrl.dart';
 import 'package:threekm/utils/threekm_textstyles.dart';
 import 'package:provider/provider.dart';
 import 'package:threekm/widgets/video_widget.dart';
@@ -28,7 +30,6 @@ import 'package:timelines/timelines.dart';
 
 import 'Widgets/comment_Loading.dart';
 import 'Widgets/likes_Loading.dart';
-import 'like_and_comment/like_list.dart';
 
 class Postview extends StatefulWidget {
   final String postId;
@@ -75,11 +76,17 @@ class _PostviewState extends State<Postview> {
   Widget build(BuildContext context) {
     final postData = context.watch<SinglePostProvider>();
     final newsData = postData.postDetails?.data?.result?.post;
-    return postData.isLoading != true
+    List videoUrls =
+        newsData != null ? newsData.videos!.map((e) => e.src).toList() : [];
+    List templist = newsData != null
+        ? (List.from(newsData.images!.toList())..addAll(videoUrls))
+        : [];
+    return postData.isLoading != true && newsData != null
         ? Scaffold(
             appBar: AppBar(
               elevation: 0,
-              title: Text('Post Detail', style: ThreeKmTextConstants.tk16PXPoppinsBlackMedium),
+              title: Text('Post Detail',
+                  style: ThreeKmTextConstants.tk16PXPoppinsBlackMedium),
               backgroundColor: Colors.white,
               foregroundColor: Colors.black,
             ),
@@ -131,7 +138,8 @@ class _PostviewState extends State<Postview> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Padding(
-                                padding: EdgeInsets.only(left: 15, top: 5, right: 15, bottom: 10),
+                                padding: EdgeInsets.only(
+                                    left: 15, top: 5, right: 15, bottom: 10),
                                 child: Row(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
@@ -140,11 +148,16 @@ class _PostviewState extends State<Postview> {
                                         Navigator.push(
                                             context,
                                             MaterialPageRoute(
-                                                builder: (context) => AuthorProfile(
-                                                    authorType: newsData?.authorType,
-                                                    id: newsData!.author!.id!,
-                                                    avatar: newsData.author!.image!,
-                                                    userName: newsData.author!.name!)));
+                                                builder: (context) =>
+                                                    AuthorProfile(
+                                                        authorType:
+                                                            newsData.authorType,
+                                                        id: newsData
+                                                            .author!.id!,
+                                                        avatar: newsData
+                                                            .author!.image!,
+                                                        userName: newsData
+                                                            .author!.name!)));
                                       },
                                       child: Container(
                                           margin: EdgeInsets.only(right: 10),
@@ -157,19 +170,27 @@ class _PostviewState extends State<Postview> {
                                                 shape: BoxShape.circle,
                                                 image: DecorationImage(
                                                     fit: BoxFit.cover,
-                                                    image: CachedNetworkImageProvider(
-                                                        newsData!.author!.image.toString()))),
+                                                    image:
+                                                        CachedNetworkImageProvider(
+                                                            newsData
+                                                                .author!.image
+                                                                .toString()))),
                                           )),
                                     ),
                                     Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       //mainAxisAlignment: MainAxisAlignment.center,
                                       children: [
                                         Container(
-                                          width: MediaQuery.of(context).size.width * 0.4,
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.4,
                                           child: Text(
                                             newsData.author!.name.toString(),
-                                            style: ThreeKmTextConstants.tk14PXPoppinsBlackBold,
+                                            style: ThreeKmTextConstants
+                                                .tk14PXPoppinsBlackBold,
                                             overflow: TextOverflow.ellipsis,
                                           ),
                                         ),
@@ -194,98 +215,147 @@ class _PostviewState extends State<Postview> {
                                     //       )
                                     //     : Container(),
                                     Spacer(),
-                                    showPopMenu(newsData.postId.toString(), newsData)
+                                    showPopMenu(
+                                        newsData.postId.toString(), newsData)
                                   ],
                                 ),
                               ),
-                              newsData.images!.length > 1 || newsData.videos!.length > 1
-                                  ?
-                                  //video and image both
-                                  Container(
-                                      height: 400,
-                                      width: 400,
-                                      child: PageView.builder(
-                                        itemCount:
-                                            newsData.images!.length + newsData.videos!.length,
-                                        // options: CarouselOptions(
-                                        //   // aspectRatio: null,
-                                        //   viewportFraction: 0.99,
-                                        // ),
-                                        itemBuilder: (
-                                          context,
-                                          index,
-                                        ) {
-                                          List videoUrls =
-                                              newsData.videos!.map((e) => e.src).toList();
-                                          List templist = List.from(newsData.images!.toList())
-                                            ..addAll(videoUrls);
-                                          return templist != null
-                                              ? templist[index].toString().contains(".mp4")
+                              // newsData.images!.length > 1 ||
+                              //         newsData.videos!.length > 1
+                              templist.length == 0
+                                  ? SizedBox(
+                                      child: Text("null"),
+                                    )
+                                  : templist.length > 1
+                                      ?
+                                      //video and image both
+                                      Container(
+                                          height: 400,
+                                          width: 400,
+                                          child: PageView.builder(
+                                            itemCount: templist.length,
+                                            //newsData.images!.length +
+                                            //newsData.videos!.length,
+                                            // options: CarouselOptions(
+                                            //   // aspectRatio: null,
+                                            //   viewportFraction: 0.99,
+                                            // ),
+                                            itemBuilder: (
+                                              context,
+                                              index,
+                                            ) {
+                                              // List videoUrls = newsData.videos!
+                                              //     .map((e) => e.src)
+                                              //     .toList();
+                                              // List templist = List.from(
+                                              //     newsData.images!.toList())
+                                              //   ..addAll(videoUrls);
+                                              return templist[index]
+                                                      .toString()
+                                                      .contains(".mp4")
                                                   ? SizedBox(
                                                       height: 300,
-                                                      width: MediaQuery.of(context).size.width,
+                                                      width: double.infinity,
                                                       child: VideoWidget(
-                                                          isVimeo:
-                                                              newsData.videos?[index].vimeoUrl !=
-                                                                      null
-                                                                  ? true
-                                                                  : false,
+                                                          isVimeo: false,
+                                                          // newsData
+                                                          //             .videos?[
+                                                          //                 index]
+                                                          //             .vimeoUrl !=
+                                                          //         null
+                                                          //     ? true
+                                                          //     : false,
                                                           thubnail: '',
-                                                          url: templist[index].toString(),
-                                                          vimeoID: newsData.videos?[index].vimeoUrl
-                                                              ?.split("/")
-                                                              .last,
+                                                          url: templist[index]
+                                                              .toString(),
+                                                          // vimeoID: newsData
+                                                          //     .videos?[index]
+                                                          //     .vimeoUrl
+                                                          //     ?.split("/")
+                                                          //     .last,
                                                           play: false),
                                                     )
                                                   : CachedNetworkImage(
                                                       key: _imagKey,
-                                                      height: _imagKey.currentContext?.size?.height,
-                                                      width: MediaQuery.of(context).size.width,
+                                                      height: 300,
+                                                      width:
+                                                          MediaQuery.of(context)
+                                                              .size
+                                                              .width,
                                                       fit: BoxFit.contain,
-                                                      imageUrl: templist[index])
-                                              : SizedBox(
-                                                  child: Text("null"),
-                                                );
-                                        },
-                                      ),
-                                    )
-                                  // image or video
-                                  : Container(
-                                      child: newsData.images!.length == 1
-                                          ? CachedNetworkImage(
-                                              height: _imagKey.currentContext?.size?.height,
-                                              width: MediaQuery.of(context).size.width,
-                                              fit: BoxFit.fitWidth,
-                                              imageUrl: '${newsData.images!.first}',
-                                            )
-                                          : VideoWidget(
-                                              isVimeo: newsData.videos?.first.vimeoUrl != null
-                                                  ? true
-                                                  : false,
-                                              thubnail: newsData.videos?.first.thumbnail != null
-                                                  ? newsData.videos!.first.thumbnail.toString()
-                                                  : '',
-                                              url: newsData.videos!.first.src.toString(),
-                                              fromSinglePage: true,
-                                              vimeoID:
-                                                  newsData.videos?.first.vimeoUrl?.split("/").last,
-                                              play: false),
-                                    ),
-                              newsData.images != null && newsData.images!.length > 1 ||
-                                      newsData.videos != null && newsData.videos!.length > 1
+                                                      imageUrl:
+                                                          templist[index]);
+                                            },
+                                          ),
+                                        )
+                                      // image or video
+                                      : Container(
+                                          child: newsData.images!.length == 1
+                                              ? CachedNetworkImage(
+                                                  height: _imagKey
+                                                      .currentContext
+                                                      ?.size
+                                                      ?.height,
+                                                  width: MediaQuery.of(context)
+                                                      .size
+                                                      .width,
+                                                  fit: BoxFit.fitWidth,
+                                                  imageUrl:
+                                                      '${newsData.images!.first}',
+                                                )
+                                              : VideoWidget(
+                                                  isVimeo: newsData
+                                                              .videos
+                                                              ?.first
+                                                              .vimeoUrl !=
+                                                          null
+                                                      ? true
+                                                      : false,
+                                                  thubnail: newsData
+                                                              .videos
+                                                              ?.first
+                                                              .thumbnail !=
+                                                          null
+                                                      ? newsData.videos!.first
+                                                          .thumbnail
+                                                          .toString()
+                                                      : '',
+                                                  url: newsData
+                                                      .videos!.first.src
+                                                      .toString(),
+                                                  fromSinglePage: true,
+                                                  vimeoID: newsData
+                                                      .videos?.first.vimeoUrl
+                                                      ?.split("/")
+                                                      .last,
+                                                  play: false),
+                                        ),
+
+                              // newsData.images != null &&
+                              //             newsData.images!.length > 1 ||
+                              //         newsData.videos != null &&
+                              //             newsData.videos!.length > 1
+                              templist.length > 1
                                   ? Container(
                                       height: 10,
                                       width: MediaQuery.of(context).size.width,
                                       child: Builder(builder: (context) {
-                                        List videoUrls =
-                                            newsData.videos!.map((e) => e.src).toList();
-                                        List templist = List.from(newsData.images!.toList())
-                                          ..addAll(videoUrls);
+                                        List videoUrls = newsData.videos!
+                                            .map((e) => e.src)
+                                            .toList();
+                                        List templist =
+                                            List.from(newsData.images!.toList())
+                                              ..addAll(videoUrls);
                                         return Row(
-                                            mainAxisAlignment: MainAxisAlignment.center,
-                                            children: templist.asMap().entries.map((entry) {
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: templist
+                                                .asMap()
+                                                .entries
+                                                .map((entry) {
                                               return Padding(
-                                                padding: const EdgeInsets.only(left: 2),
+                                                padding: const EdgeInsets.only(
+                                                    left: 2),
                                                 child: DotIndicator(
                                                   size: 8.0,
                                                   color: Colors.grey,
@@ -359,12 +429,14 @@ class _PostviewState extends State<Postview> {
                                 ),
                                 child: Text(
                                   newsData.submittedHeadline.toString(),
-                                  style: ThreeKmTextConstants.tk14PXPoppinsBlackSemiBold,
+                                  style: ThreeKmTextConstants
+                                      .tk14PXPoppinsBlackSemiBold,
                                   textAlign: TextAlign.left,
                                 ),
                               ),
                               Padding(
-                                padding: EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 10
+                                padding: EdgeInsets.only(
+                                    left: 10, right: 10, top: 10, bottom: 10
                                     // bottom: MediaQuery.of(context).size.height *
                                     //     0.1
                                     ),
@@ -379,23 +451,23 @@ class _PostviewState extends State<Postview> {
                                     padding: const EdgeInsets.only(left: 16),
                                     child: InkWell(
                                       onTap: () {
-                                        // _showLikedBottomModalSheet(
-                                        //     newsData.postId!.toInt(), newsData.likes);
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) => LikeList(
-                                                      postId: newsData.postId!,
-                                                    )));
+                                        _showLikedBottomModalSheet(
+                                            newsData.postId!.toInt(),
+                                            newsData.likes);
                                       },
                                       child: Wrap(
                                         alignment: WrapAlignment.center,
                                         children: [
-                                          const Image(image: AssetImage('assets/like_heart.png')),
+                                          const Image(
+                                              image: AssetImage(
+                                                  'assets/like_heart.png')),
                                           Text(
                                             '  ${newsData.likes}',
-                                            style: ThreeKmTextConstants.tk12PXPoppinsBlackSemiBold
-                                                .copyWith(fontWeight: FontWeight.normal),
+                                            style: ThreeKmTextConstants
+                                                .tk12PXPoppinsBlackSemiBold
+                                                .copyWith(
+                                                    fontWeight:
+                                                        FontWeight.normal),
                                           )
                                         ],
                                       ),
@@ -416,15 +488,19 @@ class _PostviewState extends State<Postview> {
                                 // ),
                                 Spacer(),
                                 Padding(
-                                    padding: EdgeInsets.only(top: 2, right: 16, bottom: 2),
+                                    padding: EdgeInsets.only(
+                                        top: 2, right: 16, bottom: 2),
                                     child: Row(
                                       children: [
                                         if (newsData.comments!.length > 0)
-                                          Text(newsData.comments!.length.toString() + ' Comments'),
+                                          Text(newsData.comments!.length
+                                                  .toString() +
+                                              ' Comments'),
                                         SizedBox(
                                           width: 10,
                                         ),
-                                        Text(newsData.views.toString() + ' Views'),
+                                        Text(newsData.views.toString() +
+                                            ' Views'),
                                       ],
                                     )),
                               ]),
@@ -435,24 +511,31 @@ class _PostviewState extends State<Postview> {
                                 thickness: 2,
                               ),
                               Padding(
-                                padding: const EdgeInsets.only(left: 16, right: 16),
+                                padding:
+                                    const EdgeInsets.only(left: 16, right: 16),
                                 child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
                                     TextButton.icon(
                                         style: ButtonStyle(
                                             foregroundColor:
-                                                MaterialStateProperty.all(Colors.black)),
+                                                MaterialStateProperty.all(
+                                                    Colors.black)),
                                         onPressed: () async {
                                           if (await getAuthStatus()) {
                                             if (newsData.isLiked == true) {
                                               context
                                                   .read<SinglePostProvider>()
-                                                  .postUnLike(newsData.postId.toString());
+                                                  .postUnLike(newsData.postId
+                                                      .toString());
                                             } else {
                                               context
                                                   .read<SinglePostProvider>()
-                                                  .postLike(newsData.postId.toString(), null);
+                                                  .postLike(
+                                                      newsData.postId
+                                                          .toString(),
+                                                      null);
                                             }
                                           } else {
                                             NaviagateToLogin(context);
@@ -471,22 +554,19 @@ class _PostviewState extends State<Postview> {
                                               ),
                                         label: Text(
                                           'Like',
-                                          style: ThreeKmTextConstants.tk12PXPoppinsBlackSemiBold,
+                                          style: ThreeKmTextConstants
+                                              .tk12PXPoppinsBlackSemiBold,
                                         )),
                                     TextButton.icon(
                                         style: ButtonStyle(
                                             foregroundColor:
-                                                MaterialStateProperty.all(Colors.black)),
+                                                MaterialStateProperty.all(
+                                                    Colors.black)),
                                         onPressed: () async {
                                           if (await getAuthStatus()) {
-                                            context
-                                                .read<CommentProvider>()
-                                                .getAllCommentsApi(newsData.postId!.toInt());
-                                            Navigator.of(context).push(MaterialPageRoute(
-                                                builder: (context) =>
-                                                    CommentSection(postId: newsData.postId!)));
-                                            // _showCommentsBottomModalSheet(
-                                            //     context, newsData.postId!.toInt());
+                                            _showCommentsBottomModalSheet(
+                                                context,
+                                                newsData.postId!.toInt());
                                           } else {
                                             NaviagateToLogin(context);
                                           }
@@ -494,30 +574,38 @@ class _PostviewState extends State<Postview> {
                                         icon: Icon(Icons.comment_outlined),
                                         label: Text(
                                           'Comment',
-                                          style: ThreeKmTextConstants.tk12PXPoppinsBlackSemiBold,
+                                          style: ThreeKmTextConstants
+                                              .tk12PXPoppinsBlackSemiBold,
                                         )),
                                     TextButton.icon(
                                         style: ButtonStyle(
                                             foregroundColor:
-                                                MaterialStateProperty.all(Colors.black)),
+                                                MaterialStateProperty.all(
+                                                    Colors.black)),
                                         onPressed: () {
-                                          String imgUrl =
-                                              newsData.images != null && newsData.images!.length > 0
-                                                  ? newsData.images!.first.toString()
-                                                  : newsData.videos!.first.thumbnail.toString();
+                                          String imgUrl = newsData.images !=
+                                                      null &&
+                                                  newsData.images!.length > 0
+                                              ? newsData.images!.first
+                                                  .toString()
+                                              : newsData.videos!.first.thumbnail
+                                                  .toString();
                                           handleShare(
                                               newsData.author!.name.toString(),
                                               newsData.author!.image.toString(),
-                                              newsData.headline.toString(),
+                                              newsData.slugHeadline ??
+                                                  newsData.submittedHeadline
+                                                      .toString(),
                                               imgUrl,
-                                              DateFormat('yyyy-MM-dd')
-                                                  .format(newsData.postCreatedDate!),
+                                              DateFormat('yyyy-MM-dd').format(
+                                                  newsData.postCreatedDate!),
                                               newsData.postId.toString());
                                         },
                                         icon: Icon(Icons.share_outlined),
                                         label: Text(
                                           'Share',
-                                          style: ThreeKmTextConstants.tk12PXPoppinsBlackSemiBold,
+                                          style: ThreeKmTextConstants
+                                              .tk12PXPoppinsBlackSemiBold,
                                         ))
                                   ],
                                 ),
@@ -671,89 +759,102 @@ class _PostviewState extends State<Postview> {
         : SinglePostLoading();
   }
 
-  // _showLikedBottomModalSheet(int postId, totalLikes) {
-  //   context.read<LikeListProvider>().showLikes(context, postId);
-  //   showModalBottomSheet<void>(
-  //     backgroundColor: Colors.white,
-  //     context: context,
-  //     builder: (BuildContext context) {
-  //       final _likeProvider = context.watch<LikeListProvider>();
-  //       return Padding(
-  //           padding: EdgeInsets.zero,
-  //           child: StatefulBuilder(
-  //             builder: (context, _) {
-  //               return Container(
-  //                 color: Colors.white,
-  //                 height: 192,
-  //                 width: MediaQuery.of(context).size.width,
-  //                 child: _likeProvider.isLoading
-  //                     ? LikesLoding()
-  //                     : Column(
-  //                         mainAxisSize: MainAxisSize.max,
-  //                         children: [
-  //                           Row(
-  //                             children: [
-  //                               Padding(
-  //                                 padding: EdgeInsets.only(top: 24, left: 18, bottom: 34),
-  //                                 child: Text("$totalLikes People reacted to this"),
-  //                               ),
-  //                             ],
-  //                           ),
-  //                           Container(
-  //                             height: 90,
-  //                             width: double.infinity,
-  //                             child: ListView.builder(
-  //                               scrollDirection: Axis.horizontal,
-  //                               itemCount: _likeProvider.likeList!.data!.result!.users!.length,
-  //                               shrinkWrap: true,
-  //                               itemBuilder: (context, index) {
-  //                                 return Container(
-  //                                     margin: EdgeInsets.only(
-  //                                       left: 21,
-  //                                     ),
-  //                                     height: 85,
-  //                                     width: 85,
-  //                                     decoration: BoxDecoration(
-  //                                         shape: BoxShape.circle,
-  //                                         image: DecorationImage(
-  //                                             fit: BoxFit.cover,
-  //                                             image: NetworkImage(_likeProvider
-  //                                                 .likeList!.data!.result!.users![index].avatar
-  //                                                 .toString()))),
-  //                                     child: Stack(
-  //                                       children: [
-  //                                         Positioned(
-  //                                             right: 0,
-  //                                             child: Image.asset(
-  //                                               'assets/fblike2x.png',
-  //                                               height: 15,
-  //                                               width: 15,
-  //                                               fit: BoxFit.cover,
-  //                                             )),
-  //                                         _likeProvider.likeList!.data!.result!.users![index]
-  //                                                     .isUnknown !=
-  //                                                 null
-  //                                             ? Center(
-  //                                                 child: Text(
-  //                                                     "+${_likeProvider.likeList!.data!.result!.anonymousCount}",
-  //                                                     style: TextStyle(
-  //                                                         fontSize: 17, color: Colors.white),
-  //                                                     textAlign: TextAlign.center),
-  //                                               )
-  //                                             : SizedBox.shrink()
-  //                                       ],
-  //                                     ));
-  //                               },
-  //                             ),
-  //                           ),
-  //                         ],
-  //                       ),
-  //               );
-  //             },
-  //           ));
-  //     },
-  //   );
-  // }
+  _showLikedBottomModalSheet(int postId, totalLikes) {
+    context.read<LikeListProvider>().showLikes(context, postId);
+    showModalBottomSheet<void>(
+      backgroundColor: Colors.white,
+      context: context,
+      builder: (BuildContext context) {
+        final _likeProvider = context.watch<LikeListProvider>();
+        return Padding(
+            padding: EdgeInsets.zero,
+            child: StatefulBuilder(
+              builder: (context, _) {
+                return Container(
+                  color: Colors.white,
+                  height: 192,
+                  width: MediaQuery.of(context).size.width,
+                  child: _likeProvider.isLoading
+                      ? LikesLoding()
+                      : Column(
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                            Row(
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.only(
+                                      top: 24, left: 18, bottom: 34),
+                                  child: Text(
+                                      "$totalLikes People reacted to this"),
+                                ),
+                              ],
+                            ),
+                            Container(
+                              height: 90,
+                              width: double.infinity,
+                              child: ListView.builder(
+                                scrollDirection: Axis.horizontal,
+                                itemCount: _likeProvider
+                                    .likeList!.data!.result!.users!.length,
+                                shrinkWrap: true,
+                                itemBuilder: (context, index) {
+                                  return Container(
+                                      margin: EdgeInsets.only(
+                                        left: 21,
+                                      ),
+                                      height: 85,
+                                      width: 85,
+                                      decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          image: DecorationImage(
+                                              fit: BoxFit.cover,
+                                              image: NetworkImage(_likeProvider
+                                                  .likeList!
+                                                  .data!
+                                                  .result!
+                                                  .users![index]
+                                                  .avatar
+                                                  .toString()))),
+                                      child: Stack(
+                                        children: [
+                                          Positioned(
+                                              right: 0,
+                                              child: Image.asset(
+                                                'assets/fblike2x.png',
+                                                height: 15,
+                                                width: 15,
+                                                fit: BoxFit.cover,
+                                              )),
+                                          _likeProvider
+                                                      .likeList!
+                                                      .data!
+                                                      .result!
+                                                      .users![index]
+                                                      .isUnknown !=
+                                                  null
+                                              ? Center(
+                                                  child: Text(
+                                                      "+${_likeProvider.likeList!.data!.result!.anonymousCount}",
+                                                      style: TextStyle(
+                                                          fontSize: 17,
+                                                          color: Colors.white),
+                                                      textAlign:
+                                                          TextAlign.center),
+                                                )
+                                              : SizedBox.shrink()
+                                        ],
+                                      ));
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                );
+              },
+            ));
+      },
+    );
+  }
 
   PopupMenuButton showPopMenu(String postID, newsData) {
     return PopupMenuButton(
@@ -763,10 +864,11 @@ class _PostviewState extends State<Postview> {
           child: ListTile(
             title: Text('Copy link'),
             onTap: () {
-              Clipboard.setData(
-                      ClipboardData(text: "https://3km.in/post-detail?id=$postID&lang=en"))
-                  .then((value) =>
-                      CustomSnackBar(context, Text("Link has been coppied to clipboard")))
+              Clipboard.setData(ClipboardData(
+                      text:
+                          "${slugUrl(headLine: newsData.slugHeadline ?? newsData.submittedHeadline, postId: postID)}"))
+                  .then((value) => CustomSnackBar(
+                      context, Text("Link has been coppied to clipboard")))
                   .whenComplete(() => Navigator.pop(context));
             },
           ),
@@ -775,9 +877,10 @@ class _PostviewState extends State<Postview> {
           child: ListTile(
             onTap: () {
               print("entry of share");
-              String imgUrl = newsData.images != null && newsData.images!.length > 0
-                  ? newsData.images!.first.toString()
-                  : newsData.videos!.first.thumbnail.toString();
+              String imgUrl =
+                  newsData.images != null && newsData.images!.length > 0
+                      ? newsData.images!.first.toString()
+                      : newsData.videos!.first.thumbnail.toString();
               handleShare(
                   newsData.author!.name.toString(),
                   newsData.author!.image.toString(),
@@ -786,7 +889,8 @@ class _PostviewState extends State<Postview> {
                   DateFormat('yyyy-MM-dd').format(newsData.postCreatedDate!),
                   newsData.postId.toString());
             },
-            title: Text('Share to..', style: ThreeKmTextConstants.tk16PXLatoBlackRegular),
+            title: Text('Share to..',
+                style: ThreeKmTextConstants.tk16PXLatoBlackRegular),
           ),
         ),
         PopupMenuItem(
@@ -836,17 +940,22 @@ class _PostviewState extends State<Postview> {
                       Row(
                         children: [
                           Container(
-                              height: 20, width: 20, child: Image.asset('assets/icons-topic.png')),
+                              height: 20,
+                              width: 20,
+                              child: Image.asset('assets/icons-topic.png')),
                           Padding(padding: EdgeInsets.only(left: 10)),
-                          Consumer<CommentProvider>(builder: (context, commentProvider, _) {
-                            return commentProvider.allComments.length != 0
+                          Consumer<CommentProvider>(
+                              builder: (context, commentProvider, _) {
+                            return commentProvider.commentList?.length != null
                                 ? Text(
-                                    "${commentProvider.allComments.length}\tComments",
-                                    style: ThreeKmTextConstants.tk14PXPoppinsBlackSemiBold,
+                                    "${commentProvider.commentList!.length}\tComments",
+                                    style: ThreeKmTextConstants
+                                        .tk14PXPoppinsBlackSemiBold,
                                   )
                                 : Text(
                                     "Comments",
-                                    style: ThreeKmTextConstants.tk14PXPoppinsBlackSemiBold,
+                                    style: ThreeKmTextConstants
+                                        .tk14PXPoppinsBlackSemiBold,
                                   );
                           })
                         ],
@@ -854,8 +963,10 @@ class _PostviewState extends State<Postview> {
                       SizedBox(
                         height: 10,
                       ),
-                      Consumer<CommentProvider>(builder: (context, commentProvider, _) {
-                        return context.read<CommentProvider>().allComments != 0
+                      Consumer<CommentProvider>(
+                          builder: (context, commentProvider, _) {
+                        return context.read<CommentProvider>().commentList !=
+                                null
                             ? Expanded(
                                 child: commentProvider.isGettingComments == true
                                     ? CommentsLoadingEffects()
@@ -863,7 +974,8 @@ class _PostviewState extends State<Postview> {
                                         physics: BouncingScrollPhysics(),
                                         shrinkWrap: true,
                                         primary: true,
-                                        itemCount: commentProvider.allComments.length,
+                                        itemCount:
+                                            commentProvider.commentList!.length,
                                         itemBuilder: (context, commentIndex) {
                                           return Container(
                                             margin: EdgeInsets.all(1),
@@ -872,15 +984,19 @@ class _PostviewState extends State<Postview> {
                                             ),
                                             child: ListTile(
                                               trailing: commentProvider
-                                                          .allComments[commentIndex].isself ==
+                                                          .commentList![
+                                                              commentIndex]
+                                                          .isself ==
                                                       true
                                                   ? IconButton(
                                                       onPressed: () {
                                                         context
-                                                            .read<CommentProvider>()
+                                                            .read<
+                                                                CommentProvider>()
                                                             .removeComment(
                                                                 commentProvider
-                                                                    .allComments[commentIndex]
+                                                                    .commentList![
+                                                                        commentIndex]
                                                                     .commentId!,
                                                                 postId);
                                                       },
@@ -893,24 +1009,31 @@ class _PostviewState extends State<Postview> {
                                                     image: DecorationImage(
                                                         image: CachedNetworkImageProvider(
                                                             commentProvider
-                                                                .allComments[commentIndex].avatar
+                                                                .commentList![
+                                                                    commentIndex]
+                                                                .avatar
                                                                 .toString()))),
                                               ),
                                               title: Text(
-                                                commentProvider.allComments[commentIndex].username
+                                                commentProvider
+                                                    .commentList![commentIndex]
+                                                    .username
                                                     .toString(),
-                                                style:
-                                                    ThreeKmTextConstants.tk14PXPoppinsBlackSemiBold,
+                                                style: ThreeKmTextConstants
+                                                    .tk14PXPoppinsBlackSemiBold,
                                               ),
                                               subtitle: Column(
-                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
                                                   children: [
                                                     SizedBox(
                                                       height: 4,
                                                     ),
                                                     Text(
                                                       commentProvider
-                                                          .allComments[commentIndex].comment
+                                                          .commentList![
+                                                              commentIndex]
+                                                          .comment
                                                           .toString(),
                                                       style: ThreeKmTextConstants
                                                           .tk14PXLatoBlackMedium,
@@ -920,10 +1043,13 @@ class _PostviewState extends State<Postview> {
                                                     ),
                                                     Text(
                                                         commentProvider
-                                                            .allComments[commentIndex].timeLapsed
+                                                            .commentList![
+                                                                commentIndex]
+                                                            .timeLapsed
                                                             .toString(),
-                                                        style:
-                                                            TextStyle(fontStyle: FontStyle.italic))
+                                                        style: TextStyle(
+                                                            fontStyle: FontStyle
+                                                                .italic))
                                                   ]),
                                             ),
                                           );
@@ -938,9 +1064,11 @@ class _PostviewState extends State<Postview> {
                           height: 60,
                           width: 338,
                           decoration: BoxDecoration(
-                              color: Colors.grey.shade200, borderRadius: BorderRadius.circular(20)),
+                              color: Colors.grey.shade200,
+                              borderRadius: BorderRadius.circular(20)),
                           child: TextFormField(
-                            autovalidateMode: AutovalidateMode.onUserInteraction,
+                            autovalidateMode:
+                                AutovalidateMode.onUserInteraction,
                             validator: (String? value) {
                               if (value == null) {
                                 return "  Comment cant be blank";
@@ -951,7 +1079,8 @@ class _PostviewState extends State<Postview> {
                             controller: _commentController,
                             maxLines: null,
                             keyboardType: TextInputType.multiline,
-                            decoration: InputDecoration(border: InputBorder.none),
+                            decoration:
+                                InputDecoration(border: InputBorder.none),
                           ),
                         ),
                       ),
@@ -965,10 +1094,13 @@ class _PostviewState extends State<Postview> {
                             if (_formKey.currentState!.validate()) {
                               context
                                   .read<CommentProvider>()
-                                  .postCommentApi(postId, _commentController.text)
-                                  .then((value) => _commentController.text = "");
+                                  .postCommentApi(
+                                      postId, _commentController.text)
+                                  .then(
+                                      (value) => _commentController.text = "");
                             } else {
-                              CustomSnackBar(context, Text("Comment cant be blank"));
+                              CustomSnackBar(
+                                  context, Text("Comment cant be blank"));
                             }
                           },
                           child: Container(
@@ -983,7 +1115,8 @@ class _PostviewState extends State<Postview> {
                                 return _controller.isLoading == false
                                     ? Text(
                                         "Submit",
-                                        style: ThreeKmTextConstants.tk14PXPoppinsWhiteMedium,
+                                        style: ThreeKmTextConstants
+                                            .tk14PXPoppinsWhiteMedium,
                                       )
                                     : CupertinoActivityIndicator();
                               },
@@ -1002,8 +1135,8 @@ class _PostviewState extends State<Postview> {
     );
   }
 
-  handleShare(String authorName, String authorProfile, String headLine, String thumbnail, date,
-      String postId) async {
+  handleShare(String authorName, String authorProfile, String headLine,
+      String thumbnail, date, String postId) async {
     print("entry of handle share");
     showLoading();
     screenshotController
@@ -1027,7 +1160,8 @@ class _PostviewState extends State<Postview> {
                     decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         image: DecorationImage(
-                            fit: BoxFit.cover, image: CachedNetworkImageProvider(authorProfile))),
+                            fit: BoxFit.cover,
+                            image: CachedNetworkImageProvider(authorProfile))),
                   )),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -1074,8 +1208,10 @@ class _PostviewState extends State<Postview> {
                 ),
                 Padding(
                   padding: EdgeInsets.only(right: 15),
-                  child:
-                      Container(height: 30, width: 30, child: Image.asset('assets/icon_light.png')),
+                  child: Container(
+                      height: 30,
+                      width: 30,
+                      child: Image.asset('assets/icon_light.png')),
                 )
               ],
             ),
@@ -1090,7 +1226,8 @@ class _PostviewState extends State<Postview> {
             : await getApplicationDocumentsDirectory();
         File file = await File('${documentDirectory!.path}/image.png').create();
         file.writeAsBytesSync(capturedImage);
-        Share.shareFiles([file.path], text: 'https://3km.in/post-detail?id=$postId&lang=en')
+        Share.shareFiles([file.path],
+                text: '${slugUrl(headLine: headLine, postId: postId)}')
             .then((value) => hideLoading());
       } on Exception catch (e) {
         hideLoading();

@@ -22,6 +22,7 @@ import 'package:threekm/providers/localization_Provider/appLanguage_provider.dar
 import 'package:threekm/providers/main/LikeList_Provider.dart';
 import 'package:threekm/providers/main/comment_Provider.dart';
 import 'package:threekm/providers/main/newsList_provider.dart';
+import 'package:threekm/utils/slugUrl.dart';
 import 'package:threekm/utils/threekm_textstyles.dart';
 import 'package:provider/provider.dart';
 import 'package:threekm/widgets/NewCardUI/card_ui.dart';
@@ -144,7 +145,14 @@ class _NewsListPageState extends State<NewsListPage> {
         initJson = json.encode({
           "lat": 21.1458004,
           "lng": 79.0881546,
-          "tags": ["Recipe", "Homebaking", "Baking", "Food", "Foodblogger", "Punefoodie"],
+          "tags": [
+            "Recipe",
+            "Homebaking",
+            "Baking",
+            "Food",
+            "Foodblogger",
+            "Punefoodie"
+          ],
           "category": 3
         });
       } else if (widget.title == "Trending") {
@@ -155,11 +163,15 @@ class _NewsListPageState extends State<NewsListPage> {
           "category": 8
         });
       } else {
-        initJson = json.encode({"lat": '', "lng": '', "query": this.widget.title});
+        initJson =
+            json.encode({"lat": '', "lng": '', "query": this.widget.title});
       }
 
       Future.delayed(Duration.zero, () {
-        context.read<NewsListProvider>().featchPostIds(initJson, mounted).whenComplete(() {
+        context
+            .read<NewsListProvider>()
+            .featchPostIds(initJson, mounted)
+            .whenComplete(() {
           context.read<NewsListProvider>().getNewsPost(
                 widget.title,
                 mounted,
@@ -248,7 +260,8 @@ class _NewsListPageState extends State<NewsListPage> {
                 } else if (newsProvider.state == "loaded") {
                   return newsProvider.newsBycategory != null
                       ? NewsPostCard(
-                          noScorll: widget.hasPostfromBanner != null ? true : false,
+                          noScorll:
+                              widget.hasPostfromBanner != null ? true : false,
                           newsListProvider: newsProvider,
                           name: widget.title,
                         )
@@ -269,14 +282,18 @@ class NewsPostCard extends StatefulWidget {
   final String name;
   final bool noScorll;
   NewsPostCard(
-      {required this.newsListProvider, required this.name, required this.noScorll, Key? key})
+      {required this.newsListProvider,
+      required this.name,
+      required this.noScorll,
+      Key? key})
       : super(key: key);
 
   @override
   _NewsPostCardState createState() => _NewsPostCardState();
 }
 
-class _NewsPostCardState extends State<NewsPostCard> with AutomaticKeepAliveClientMixin {
+class _NewsPostCardState extends State<NewsPostCard>
+    with AutomaticKeepAliveClientMixin {
   ScreenshotController screenshotController = ScreenshotController();
   TextEditingController _commentController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
@@ -285,8 +302,8 @@ class _NewsPostCardState extends State<NewsPostCard> with AutomaticKeepAliveClie
     final byteData = await rootBundle.load('assets/$path');
 
     final file = File('${(await getTemporaryDirectory()).path}/$path');
-    await file
-        .writeAsBytes(byteData.buffer.asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
+    await file.writeAsBytes(byteData.buffer
+        .asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
 
     return file;
   }
@@ -304,7 +321,8 @@ class _NewsPostCardState extends State<NewsPostCard> with AutomaticKeepAliveClie
   void initState() {
     if (widget.noScorll == false) {
       _scrollController.addListener(() {
-        if (_scrollController.position.maxScrollExtent == _scrollController.position.pixels) {
+        if (_scrollController.position.maxScrollExtent ==
+            _scrollController.position.pixels) {
           if (context.read<NewsListProvider>().getttingMorePosts == false) {
             takeCount += 10;
             skipCount += 10;
@@ -349,10 +367,11 @@ class _NewsPostCardState extends State<NewsPostCard> with AutomaticKeepAliveClie
               physics: BouncingScrollPhysics(),
               controller: _scrollController,
               itemCount: //50,
-                  widget.newsListProvider.newsBycategory!.data!.result!.posts!.length,
+                  widget.newsListProvider.newsBycategory!.data!.result!.posts!
+                      .length,
               itemBuilder: (context, postIndex) {
-                final newsData =
-                    widget.newsListProvider.newsBycategory!.data!.result!.posts![postIndex];
+                final newsData = widget.newsListProvider.newsBycategory!.data!
+                    .result!.posts![postIndex];
 
                 if (widget.newsListProvider.getttingMorePosts == true) {
                   return Container(
@@ -973,8 +992,8 @@ class _NewsPostCardState extends State<NewsPostCard> with AutomaticKeepAliveClie
   }
 
   // previous param String imgUrl, String name, String newsHeadLine, int index
-  handleShare(String authorName, String authorProfile, String headLine, String thumbnail, date,
-      String postId) async {
+  handleShare(String authorName, String authorProfile, String headLine,
+      String thumbnail, date, String postId) async {
     showLoading();
     screenshotController
         .captureFromWidget(Container(
@@ -997,7 +1016,8 @@ class _NewsPostCardState extends State<NewsPostCard> with AutomaticKeepAliveClie
                     decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         image: DecorationImage(
-                            fit: BoxFit.cover, image: CachedNetworkImageProvider(authorProfile))),
+                            fit: BoxFit.cover,
+                            image: CachedNetworkImageProvider(authorProfile))),
                   )),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -1044,8 +1064,10 @@ class _NewsPostCardState extends State<NewsPostCard> with AutomaticKeepAliveClie
                 ),
                 Padding(
                   padding: EdgeInsets.only(right: 15),
-                  child:
-                      Container(height: 30, width: 30, child: Image.asset('assets/icon_light.png')),
+                  child: Container(
+                      height: 30,
+                      width: 30,
+                      child: Image.asset('assets/icon_light.png')),
                 )
               ],
             ),
@@ -1060,6 +1082,8 @@ class _NewsPostCardState extends State<NewsPostCard> with AutomaticKeepAliveClie
             : await getApplicationDocumentsDirectory();
         File file = await File('${documentDirectory!.path}/image.png').create();
         file.writeAsBytesSync(capturedImage);
+        Share.shareFiles([file.path],
+                text: '${slugUrl(headLine: headLine, postId: postId)}')
         Share.shareFiles([file.path], text: 'https://3km.in/post-detail?id=$postId&lang=en')
             .then((value) => hideLoading());
       } on Exception catch (e) {
@@ -1121,7 +1145,8 @@ class _NewsPostCardState extends State<NewsPostCard> with AutomaticKeepAliveClie
                           child: Column(
                             children: [
                               Padding(
-                                padding: EdgeInsets.only(left: 15, top: 5, right: 15, bottom: 10),
+                                padding: EdgeInsets.only(
+                                    left: 15, top: 5, right: 15, bottom: 10),
                                 child: Row(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
@@ -1130,14 +1155,19 @@ class _NewsPostCardState extends State<NewsPostCard> with AutomaticKeepAliveClie
                                         Navigator.push(
                                             context,
                                             MaterialPageRoute(
-                                                builder: (context) => AuthorProfile(
-                                                    authorType: newsData.authorType,
-                                                    // page: 1,
-                                                    // authorType:
-                                                    //     "user",
-                                                    id: newsData.author!.id!,
-                                                    avatar: newsData.author!.image!,
-                                                    userName: newsData.author!.name!)));
+                                                builder: (context) =>
+                                                    AuthorProfile(
+                                                        authorType:
+                                                            newsData.authorType,
+                                                        // page: 1,
+                                                        // authorType:
+                                                        //     "user",
+                                                        id: newsData
+                                                            .author!.id!,
+                                                        avatar: newsData
+                                                            .author!.image!,
+                                                        userName: newsData
+                                                            .author!.name!)));
                                       },
                                       child: Container(
                                           margin: EdgeInsets.only(right: 10),
@@ -1150,12 +1180,16 @@ class _NewsPostCardState extends State<NewsPostCard> with AutomaticKeepAliveClie
                                                 shape: BoxShape.circle,
                                                 image: DecorationImage(
                                                     fit: BoxFit.cover,
-                                                    image: CachedNetworkImageProvider(
-                                                        newsData.author!.image.toString()))),
+                                                    image:
+                                                        CachedNetworkImageProvider(
+                                                            newsData
+                                                                .author!.image
+                                                                .toString()))),
                                           )),
                                     ),
                                     Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       //mainAxisAlignment: MainAxisAlignment.center,
                                       children: [
                                         Container(
@@ -1165,7 +1199,8 @@ class _NewsPostCardState extends State<NewsPostCard> with AutomaticKeepAliveClie
                                           //     0.4,
                                           child: Text(
                                             newsData.author!.name.toString(),
-                                            style: ThreeKmTextConstants.tk14PXPoppinsBlackBold,
+                                            style: ThreeKmTextConstants
+                                                .tk14PXPoppinsBlackBold,
                                             overflow: TextOverflow.fade,
                                             maxLines: 1,
                                           ),
@@ -1178,7 +1213,8 @@ class _NewsPostCardState extends State<NewsPostCard> with AutomaticKeepAliveClie
                                     ),
                                     newsData.isVerified == true
                                         ? Padding(
-                                            padding: const EdgeInsets.only(top: 8),
+                                            padding:
+                                                const EdgeInsets.only(top: 8),
                                             child: Image.asset(
                                               'assets/verified.png',
                                               height: 15,
@@ -1188,7 +1224,8 @@ class _NewsPostCardState extends State<NewsPostCard> with AutomaticKeepAliveClie
                                           )
                                         : Container(),
                                     Spacer(),
-                                    showPopMenu(newsData.postId.toString(), newsData)
+                                    showPopMenu(
+                                        newsData.postId.toString(), newsData)
                                     // IconButton(
                                     //     onPressed: () {},
                                     //     icon: Icon(Icons.more_vert))
@@ -1196,16 +1233,18 @@ class _NewsPostCardState extends State<NewsPostCard> with AutomaticKeepAliveClie
                                 ),
                               ),
                               //both pics and images is present
-                              newsData.images!.length > 1 || newsData.videos!.length > 1
+                              newsData.images!.length > 1 ||
+                                      newsData.videos!.length > 1
                                   ?
                                   //video and image both
                                   Container(
                                       height: 400,
                                       width: 400,
-                                      decoration: BoxDecoration(color: Colors.black26),
+                                      decoration:
+                                          BoxDecoration(color: Colors.black26),
                                       child: PageView.builder(
-                                        itemCount:
-                                            newsData.images!.length + newsData.videos!.length,
+                                        itemCount: newsData.images!.length +
+                                            newsData.videos!.length,
                                         // options: CarouselOptions(
                                         //   // aspectRatio: null,
                                         //   viewportFraction: 0.99,
@@ -1214,38 +1253,61 @@ class _NewsPostCardState extends State<NewsPostCard> with AutomaticKeepAliveClie
                                           context,
                                           index,
                                         ) {
-                                          List<String?> videoUrls =
-                                              newsData.videos!.map((e) => e.src).toList();
-                                          List<String?> imglist =
-                                              List.from(newsData.images!.toList());
-                                          List<String?> templist = videoUrls + imglist;
+                                          List<String?> videoUrls = newsData
+                                              .videos!
+                                              .map((e) => e.src)
+                                              .toList();
+                                          List<String?> imglist = List.from(
+                                              newsData.images!.toList());
+                                          List<String?> templist =
+                                              videoUrls + imglist;
 
                                           return templist != null
-                                              ? templist[index].toString().contains(".mp4")
+                                              ? templist[index]
+                                                      .toString()
+                                                      .contains(".mp4")
                                                   ? SizedBox(
                                                       height: 300,
-                                                      width: MediaQuery.of(context).size.width,
+                                                      width:
+                                                          MediaQuery.of(context)
+                                                              .size
+                                                              .width,
                                                       child: VideoWidget(
-                                                          isVimeo: newsData.videos!.first.player ==
+                                                          isVimeo: newsData
+                                                                      .videos!
+                                                                      .first
+                                                                      .player ==
                                                                   "vimeo"
                                                               ? true
                                                               : false,
-                                                          vimeoID: newsData.videos!.first.player ==
+                                                          vimeoID: newsData
+                                                                      .videos!
+                                                                      .first
+                                                                      .player ==
                                                                   "vimeo"
-                                                              ? newsData.videos!.first.vimeoUrl!
+                                                              ? newsData
+                                                                  .videos!
+                                                                  .first
+                                                                  .vimeoUrl!
                                                                   .split("/")
                                                                   .last
                                                               : "",
                                                           thubnail: '',
-                                                          url: templist[index].toString(),
+                                                          url: templist[index]
+                                                              .toString(),
                                                           play: false),
                                                     )
                                                   : newsData.images!.length > 0
                                                       ? CachedNetworkImage(
                                                           height: 254,
-                                                          width: MediaQuery.of(context).size.width,
+                                                          width: MediaQuery.of(
+                                                                  context)
+                                                              .size
+                                                              .width,
                                                           fit: BoxFit.contain,
-                                                          imageUrl: templist[index].toString())
+                                                          imageUrl:
+                                                              templist[index]
+                                                                  .toString())
                                                       : SizedBox.shrink()
                                               : SizedBox(
                                                   child: Text("null"),
@@ -1259,25 +1321,42 @@ class _NewsPostCardState extends State<NewsPostCard> with AutomaticKeepAliveClie
                                       child: newsData.images!.length == 1
                                           ? CachedNetworkImage(
                                               key: _imagKey,
-                                              height: _imagKey.currentContext?.size?.height,
-                                              width: MediaQuery.of(context).size.width,
+                                              height: _imagKey
+                                                  .currentContext?.size?.height,
+                                              width: MediaQuery.of(context)
+                                                  .size
+                                                  .width,
                                               fit: BoxFit.fitWidth,
-                                              imageUrl: '${newsData.images!.first}',
+                                              imageUrl:
+                                                  '${newsData.images!.first}',
                                             )
                                           : newsData.videos!.length > 0
                                               ? VideoWidget(
-                                                  isVimeo: newsData.videos!.first.player == "vimeo"
+                                                  isVimeo: newsData.videos!
+                                                              .first.player ==
+                                                          "vimeo"
                                                       ? true
                                                       : false,
-                                                  vimeoID: newsData.videos!.first.player == "vimeo"
-                                                      ? newsData.videos!.first.vimeoUrl!
+                                                  vimeoID: newsData.videos!
+                                                              .first.player ==
+                                                          "vimeo"
+                                                      ? newsData.videos!.first
+                                                          .vimeoUrl!
                                                           .split("/")
                                                           .last
                                                       : "",
-                                                  thubnail: newsData.videos?.first.thumbnail != null
-                                                      ? newsData.videos!.first.thumbnail.toString()
+                                                  thubnail: newsData
+                                                              .videos
+                                                              ?.first
+                                                              .thumbnail !=
+                                                          null
+                                                      ? newsData.videos!.first
+                                                          .thumbnail
+                                                          .toString()
                                                       : '',
-                                                  url: newsData.videos!.first.src.toString(),
+                                                  url: newsData
+                                                      .videos!.first.src
+                                                      .toString(),
                                                   fromSinglePage: true,
                                                   play: false)
                                               : SizedBox.shrink(),
@@ -1295,15 +1374,23 @@ class _NewsPostCardState extends State<NewsPostCard> with AutomaticKeepAliveClie
                                       height: 10,
                                       width: MediaQuery.of(context).size.width,
                                       child: Builder(builder: (context) {
-                                        List<String?> videoUrls =
-                                            newsData.videos!.map((e) => e.src).toList();
+                                        List<String?> videoUrls = newsData
+                                            .videos!
+                                            .map((e) => e.src)
+                                            .toList();
                                         List<String?> templist =
-                                            List.from(newsData.images!.toList())..addAll(videoUrls);
+                                            List.from(newsData.images!.toList())
+                                              ..addAll(videoUrls);
                                         return Row(
-                                            mainAxisAlignment: MainAxisAlignment.center,
-                                            children: templist.asMap().entries.map((entry) {
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: templist
+                                                .asMap()
+                                                .entries
+                                                .map((entry) {
                                               return Padding(
-                                                padding: const EdgeInsets.only(left: 2),
+                                                padding: const EdgeInsets.only(
+                                                    left: 2),
                                                 child: DotIndicator(
                                                   size: 8.0,
                                                   color: Colors.grey,
@@ -1369,30 +1456,36 @@ class _NewsPostCardState extends State<NewsPostCard> with AutomaticKeepAliveClie
                               //   ]),
                               Row(children: [
                                 Padding(
-                                    padding: EdgeInsets.only(top: 2, left: 5, bottom: 2),
+                                    padding: EdgeInsets.only(
+                                        top: 2, left: 5, bottom: 2),
                                     child: Consumer<NewsListProvider>(
                                       builder: (context, newsProvider, _) {
                                         return InkWell(
                                           onTap: () {
                                             _showLikedBottomModalSheet(
-                                                newsData.postId!.toInt(), newsData.likes);
+                                                newsData.postId!.toInt(),
+                                                newsData.likes);
                                           },
                                           child: newsData.likes != 0
-                                              ? Text(
-                                                  "👍 ❤️ " + newsData.likes.toString() + ' Likes')
+                                              ? Text("👍 ❤️ " +
+                                                  newsData.likes.toString() +
+                                                  ' Likes')
                                               : SizedBox.shrink(),
                                         );
                                       },
                                     )),
                                 Spacer(),
                                 Padding(
-                                    padding: EdgeInsets.only(top: 2, right: 5, bottom: 2),
-                                    child: Text(newsData.views.toString() + ' Views')),
+                                    padding: EdgeInsets.only(
+                                        top: 2, right: 5, bottom: 2),
+                                    child: Text(
+                                        newsData.views.toString() + ' Views')),
                               ]),
                               SizedBox(height: 20),
                               Text(
                                 newsData.headline.toString(),
-                                style: ThreeKmTextConstants.tk14PXLatoBlackMedium,
+                                style:
+                                    ThreeKmTextConstants.tk14PXLatoBlackMedium,
                                 textAlign: TextAlign.center,
                               ),
                               Padding(
@@ -1400,7 +1493,8 @@ class _NewsPostCardState extends State<NewsPostCard> with AutomaticKeepAliveClie
                                     left: 10,
                                     right: 10,
                                     top: 10,
-                                    bottom: MediaQuery.of(context).size.height * 0.1),
+                                    bottom: MediaQuery.of(context).size.height *
+                                        0.1),
                                 child: HtmlWidget(
                                   newsData.story.toString(),
                                   textStyle: TextStyle(),
@@ -1428,31 +1522,45 @@ class _NewsPostCardState extends State<NewsPostCard> with AutomaticKeepAliveClie
                 child: Container(
                   height: 60,
                   width: MediaQuery.of(context).size.width,
-                  child: ButtonBar(alignment: MainAxisAlignment.center, children: [
+                  child:
+                      ButtonBar(alignment: MainAxisAlignment.center, children: [
                     Container(
                       height: 60,
                       width: 60,
                       child: Consumer<NewsListProvider>(
                         builder: (context, newslistProvider, _) {
                           return EmotionButton(
+                              providerType: 'NewsListProvider',
                               isLiked: newsData.isLiked!,
                               initalReaction: newsData.isLiked!
+                                  ? Reaction(
+                                      icon: Image.asset("assets/like_icon.png"))
+                                  : Reaction(
+                                      icon: Image.asset(
+                                          "assets/un_like_icon.png")),
                                   ? Reaction(icon: Image.asset("assets/thumbs_up_red.png"))
                                   : Reaction(icon: Image.asset("assets/thumbs-up.png")),
                               selectedReaction: newsData.isLiked!
+                                  ? Reaction(
+                                      icon: Image.asset("assets/like_icon.png"))
+                                  : Reaction(
+                                      icon: Image.asset(
+                                          "assets/un_like_icon.png")),
                                   ? Reaction(icon: Image.asset("assets/thumbs_up_red.png"))
                                   : Reaction(icon: Image.asset("assets/thumbs-up.png")),
                               postId: newsData.postId!.toInt(),
                               reactions: reactionAssets.reactions);
                         },
                       ),
-                      decoration:
-                          BoxDecoration(color: Colors.white, shape: BoxShape.circle, boxShadow: [
-                        BoxShadow(
-                          color: Colors.black26,
-                          blurRadius: 8,
-                        )
-                      ]),
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black26,
+                              blurRadius: 8,
+                            )
+                          ]),
                     ),
                     Container(
                       height: 60,
@@ -1460,26 +1568,31 @@ class _NewsPostCardState extends State<NewsPostCard> with AutomaticKeepAliveClie
                       child: IconButton(
                           onPressed: () async {
                             if (await getAuthStatus()) {
-                              _showCommentsBottomModalSheet(context, newsData.postId!);
+                              _showCommentsBottomModalSheet(
+                                  context, newsData.postId!);
                             } else {
                               NaviagateToLogin(context);
                             }
                           },
-                          icon: Image.asset('assets/icons-topic.png', fit: BoxFit.cover)),
-                      decoration:
-                          BoxDecoration(color: Colors.white, shape: BoxShape.circle, boxShadow: [
-                        BoxShadow(
-                          color: Colors.black26,
-                          blurRadius: 8,
-                        )
-                      ]),
+                          icon: Image.asset('assets/icons-topic.png',
+                              fit: BoxFit.cover)),
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black26,
+                              blurRadius: 8,
+                            )
+                          ]),
                     ),
                     Container(
                       height: 60,
                       width: 60,
                       child: IconButton(
                           onPressed: () {
-                            String imgUrl = newsData.images != null && newsData.images!.length > 0
+                            String imgUrl = newsData.images != null &&
+                                    newsData.images!.length > 0
                                 ? newsData.images!.first.toString()
                                 : newsData.videos!.first.thumbnail.toString();
                             handleShare(
@@ -1491,15 +1604,18 @@ class _NewsPostCardState extends State<NewsPostCard> with AutomaticKeepAliveClie
                                 newsData.postId.toString());
                           },
                           icon: Center(
-                            child: Image.asset('assets/icons-share.png', fit: BoxFit.contain),
+                            child: Image.asset('assets/icons-share.png',
+                                fit: BoxFit.contain),
                           )),
-                      decoration:
-                          BoxDecoration(color: Colors.white, shape: BoxShape.circle, boxShadow: [
-                        BoxShadow(
-                          color: Colors.black26,
-                          blurRadius: 8,
-                        )
-                      ]),
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black26,
+                              blurRadius: 8,
+                            )
+                          ]),
                     ),
                   ]),
                 ),
@@ -1532,8 +1648,10 @@ class _NewsPostCardState extends State<NewsPostCard> with AutomaticKeepAliveClie
                             Row(
                               children: [
                                 Padding(
-                                  padding: EdgeInsets.only(top: 24, left: 18, bottom: 34),
-                                  child: Text("$totalLikes People reacted to this"),
+                                  padding: EdgeInsets.only(
+                                      top: 24, left: 18, bottom: 34),
+                                  child: Text(
+                                      "$totalLikes People reacted to this"),
                                 ),
                               ],
                             ),
@@ -1542,7 +1660,8 @@ class _NewsPostCardState extends State<NewsPostCard> with AutomaticKeepAliveClie
                               width: double.infinity,
                               child: ListView.builder(
                                 scrollDirection: Axis.horizontal,
-                                itemCount: _likeProvider.likeList!.data!.result!.users!.length,
+                                itemCount: _likeProvider
+                                    .likeList!.data!.result!.users!.length,
                                 shrinkWrap: true,
                                 itemBuilder: (context, index) {
                                   return Container(
@@ -1556,7 +1675,11 @@ class _NewsPostCardState extends State<NewsPostCard> with AutomaticKeepAliveClie
                                           image: DecorationImage(
                                               fit: BoxFit.cover,
                                               image: NetworkImage(_likeProvider
-                                                  .likeList!.data!.result!.users![index].avatar
+                                                  .likeList!
+                                                  .data!
+                                                  .result!
+                                                  .users![index]
+                                                  .avatar
                                                   .toString()))),
                                       child: Stack(
                                         children: [
@@ -1568,15 +1691,21 @@ class _NewsPostCardState extends State<NewsPostCard> with AutomaticKeepAliveClie
                                                 width: 15,
                                                 fit: BoxFit.cover,
                                               )),
-                                          _likeProvider.likeList!.data!.result!.users![index]
+                                          _likeProvider
+                                                      .likeList!
+                                                      .data!
+                                                      .result!
+                                                      .users![index]
                                                       .isUnknown !=
                                                   null
                                               ? Center(
                                                   child: Text(
                                                       "+${_likeProvider.likeList!.data!.result!.anonymousCount}",
                                                       style: TextStyle(
-                                                          fontSize: 17, color: Colors.white),
-                                                      textAlign: TextAlign.center),
+                                                          fontSize: 17,
+                                                          color: Colors.white),
+                                                      textAlign:
+                                                          TextAlign.center),
                                                 )
                                               : SizedBox.shrink()
                                         ],
@@ -1625,17 +1754,22 @@ class _NewsPostCardState extends State<NewsPostCard> with AutomaticKeepAliveClie
                       Row(
                         children: [
                           Container(
-                              height: 20, width: 20, child: Image.asset('assets/icons-topic.png')),
+                              height: 20,
+                              width: 20,
+                              child: Image.asset('assets/icons-topic.png')),
                           Padding(padding: EdgeInsets.only(left: 10)),
-                          Consumer<CommentProvider>(builder: (context, commentProvider, _) {
-                            return commentProvider.allComments.length != 0
+                          Consumer<CommentProvider>(
+                              builder: (context, commentProvider, _) {
+                            return commentProvider.commentList?.length != null
                                 ? Text(
-                                    "${commentProvider.allComments.length}\tComments",
-                                    style: ThreeKmTextConstants.tk14PXPoppinsBlackSemiBold,
+                                    "${commentProvider.commentList!.length}\tComments",
+                                    style: ThreeKmTextConstants
+                                        .tk14PXPoppinsBlackSemiBold,
                                   )
                                 : Text(
                                     "Comments",
-                                    style: ThreeKmTextConstants.tk14PXPoppinsBlackSemiBold,
+                                    style: ThreeKmTextConstants
+                                        .tk14PXPoppinsBlackSemiBold,
                                   );
                           })
                         ],
@@ -1643,8 +1777,10 @@ class _NewsPostCardState extends State<NewsPostCard> with AutomaticKeepAliveClie
                       SizedBox(
                         height: 10,
                       ),
-                      Consumer<CommentProvider>(builder: (context, commentProvider, _) {
-                        return context.read<CommentProvider>().allComments != null
+                      Consumer<CommentProvider>(
+                          builder: (context, commentProvider, _) {
+                        return context.read<CommentProvider>().commentList !=
+                                null
                             ? Expanded(
                                 child: commentProvider.isGettingComments == true
                                     ? CommentsLoadingEffects()
@@ -1652,7 +1788,8 @@ class _NewsPostCardState extends State<NewsPostCard> with AutomaticKeepAliveClie
                                         physics: BouncingScrollPhysics(),
                                         shrinkWrap: true,
                                         primary: true,
-                                        itemCount: commentProvider.allComments.length,
+                                        itemCount:
+                                            commentProvider.commentList!.length,
                                         itemBuilder: (context, commentIndex) {
                                           return Container(
                                             margin: EdgeInsets.all(1),
@@ -1661,15 +1798,19 @@ class _NewsPostCardState extends State<NewsPostCard> with AutomaticKeepAliveClie
                                             ),
                                             child: ListTile(
                                               trailing: commentProvider
-                                                          .allComments[commentIndex].isself ==
+                                                          .commentList![
+                                                              commentIndex]
+                                                          .isself ==
                                                       true
                                                   ? IconButton(
                                                       onPressed: () {
                                                         context
-                                                            .read<CommentProvider>()
+                                                            .read<
+                                                                CommentProvider>()
                                                             .removeComment(
                                                                 commentProvider
-                                                                    .allComments[commentIndex]
+                                                                    .commentList![
+                                                                        commentIndex]
                                                                     .commentId!,
                                                                 postId);
                                                       },
@@ -1682,24 +1823,31 @@ class _NewsPostCardState extends State<NewsPostCard> with AutomaticKeepAliveClie
                                                     image: DecorationImage(
                                                         image: CachedNetworkImageProvider(
                                                             commentProvider
-                                                                .allComments[commentIndex].avatar
+                                                                .commentList![
+                                                                    commentIndex]
+                                                                .avatar
                                                                 .toString()))),
                                               ),
                                               title: Text(
-                                                commentProvider.allComments[commentIndex].username
+                                                commentProvider
+                                                    .commentList![commentIndex]
+                                                    .username
                                                     .toString(),
-                                                style:
-                                                    ThreeKmTextConstants.tk14PXPoppinsBlackSemiBold,
+                                                style: ThreeKmTextConstants
+                                                    .tk14PXPoppinsBlackSemiBold,
                                               ),
                                               subtitle: Column(
-                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
                                                   children: [
                                                     SizedBox(
                                                       height: 4,
                                                     ),
                                                     Text(
                                                       commentProvider
-                                                          .allComments[commentIndex].comment
+                                                          .commentList![
+                                                              commentIndex]
+                                                          .comment
                                                           .toString(),
                                                       style: ThreeKmTextConstants
                                                           .tk14PXLatoBlackMedium,
@@ -1709,10 +1857,13 @@ class _NewsPostCardState extends State<NewsPostCard> with AutomaticKeepAliveClie
                                                     ),
                                                     Text(
                                                         commentProvider
-                                                            .allComments[commentIndex].timeLapsed
+                                                            .commentList![
+                                                                commentIndex]
+                                                            .timeLapsed
                                                             .toString(),
-                                                        style:
-                                                            TextStyle(fontStyle: FontStyle.italic))
+                                                        style: TextStyle(
+                                                            fontStyle: FontStyle
+                                                                .italic))
                                                   ]),
                                             ),
                                           );
@@ -1727,9 +1878,11 @@ class _NewsPostCardState extends State<NewsPostCard> with AutomaticKeepAliveClie
                           height: 50,
                           width: 338,
                           decoration: BoxDecoration(
-                              color: Colors.grey.shade200, borderRadius: BorderRadius.circular(20)),
+                              color: Colors.grey.shade200,
+                              borderRadius: BorderRadius.circular(20)),
                           child: TextFormField(
-                            autovalidateMode: AutovalidateMode.onUserInteraction,
+                            autovalidateMode:
+                                AutovalidateMode.onUserInteraction,
                             validator: (String? value) {
                               if (value == null) {
                                 return "  Comment cant be blank";
@@ -1740,7 +1893,8 @@ class _NewsPostCardState extends State<NewsPostCard> with AutomaticKeepAliveClie
                             controller: _commentController,
                             maxLines: null,
                             keyboardType: TextInputType.multiline,
-                            decoration: InputDecoration(border: InputBorder.none),
+                            decoration:
+                                InputDecoration(border: InputBorder.none),
                           ),
                         ),
                       ),
@@ -1752,10 +1906,12 @@ class _NewsPostCardState extends State<NewsPostCard> with AutomaticKeepAliveClie
                         child: InkWell(
                           onTap: () {
                             if (_formKey.currentState!.validate() &&
-                                context.read<CommentProvider>().isLoading == false) {
+                                context.read<CommentProvider>().isLoading ==
+                                    false) {
                               context
                                   .read<CommentProvider>()
-                                  .postCommentApi(postId, _commentController.text)
+                                  .postCommentApi(
+                                      postId, _commentController.text)
                                   .then((value) => _commentController.clear());
                             }
                           },
@@ -1771,7 +1927,8 @@ class _NewsPostCardState extends State<NewsPostCard> with AutomaticKeepAliveClie
                                 return _controller.isLoading == false
                                     ? Text(
                                         "Submit",
-                                        style: ThreeKmTextConstants.tk14PXPoppinsWhiteMedium,
+                                        style: ThreeKmTextConstants
+                                            .tk14PXPoppinsWhiteMedium,
                                       )
                                     : CupertinoActivityIndicator();
                               },
@@ -1798,6 +1955,11 @@ class _NewsPostCardState extends State<NewsPostCard> with AutomaticKeepAliveClie
           child: ListTile(
             title: Text('Copy link'),
             onTap: () {
+              Clipboard.setData(ClipboardData(
+                      text:
+                          "${slugUrl(headLine: newsData.slugHeadline ?? newsData.submittedHeadline, postId: postID)}"))
+                  .then((value) => CustomSnackBar(
+                      context, Text("Link has been coppied to clipboard")))
               Clipboard.setData(
                       ClipboardData(text: "https://3km.in/post-detail?id=$postID&lang=en"))
                   .then((value) =>
@@ -1809,9 +1971,10 @@ class _NewsPostCardState extends State<NewsPostCard> with AutomaticKeepAliveClie
         PopupMenuItem(
           child: ListTile(
             onTap: () {
-              String imgUrl = newsData.images != null && newsData.images!.length > 0
-                  ? newsData.images!.first.toString()
-                  : newsData.videos!.first.thumbnail.toString();
+              String imgUrl =
+                  newsData.images != null && newsData.images!.length > 0
+                      ? newsData.images!.first.toString()
+                      : newsData.videos!.first.thumbnail.toString();
               handleShare(
                   newsData.author!.name.toString(),
                   newsData.author!.image.toString(),
@@ -1820,7 +1983,8 @@ class _NewsPostCardState extends State<NewsPostCard> with AutomaticKeepAliveClie
                   newsData.createdDate,
                   newsData.postId.toString());
             },
-            title: Text('Share to..', style: ThreeKmTextConstants.tk16PXLatoBlackRegular),
+            title: Text('Share to..',
+                style: ThreeKmTextConstants.tk16PXLatoBlackRegular),
           ),
         ),
         PopupMenuItem(
