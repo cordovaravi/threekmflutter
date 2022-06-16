@@ -254,8 +254,18 @@ class _NewsListPageState extends State<NewsListPage> {
                     child: CircularProgressIndicator(),
                   );
                 } else if (newsProvider.state == "error") {
-                  return Center(
-                    child: Lottie.asset("assets/Caterror.json"),
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Lottie.asset("assets/newsListError.json"),
+                      Text("Opps! It looks like you are offline",
+                          style: ThreeKmTextConstants.tk18PXPoppinsBlackMedium),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Text(
+                          "Please check your internet connection and try again.")
+                    ],
                   );
                 } else if (newsProvider.state == "loaded") {
                   return newsProvider.newsBycategory != null
@@ -383,6 +393,7 @@ class _NewsPostCardState extends State<NewsPostCard>
                 if (newsData.postId != null) {
                   return newsData != null
                       ? CardUI(
+                          providerType: 'NewsListProvider',
                           data: newsData,
                         )
                       : Container();
@@ -1084,7 +1095,6 @@ class _NewsPostCardState extends State<NewsPostCard>
         file.writeAsBytesSync(capturedImage);
         Share.shareFiles([file.path],
                 text: '${slugUrl(headLine: headLine, postId: postId)}')
-        Share.shareFiles([file.path], text: 'https://3km.in/post-detail?id=$postId&lang=en')
             .then((value) => hideLoading());
       } on Exception catch (e) {
         hideLoading();
@@ -1538,16 +1548,12 @@ class _NewsPostCardState extends State<NewsPostCard>
                                   : Reaction(
                                       icon: Image.asset(
                                           "assets/un_like_icon.png")),
-                                  ? Reaction(icon: Image.asset("assets/thumbs_up_red.png"))
-                                  : Reaction(icon: Image.asset("assets/thumbs-up.png")),
                               selectedReaction: newsData.isLiked!
                                   ? Reaction(
                                       icon: Image.asset("assets/like_icon.png"))
                                   : Reaction(
                                       icon: Image.asset(
                                           "assets/un_like_icon.png")),
-                                  ? Reaction(icon: Image.asset("assets/thumbs_up_red.png"))
-                                  : Reaction(icon: Image.asset("assets/thumbs-up.png")),
                               postId: newsData.postId!.toInt(),
                               reactions: reactionAssets.reactions);
                         },
@@ -1598,7 +1604,9 @@ class _NewsPostCardState extends State<NewsPostCard>
                             handleShare(
                                 newsData.author!.name.toString(),
                                 newsData.author!.image.toString(),
-                                newsData.headline.toString(),
+                                newsData.headline ??
+                                    newsData.submittedHeadline ??
+                                    "",
                                 imgUrl,
                                 newsData.createdDate,
                                 newsData.postId.toString());
@@ -1960,10 +1968,6 @@ class _NewsPostCardState extends State<NewsPostCard>
                           "${slugUrl(headLine: newsData.slugHeadline ?? newsData.submittedHeadline, postId: postID)}"))
                   .then((value) => CustomSnackBar(
                       context, Text("Link has been coppied to clipboard")))
-              Clipboard.setData(
-                      ClipboardData(text: "https://3km.in/post-detail?id=$postID&lang=en"))
-                  .then((value) =>
-                      CustomSnackBar(context, Text("Link has been coppied to clipboard")))
                   .whenComplete(() => Navigator.pop(context));
             },
           ),
@@ -1978,7 +1982,7 @@ class _NewsPostCardState extends State<NewsPostCard>
               handleShare(
                   newsData.author!.name.toString(),
                   newsData.author!.image.toString(),
-                  newsData.submittedHeadline.toString(),
+                  newsData.slugHeadline ?? newsData.submittedHeadline,
                   imgUrl,
                   newsData.createdDate,
                   newsData.postId.toString());
