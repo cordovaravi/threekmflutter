@@ -399,7 +399,7 @@ class _RestaurantsCheckOutScreenState extends State<RestaurantsCheckOutScreen> {
                                                     CrossAxisAlignment.start,
                                                 children: [
                                                   Text(
-                                                      '${deliveryAddressdata?.flatNo}, ${deliveryAddressdata?.area}, ${deliveryAddressdata?.city}',
+                                                      '${deliveryAddressdata?.flatNo}, ${deliveryAddressdata?.area}, ${deliveryAddressdata?.city?.split("Instance").first}',
                                                       style: ThreeKmTextConstants
                                                           .tk14PXPoppinsBlackSemiBold
                                                           .copyWith(
@@ -502,7 +502,7 @@ class _RestaurantsCheckOutScreenState extends State<RestaurantsCheckOutScreen> {
                                                                 .start,
                                                         children: [
                                                           Text(
-                                                              '${address.flatNo}, ${address.area}, ${address.city}',
+                                                              '${address.flatNo}, ${address.area}, ${address.city?.split("Instance").first}',
                                                               style: ThreeKmTextConstants
                                                                   .tk14PXPoppinsBlackSemiBold
                                                                   .copyWith(
