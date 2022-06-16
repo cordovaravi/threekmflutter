@@ -121,6 +121,7 @@ flutter:
     - assets/shopImg/
     - assets/BusinessesImg/
     - assets/dayzero/
+    - assets/reactions/
     #- buzzer.mp3
 
   # An image asset can refer to one or more resolution-specific "variants", see

@@ -739,6 +739,19 @@ class _MyProfilePostState extends State<MyProfilePost>
                 decoration:
                     BoxDecoration(shape: BoxShape.circle, color: Colors.grey),
               ),
+        Container(
+          height: 120,
+          width: 120,
+          //margin: EdgeInsets.only(top: 44),
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            border: Border.all(color: Colors.white, width: 3),
+            image: DecorationImage(
+              image: CachedNetworkImageProvider(selfProfileModel.data!.result!.author!.image!),
+              fit: BoxFit.fill,
+            ),
+          ),
+        ),
       ],
     );
   }
@@ -761,11 +774,7 @@ class _NewsCardState extends State<NewsCard> {
   Widget build(BuildContext context) {
     final newsData = widget.selfProfileModel.data!.result;
     return Stack(alignment: AlignmentDirectional.center, children: [
-      CardUI(
-        data: newsData!.posts![widget.index],
-        isfollow: false,
-        providerType: 'AutthorProfileProvider',
-      ),
+      CardUI(data: newsData!.posts![widget.index], isfollow: false),
       if (newsData.posts![widget.index].status == "rejected")
         Container(
           decoration: BoxDecoration(
@@ -774,7 +783,7 @@ class _NewsCardState extends State<NewsCard> {
           ),
           margin: EdgeInsets.only(top: 20, left: 20, right: 20),
           width: double.infinity,
-          height: 600,
+          height: 550,
         ),
       // Padding(
       //   padding: EdgeInsets.only(left: 10, right: 10, top: 8, bottom: 8),
