@@ -37,11 +37,14 @@ class _AddNewPostState extends State<AddNewPost> {
   final ImagePicker _imagePicker = ImagePicker();
 
   Geometry? _geometry;
-  var padding = EdgeInsets.only(right: 18, left: 18);
+  var padding = EdgeInsets.only(
+    right: 18,
+    left: 18,
+  );
 
   int headlineCount = 0;
   int descriptionCount = 0;
-  String? _selectedAddress;
+  String? _selecetdAddress;
 
   @override
   void initState() {
@@ -61,32 +64,23 @@ class _AddNewPostState extends State<AddNewPost> {
         actions: [
           TextButton(
               onPressed: () {
-                if (_headLineController.text.isEmpty) {
-                  Fluttertoast.showToast(msg: "Headline required");
-                  return;
+                if (_headLineController.text.isNotEmpty) {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => PostUploadPage(
+                                Title: _headLineController.text,
+                                Story: _storyController.text,
+                                address: _selecetdAddress ?? "",
+                                lat: _geometry?.location.lat,
+                                long: _geometry?.location.lng,
+                              )));
+                } else {
+                  // CustomSnackBar(
+                  //     context, Text("Please add atlest Headline of the Post"));
+                  Fluttertoast.showToast(
+                      msg: "Please add At least Headline of the Post");
                 }
-                if (context.read<AddPostProvider>().tagsList.length < 3) {
-                  Fluttertoast.showToast(msg: "Minimum 3 tags required");
-                  return;
-                }
-                if (_selectedAddress == null) {
-                  Fluttertoast.showToast(msg: "Location required");
-                  return;
-                }
-                if (!(descriptionCount > 0 || imageList.getMoreImages.isNotEmpty)) {
-                  Fluttertoast.showToast(msg: "Add description or upload a media");
-                  return;
-                }
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => PostUploadPage(
-                              Title: _headLineController.text,
-                              Story: _storyController.text,
-                              address: _selectedAddress ?? "",
-                              lat: _geometry?.location.lat,
-                              long: _geometry?.location.lng,
-                            )));
                 // if (_formKey.currentState!.validate()) {
                 //   if (_geometry?.location.lat != null) {
                 //     context
@@ -129,23 +123,24 @@ class _AddNewPostState extends State<AddNewPost> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Space Top of headline
-                SizedBox(height: 18),
-
+                SizedBox(
+                  height: 18,
+                ),
                 // Headline
                 buildHeadline,
                 // Space top of headline input
-                SizedBox(height: 7),
-
+                SizedBox(
+                  height: 7,
+                ),
                 // Headline input
                 Container(
                   padding: padding,
                   height: 52,
                   child: TextFormField(
                     validator: (String? story) {
-                      if (story == null || story.trim().isEmpty) {
+                      if (story == null || story == "" || story == " ") {
                         return "Please Add Headline";
-                      } else
-                        return null;
+                      }
                     },
                     controller: _headLineController,
                     maxLines: 1,
@@ -155,8 +150,11 @@ class _AddNewPostState extends State<AddNewPost> {
                     textAlignVertical: TextAlignVertical.top,
                     maxLengthEnforcement: MaxLengthEnforcement.enforced,
                     buildCounter: (context,
-                        {required currentLength, required isFocused, maxLength}) {
-                      WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+                        {required currentLength,
+                        required isFocused,
+                        maxLength}) {
+                      WidgetsBinding.instance!
+                          .addPostFrameCallback((timeStamp) {
                         setState(() {
                           headlineCount = currentLength;
                         });
@@ -174,43 +172,49 @@ class _AddNewPostState extends State<AddNewPost> {
                     ),
                   ),
                 ),
-
                 // Divider
-                SizedBox(height: 5),
-                Divider(color: Color(0xFFD5D5D5), thickness: 0.5),
-
+                SizedBox(
+                  height: 5,
+                ),
+                Divider(
+                  color: Color(0xFFD5D5D5),
+                  thickness: 0.5,
+                ),
                 // Space top of description
-                SizedBox(height: 24),
-
+                SizedBox(
+                  height: 24,
+                ),
                 // Description
                 buildDescription,
-
                 // Space top of description input
-                SizedBox(height: 8),
-
+                SizedBox(
+                  height: 8,
+                ),
                 // Description input
                 Container(
                   padding: padding,
                   height: 135,
                   child: TextFormField(
                     validator: (String? story) {
-                      if (story == null || story.trim().isEmpty) {
+                      if (story == null || story == "" || story == " ") {
                         return "Please Add Story";
-                      } else
-                        return null;
+                      }
                     },
                     controller: _storyController,
                     maxLines: null,
                     minLines: null,
                     expands: true,
-                    maxLength: 2000,
+                    //maxLength: 2500,
                     maxLengthEnforcement: MaxLengthEnforcement.enforced,
                     buildCounter: (context,
-                        {required currentLength, required isFocused, maxLength}) {
-                      WidgetsBinding.instance!.addPostFrameCallback((_) {
-                        setState(() {
-                          descriptionCount = currentLength;
-                        });
+                        {required currentLength,
+                        required isFocused,
+                        maxLength}) {
+                      WidgetsBinding.instance!
+                          .addPostFrameCallback((timeStamp) {
+                        // setState(() {
+                        //   descriptionCount = currentLength;
+                        // });
                       });
                       Container(
                         height: 1,
@@ -226,29 +230,46 @@ class _AddNewPostState extends State<AddNewPost> {
                   ),
                 ),
                 // Spaced before divider
-                SizedBox(height: 32),
-
+                SizedBox(
+                  height: 32,
+                ),
                 // Divider
-                Divider(color: Color(0xFFD5D5D5), thickness: 0.5),
-
+                Divider(
+                  color: Color(0xFFD5D5D5),
+                  thickness: 0.5,
+                ),
                 // Spacer for tags
-                SizedBox(height: 16),
-
+                SizedBox(
+                  height: 16,
+                ),
                 // Tags
-                buildTagsHeader,
-
+                Container(
+                  padding: padding,
+                  child: Text(
+                    "Tags".toUpperCase(),
+                    style:
+                        ThreeKmTextConstants.tk12PXPoppinsWhiteRegular.copyWith(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      color: Color(0xFF0F0F2D),
+                    ),
+                  ),
+                ),
                 // Spacer after tags
-                SizedBox(height: 12),
-
+                SizedBox(
+                  height: 12,
+                ),
                 // Tag List
                 buildTags,
-
                 // Spacer for divider on location
-                SizedBox(height: 16),
-
+                SizedBox(
+                  height: 16,
+                ),
                 // Divider
-                Divider(color: Color(0xFFD5D5D5), thickness: 0.5),
-
+                Divider(
+                  color: Color(0xFFD5D5D5),
+                  thickness: 0.5,
+                ),
                 // Location
                 Builder(
                   builder: (_controller) => Container(
@@ -273,10 +294,14 @@ class _AddNewPostState extends State<AddNewPost> {
                         SizedBox(width: 16),
                         Expanded(
                           child: Container(
-                            padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                            padding: EdgeInsets.symmetric(
+                                vertical: 8, horizontal: 12),
                             child: Text(
-                              "${_selectedAddress ?? "Unspecified location"}".toUpperCase(),
-                              style: ThreeKmTextConstants.tk12PXPoppinsWhiteRegular.copyWith(
+                              "${_selecetdAddress ?? "Unspecified location"}"
+                                  .toUpperCase(),
+                              style: ThreeKmTextConstants
+                                  .tk12PXPoppinsWhiteRegular
+                                  .copyWith(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w500,
                                 color: Color(0xFF0F0F2D),
@@ -290,11 +315,16 @@ class _AddNewPostState extends State<AddNewPost> {
                         InkWell(
                           onTap: () async {
                             Future.delayed(Duration.zero, () {
-                              context.read<LocationProvider>().getLocation().whenComplete(() {
-                                final _locationProvider =
-                                    context.read<LocationProvider>().getlocationData;
+                              context
+                                  .read<LocationProvider>()
+                                  .getLocation()
+                                  .whenComplete(() {
+                                final _locationProvider = context
+                                    .read<LocationProvider>()
+                                    .getlocationData;
                                 final kInitialPosition = LatLng(
-                                    _locationProvider!.latitude!, _locationProvider.longitude!);
+                                    _locationProvider!.latitude!,
+                                    _locationProvider.longitude!);
                                 if (_locationProvider != null) {
                                   Navigator.push(
                                       context,
@@ -305,7 +335,8 @@ class _AddNewPostState extends State<AddNewPost> {
                                           onPlacePicked: (result) {
                                             //print(result.formattedAddress);
                                             setState(() {
-                                              _selectedAddress = result.formattedAddress;
+                                              _selecetdAddress =
+                                                  result.formattedAddress;
                                               print(result.geometry!.toJson());
                                               _geometry = result.geometry;
                                             });
@@ -326,7 +357,8 @@ class _AddNewPostState extends State<AddNewPost> {
                             //     .pushNamed(LocationBasePage.path);
                           },
                           child: Container(
-                            padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                            padding: EdgeInsets.symmetric(
+                                vertical: 8, horizontal: 12),
                             decoration: BoxDecoration(
                               color: Color(0xFFF4F3F8),
                               borderRadius: BorderRadius.circular(20),
@@ -334,8 +366,11 @@ class _AddNewPostState extends State<AddNewPost> {
                             child: Center(
                               child: Text(
                                 "Change",
-                                style: ThreeKmTextConstants.tk12PXPoppinsWhiteRegular.copyWith(
-                                    fontWeight: FontWeight.w900, color: Color(0xFF3E7EFF)),
+                                style: ThreeKmTextConstants
+                                    .tk12PXPoppinsWhiteRegular
+                                    .copyWith(
+                                        fontWeight: FontWeight.w900,
+                                        color: Color(0xFF3E7EFF)),
                               ),
                             ),
                           ),
@@ -357,14 +392,16 @@ class _AddNewPostState extends State<AddNewPost> {
                   height: 10,
                 ),
                 imageList.getMoreImages.length > 0
-                    ? Consumer<AddPostProvider>(builder: (context, controller, _) {
+                    ? Consumer<AddPostProvider>(
+                        builder: (context, controller, _) {
                         return Container(
                           // height: 400,
                           // width: MediaQuery.of(context).size.width,
                           child: GridView.builder(
                               shrinkWrap: true,
                               gridDelegate:
-                                  SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3),
+                                  SliverGridDelegateWithFixedCrossAxisCount(
+                                      crossAxisCount: 3),
                               itemCount: imageList.getMoreImages.length,
                               itemBuilder: (BuildContext context, int index) {
                                 return Padding(
@@ -379,11 +416,15 @@ class _AddNewPostState extends State<AddNewPost> {
                                             height: 80,
                                             width: 80,
                                             color: Color(0xffF4F3F8),
-                                            child:
-                                                imageList.getMoreImages[index].path.contains("mp4")
-                                                    ? Image.asset("assets/ring_icon.png")
-                                                    : Image.file(imageList.getMoreImages[index],
-                                                        fit: BoxFit.contain),
+                                            child: imageList
+                                                    .getMoreImages[index].path
+                                                    .contains("mp4")
+                                                ? Image.asset(
+                                                    "assets/ring_icon.png")
+                                                : Image.file(
+                                                    imageList
+                                                        .getMoreImages[index],
+                                                    fit: BoxFit.contain),
                                             //
                                           ),
                                           Positioned(
@@ -395,7 +436,9 @@ class _AddNewPostState extends State<AddNewPost> {
                                                 margin: EdgeInsets.all(20),
                                                 decoration: BoxDecoration(
                                                     color: Color(0xffFF5858),
-                                                    borderRadius: BorderRadius.circular(8)),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            8)),
                                                 child: InkWell(
                                                   onTap: () {
                                                     context
@@ -466,12 +509,13 @@ class _AddNewPostState extends State<AddNewPost> {
             style: GoogleFonts.poppins(
               fontSize: 14,
               fontWeight: FontWeight.w500,
-              color: descriptionCount > 0 ? Color(0xFF979EA4) : Color(0xFF0F0F2D),
+              color:
+                  descriptionCount > 0 ? Color(0xFF979EA4) : Color(0xFF0F0F2D),
             ),
           ),
           Text(
-            // "",
-            "($descriptionCount/2000)",
+            "",
+            //"($descriptionCount/250)",
             style: ThreeKmTextConstants.tk12PXPoppinsWhiteRegular.copyWith(
               fontSize: 10.5,
               fontWeight: FontWeight.w700,
@@ -482,20 +526,6 @@ class _AddNewPostState extends State<AddNewPost> {
       ),
     );
   }
-
-  Widget get buildTagsHeader => Container(
-        padding: padding,
-        child: Text(
-          "Tags".toUpperCase(),
-          style: ThreeKmTextConstants.tk12PXPoppinsWhiteRegular.copyWith(
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-            color: context.read<AddPostProvider>().tagsList.length > 0
-                ? Color(0xFF979EA4)
-                : Color(0xFF0F0F2D),
-          ),
-        ),
-      );
 
   // Widget get buildFooter {
   //   return Positioned(
@@ -575,7 +605,8 @@ class _AddNewPostState extends State<AddNewPost> {
                     imageList.getMoreImages.length > 0
                         ? "UPLOADED MEDIA".toUpperCase()
                         : "UPLOAD MEDIA".toUpperCase(),
-                    style: ThreeKmTextConstants.tk14PXPoppinsWhiteMedium.copyWith(
+                    style:
+                        ThreeKmTextConstants.tk14PXPoppinsWhiteMedium.copyWith(
                       color: Color(0xFF0F0F2D),
                     ),
                   ),
@@ -602,7 +633,9 @@ class _AddNewPostState extends State<AddNewPost> {
                 _showImageVideoBottomModalSheet(context);
               },
               child: Text(
-                  imageList.getMoreImages.length > 0 ? "Add More Media" : "UPLOAD IMAGE/VIDEO",
+                  imageList.getMoreImages.length > 0
+                      ? "Add More Media"
+                      : "UPLOAD IMAGE/VIDEO",
                   style: ThreeKmTextConstants.tk14PXPoppinsWhiteMedium
                       .copyWith(color: Color(0xff3E7EFF))),
             ),
@@ -633,74 +666,105 @@ class _AddNewPostState extends State<AddNewPost> {
   Widget get buildTags {
     return Container(
       padding: padding,
-      width: MediaQuery.of(context).size.width,
-      child: Consumer<AddPostProvider>(
-        builder: (context, addpostProvider, _) {
-          return Wrap(runAlignment: WrapAlignment.start, runSpacing: 12, spacing: 12, children: [
-            ...addpostProvider.tagsList.map((value) {
-              return GestureDetector(
-                onTap: () {
-                  context.read<AddPostProvider>().removeTag(value);
-                },
-                child: Container(
-                    // margin: EdgeInsets.only(right: 12),
-                    padding: EdgeInsets.fromLTRB(6, 4, 4, 4),
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(25),
-                        //color: Colors.blue
-                        // color: e.value.active
-                        //     ? Colors.blue
-                        //     : Colors.white,
-                        border: Border.all(color: Color(0xFF979EA4), width: 1)
-                        //     : Border.all(color: Colors.transparent)
-                        ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Text(
-                          value.toString(),
-                          style: ThreeKmTextConstants.tk12PXPoppinsWhiteRegular.copyWith(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w700,
-                            color: Color(0xFF979EA4),
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Consumer<AddPostProvider>(
+          builder: (context, addpostProvider, _) {
+            return Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: addpostProvider.tagsList.length > 0
+                    ? [
+                        ...addpostProvider.tagsList.map((value) {
+                          return GestureDetector(
+                            onTap: () {
+                              context.read<AddPostProvider>().removeTag(value);
+                            },
+                            child: Container(
+                                margin: EdgeInsets.only(right: 12),
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 8, vertical: 4),
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(20),
+                                    //color: Colors.blue
+                                    // color: e.value.active
+                                    //     ? Colors.blue
+                                    //     : Colors.white,
+                                    border: Border.all(
+                                        color: Color(0xFF979EA4), width: 1)
+                                    //     : Border.all(color: Colors.transparent)
+                                    ),
+                                child: Row(
+                                  children: [
+                                    Center(
+                                      child: Text(
+                                        value.toString(),
+                                        style: ThreeKmTextConstants
+                                            .tk12PXPoppinsWhiteRegular
+                                            .copyWith(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w700,
+                                          color: Color(0xFF979EA4),
+                                        ),
+                                      ),
+                                    ),
+                                    Icon(Icons.cancel_outlined)
+                                  ],
+                                )),
+                          );
+                        }).toList(),
+                        InkWell(
+                          onTap: () => addTag(context),
+                          child: Container(
+                            margin: EdgeInsets.only(right: 12),
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 8, vertical: 4),
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(20),
+                                color: Colors.white,
+                                border: Border.all(
+                                    color: Color(0xFF979EA4), width: 1)),
+                            child: Center(
+                              child: Text(
+                                "+ Add",
+                                style: ThreeKmTextConstants
+                                    .tk12PXPoppinsWhiteRegular
+                                    .copyWith(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w700,
+                                        color: Colors.black),
+                              ),
+                            ),
                           ),
-                        ),
-                        SizedBox(width: 5),
-                        Icon(
-                          Icons.cancel_rounded,
-                          color: Colors.black54,
-                          size: 20,
                         )
-                      ],
-                    )),
-              );
-            }).toList(),
-            InkWell(
-              onTap: () => addTag(context),
-              child: Container(
-                margin: EdgeInsets.only(right: 12),
-                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                    color: Colors.white,
-                    boxShadow: [
-                      BoxShadow(
-                          color: Colors.black45,
-                          blurRadius: 5,
-                          spreadRadius: 2,
-                          offset: Offset(1, 2)),
-                    ],
-                    border: Border.all(color: Color(0xFF979EA4), width: 1)),
-                child: Text(
-                  "+ Add",
-                  style: ThreeKmTextConstants.tk12PXPoppinsWhiteRegular
-                      .copyWith(fontSize: 12, fontWeight: FontWeight.w700, color: Colors.black),
-                ),
-              ),
-            )
-          ]);
-        },
+                      ]
+                    : [
+                        InkWell(
+                          onTap: () => addTag(context),
+                          child: Container(
+                            margin: EdgeInsets.only(right: 12),
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 8, vertical: 4),
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(20),
+                                color: Colors.white,
+                                border: Border.all(
+                                    color: Color(0xFF979EA4), width: 1)),
+                            child: Center(
+                              child: Text(
+                                "+ Add",
+                                style: ThreeKmTextConstants
+                                    .tk12PXPoppinsWhiteRegular
+                                    .copyWith(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w700,
+                                        color: Colors.black),
+                              ),
+                            ),
+                          ),
+                        )
+                      ]);
+          },
+        ),
       ),
     );
   }
@@ -710,7 +774,8 @@ class _AddNewPostState extends State<AddNewPost> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
           title: Text(
             "Add Tag",
             style: ThreeKmTextConstants.tk14PXPoppinsBlackSemiBold
@@ -730,7 +795,8 @@ class _AddNewPostState extends State<AddNewPost> {
             TextButton(
               child: Text(
                 "Cancel",
-                style: ThreeKmTextConstants.tk14PXPoppinsBlackSemiBold.copyWith(color: Colors.red),
+                style: ThreeKmTextConstants.tk14PXPoppinsBlackSemiBold
+                    .copyWith(color: Colors.red),
               ),
               onPressed: () {
                 Navigator.of(context).pop();
@@ -740,7 +806,8 @@ class _AddNewPostState extends State<AddNewPost> {
             TextButton(
               child: Text(
                 "Continue",
-                style: ThreeKmTextConstants.tk14PXPoppinsBlackSemiBold.copyWith(color: Colors.blue),
+                style: ThreeKmTextConstants.tk14PXPoppinsBlackSemiBold
+                    .copyWith(color: Colors.blue),
               ),
               onPressed: () {
                 Navigator.of(context).pop(_tagscontroller.text);
@@ -828,7 +895,8 @@ class _AddNewPostState extends State<AddNewPost> {
                       InkWell(
                         onTap: () async {
                           List<XFile>? imageFileList = [];
-                          final List<XFile>? images = await _imagePicker.pickMultiImage();
+                          final List<XFile>? images =
+                              await _imagePicker.pickMultiImage();
                           if (imageFileList.isEmpty) {
                             imageFileList.addAll(images!);
                           }
@@ -841,7 +909,8 @@ class _AddNewPostState extends State<AddNewPost> {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => EditImage(images: imageFileList)));
+                                    builder: (context) =>
+                                        EditImage(images: imageFileList)));
                           }
                         },
                         child: Container(
@@ -867,16 +936,16 @@ class _AddNewPostState extends State<AddNewPost> {
                       ),
                       InkWell(
                         onTap: () async {
-                          final pickedVideo =
-                              await _imagePicker.pickVideo(source: ImageSource.gallery);
+                          final pickedVideo = await _imagePicker.pickVideo(
+                              source: ImageSource.gallery);
                           //final file = XFile(pickedVideo!.path);
                           Navigator.pop(context);
                           if (pickedVideo != null) {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) =>
-                                        VideoCompress(videoFile: File(pickedVideo.path))));
+                                    builder: (context) => VideoCompress(
+                                        videoFile: File(pickedVideo.path))));
                             // final size =
                             //     getVideoSize(file: File(pickedVideo.path));
                             // log("size is $size");

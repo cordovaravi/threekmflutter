@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
 
@@ -32,7 +31,8 @@ class _ProfilePageState extends State<ProfilePage> {
   final TextEditingController _emailController = TextEditingController();
   @override
   void initState() {
-    Future.microtask(() => context.read<ProfileInfoProvider>().getProfileBasicData());
+    Future.microtask(
+        () => context.read<ProfileInfoProvider>().getProfileBasicData());
     super.initState();
   }
 
@@ -88,12 +88,14 @@ class _ProfilePageState extends State<ProfilePage> {
                   buildProfileRow(
                     title: "Date of Birth",
                     showDivider: true,
-                    child: buildDateOfBirth(widgetdateOfBirth: profileData.dateOfBirth),
+                    child: buildDateOfBirth(
+                        widgetdateOfBirth: profileData.dateOfBirth),
                   ),
                   buildProfileRow(
                     title: "Gender",
                     showDivider: true,
-                    child: buildGender(context, widgetGender: profileData.Gender),
+                    child:
+                        buildGender(context, widgetGender: profileData.Gender),
                   ),
                 ],
               );
@@ -162,7 +164,10 @@ class _ProfilePageState extends State<ProfilePage> {
               height: MediaQuery.of(context).size.height,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.end,
-                children: [buildCloseButton(onTap: Navigator.of(context).pop), GenderPopUp()],
+                children: [
+                  buildCloseButton(onTap: Navigator.of(context).pop),
+                  GenderPopUp()
+                ],
               ),
             ),
           );
@@ -217,7 +222,10 @@ class _ProfilePageState extends State<ProfilePage> {
               height: double.infinity,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.end,
-                children: [buildCloseButton(onTap: Navigator.of(context).pop), NamePopUp()],
+                children: [
+                  buildCloseButton(onTap: Navigator.of(context).pop),
+                  NamePopUp()
+                ],
               ),
             ),
           );
@@ -293,7 +301,8 @@ class _ProfilePageState extends State<ProfilePage> {
                   : CachedNetworkImage(
                       imageUrl: controller.Avatar.toString(),
                       fit: BoxFit.fill,
-                      placeholder: (context, url) => CupertinoActivityIndicator(),
+                      placeholder: (context, url) =>
+                          CupertinoActivityIndicator(),
                     ),
               // Image.asset("assets/default_profile_image.png"),
             ),
@@ -301,7 +310,8 @@ class _ProfilePageState extends State<ProfilePage> {
               offset: Offset(45, -30),
               child: Container(
                 height: 32,
-                decoration: BoxDecoration(color: Colors.white, shape: BoxShape.circle),
+                decoration:
+                    BoxDecoration(color: Colors.white, shape: BoxShape.circle),
                 child: Center(
                   child: GestureDetector(
                     onTap: showProfileImageDialog,
@@ -320,7 +330,9 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Widget buildProfileRow(
-      {required String title, required bool showDivider, required Widget child}) {
+      {required String title,
+      required bool showDivider,
+      required Widget child}) {
     return Container(
       padding: EdgeInsets.only(left: 18, right: 19),
       child: Container(
@@ -380,7 +392,8 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Widget buildProfileButton({required String title, double? width, required VoidCallback onTap}) {
+  Widget buildProfileButton(
+      {required String title, double? width, required VoidCallback onTap}) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -516,15 +529,18 @@ class _ProfilePageState extends State<ProfilePage> {
 
   formatDate(dateUtc, option) {
     if (dateUtc != "null") {
-      var dateFormat = DateFormat("hh:mm aa dd MM yyyy"); // you can change the format here
+      var dateFormat =
+          DateFormat("hh:mm aa dd MM yyyy"); // you can change the format here
       // DateFormat("dd-MM-yyyy hh:mm aa"); // you can change the format here
-      var utcDate = dateFormat.format(DateTime.parse(dateUtc)); // pass the UTC time here
+      var utcDate =
+          dateFormat.format(DateTime.parse(dateUtc)); // pass the UTC time here
       var localDate = dateFormat.parse(utcDate, true).toLocal().toString();
       String createdDate = dateFormat.format(DateTime.parse(localDate));
       print('${createdDate.split(" ")[2]}');
       print('${createdDate.split(" ")[3]}');
       print('${createdDate.split(" ")[4]}');
-      print("${createdDate}=====================================================");
+      print(
+          "${createdDate}=====================================================");
       if (option == "d") return createdDate.split(" ")[2];
       if (option == "m") return createdDate.split(" ")[3];
       if (option == "y") return createdDate.split(" ")[4];
@@ -534,7 +550,8 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
-  Widget buildDateOfBirthFields({required String text, BorderRadiusGeometry? radius}) {
+  Widget buildDateOfBirthFields(
+      {required String text, BorderRadiusGeometry? radius}) {
     return Container(
       padding: EdgeInsets.all(8),
       decoration: BoxDecoration(
@@ -630,7 +647,8 @@ class _ProfilePageState extends State<ProfilePage> {
                   children: [
                     Text(
                       "Select Your Gender",
-                      style: ThreeKmTextConstants.tk14PXPoppinsBlackSemiBold.copyWith(
+                      style: ThreeKmTextConstants.tk14PXPoppinsBlackSemiBold
+                          .copyWith(
                         fontSize: 16,
                         fontWeight: FontWeight.normal,
                         color: Color(0xFF979EA4),
@@ -647,11 +665,14 @@ class _ProfilePageState extends State<ProfilePage> {
             )
           : Row(
               children: [
-                if (controller.gender.toLowerCase() != "other" || widgetGender != "other") ...{
+                if (controller.gender.toLowerCase() != "other" ||
+                    widgetGender != "other") ...{
                   SvgPicture.asset(
-                    controller.gender.toLowerCase() == "male" || widgetGender == "male"
+                    controller.gender.toLowerCase() == "male" ||
+                            widgetGender == "male"
                         ? "assets/male.svg"
-                        : controller.gender.toLowerCase() == "female" || widgetGender == "female"
+                        : controller.gender.toLowerCase() == "female" ||
+                                widgetGender == "female"
                             ? "assets/female.svg"
                             : "assets/other.png",
                     height: 32,
@@ -669,12 +690,16 @@ class _ProfilePageState extends State<ProfilePage> {
                     ? Text(
                         "${controller.gender}",
                         style: GoogleFonts.poppins(
-                            color: Color(0xFF232629), fontSize: 18, fontWeight: FontWeight.w600),
+                            color: Color(0xFF232629),
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600),
                       )
                     : Text(
                         "$widgetGender",
                         style: GoogleFonts.poppins(
-                            color: Color(0xFF232629), fontSize: 18, fontWeight: FontWeight.w600),
+                            color: Color(0xFF232629),
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600),
                       ),
                 space(width: 71),
                 buildEditButton(onTap: showGenderDialog)
@@ -708,7 +733,8 @@ class _ProfileImagePopUpState extends State<ProfileImagePopUp> {
 
   XFile? image;
 
-  final GlobalKey<ExtendedImageEditorState> editorKey = GlobalKey<ExtendedImageEditorState>();
+  final GlobalKey<ExtendedImageEditorState> editorKey =
+      GlobalKey<ExtendedImageEditorState>();
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -798,7 +824,8 @@ class _ProfileImagePopUpState extends State<ProfileImagePopUp> {
     );
   }
 
-  Widget buildProfileButton({required String title, double? width, required VoidCallback onTap}) {
+  Widget buildProfileButton(
+      {required String title, double? width, required VoidCallback onTap}) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -844,12 +871,15 @@ class _ProfileImagePopUpState extends State<ProfileImagePopUp> {
         // }
         Uint8List? fileData;
         if (editorKey.currentState?.rawImageData != null) {
-          fileData = await cropImageDataWithNativeLibrary(state: editorKey.currentState!);
+          fileData = await cropImageDataWithNativeLibrary(
+              state: editorKey.currentState!);
           final tempDir = await getTemporaryDirectory();
           File file = await File('${tempDir.path}/image.png').create();
           file.writeAsBytesSync(fileData!);
           print(file.path);
-          context.read<ProfileInfoProvider>().uploadPhoto(context: context, filePath: file.path);
+          context
+              .read<ProfileInfoProvider>()
+              .uploadPhoto(context: context, filePath: file.path);
         }
       },
       borderRadius: BorderRadius.circular(26),
@@ -867,8 +897,8 @@ class _ProfileImagePopUpState extends State<ProfileImagePopUp> {
                     ),
                     Text(
                       "Save Image",
-                      style:
-                          ThreeKmTextConstants.tk14PXPoppinsBlackBold.copyWith(color: Colors.white),
+                      style: ThreeKmTextConstants.tk14PXPoppinsBlackBold
+                          .copyWith(color: Colors.white),
                     )
                   ],
                 )
@@ -980,14 +1010,14 @@ class _NamePopUpState extends State<NamePopUp> {
           InkWell(
             onTap: () {
               if (firstname.text.isNotEmpty && lastname.text.isNotEmpty) {
-                context
-                    .read<ProfileInfoProvider>()
-                    .updateProfileInfo(fname: firstname.text, lname: lastname.text);
+                context.read<ProfileInfoProvider>().updateProfileInfo(
+                    fname: firstname.text, lname: lastname.text);
               }
             },
             child: Text(
               "Save",
-              style: ThreeKmTextConstants.tk14PXPoppinsBlackBold.copyWith(color: Colors.white),
+              style: ThreeKmTextConstants.tk14PXPoppinsBlackBold
+                  .copyWith(color: Colors.white),
             ),
           )
           // } else ...{
@@ -1045,10 +1075,12 @@ class _NamePopUpState extends State<NamePopUp> {
           hintStyle: ThreeKmTextConstants.tk16PXPoppinsBlackSemiBold
               .copyWith(color: Color(0xFF979EA4), fontWeight: FontWeight.w400),
           enabledBorder: UnderlineInputBorder(
-            borderSide: BorderSide(color: valid ? Color(0xFFF4F3F8) : Colors.red, width: 1),
+            borderSide: BorderSide(
+                color: valid ? Color(0xFFF4F3F8) : Colors.red, width: 1),
           ),
           focusedBorder: UnderlineInputBorder(
-            borderSide: BorderSide(color: valid ? Color(0xFF43B978) : Colors.red, width: 1),
+            borderSide: BorderSide(
+                color: valid ? Color(0xFF43B978) : Colors.red, width: 1),
           ),
         ),
       ),
@@ -1097,8 +1129,8 @@ class _PhonePopUpState extends State<PhonePopUp> {
           space(height: 48),
           Text(
             "Enter New Mobile Number",
-            style: ThreeKmTextConstants.tk14PXPoppinsBlackSemiBold
-                .copyWith(color: Color(0xFF979EA4), fontWeight: FontWeight.w500),
+            style: ThreeKmTextConstants.tk14PXPoppinsBlackSemiBold.copyWith(
+                color: Color(0xFF979EA4), fontWeight: FontWeight.w500),
           ),
           space(height: 13),
           buildTextField(
@@ -1219,7 +1251,8 @@ class _PhonePopUpState extends State<PhonePopUp> {
         children: [
           Text(
             title == null ? "Send OTP" : title,
-            style: ThreeKmTextConstants.tk14PXPoppinsBlackBold.copyWith(color: Colors.white),
+            style: ThreeKmTextConstants.tk14PXPoppinsBlackBold
+                .copyWith(color: Colors.white),
           )
           // } else ...{
           //   Container(
@@ -1235,7 +1268,8 @@ class _PhonePopUpState extends State<PhonePopUp> {
     );
   }
 
-  Widget buildTextField({required String hintText, required TextEditingController controller}) {
+  Widget buildTextField(
+      {required String hintText, required TextEditingController controller}) {
     return Container(
       height: 60,
       padding: EdgeInsets.symmetric(horizontal: 16),
@@ -1290,7 +1324,9 @@ class _PhonePopUpState extends State<PhonePopUp> {
                 decoration: InputDecoration(
                     hintText: hintText,
                     hintStyle: ThreeKmTextConstants.tk16PXPoppinsBlackSemiBold
-                        .copyWith(color: Color(0xFF979EA4), fontWeight: FontWeight.w400),
+                        .copyWith(
+                            color: Color(0xFF979EA4),
+                            fontWeight: FontWeight.w400),
                     enabledBorder: InputBorder.none,
                     focusedBorder: InputBorder.none),
               ),
@@ -1422,7 +1458,8 @@ class _ChangePasswordPopUpState extends State<ChangePasswordPopUp> {
           ),
           Text(
             "Save New Password",
-            style: ThreeKmTextConstants.tk14PXPoppinsBlackBold.copyWith(color: Colors.white),
+            style: ThreeKmTextConstants.tk14PXPoppinsBlackBold
+                .copyWith(color: Colors.white),
           )
           // } else ...{
           //   Container(
@@ -1476,10 +1513,12 @@ class _ChangePasswordPopUpState extends State<ChangePasswordPopUp> {
           hintStyle: ThreeKmTextConstants.tk16PXPoppinsBlackSemiBold
               .copyWith(color: Color(0xFF979EA4), fontWeight: FontWeight.w400),
           enabledBorder: UnderlineInputBorder(
-            borderSide: BorderSide(color: valid ? Color(0xFFF4F3F8) : Colors.red, width: 1),
+            borderSide: BorderSide(
+                color: valid ? Color(0xFFF4F3F8) : Colors.red, width: 1),
           ),
           focusedBorder: UnderlineInputBorder(
-            borderSide: BorderSide(color: valid ? Color(0xFF43B978) : Colors.red, width: 1),
+            borderSide: BorderSide(
+                color: valid ? Color(0xFF43B978) : Colors.red, width: 1),
           ),
         ),
       ),
@@ -1511,7 +1550,8 @@ class GenderPopUp extends StatelessWidget {
             Expanded(
               child: Text(
                 title,
-                style: ThreeKmTextConstants.tk14PXPoppinsBlackSemiBold.copyWith(fontSize: 18),
+                style: ThreeKmTextConstants.tk14PXPoppinsBlackSemiBold
+                    .copyWith(fontSize: 18),
               ),
             ),
             Checkbox(
@@ -1548,7 +1588,8 @@ class GenderPopUp extends StatelessWidget {
             space(height: 40),
             Text(
               "Select gender".toUpperCase(),
-              style: ThreeKmTextConstants.tk14PXPoppinsBlackBold.copyWith(fontSize: 16),
+              style: ThreeKmTextConstants.tk14PXPoppinsBlackBold
+                  .copyWith(fontSize: 16),
             ),
             space(height: 56),
             buildGenderRow(asset: "assets/female.svg", title: "Female"),
@@ -1576,7 +1617,8 @@ class GenderPopUp extends StatelessWidget {
                         Container(
                           height: 8,
                           width: 8,
-                          decoration: BoxDecoration(color: Colors.white, shape: BoxShape.circle),
+                          decoration: BoxDecoration(
+                              color: Colors.white, shape: BoxShape.circle),
                         ),
                         Container(
                           height: 18,
@@ -1593,8 +1635,8 @@ class GenderPopUp extends StatelessWidget {
                     ),
                     Text(
                       "Save Gender",
-                      style:
-                          ThreeKmTextConstants.tk14PXPoppinsBlackBold.copyWith(color: Colors.white),
+                      style: ThreeKmTextConstants.tk14PXPoppinsBlackBold
+                          .copyWith(color: Colors.white),
                     )
                   } else ...{
                     Container(

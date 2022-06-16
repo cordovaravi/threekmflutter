@@ -15,6 +15,7 @@ import 'package:provider/src/provider.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:threekm/Custom_library/src/reaction.dart';
 import 'package:threekm/Models/FeedPost/HomenewsBottomModel.dart';
 import 'package:threekm/UI/main/News/NewsList.dart';
 import 'package:threekm/UI/main/News/News_FeedPage.dart';
@@ -31,9 +32,6 @@ import 'package:threekm/providers/main/comment_Provider.dart';
 import 'package:threekm/utils/slugUrl.dart';
 import 'package:threekm/utils/threekm_textstyles.dart';
 import 'package:threekm/widgets/NewCardUI/image_layout.dart';
-
-import '../../UI/main/News/like_and_comment/comment_section.dart';
-import '../../UI/main/News/like_and_comment/like_list.dart';
 import 'package:threekm/widgets/reactions_assets.dart' as reactionAssets;
 import '../emotion_Button.dart';
 // import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
@@ -73,6 +71,17 @@ class _CardUIState extends State<CardUI> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          if (data.preheaderLike != "" && data.preheaderComment == "")
+            Text('${data.preheaderLike}'),
+          if (data.preheaderLike != "" && data.preheaderComment == "")
+            Divider(
+              thickness: 2,
+            ),
+          if (data.preheaderComment != "") Text('${data.preheaderComment}'),
+          if (data.preheaderComment != "")
+            Divider(
+              thickness: 2,
+            ),
           Row(
             children: [
               data.author?.image != null
@@ -281,17 +290,49 @@ class _CardUIState extends State<CardUI> {
                         NaviagateToLogin(context);
                       }
                     },
-                    icon: data.isLiked!
-                        ? Image.asset(
-                            "assets/like_icon.png",
-                            width: 22,
-                            height: 19,
-                          )
-                        : Image.asset(
-                            "assets/un_like_icon.png",
-                            width: 22,
-                            height: 19,
-                          ),
+                    icon: EmotionButton(
+                        providerType: widget.providerType,
+                        isLiked: data.isLiked!,
+                        initalReaction: data.isLiked!
+                            ? Reaction(
+                                icon: Image.asset(
+                                  "assets/like_icon.png",
+                                  width: 22,
+                                  height: 19,
+                                ),
+                              )
+                            : Reaction(
+                                icon: Image.asset(
+                                "assets/un_like_icon.png",
+                                width: 22,
+                                height: 19,
+                              )),
+                        selectedReaction: data.isLiked!
+                            ? Reaction(
+                                icon: Image.asset(
+                                "assets/like_icon.png",
+                                width: 22,
+                                height: 19,
+                              ))
+                            : Reaction(
+                                icon: Image.asset(
+                                "assets/un_like_icon.png",
+                                width: 22,
+                                height: 19,
+                              )),
+                        postId: data.postId!.toInt(),
+                        reactions: reactionAssets.reactions),
+                    // data.isLiked!
+                    //     ? Image.asset(
+                    //         "assets/like_icon.png",
+                    //         width: 22,
+                    //         height: 19,
+                    //       )
+                    //     : Image.asset(
+                    //         "assets/un_like_icon.png",
+                    //         width: 22,
+                    //         height: 19,
+                    //       ),
                     label: Text(
                       'Like',
                       style: ThreeKmTextConstants.tk12PXPoppinsBlackSemiBold,
@@ -325,7 +366,9 @@ class _CardUIState extends State<CardUI> {
                       handleShare(
                           data.author!.name.toString(),
                           data.author!.image.toString(),
-                          data.headline.toString(),
+                          data.slugHeadline != null || data.slugHeadline != ""
+                              ? data.slugHeadline
+                              : data.submittedHeadline,
                           imgUrl,
                           data.createdDate,
                           data.postId.toString());
@@ -334,8 +377,69 @@ class _CardUIState extends State<CardUI> {
                     label: Text(
                       'Share',
                       style: ThreeKmTextConstants.tk12PXPoppinsBlackSemiBold,
-                    ))
+                    )),
               ],
+            ),
+          if (data.comments > 0) Text('${data.comments} comments'),
+          if (data.comments > 0 &&
+              data.latestComment != null &&
+              data.latestComment.user != null)
+            Padding(
+              padding: const EdgeInsets.only(top: 10, bottom: 10),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(50),
+                    child: Image(
+                      image: NetworkImage('${data.latestComment.user.avatar}'),
+                      width: 48,
+                      height: 48,
+                    ),
+                  ),
+                  SizedBox(
+                    width: 10,
+                  ),
+                  Expanded(
+                    child: Container(
+                      padding:
+                          const EdgeInsets.only(left: 10, right: 10, top: 8),
+                      decoration: BoxDecoration(
+                          color: Color(0xFFF4F4F4),
+                          borderRadius: BorderRadius.circular(10)),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                '${data.latestComment.user.name}',
+                                style:
+                                    ThreeKmTextConstants.tk14PXPoppinsBlackBold,
+                              ),
+                              // IconButton(
+                              //     onPressed: () {},
+                              //     icon: Image(
+                              //         image: AssetImage(
+                              //             'assets/fluent_delete.png')))
+                            ],
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 10),
+                            child: Text(
+                              '${data.latestComment.comment}',
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 3,
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  )
+                ],
+              ),
             )
         ],
       ),
@@ -677,10 +781,6 @@ class _CardUIState extends State<CardUI> {
                           "${slugUrl(headLine: newsData.slugHeadline.toString(), postId: postID)}"))
                   .then((value) => CustomSnackBar(
                       context, Text("Link has been coppied to clipboard")))
-              Clipboard.setData(
-                      ClipboardData(text: "https://3km.in/post-detail?id=$postID&lang=en"))
-                  .then((value) =>
-                      CustomSnackBar(context, Text("Link has been coppied to clipboard")))
                   .whenComplete(() => Navigator.pop(context));
             },
           ),
@@ -810,9 +910,10 @@ class _CardUIState extends State<CardUI> {
             ? await getExternalStorageDirectory()
             : await getApplicationDocumentsDirectory();
         File file = await File('${documentDirectory!.path}/image.png').create();
+        log(slugUrl(headLine: headLine, postId: postId));
         file.writeAsBytesSync(capturedImage);
         Share.shareFiles([file.path],
-                text: '$headLine https://3km.in/post-detail?id=$postId&lang=en')
+                text: '${slugUrl(headLine: headLine, postId: postId)}')
             .then((value) => hideLoading());
       } on Exception catch (e) {
         hideLoading();

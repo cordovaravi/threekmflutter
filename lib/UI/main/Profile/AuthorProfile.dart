@@ -24,6 +24,7 @@ import 'package:threekm/providers/localization_Provider/appLanguage_provider.dar
 import 'package:threekm/providers/main/AthorProfile_Provider.dart';
 import 'package:threekm/providers/main/LikeList_Provider.dart';
 import 'package:threekm/providers/main/comment_Provider.dart';
+import 'package:threekm/widgets/NewCardUI/card_ui.dart';
 import 'package:threekm/widgets/emotion_Button.dart';
 import 'package:threekm/widgets/reactions_assets.dart' as reactionAssets;
 
@@ -536,7 +537,7 @@ class _AuthorProfileState extends State<AuthorProfile>
             child: IconButton(
               icon: Icon(
                 Icons.arrow_back,
-                color: Colors.white,
+                color: Colors.black,
               ),
               onPressed: Navigator.of(context).pop,
             ),
@@ -586,657 +587,735 @@ class NewsCard extends StatefulWidget {
 }
 
 class _NewsCardState extends State<NewsCard> {
-  TextEditingController _commentController = TextEditingController();
-  ScreenshotController screenshotController = ScreenshotController();
+  // TextEditingController _commentController = TextEditingController();
+  // ScreenshotController screenshotController = ScreenshotController();
   @override
   Widget build(BuildContext context) {
     final newsData = widget.authorProfileModel.data.result;
-    return Stack(alignment: AlignmentDirectional.center, children: [
-      Padding(
-        padding: EdgeInsets.only(left: 10, right: 10, top: 8, bottom: 8),
-        child: Column(mainAxisSize: MainAxisSize.min, children: [
-          Container(
-            margin: EdgeInsets.only(bottom: 10),
-            decoration: BoxDecoration(
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(color: Color(0xff32335E26), blurRadius: 8),
-                ],
-                borderRadius: BorderRadius.circular(10)),
-            child: Container(
-                child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                          margin: EdgeInsets.only(right: 10),
-                          height: 50,
-                          width: 50,
-                          child: Container(
-                            height: 50,
-                            width: 50,
-                            decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                image: DecorationImage(
-                                    fit: BoxFit.cover,
-                                    image: CachedNetworkImageProvider(widget.avtar)
-                                    //newsData.author!.image.toString())
-                                    )),
-                            // child: newsData.author!.isVerified == true
-                            //     //newsData.isVerified == true
-                            //     ? Stack(
-                            //         children: [
-                            //           Positioned(
-                            //               left: 0,
-                            //               child: Image.asset(
-                            //                 'assets/verified.png',
-                            //                 height: 15,
-                            //                 width: 15,
-                            //                 fit: BoxFit.cover,
-                            //               ))
-                            //         ],
-                            //       )
-                            //     : Container(),
-                          )),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        //mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Container(
-                            width: MediaQuery.of(context).size.width * 0.35,
-                            child: Text(
-                              widget.authorName,
-                              style: ThreeKmTextConstants.tk14PXPoppinsBlackBold,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                          Text(newsData!.posts![widget.index].createdDate.toString()
-                              //newsData.createdDate.toString()
-                              )
-                        ],
-                      ),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      Spacer(),
-                      showPopMenu(newsData.posts![widget.index].postId.toString(), newsData)
-                    ],
-                  ),
-                ),
-                //pic
-                if (newsData.posts![widget.index].images != null &&
-                    newsData.posts![widget.index].images!.length > 0)
-                  CachedNetworkImage(
-                    height: 254,
-                    width: 338,
-                    fit: BoxFit.fill,
-                    imageUrl: '${newsData.posts![widget.index].images!.first}',
-                  )
-                else if (newsData.posts![widget.index].videos != null &&
-                    newsData.posts![widget.index].videos!.length > 0)
-                  Stack(children: [
-                    Container(
-                      height: 254,
-                      width: MediaQuery.of(context).size.width,
-                      child: VideoWidget(
-                          isVimeo: newsData.posts![widget.index].videos!.first.player == "vimeo"
-                              ? true
-                              : false,
-                          vimeoID: newsData.posts![widget.index].videos!.first.player == "vimeo"
-                              ? newsData.posts![widget.index].videos!.first.vimeoUrl!
-                                  .split("/")
-                                  .last
-                              : "",
-                          thubnail:
-                              newsData.posts![widget.index].videos!.first.thumbnail!.isNotEmpty
-                                  ? newsData.posts![widget.index].videos!.first.thumbnail.toString()
-                                  : '',
-                          url: newsData.posts![widget.index].videos!.first.src.toString(),
-                          play: false),
-                    ),
-                  ]),
-                Row(children: [
-                  if (newsData.posts![widget.index].likes != null &&
-                      newsData.posts![widget.index].likes != 0)
-                    Padding(
-                        padding: EdgeInsets.only(top: 5, left: 5, bottom: 2),
-                        child: InkWell(
-                          onTap: () {
-                            _showLikedBottomModalSheet(
-                                newsData.posts![widget.index].postId!.toInt(),
-                                newsData.posts![widget.index].likes);
-                          },
-                          child: Row(
-                            children: [
-                              Text('👍 ❤️ '),
-                              Container(
-                                // height: 30,
-                                // width: 30,
-                                // decoration: BoxDecoration(
-                                //     shape: BoxShape.circle,
-                                //     color: Color(0xffFC5E6A)),
-                                child: Center(
-                                    child: newsData.posts![widget.index].likes != null
-                                        ? Text('+' + newsData.posts![widget.index].likes.toString())
-                                        : Text("+0")),
-                              )
-                            ],
-                          ),
-                        )),
-                  Spacer(),
-                  Padding(
-                      padding: EdgeInsets.only(top: 5, right: 5, bottom: 2),
-                      child: Text(newsData.posts![widget.index].views.toString() + ' Views'))
-                ]),
-                Text(
-                  newsData.posts![widget.index].headline.toString(),
-                  style: ThreeKmTextConstants.tk14PXLatoBlackMedium,
-                  textAlign: TextAlign.center,
-                ),
-                SizedBox(
-                  height: 8,
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: HtmlWidget(newsData.posts![widget.index].story.toString()),
-                ),
-
-                SizedBox(
-                  height: 35,
-                ),
-              ],
-            )),
-          )
-        ]),
-      ),
-      Positioned(
-          bottom: 0,
-          child: Container(
-            height: 60,
-            width: 230,
-            child: ButtonBar(children: [
-              Container(
-                height: 60,
-                width: 60,
-                child: PostAuthorEmotionButton(
-                    isLiked: newsData.posts![widget.index].isLiked!,
-                    initalReaction: newsData.posts![widget.index].isLiked!
-                        ? Reaction(icon: Image.asset("assets/thumbs_up_red.png"))
-                        : Reaction(icon: Image.asset("assets/thumbs-up.png")),
-                    selectedReaction: newsData.posts![widget.index].isLiked!
-                        ? Reaction(icon: Image.asset("assets/thumbs_up_red.png"))
-                        : Reaction(icon: Image.asset("assets/thumbs-up.png")),
-                    postId: newsData.posts![widget.index].postId!.toInt(),
-                    reactions: reactionAssets.reactions),
-                decoration: BoxDecoration(color: Colors.white, shape: BoxShape.circle, boxShadow: [
-                  BoxShadow(
-                    color: Colors.black26,
-                    blurRadius: 8,
-                  )
-                ]),
-              ),
-              Container(
-                height: 60,
-                width: 60,
-                child: IconButton(
-                    onPressed: () {
-                      _showCommentsBottomModalSheet(
-                          context, newsData.posts![widget.index].postId!.toInt());
-                    },
-                    icon: Image.asset('assets/icons-topic.png', fit: BoxFit.cover)),
-                decoration: BoxDecoration(color: Colors.white, shape: BoxShape.circle, boxShadow: [
-                  BoxShadow(
-                    color: Colors.black26,
-                    blurRadius: 8,
-                  )
-                ]),
-              ),
-              Container(
-                height: 60,
-                width: 60,
-                child: IconButton(
-                    onPressed: () async {
-                      // showLoading();
-                      String imgUrl = newsData.posts![widget.index].images!.isNotEmpty &&
-                              newsData.posts![widget.index].images!.length > 0
-                          ? newsData.posts![widget.index].images!.first.toString()
-                          : newsData.posts![widget.index].videos!.first.thumbnail.toString();
-                      handleShare(
-                          newsData.author!.name.toString(),
-                          newsData.author!.image.toString(),
-                          newsData.posts![widget.index].submittedHeadline.toString(),
-                          imgUrl,
-                          newsData.posts![widget.index].createdDate.toString(),
-                          newsData.posts![widget.index].postId.toString());
-                    },
-                    icon: Center(
-                      child: Image.asset('assets/icons-share.png', fit: BoxFit.contain),
-                    )),
-                decoration: BoxDecoration(color: Colors.white, shape: BoxShape.circle, boxShadow: [
-                  BoxShadow(
-                    color: Colors.black26,
-                    blurRadius: 8,
-                  )
-                ]),
-              ),
-            ]),
-          )),
-    ]);
-  }
-
-  _showLikedBottomModalSheet(int postId, totalLikes) {
-    context.read<LikeListProvider>().showLikes(context, postId);
-    showModalBottomSheet<void>(
-      backgroundColor: Colors.white,
-      context: context,
-      builder: (BuildContext context) {
-        final _likeProvider = context.watch<LikeListProvider>();
-        return Padding(
-            padding: EdgeInsets.zero,
-            child: StatefulBuilder(
-              builder: (context, _) {
-                return Container(
-                  color: Colors.white,
-                  height: 192,
-                  width: MediaQuery.of(context).size.width,
-                  child: _likeProvider.isLoading
-                      ? LikesLoding()
-                      : Column(
-                          mainAxisSize: MainAxisSize.max,
-                          children: [
-                            Row(
-                              children: [
-                                Padding(
-                                  padding: EdgeInsets.only(top: 24, left: 18, bottom: 34),
-                                  child: Text("$totalLikes People reacted to this"),
-                                ),
-                              ],
-                            ),
-                            Container(
-                              height: 90,
-                              width: double.infinity,
-                              child: ListView.builder(
-                                scrollDirection: Axis.horizontal,
-                                itemCount: _likeProvider.likeList!.data!.result!.users!.length,
-                                shrinkWrap: true,
-                                itemBuilder: (context, index) {
-                                  return Container(
-                                      margin: EdgeInsets.only(
-                                        left: 21,
-                                      ),
-                                      height: 85,
-                                      width: 85,
-                                      decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          image: DecorationImage(
-                                              fit: BoxFit.cover,
-                                              image: NetworkImage(_likeProvider
-                                                  .likeList!.data!.result!.users![index].avatar
-                                                  .toString()))),
-                                      child: Stack(
-                                        children: [
-                                          Positioned(
-                                              right: 0,
-                                              child: Image.asset(
-                                                'assets/fblike2x.png',
-                                                height: 15,
-                                                width: 15,
-                                                fit: BoxFit.cover,
-                                              )),
-                                          _likeProvider.likeList!.data!.result!.users![index]
-                                                      .isUnknown !=
-                                                  null
-                                              ? Center(
-                                                  child: Text(
-                                                      "+${_likeProvider.likeList!.data!.result!.anonymousCount}",
-                                                      style: TextStyle(
-                                                          fontSize: 17, color: Colors.white),
-                                                      textAlign: TextAlign.center),
-                                                )
-                                              : SizedBox.shrink()
-                                        ],
-                                      ));
-                                },
-                              ),
-                            ),
-                          ],
-                        ),
-                );
-              },
-            ));
-      },
+    return CardUI(
+      data: newsData?.posts?[widget.index],
+      providerType: 'AutthorProfileProvider',
     );
+    // return Stack(alignment: AlignmentDirectional.center, children: [
+    //   Padding(
+    //     padding: EdgeInsets.only(left: 10, right: 10, top: 8, bottom: 8),
+    //     child: Column(mainAxisSize: MainAxisSize.min, children: [
+    //       Container(
+    //         margin: EdgeInsets.only(bottom: 10),
+    //         decoration: BoxDecoration(
+    //             color: Colors.white,
+    //             boxShadow: [
+    //               BoxShadow(color: Color(0xff32335E26), blurRadius: 8),
+    //             ],
+    //             borderRadius: BorderRadius.circular(10)),
+    //         child: Container(
+    //             child: Column(
+    //           mainAxisAlignment: MainAxisAlignment.start,
+    //           children: [
+    //             Padding(
+    //               padding: const EdgeInsets.all(10.0),
+    //               child: Row(
+    //                 crossAxisAlignment: CrossAxisAlignment.start,
+    //                 children: [
+    //                   Container(
+    //                       margin: EdgeInsets.only(right: 10),
+    //                       height: 50,
+    //                       width: 50,
+    //                       child: Container(
+    //                         height: 50,
+    //                         width: 50,
+    //                         decoration: BoxDecoration(
+    //                             shape: BoxShape.circle,
+    //                             image: DecorationImage(
+    //                                 fit: BoxFit.cover,
+    //                                 image:
+    //                                     CachedNetworkImageProvider(widget.avtar)
+    //                                 //newsData.author!.image.toString())
+    //                                 )),
+    //                         // child: newsData.author!.isVerified == true
+    //                         //     //newsData.isVerified == true
+    //                         //     ? Stack(
+    //                         //         children: [
+    //                         //           Positioned(
+    //                         //               left: 0,
+    //                         //               child: Image.asset(
+    //                         //                 'assets/verified.png',
+    //                         //                 height: 15,
+    //                         //                 width: 15,
+    //                         //                 fit: BoxFit.cover,
+    //                         //               ))
+    //                         //         ],
+    //                         //       )
+    //                         //     : Container(),
+    //                       )),
+    //                   Column(
+    //                     crossAxisAlignment: CrossAxisAlignment.start,
+    //                     //mainAxisAlignment: MainAxisAlignment.center,
+    //                     children: [
+    //                       Container(
+    //                         width: MediaQuery.of(context).size.width * 0.35,
+    //                         child: Text(
+    //                           widget.authorName,
+    //                           style:
+    //                               ThreeKmTextConstants.tk14PXPoppinsBlackBold,
+    //                           overflow: TextOverflow.ellipsis,
+    //                         ),
+    //                       ),
+    //                       Text(newsData!.posts![widget.index].createdDate
+    //                               .toString()
+    //                           //newsData.createdDate.toString()
+    //                           )
+    //                     ],
+    //                   ),
+    //                   SizedBox(
+    //                     width: 10,
+    //                   ),
+    //                   Spacer(),
+    //                   showPopMenu(
+    //                       newsData.posts![widget.index].postId.toString(),
+    //                       newsData)
+    //                 ],
+    //               ),
+    //             ),
+    //             //pic
+    //             if (newsData.posts![widget.index].images != null &&
+    //                 newsData.posts![widget.index].images!.length > 0)
+    //               CachedNetworkImage(
+    //                 height: 254,
+    //                 width: 338,
+    //                 fit: BoxFit.fill,
+    //                 imageUrl: '${newsData.posts![widget.index].images!.first}',
+    //               )
+    //             else if (newsData.posts![widget.index].videos != null &&
+    //                 newsData.posts![widget.index].videos!.length > 0)
+    //               Stack(children: [
+    //                 Container(
+    //                   height: 254,
+    //                   width: MediaQuery.of(context).size.width,
+    //                   child: VideoWidget(
+    //                       isVimeo: newsData.posts![widget.index].videos!.first
+    //                                   .player ==
+    //                               "vimeo"
+    //                           ? true
+    //                           : false,
+    //                       vimeoID: newsData.posts![widget.index].videos!.first
+    //                                   .player ==
+    //                               "vimeo"
+    //                           ? newsData
+    //                               .posts![widget.index].videos!.first.vimeoUrl!
+    //                               .split("/")
+    //                               .last
+    //                           : "",
+    //                       thubnail: newsData.posts![widget.index].videos!.first
+    //                               .thumbnail!.isNotEmpty
+    //                           ? newsData
+    //                               .posts![widget.index].videos!.first.thumbnail
+    //                               .toString()
+    //                           : '',
+    //                       url: newsData.posts![widget.index].videos!.first.src.toString(),
+    //                       play: false),
+    //                 ),
+    //               ]),
+    //             Row(children: [
+    //               if (newsData.posts![widget.index].likes != null &&
+    //                   newsData.posts![widget.index].likes != 0)
+    //                 Padding(
+    //                     padding: EdgeInsets.only(top: 5, left: 5, bottom: 2),
+    //                     child: InkWell(
+    //                       onTap: () {
+    //                         _showLikedBottomModalSheet(
+    //                             newsData.posts![widget.index].postId!.toInt(),
+    //                             newsData.posts![widget.index].likes);
+    //                       },
+    //                       child: Row(
+    //                         children: [
+    //                           Text('👍 ❤️ '),
+    //                           Container(
+    //                             // height: 30,
+    //                             // width: 30,
+    //                             // decoration: BoxDecoration(
+    //                             //     shape: BoxShape.circle,
+    //                             //     color: Color(0xffFC5E6A)),
+    //                             child: Center(
+    //                                 child: newsData
+    //                                             .posts![widget.index].likes !=
+    //                                         null
+    //                                     ? Text('+' +
+    //                                         newsData.posts![widget.index].likes
+    //                                             .toString())
+    //                                     : Text("+0")),
+    //                           )
+    //                         ],
+    //                       ),
+    //                     )),
+    //               Spacer(),
+    //               Padding(
+    //                   padding: EdgeInsets.only(top: 5, right: 5, bottom: 2),
+    //                   child: Text(
+    //                       newsData.posts![widget.index].views.toString() +
+    //                           ' Views'))
+    //             ]),
+    //             Text(
+    //               newsData.posts![widget.index].headline.toString(),
+    //               style: ThreeKmTextConstants.tk14PXLatoBlackMedium,
+    //               textAlign: TextAlign.center,
+    //             ),
+    //             SizedBox(
+    //               height: 8,
+    //             ),
+    //             Padding(
+    //               padding: const EdgeInsets.all(16.0),
+    //               child: HtmlWidget(
+    //                   newsData.posts![widget.index].story.toString()),
+    //             ),
+
+    //             SizedBox(
+    //               height: 35,
+    //             ),
+    //           ],
+    //         )),
+    //       )
+    //     ]),
+    //   ),
+    //   Positioned(
+    //       bottom: 0,
+    //       child: Container(
+    //         height: 60,
+    //         width: 230,
+    //         child: ButtonBar(children: [
+    //           Container(
+    //             height: 60,
+    //             width: 60,
+    //             child: PostAuthorEmotionButton(
+    //                 isLiked: newsData.posts![widget.index].isLiked!,
+    //                 initalReaction: newsData.posts![widget.index].isLiked!
+    //                     ? Reaction(
+    //                         icon: Image.asset("assets/thumbs_up_red.png"))
+    //                     : Reaction(icon: Image.asset("assets/thumbs-up.png")),
+    //                 selectedReaction: newsData.posts![widget.index].isLiked!
+    //                     ? Reaction(
+    //                         icon: Image.asset("assets/thumbs_up_red.png"))
+    //                     : Reaction(icon: Image.asset("assets/thumbs-up.png")),
+    //                 postId: newsData.posts![widget.index].postId!.toInt(),
+    //                 reactions: reactionAssets.reactions),
+    //             decoration: BoxDecoration(
+    //                 color: Colors.white,
+    //                 shape: BoxShape.circle,
+    //                 boxShadow: [
+    //                   BoxShadow(
+    //                     color: Colors.black26,
+    //                     blurRadius: 8,
+    //                   )
+    //                 ]),
+    //           ),
+    //           Container(
+    //             height: 60,
+    //             width: 60,
+    //             child: IconButton(
+    //                 onPressed: () {
+    //                   _showCommentsBottomModalSheet(context,
+    //                       newsData.posts![widget.index].postId!.toInt());
+    //                 },
+    //                 icon: Image.asset('assets/icons-topic.png',
+    //                     fit: BoxFit.cover)),
+    //             decoration: BoxDecoration(
+    //                 color: Colors.white,
+    //                 shape: BoxShape.circle,
+    //                 boxShadow: [
+    //                   BoxShadow(
+    //                     color: Colors.black26,
+    //                     blurRadius: 8,
+    //                   )
+    //                 ]),
+    //           ),
+    //           Container(
+    //             height: 60,
+    //             width: 60,
+    //             child: IconButton(
+    //                 onPressed: () async {
+    //                   // showLoading();
+    //                   String imgUrl = newsData
+    //                               .posts![widget.index].images!.isNotEmpty &&
+    //                           newsData.posts![widget.index].images!.length > 0
+    //                       ? newsData.posts![widget.index].images!.first
+    //                           .toString()
+    //                       : newsData
+    //                           .posts![widget.index].videos!.first.thumbnail
+    //                           .toString();
+    //                   handleShare(
+    //                       newsData.author!.name.toString(),
+    //                       newsData.author!.image.toString(),
+    //                       newsData.posts![widget.index].submittedHeadline
+    //                           .toString(),
+    //                       imgUrl,
+    //                       newsData.posts![widget.index].createdDate.toString(),
+    //                       newsData.posts![widget.index].postId.toString());
+    //                 },
+    //                 icon: Center(
+    //                   child: Image.asset('assets/icons-share.png',
+    //                       fit: BoxFit.contain),
+    //                 )),
+    //             decoration: BoxDecoration(
+    //                 color: Colors.white,
+    //                 shape: BoxShape.circle,
+    //                 boxShadow: [
+    //                   BoxShadow(
+    //                     color: Colors.black26,
+    //                     blurRadius: 8,
+    //                   )
+    //                 ]),
+    //           ),
+    //         ]),
+    //       )),
+    // ]);
   }
 
-  _showCommentsBottomModalSheet(BuildContext context, int postId) {
-    //print("this is new :$postId");
-    context.read<CommentProvider>().getAllCommentsApi(postId);
-    showModalBottomSheet<void>(
-      backgroundColor: Colors.transparent,
-      context: context,
-      isScrollControlled: true,
-      builder: (BuildContext context) {
-        return Padding(
-          padding: MediaQuery.of(context).viewInsets,
-          child: StatefulBuilder(
-            builder: (BuildContext context, StateSetter setModalState) {
-              return ClipPath(
-                clipper: OvalTopBorderClipper(),
-                child: Container(
-                  color: Colors.white,
-                  height: MediaQuery.of(context).size.height / 2,
-                  padding: const EdgeInsets.all(15.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      Container(
-                        height: 5,
-                        width: 30,
-                        color: Colors.grey.shade300,
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Row(
-                        children: [
-                          Container(
-                              height: 20, width: 20, child: Image.asset('assets/icons-topic.png')),
-                          Padding(padding: EdgeInsets.only(left: 10)),
-                          Consumer<CommentProvider>(builder: (context, commentProvider, _) {
-                            return commentProvider.allComments.length != null
-                                ? Text(
-                                    "${commentProvider.allComments.length}\tComments",
-                                    style: ThreeKmTextConstants.tk14PXPoppinsBlackSemiBold,
-                                  )
-                                : Text(
-                                    "Comments",
-                                    style: ThreeKmTextConstants.tk14PXPoppinsBlackSemiBold,
-                                  );
-                          })
-                        ],
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Consumer<CommentProvider>(builder: (context, commentProvider, _) {
-                        return context.read<CommentProvider>().allComments != null
-                            ? Expanded(
-                                child: commentProvider.isGettingComments == true
-                                    ? CommentsLoadingEffects()
-                                    : ListView.builder(
-                                        physics: BouncingScrollPhysics(),
-                                        shrinkWrap: true,
-                                        primary: true,
-                                        itemCount: commentProvider.allComments.length,
-                                        itemBuilder: (context, commentIndex) {
-                                          return Container(
-                                            margin: EdgeInsets.all(1),
-                                            decoration: BoxDecoration(
-                                              color: Colors.white,
-                                            ),
-                                            child: ListTile(
-                                              trailing: commentProvider
-                                                          .allComments[commentIndex].isself ==
-                                                      true
-                                                  ? IconButton(
-                                                      onPressed: () {
-                                                        context
-                                                            .read<CommentProvider>()
-                                                            .removeComment(
-                                                                commentProvider
-                                                                    .allComments[commentIndex]
-                                                                    .commentId!,
-                                                                postId);
-                                                      },
-                                                      icon: Icon(Icons.delete))
-                                                  : SizedBox(),
-                                              leading: Container(
-                                                height: 40,
-                                                width: 40,
-                                                decoration: BoxDecoration(
-                                                    image: DecorationImage(
-                                                        image: CachedNetworkImageProvider(
-                                                            commentProvider
-                                                                .allComments[commentIndex].avatar
-                                                                .toString()))),
-                                              ),
-                                              title: Text(
-                                                commentProvider.allComments[commentIndex].username
-                                                    .toString(),
-                                                style:
-                                                    ThreeKmTextConstants.tk14PXPoppinsBlackSemiBold,
-                                              ),
-                                              subtitle: Column(
-                                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                                  children: [
-                                                    SizedBox(
-                                                      height: 4,
-                                                    ),
-                                                    Text(
-                                                      commentProvider
-                                                          .allComments[commentIndex].comment
-                                                          .toString(),
-                                                      style: ThreeKmTextConstants
-                                                          .tk14PXLatoBlackMedium,
-                                                    ),
-                                                    SizedBox(
-                                                      height: 2,
-                                                    ),
-                                                    Text(
-                                                        commentProvider
-                                                            .allComments[commentIndex].timeLapsed
-                                                            .toString(),
-                                                        style:
-                                                            TextStyle(fontStyle: FontStyle.italic))
-                                                  ]),
-                                            ),
-                                          );
-                                        },
-                                      ),
-                              )
-                            : SizedBox();
-                      }),
-                      Container(
-                        height: 116,
-                        width: 338,
-                        decoration: BoxDecoration(
-                            color: Colors.grey.shade200, borderRadius: BorderRadius.circular(20)),
-                        child: TextFormField(
-                          controller: _commentController,
-                          maxLines: null,
-                          keyboardType: TextInputType.multiline,
-                          decoration: InputDecoration(border: InputBorder.none),
-                        ),
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: InkWell(
-                          onTap: () {
-                            context
-                                .read<CommentProvider>()
-                                .postCommentApi(postId, _commentController.text)
-                                .then((value) => _commentController.clear());
-                          },
-                          child: Container(
-                            height: 36,
-                            width: 112,
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(18),
-                                color: ThreeKmTextConstants.blue2),
-                            child: Center(
-                              child: Text(
-                                "Submit",
-                                style: ThreeKmTextConstants.tk14PXPoppinsWhiteMedium,
-                              ),
-                            ),
-                          ),
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-              );
-            },
-          ),
-        );
-      },
-    );
-  }
+  // _showLikedBottomModalSheet(int postId, totalLikes) {
+  //   context.read<LikeListProvider>().showLikes(context, postId);
+  //   showModalBottomSheet<void>(
+  //     backgroundColor: Colors.white,
+  //     context: context,
+  //     builder: (BuildContext context) {
+  //       final _likeProvider = context.watch<LikeListProvider>();
+  //       return Padding(
+  //           padding: EdgeInsets.zero,
+  //           child: StatefulBuilder(
+  //             builder: (context, _) {
+  //               return Container(
+  //                 color: Colors.white,
+  //                 height: 192,
+  //                 width: MediaQuery.of(context).size.width,
+  //                 child: _likeProvider.isLoading
+  //                     ? LikesLoding()
+  //                     : Column(
+  //                         mainAxisSize: MainAxisSize.max,
+  //                         children: [
+  //                           Row(
+  //                             children: [
+  //                               Padding(
+  //                                 padding: EdgeInsets.only(
+  //                                     top: 24, left: 18, bottom: 34),
+  //                                 child: Text(
+  //                                     "$totalLikes People reacted to this"),
+  //                               ),
+  //                             ],
+  //                           ),
+  //                           Container(
+  //                             height: 90,
+  //                             width: double.infinity,
+  //                             child: ListView.builder(
+  //                               scrollDirection: Axis.horizontal,
+  //                               itemCount: _likeProvider
+  //                                   .likeList!.data!.result!.users!.length,
+  //                               shrinkWrap: true,
+  //                               itemBuilder: (context, index) {
+  //                                 return Container(
+  //                                     margin: EdgeInsets.only(
+  //                                       left: 21,
+  //                                     ),
+  //                                     height: 85,
+  //                                     width: 85,
+  //                                     decoration: BoxDecoration(
+  //                                         shape: BoxShape.circle,
+  //                                         image: DecorationImage(
+  //                                             fit: BoxFit.cover,
+  //                                             image: NetworkImage(_likeProvider
+  //                                                 .likeList!
+  //                                                 .data!
+  //                                                 .result!
+  //                                                 .users![index]
+  //                                                 .avatar
+  //                                                 .toString()))),
+  //                                     child: Stack(
+  //                                       children: [
+  //                                         Positioned(
+  //                                             right: 0,
+  //                                             child: Image.asset(
+  //                                               'assets/fblike2x.png',
+  //                                               height: 15,
+  //                                               width: 15,
+  //                                               fit: BoxFit.cover,
+  //                                             )),
+  //                                         _likeProvider
+  //                                                     .likeList!
+  //                                                     .data!
+  //                                                     .result!
+  //                                                     .users![index]
+  //                                                     .isUnknown !=
+  //                                                 null
+  //                                             ? Center(
+  //                                                 child: Text(
+  //                                                     "+${_likeProvider.likeList!.data!.result!.anonymousCount}",
+  //                                                     style: TextStyle(
+  //                                                         fontSize: 17,
+  //                                                         color: Colors.white),
+  //                                                     textAlign:
+  //                                                         TextAlign.center),
+  //                                               )
+  //                                             : SizedBox.shrink()
+  //                                       ],
+  //                                     ));
+  //                               },
+  //                             ),
+  //                           ),
+  //                         ],
+  //                       ),
+  //               );
+  //             },
+  //           ));
+  //     },
+  //   );
+  // }
 
-  PopupMenuButton showPopMenu(String postID, newsData) {
-    return PopupMenuButton(
-      icon: Icon(Icons.more_vert),
-      itemBuilder: (BuildContext context) => <PopupMenuEntry>[
-        PopupMenuItem(
-          child: ListTile(
-            title: Text('Copy link'),
-            onTap: () {
-              Clipboard.setData(
-                      ClipboardData(text: "https://3km.in/post-detail?id=$postID&lang=en"))
-                  .then((value) =>
-                      CustomSnackBar(context, Text("Link has been coppied to clipboard")))
-                  .whenComplete(() => Navigator.pop(context));
-            },
-          ),
-        ),
-        // PopupMenuItem(
-        //   child: ListTile(
-        //     onTap: () {
-        //       String imgUrl =
-        //           newsData.images != null && newsData.images!.length > 0
-        //               ? newsData.images!.first.toString()
-        //               : newsData.videos!.first.thumbnail.toString();
-        //       handleShare(
-        //           newsData.author!.name.toString(),
-        //           newsData.author!.image.toString(),
-        //           newsData.submittedHeadline.toString(),
-        //           imgUrl,
-        //           newsData.createdDate,
-        //           newsData.postId.toString());
-        //     },
-        //     title: Text('Share to..',
-        //         style: ThreeKmTextConstants.tk16PXLatoBlackRegular),
-        //   ),
-        // ),
-        PopupMenuItem(
-          child: ListTile(
-            onTap: () {
-              Navigator.pop(context);
-            },
-            title: Text(
-              'Cancel',
-              style: ThreeKmTextConstants.tk16PXPoppinsRedSemiBold,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
+  // _showCommentsBottomModalSheet(BuildContext context, int postId) {
+  //   //print("this is new :$postId");
+  //   context.read<CommentProvider>().getAllCommentsApi(postId);
+  //   showModalBottomSheet<void>(
+  //     backgroundColor: Colors.transparent,
+  //     context: context,
+  //     isScrollControlled: true,
+  //     builder: (BuildContext context) {
+  //       return Padding(
+  //         padding: MediaQuery.of(context).viewInsets,
+  //         child: StatefulBuilder(
+  //           builder: (BuildContext context, StateSetter setModalState) {
+  //             return ClipPath(
+  //               clipper: OvalTopBorderClipper(),
+  //               child: Container(
+  //                 color: Colors.white,
+  //                 height: MediaQuery.of(context).size.height / 2,
+  //                 padding: const EdgeInsets.all(15.0),
+  //                 child: Column(
+  //                   crossAxisAlignment: CrossAxisAlignment.center,
+  //                   children: <Widget>[
+  //                     Container(
+  //                       height: 5,
+  //                       width: 30,
+  //                       color: Colors.grey.shade300,
+  //                     ),
+  //                     SizedBox(
+  //                       height: 10,
+  //                     ),
+  //                     Row(
+  //                       children: [
+  //                         Container(
+  //                             height: 20,
+  //                             width: 20,
+  //                             child: Image.asset('assets/icons-topic.png')),
+  //                         Padding(padding: EdgeInsets.only(left: 10)),
+  //                         Consumer<CommentProvider>(
+  //                             builder: (context, commentProvider, _) {
+  //                           return commentProvider.commentList?.length != null
+  //                               ? Text(
+  //                                   "${commentProvider.commentList!.length}\tComments",
+  //                                   style: ThreeKmTextConstants
+  //                                       .tk14PXPoppinsBlackSemiBold,
+  //                                 )
+  //                               : Text(
+  //                                   "Comments",
+  //                                   style: ThreeKmTextConstants
+  //                                       .tk14PXPoppinsBlackSemiBold,
+  //                                 );
+  //                         })
+  //                       ],
+  //                     ),
+  //                     SizedBox(
+  //                       height: 10,
+  //                     ),
+  //                     Consumer<CommentProvider>(
+  //                         builder: (context, commentProvider, _) {
+  //                       return context.read<CommentProvider>().commentList !=
+  //                               null
+  //                           ? Expanded(
+  //                               child: commentProvider.isGettingComments == true
+  //                                   ? CommentsLoadingEffects()
+  //                                   : ListView.builder(
+  //                                       physics: BouncingScrollPhysics(),
+  //                                       shrinkWrap: true,
+  //                                       primary: true,
+  //                                       itemCount:
+  //                                           commentProvider.commentList!.length,
+  //                                       itemBuilder: (context, commentIndex) {
+  //                                         return Container(
+  //                                           margin: EdgeInsets.all(1),
+  //                                           decoration: BoxDecoration(
+  //                                             color: Colors.white,
+  //                                           ),
+  //                                           child: ListTile(
+  //                                             trailing: commentProvider
+  //                                                         .commentList![
+  //                                                             commentIndex]
+  //                                                         .isself ==
+  //                                                     true
+  //                                                 ? IconButton(
+  //                                                     onPressed: () {
+  //                                                       context
+  //                                                           .read<
+  //                                                               CommentProvider>()
+  //                                                           .removeComment(
+  //                                                               commentProvider
+  //                                                                   .commentList![
+  //                                                                       commentIndex]
+  //                                                                   .commentId!,
+  //                                                               postId);
+  //                                                     },
+  //                                                     icon: Icon(Icons.delete))
+  //                                                 : SizedBox(),
+  //                                             leading: Container(
+  //                                               height: 40,
+  //                                               width: 40,
+  //                                               decoration: BoxDecoration(
+  //                                                   image: DecorationImage(
+  //                                                       image: CachedNetworkImageProvider(
+  //                                                           commentProvider
+  //                                                               .commentList![
+  //                                                                   commentIndex]
+  //                                                               .avatar
+  //                                                               .toString()))),
+  //                                             ),
+  //                                             title: Text(
+  //                                               commentProvider
+  //                                                   .commentList![commentIndex]
+  //                                                   .username
+  //                                                   .toString(),
+  //                                               style: ThreeKmTextConstants
+  //                                                   .tk14PXPoppinsBlackSemiBold,
+  //                                             ),
+  //                                             subtitle: Column(
+  //                                                 crossAxisAlignment:
+  //                                                     CrossAxisAlignment.start,
+  //                                                 children: [
+  //                                                   SizedBox(
+  //                                                     height: 4,
+  //                                                   ),
+  //                                                   Text(
+  //                                                     commentProvider
+  //                                                         .commentList![
+  //                                                             commentIndex]
+  //                                                         .comment
+  //                                                         .toString(),
+  //                                                     style: ThreeKmTextConstants
+  //                                                         .tk14PXLatoBlackMedium,
+  //                                                   ),
+  //                                                   SizedBox(
+  //                                                     height: 2,
+  //                                                   ),
+  //                                                   Text(
+  //                                                       commentProvider
+  //                                                           .commentList![
+  //                                                               commentIndex]
+  //                                                           .timeLapsed
+  //                                                           .toString(),
+  //                                                       style: TextStyle(
+  //                                                           fontStyle: FontStyle
+  //                                                               .italic))
+  //                                                 ]),
+  //                                           ),
+  //                                         );
+  //                                       },
+  //                                     ),
+  //                             )
+  //                           : SizedBox();
+  //                     }),
+  //                     Container(
+  //                       height: 116,
+  //                       width: 338,
+  //                       decoration: BoxDecoration(
+  //                           color: Colors.grey.shade200,
+  //                           borderRadius: BorderRadius.circular(20)),
+  //                       child: TextFormField(
+  //                         controller: _commentController,
+  //                         maxLines: null,
+  //                         keyboardType: TextInputType.multiline,
+  //                         decoration: InputDecoration(border: InputBorder.none),
+  //                       ),
+  //                     ),
+  //                     SizedBox(
+  //                       height: 10,
+  //                     ),
+  //                     Align(
+  //                       alignment: Alignment.centerLeft,
+  //                       child: InkWell(
+  //                         onTap: () {
+  //                           context
+  //                               .read<CommentProvider>()
+  //                               .postCommentApi(postId, _commentController.text)
+  //                               .then((value) => _commentController.clear());
+  //                         },
+  //                         child: Container(
+  //                           height: 36,
+  //                           width: 112,
+  //                           decoration: BoxDecoration(
+  //                               borderRadius: BorderRadius.circular(18),
+  //                               color: ThreeKmTextConstants.blue2),
+  //                           child: Center(
+  //                             child: Text(
+  //                               "Submit",
+  //                               style: ThreeKmTextConstants
+  //                                   .tk14PXPoppinsWhiteMedium,
+  //                             ),
+  //                           ),
+  //                         ),
+  //                       ),
+  //                     )
+  //                   ],
+  //                 ),
+  //               ),
+  //             );
+  //           },
+  //         ),
+  //       );
+  //     },
+  //   );
+  // }
 
-  // previous param String imgUrl, String name, String newsHeadLine, int index
-  handleShare(String authorName, String authorProfile, String headLine,
-      String thumbnail, date, String postId) async {
-    showLoading();
-    screenshotController
-        .captureFromWidget(Container(
-      padding: EdgeInsets.only(top: 15, bottom: 15),
-      color: Colors.white,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Row(
-            //mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                  margin: EdgeInsets.only(right: 10),
-                  height: 50,
-                  width: 50,
-                  child: Container(
-                    height: 50,
-                    width: 50,
-                    decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        image: DecorationImage(
-                            fit: BoxFit.cover,
-                            image: CachedNetworkImageProvider(authorProfile))),
-                  )),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    child: Text(
-                      authorName,
-                      style: ThreeKmTextConstants.tk14PXPoppinsBlackBold,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  Text(
-                    date,
-                    style: ThreeKmTextConstants.tk12PXLatoBlackBold,
-                  )
-                ],
-              ),
-              // SizedBox(
-              //   width: 10,
-              // ),
-            ],
-          ),
-          Container(
-              height: 254,
-              width: MediaQuery.of(context).size.width,
-              child: CachedNetworkImage(imageUrl: thumbnail)),
-          Text(
-            headLine,
-            style: ThreeKmTextConstants.tk14PXPoppinsBlackBold,
-            textAlign: TextAlign.center,
-          ),
-          Padding(
-            padding: EdgeInsets.only(top: 5),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Container(
-                  height: 30,
-                  width: 250,
-                  child: Image.asset(
-                    'assets/playstore.jpg',
-                    fit: BoxFit.fitHeight,
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(right: 15),
-                  child: Container(
-                      height: 30,
-                      width: 30,
-                      child: Image.asset('assets/icon_light.png')),
-                )
-              ],
-            ),
-          )
-        ],
-      ),
-    ))
-        .then((capturedImage) async {
-      try {
-        var documentDirectory = Platform.isAndroid
-            ? await getExternalStorageDirectory()
-            : await getApplicationDocumentsDirectory();
-        File file = await File('${documentDirectory!.path}/image.png').create();
-        file.writeAsBytesSync(capturedImage);
-        Share.shareFiles([file.path],
-                text: 'https://3km.in/post-detail?id=$postId&lang=en')
-            .then((value) => hideLoading());
-      } on Exception catch (e) {
-        hideLoading();
-      }
-    });
-  }
+  // PopupMenuButton showPopMenu(String postID, newsData) {
+  //   return PopupMenuButton(
+  //     icon: Icon(Icons.more_vert),
+  //     itemBuilder: (BuildContext context) => <PopupMenuEntry>[
+  //       PopupMenuItem(
+  //         child: ListTile(
+  //           title: Text('Copy link'),
+  //           onTap: () {
+  //             Clipboard.setData(ClipboardData(
+  //                     text: "https://3km.in/post-detail?id=$postID&lang=en"))
+  //                 .then((value) => CustomSnackBar(
+  //                     context, Text("Link has been coppied to clipboard")))
+  //                 .whenComplete(() => Navigator.pop(context));
+  //           },
+  //         ),
+  //       ),
+  //       // PopupMenuItem(
+  //       //   child: ListTile(
+  //       //     onTap: () {
+  //       //       String imgUrl =
+  //       //           newsData.images != null && newsData.images!.length > 0
+  //       //               ? newsData.images!.first.toString()
+  //       //               : newsData.videos!.first.thumbnail.toString();
+  //       //       handleShare(
+  //       //           newsData.author!.name.toString(),
+  //       //           newsData.author!.image.toString(),
+  //       //           newsData.submittedHeadline.toString(),
+  //       //           imgUrl,
+  //       //           newsData.createdDate,
+  //       //           newsData.postId.toString());
+  //       //     },
+  //       //     title: Text('Share to..',
+  //       //         style: ThreeKmTextConstants.tk16PXLatoBlackRegular),
+  //       //   ),
+  //       // ),
+  //       PopupMenuItem(
+  //         child: ListTile(
+  //           onTap: () {
+  //             Navigator.pop(context);
+  //           },
+  //           title: Text(
+  //             'Cancel',
+  //             style: ThreeKmTextConstants.tk16PXPoppinsRedSemiBold,
+  //           ),
+  //         ),
+  //       ),
+  //     ],
+  //   );
+  // }
+
+  // // previous param String imgUrl, String name, String newsHeadLine, int index
+  // handleShare(String authorName, String authorProfile, String headLine,
+  //     String thumbnail, date, String postId) async {
+  //   showLoading();
+  //   screenshotController
+  //       .captureFromWidget(Container(
+  //     padding: EdgeInsets.only(top: 15, bottom: 15),
+  //     color: Colors.white,
+  //     child: Column(
+  //       mainAxisSize: MainAxisSize.min,
+  //       children: [
+  //         Row(
+  //           //mainAxisAlignment: MainAxisAlignment.center,
+  //           crossAxisAlignment: CrossAxisAlignment.start,
+  //           children: [
+  //             Container(
+  //                 margin: EdgeInsets.only(right: 10),
+  //                 height: 50,
+  //                 width: 50,
+  //                 child: Container(
+  //                   height: 50,
+  //                   width: 50,
+  //                   decoration: BoxDecoration(
+  //                       shape: BoxShape.circle,
+  //                       image: DecorationImage(
+  //                           fit: BoxFit.cover,
+  //                           image: CachedNetworkImageProvider(authorProfile))),
+  //                 )),
+  //             Column(
+  //               crossAxisAlignment: CrossAxisAlignment.start,
+  //               children: [
+  //                 Container(
+  //                   child: Text(
+  //                     authorName,
+  //                     style: ThreeKmTextConstants.tk14PXPoppinsBlackBold,
+  //                     overflow: TextOverflow.ellipsis,
+  //                   ),
+  //                 ),
+  //                 Text(
+  //                   date,
+  //                   style: ThreeKmTextConstants.tk12PXLatoBlackBold,
+  //                 )
+  //               ],
+  //             ),
+  //             // SizedBox(
+  //             //   width: 10,
+  //             // ),
+  //           ],
+  //         ),
+  //         Container(
+  //             height: 254,
+  //             width: MediaQuery.of(context).size.width,
+  //             child: CachedNetworkImage(imageUrl: thumbnail)),
+  //         Text(
+  //           headLine,
+  //           style: ThreeKmTextConstants.tk14PXPoppinsBlackBold,
+  //           textAlign: TextAlign.center,
+  //         ),
+  //         Padding(
+  //           padding: EdgeInsets.only(top: 5),
+  //           child: Row(
+  //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //             children: [
+  //               Container(
+  //                 height: 30,
+  //                 width: 250,
+  //                 child: Image.asset(
+  //                   'assets/playstore.jpg',
+  //                   fit: BoxFit.fitHeight,
+  //                 ),
+  //               ),
+  //               Padding(
+  //                 padding: EdgeInsets.only(right: 15),
+  //                 child: Container(
+  //                     height: 30,
+  //                     width: 30,
+  //                     child: Image.asset('assets/icon_light.png')),
+  //               )
+  //             ],
+  //           ),
+  //         )
+  //       ],
+  //     ),
+  //   ))
+  //       .then((capturedImage) async {
+  //     try {
+  //       var documentDirectory = Platform.isAndroid
+  //           ? await getExternalStorageDirectory()
+  //           : await getApplicationDocumentsDirectory();
+  //       File file = await File('${documentDirectory!.path}/image.png').create();
+  //       file.writeAsBytesSync(capturedImage);
+  //       Share.shareFiles([file.path],
+  //               text: 'https://3km.in/post-detail?id=$postId&lang=en')
+  //           .then((value) => hideLoading());
+  //     } on Exception catch (e) {
+  //       hideLoading();
+  //     }
+  //   });
+  // }
 }
