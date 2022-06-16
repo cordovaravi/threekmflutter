@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:device_info/device_info.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -19,6 +20,19 @@ class NewsFeedProvider extends ChangeNotifier {
 
   bool _isLoading = false;
   bool get isLoading => _isLoading;
+  String? thisdeviceId;
+  getDeviceId() async {
+    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+    if (Platform.isAndroid) {
+      await deviceInfo.androidInfo.then((value) {
+        thisdeviceId = value.androidId;
+      });
+    } else if (Platform.isIOS) {
+      await deviceInfo.iosInfo.then((value) {
+        thisdeviceId = value.identifierForVendor;
+      });
+    }
+  }
 
   Future<NewsFeedBottomModel?> getBottomFeed({String? languageCode}) async {
     SharedPreferences _prefs = await SharedPreferences.getInstance();
@@ -27,8 +41,12 @@ class NewsFeedProvider extends ChangeNotifier {
     notifyListeners();
 
     //request json
-    String requestJson =
-        json.encode({"lat": 18.555217, "lng": 73.799742, "lang": languageCode});
+    String requestJson = json.encode({
+      "lat": 18.555217,
+      "lng": 73.799742,
+      "lang": languageCode,
+      "device": thisdeviceId,
+    });
     if (await _apiProvider.getConnectivityStatus()) {
       //you are online
       final response = await _apiProvider.post(feedApi, requestJson);
