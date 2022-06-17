@@ -155,9 +155,7 @@ class _SplashScreenState extends State<SplashScreen> {
                 id: num.parse(initLink.last),
               );
             })).then((value) => Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(builder: (_) => TabBarNavigation()),
-                (route) => false));
+                context, MaterialPageRoute(builder: (_) => TabBarNavigation()), (route) => false));
           });
         } else if (initialLink.contains('/biz/')) {
           await Hive.openBox('cartBox').whenComplete(() {
@@ -166,9 +164,7 @@ class _SplashScreenState extends State<SplashScreen> {
                 id: int.parse(initialLink.split('/').last),
               );
             })).then((value) => Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(builder: (_) => TabBarNavigation()),
-                (route) => false));
+                context, MaterialPageRoute(builder: (_) => TabBarNavigation()), (route) => false));
           });
         } else if (initialLink.contains('/category/')) {
           await Hive.openBox('cartBox').whenComplete(() {
@@ -178,9 +174,7 @@ class _SplashScreenState extends State<SplashScreen> {
                 query: '${initLink.last}',
               );
             })).then((value) => Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(builder: (_) => TabBarNavigation()),
-                (route) => false));
+                context, MaterialPageRoute(builder: (_) => TabBarNavigation()), (route) => false));
           });
         } else if (initialLink.contains("poll")) {
           Navigator.push(context, MaterialPageRoute(builder: (_) {
@@ -189,43 +183,33 @@ class _SplashScreenState extends State<SplashScreen> {
               PollId: "${int.parse(initialLink.split('/').last)}",
             );
           })).then((value) => Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(builder: (_) => TabBarNavigation()),
-              (route) => false));
+              context, MaterialPageRoute(builder: (_) => TabBarNavigation()), (route) => false));
         } else if (initialLink.contains("/food/restaurant/menu/")) {
           await Hive.openBox('restroCartBox').whenComplete(() {
             Navigator.push(context, MaterialPageRoute(builder: (_) {
               return RestaurantMenu(
-                  data: Creators(
-                      creatorId: int.parse(initialLink.split('/').last))
+                  data: Creators(creatorId: int.parse(initialLink.split('/').last))
                   //{creatorId: "${int.parse(initialLink.split('/').last)}"},
                   );
             })).then((value) => Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(builder: (_) => TabBarNavigation()),
-                (route) => false));
+                context, MaterialPageRoute(builder: (_) => TabBarNavigation()), (route) => false));
           });
         } else if (initialLink.contains("/food/restaurant/list/")) {
           await Hive.openBox('restroCartBox').whenComplete(() {
             Navigator.push(context, MaterialPageRoute(builder: (_) {
               return BiryaniRestro();
             })).then((value) => Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(builder: (_) => TabBarNavigation()),
-                (route) => false));
+                context, MaterialPageRoute(builder: (_) => TabBarNavigation()), (route) => false));
           });
         } else {
-          Navigator.push(context,
-              MaterialPageRoute(builder: (BuildContext context) {
-            return Postview(postId: "${int.parse(initialLink.split('/').last)}"
+          Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
+            return PostView(postId: "${int.parse(initialLink.split('/').last)}"
                 // initialLink
                 //     .substring(30, initialLink.length)
                 //     .replaceAll('&lang=en', '')
                 );
           })).then((value) => Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(builder: (_) => TabBarNavigation()),
-              (route) => false));
+              context, MaterialPageRoute(builder: (_) => TabBarNavigation()), (route) => false));
         }
       } else {
         Future.delayed(Duration(seconds: 2), () {
@@ -246,12 +230,10 @@ class _SplashScreenState extends State<SplashScreen> {
     if (token != null) {
       //handleDeepLink();
       Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(builder: (context) => TabBarNavigation()),
-          (route) => false);
+          context, MaterialPageRoute(builder: (context) => TabBarNavigation()), (route) => false);
     } else
-      Navigator.pushAndRemoveUntil(context,
-          MaterialPageRoute(builder: (context) => SignUp()), (route) => false);
+      Navigator.pushAndRemoveUntil(
+          context, MaterialPageRoute(builder: (context) => SignUp()), (route) => false);
   }
 
   @override

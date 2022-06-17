@@ -112,6 +112,7 @@ class _CommentSectionState extends State<CommentSection> {
     super.initState();
     _node = FocusNode();
     _controller = TextEditingController();
+    Future.microtask(() => context.read<CommentProvider>().getAllCommentsApi(widget.postId));
   }
 
   @override

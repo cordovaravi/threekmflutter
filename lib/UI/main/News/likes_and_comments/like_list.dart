@@ -1,6 +1,7 @@
 // author: Prateek Aher
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:threekm/Models/LikeListModel.dart';
 import 'package:threekm/UI/main/News/Widgets/likes_Loading.dart';
 
 import '../../../../providers/main/LikeList_Provider.dart';
@@ -49,232 +50,17 @@ class _LikeListState extends State<LikeList> {
                   child: TabBarView(children: [
                 provider.isLoading
                     ? LikesListLoading()
-                    : ListView.builder(
-                        itemCount: provider.users.length,
-                        itemBuilder: (context, index) => ListTile(
-                              onTap: () => goToProfile(
-                                provider: provider,
-                                index: index,
-                              ),
-                              leading: Stack(
-                                children: [
-                                  Container(
-                                      height: 45,
-                                      width: 45,
-                                      decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          image: (index < provider.usersCount!)
-                                              ? DecorationImage(
-                                                  fit: BoxFit.cover,
-                                                  image: NetworkImage(
-                                                      provider.users[index].avatar.toString()))
-                                              : null),
-                                      child: provider.users[index].isUnknown != null
-                                          ? Center(
-                                              child: Text(
-                                                  // "+${provider.likeList!.data!.result!.anonymousCount}",
-                                                  "+",
-                                                  style:
-                                                      TextStyle(fontSize: 22, color: Colors.white),
-                                                  textAlign: TextAlign.center),
-                                            )
-                                          : SizedBox.shrink()),
-                                  Positioned(
-                                    right: 0,
-                                    top: 0,
-                                    child: Image.asset(
-                                      'assets/reactions/${provider.users[index].isUnknown != null ? 'like' : (provider.users[index].emotion ?? 'like')}.png',
-                                      height: 15,
-                                      width: 15,
-                                      // color: Colors.blue,
-                                    ),
-                                  )
-                                ],
-                              ),
-                              title: Text(provider.users[index].name != 'anonymous'
-                                  ? provider.users[index].name.toString()
-                                  : '...and ${provider.likeList?.data?.result?.anonymousCount} more'),
-                            )),
-                if (provider.likeCount != 0)
-                  ListView.builder(
-                      itemCount: provider.likeCount,
-                      itemBuilder: (context, index) => ListTile(
-                            leading: Stack(
-                              children: [
-                                Container(
-                                  height: 45,
-                                  width: 45,
-                                  decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      image: DecorationImage(
-                                          fit: BoxFit.cover,
-                                          image: NetworkImage(
-                                              provider.likeUsers[index].avatar.toString()))),
-                                ),
-                                Positioned(
-                                  right: 0,
-                                  top: 0,
-                                  child: Image.asset(
-                                    'assets/reactions/like.png',
-                                    height: 15,
-                                    width: 15,
-                                    // color: Colors.blue,
-                                  ),
-                                )
-                              ],
-                            ),
-                            title: Text('${provider.likeUsers[index].name}'),
-                          )),
-                if (provider.loveCount != 0)
-                  ListView.builder(
-                      itemCount: provider.loveCount,
-                      itemBuilder: (context, index) => ListTile(
-                            leading: Stack(
-                              children: [
-                                Container(
-                                  height: 45,
-                                  width: 45,
-                                  decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      image: DecorationImage(
-                                          fit: BoxFit.cover,
-                                          image: NetworkImage(
-                                              provider.loveUsers[index].avatar.toString()))),
-                                ),
-                                Positioned(
-                                  right: 0,
-                                  top: 0,
-                                  child: Image.asset(
-                                    'assets/reactions/love.png',
-                                    height: 15,
-                                    width: 15,
-                                    // color: Colors.blue,
-                                  ),
-                                )
-                              ],
-                            ),
-                            title: Text('${provider.loveUsers[index].name}'),
-                          )),
-                if (provider.careCount != 0)
-                  ListView.builder(
-                      itemCount: provider.careCount,
-                      itemBuilder: (context, index) => ListTile(
-                            leading: Stack(
-                              children: [
-                                Container(
-                                  height: 45,
-                                  width: 45,
-                                  decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      image: DecorationImage(
-                                          fit: BoxFit.cover,
-                                          image: NetworkImage(
-                                              provider.careUsers[index].avatar.toString()))),
-                                ),
-                                Positioned(
-                                  right: 0,
-                                  top: 0,
-                                  child: Image.asset(
-                                    'assets/reactions/care.png',
-                                    height: 15,
-                                    width: 15,
-                                    // color: Colors.blue,
-                                  ),
-                                )
-                              ],
-                            ),
-                            title: Text('${provider.careUsers[index].name}'),
-                          )),
-                if (provider.laughCount != 0)
-                  ListView.builder(
-                      itemCount: provider.laughCount,
-                      itemBuilder: (context, index) => ListTile(
-                            leading: Stack(
-                              children: [
-                                Container(
-                                  height: 45,
-                                  width: 45,
-                                  decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      image: DecorationImage(
-                                          fit: BoxFit.cover,
-                                          image: NetworkImage(
-                                              provider.laughUsers[index].avatar.toString()))),
-                                ),
-                                Positioned(
-                                  right: 0,
-                                  top: 0,
-                                  child: Image.asset(
-                                    'assets/reactions/laugh.png',
-                                    height: 15,
-                                    width: 15,
-                                    // color: Colors.blue,
-                                  ),
-                                )
-                              ],
-                            ),
-                            title: Text('${provider.laughUsers[index].name}'),
-                          )),
-                if (provider.sadCount != 0)
-                  ListView.builder(
-                      itemCount: provider.sadCount,
-                      itemBuilder: (context, index) => ListTile(
-                            leading: Stack(
-                              children: [
-                                Container(
-                                  height: 45,
-                                  width: 45,
-                                  decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      image: DecorationImage(
-                                          fit: BoxFit.cover,
-                                          image: NetworkImage(
-                                              provider.cryUsers[index].avatar.toString()))),
-                                ),
-                                Positioned(
-                                  right: 0,
-                                  top: 0,
-                                  child: Image.asset(
-                                    'assets/reactions/cry.png',
-                                    height: 15,
-                                    width: 15,
-                                    // color: Colors.blue,
-                                  ),
-                                )
-                              ],
-                            ),
-                            title: Text('${provider.cryUsers[index].name}'),
-                          )),
-                if (provider.angryCount != 0)
-                  ListView.builder(
-                      itemCount: provider.angryCount,
-                      itemBuilder: (context, index) => ListTile(
-                            leading: Stack(
-                              children: [
-                                Container(
-                                  height: 45,
-                                  width: 45,
-                                  decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      image: DecorationImage(
-                                          fit: BoxFit.cover,
-                                          image: NetworkImage(
-                                              provider.angryUsers[index].avatar.toString()))),
-                                ),
-                                Positioned(
-                                  right: 0,
-                                  top: 0,
-                                  child: Image.asset(
-                                    'assets/reactions/angry.png',
-                                    height: 15,
-                                    width: 15,
-                                    // color: Colors.blue,
-                                  ),
-                                )
-                              ],
-                            ),
-                            title: Text('${provider.angryUsers[index].name}'),
-                          )),
+                    :
+                    // ALL Likes
+                    reactionList(
+                        userList: provider.users,
+                        anonymousCount: provider.likeList?.data?.result?.anonymousCount),
+                if (provider.likeCount != 0) reactionList(userList: provider.likeUsers),
+                if (provider.loveCount != 0) reactionList(userList: provider.loveUsers),
+                if (provider.careCount != 0) reactionList(userList: provider.careUsers),
+                if (provider.laughCount != 0) reactionList(userList: provider.laughUsers),
+                if (provider.sadCount != 0) reactionList(userList: provider.sadUsers),
+                if (provider.angryCount != 0) reactionList(userList: provider.angryUsers),
               ])),
             ],
           ),
@@ -413,15 +199,67 @@ class _LikeListState extends State<LikeList> {
         Duration.zero, () => context.read<LikeListProvider>().showLikes(context, widget.postId));
   }
 
-  goToProfile({required LikeListProvider provider, required int index}) {
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => AuthorProfile(
-                  authorType: provider.users[index].userType,
-                  id: provider.users[index].id!,
-                  avatar: provider.users[index].avatar ?? '',
-                  userName: provider.users[index].name ?? '',
-                )));
+  ListView reactionList({
+    required List<User> userList,
+    int? anonymousCount,
+  }) =>
+      ListView.builder(
+          itemCount: userList.length,
+          itemBuilder: (context, index) => ListTile(
+                // TODO: for future build
+                // onTap: () => goToProfile(
+                //   users: userList,
+                //   index: index,
+                // ),
+
+                leading: Stack(
+                  children: [
+                    Container(
+                        height: 45,
+                        width: 45,
+                        decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            image: (index < userList.length)
+                                ? DecorationImage(
+                                    fit: BoxFit.cover,
+                                    image: NetworkImage(userList[index].avatar.toString()))
+                                : null),
+                        child: userList[index].isUnknown != null
+                            ? Center(
+                                child: Text(
+                                    // "+${provider.likeList!.data!.result!.anonymousCount}",
+                                    "+",
+                                    style: TextStyle(fontSize: 22, color: Colors.white),
+                                    textAlign: TextAlign.center),
+                              )
+                            : SizedBox.shrink()),
+                    Positioned(
+                      right: 0,
+                      top: 0,
+                      child: Image.asset(
+                        'assets/reactions/${userList[index].emotion ?? 'like'}.png',
+                        height: 15,
+                        width: 15,
+                        // color: Colors.blue,
+                      ),
+                    )
+                  ],
+                ),
+                title: Text(userList[index].name != 'anonymous'
+                    ? userList[index].name.toString()
+                    : '...and ${anonymousCount} more'),
+              ));
+
+  goToProfile({required List<User> users, required int index}) {
+    if (users[index].isUnknown == null)
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => AuthorProfile(
+                    authorType: users[index].userType,
+                    id: users[index].id!,
+                    avatar: users[index].avatar ?? '',
+                    userName: users[index].name ?? '',
+                  )));
   }
 }

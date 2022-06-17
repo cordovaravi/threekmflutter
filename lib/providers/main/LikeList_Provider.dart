@@ -34,10 +34,10 @@ class LikeListProvider extends ChangeNotifier {
       <User>[];
   int? get laughCount => laughUsers.length;
 
-  List<User> get cryUsers =>
+  List<User> get sadUsers =>
       _likeList?.data?.result?.users?.where((element) => element.emotion == 'sad').toList() ??
       <User>[];
-  int? get sadCount => cryUsers.length;
+  int? get sadCount => sadUsers.length;
 
   List<User> get angryUsers =>
       _likeList?.data?.result?.users?.where((element) => element.emotion == 'angry').toList() ??
@@ -56,7 +56,7 @@ class LikeListProvider extends ChangeNotifier {
         _isLoading = false;
         if (response["status"] == "success") {
           _likeList = LikeListModel.fromJson(response);
-          // notifyListeners();
+          notifyListeners();
           if (_likeList!.data!.result!.anonymousCount != 0) {
             // print(_likeList!.data!.result!.count! + 1);
             _likeList!.data!.result!.users!.add(
