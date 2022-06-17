@@ -33,6 +33,7 @@ import 'package:threekm/utils/slugUrl.dart';
 import 'package:threekm/utils/threekm_textstyles.dart';
 import 'package:threekm/widgets/NewCardUI/image_layout.dart';
 import 'package:threekm/widgets/reactions_assets.dart' as reactionAssets;
+import '../../UI/main/News/likes_and_comments/comment_section.dart';
 import '../../UI/main/News/likes_and_comments/like_list.dart';
 import '../emotion_Button.dart';
 // import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
@@ -337,7 +338,13 @@ class _CardUIState extends State<CardUI> {
                     style: ButtonStyle(foregroundColor: MaterialStateProperty.all(Colors.black)),
                     onPressed: () async {
                       if (await getAuthStatus()) {
-                        showCommentsBottomModalSheet(context, data.postId!.toInt());
+                        // showCommentsBottomModalSheet(context, data.postId!.toInt());
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => CommentSection(
+                                      postId: data.postId!,
+                                    )));
                       } else {
                         NaviagateToLogin(context);
                       }
@@ -431,6 +438,7 @@ class _CardUIState extends State<CardUI> {
     );
   }
 
+  @Deprecated('Replaced by CommentSection() screen.')
   showCommentsBottomModalSheet(BuildContext context, int postId) {
     //print("this is new :$postId");
     context.read<CommentProvider>().getAllCommentsApi(postId);
@@ -628,6 +636,7 @@ class _CardUIState extends State<CardUI> {
     );
   }
 
+  @Deprecated('Replaced by Likelist() screen.')
   _showLikedBottomModalSheet(int postId, totalLikes) {
     context.read<LikeListProvider>().showLikes(context, postId);
     showModalBottomSheet<void>(

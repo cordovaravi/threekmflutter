@@ -31,6 +31,7 @@ import 'package:timelines/timelines.dart';
 
 import 'Widgets/comment_Loading.dart';
 import 'Widgets/likes_Loading.dart';
+import 'likes_and_comments/comment_section.dart';
 
 class Postview extends StatefulWidget {
   final String postId;
@@ -440,7 +441,18 @@ class _PostviewState extends State<Postview> {
                                     child: Row(
                                       children: [
                                         if (newsData.comments!.length > 0)
-                                          Text(newsData.comments!.length.toString() + ' Comments'),
+                                          InkWell(
+                                              splashFactory: InkRipple.splashFactory,
+                                              onTap: () {
+                                                Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) => CommentSection(
+                                                              postId: newsData.postId!,
+                                                            )));
+                                              },
+                                              child: Text(newsData.comments!.length.toString() +
+                                                  ' Comments')),
                                         SizedBox(
                                           width: 10,
                                         ),
@@ -499,8 +511,14 @@ class _PostviewState extends State<Postview> {
                                                 MaterialStateProperty.all(Colors.black)),
                                         onPressed: () async {
                                           if (await getAuthStatus()) {
-                                            _showCommentsBottomModalSheet(
-                                                context, newsData.postId!.toInt());
+                                            // _showCommentsBottomModalSheet(
+                                            //     context, newsData.postId!.toInt());
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) => CommentSection(
+                                                          postId: newsData.postId!,
+                                                        )));
                                           } else {
                                             NaviagateToLogin(context);
                                           }
@@ -821,6 +839,7 @@ class _PostviewState extends State<Postview> {
     );
   }
 
+  @Deprecated('Replaced by CommentSection() screen.')
   _showCommentsBottomModalSheet(BuildContext context, int postId) {
     //print("this is new :$postId");
     context.read<CommentProvider>().getAllCommentsApi(postId);

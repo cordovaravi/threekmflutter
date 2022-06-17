@@ -55,8 +55,7 @@ class MyProfilePost extends StatefulWidget {
   _MyProfilePostState createState() => _MyProfilePostState();
 }
 
-class _MyProfilePostState extends State<MyProfilePost>
-    with TickerProviderStateMixin {
+class _MyProfilePostState extends State<MyProfilePost> with TickerProviderStateMixin {
   ScrollController controller = ScrollController();
 
   int index = 0;
@@ -86,9 +85,7 @@ class _MyProfilePostState extends State<MyProfilePost>
           IconButton(
               onPressed: () {
                 Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => SearchPage(tabNuber: 0)));
+                    context, MaterialPageRoute(builder: (context) => SearchPage(tabNuber: 0)));
               },
               icon: Icon(
                 Icons.search,
@@ -96,8 +93,7 @@ class _MyProfilePostState extends State<MyProfilePost>
               ))
         ],
       ),
-      body: selfProfile.isGettingSelfProfile == true &&
-              selfProfile.selfProfile?.data == null
+      body: selfProfile.isGettingSelfProfile == true && selfProfile.selfProfile?.data == null
           ? Container(
               height: MediaQuery.of(context).size.height,
               width: MediaQuery.of(context).size.width,
@@ -144,10 +140,10 @@ class _MyProfilePostState extends State<MyProfilePost>
                 SliverAppBar(
                   title: Text(""),
                   collapsedHeight: 0,
-                  expandedHeight: addingAbout == true &&
-                          selfProfileModel!.data!.result!.author!.about == null
-                      ? 320
-                      : 270,
+                  expandedHeight:
+                      addingAbout == true && selfProfileModel!.data!.result!.author!.about == null
+                          ? 320
+                          : 270,
                   // widget.isFromSelfProfileNavigate != true
                   //     ? (addingAbout != true ? 250 : 300)
                   //     : 250,
@@ -170,8 +166,7 @@ class _MyProfilePostState extends State<MyProfilePost>
                                       "${selfProfileModel.data!.result!.author!.name}",
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
-                                      style: ThreeKmTextConstants
-                                          .tk14PXPoppinsBlackSemiBold
+                                      style: ThreeKmTextConstants.tk14PXPoppinsBlackSemiBold
                                           .copyWith(fontSize: 18),
                                     ),
                                   ),
@@ -180,9 +175,7 @@ class _MyProfilePostState extends State<MyProfilePost>
                                   height: 5,
                                 ),
                                 Container(
-                                  child: selfProfileModel
-                                              .data!.result!.author!.about !=
-                                          null
+                                  child: selfProfileModel.data!.result!.author!.about != null
                                       ? Consumer<AutthorProfileProvider>(
                                           builder: (context, controller, _) {
                                           return Column(
@@ -206,24 +199,18 @@ class _MyProfilePostState extends State<MyProfilePost>
                                                   height: 26,
                                                   width: 124,
                                                   decoration: BoxDecoration(
-                                                      color: Color(0xff3E7EFF)
-                                                          .withOpacity(0.10),
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              14)),
+                                                      color: Color(0xff3E7EFF).withOpacity(0.10),
+                                                      borderRadius: BorderRadius.circular(14)),
                                                   child: InkWell(
                                                     onTap: () {
                                                       controller.editAgain();
                                                     },
                                                     child: Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .center,
+                                                        mainAxisAlignment: MainAxisAlignment.center,
                                                         children: [
                                                           Icon(
                                                             Icons.edit,
-                                                            color: Color(
-                                                                0xff3E7EFF),
+                                                            color: Color(0xff3E7EFF),
                                                           ),
                                                           SizedBox(
                                                             width: 4,
@@ -232,9 +219,7 @@ class _MyProfilePostState extends State<MyProfilePost>
                                                             "About Me",
                                                             style: ThreeKmTextConstants
                                                                 .tk12PXPoppinsBlackSemiBold
-                                                                .copyWith(
-                                                                    color: Color(
-                                                                        0xff3E7EFF)),
+                                                                .copyWith(color: Color(0xff3E7EFF)),
                                                           )
                                                         ]),
                                                   ))
@@ -252,19 +237,14 @@ class _MyProfilePostState extends State<MyProfilePost>
                                                   height: 26,
                                                   width: 124,
                                                   decoration: BoxDecoration(
-                                                      color: Color(0xff3E7EFF)
-                                                          .withOpacity(0.10),
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              14)),
+                                                      color: Color(0xff3E7EFF).withOpacity(0.10),
+                                                      borderRadius: BorderRadius.circular(14)),
                                                   child: Center(
                                                       child: Text(
                                                     "Add About Me",
                                                     style: ThreeKmTextConstants
                                                         .tk12PXPoppinsBlackSemiBold
-                                                        .copyWith(
-                                                            color: Color(
-                                                                0xff3E7EFF)),
+                                                        .copyWith(color: Color(0xff3E7EFF)),
                                                   ))),
                                             )
                                           : Container(),
@@ -274,8 +254,7 @@ class _MyProfilePostState extends State<MyProfilePost>
                           ],
                         ),
                         if (addingAbout &&
-                            selfProfileModel.data!.result!.author!.about ==
-                                null) ...{
+                            selfProfileModel.data!.result!.author!.about == null) ...{
                           Container(
                             margin: EdgeInsets.only(),
                             child: TextFormField(
@@ -285,8 +264,7 @@ class _MyProfilePostState extends State<MyProfilePost>
                               expands: false,
                               maxLength: 35,
                               textAlignVertical: TextAlignVertical.top,
-                              maxLengthEnforcement:
-                                  MaxLengthEnforcement.enforced,
+                              maxLengthEnforcement: MaxLengthEnforcement.enforced,
                               decoration: InputDecoration(
                                 border: InputBorder.none,
                               ),
@@ -296,28 +274,22 @@ class _MyProfilePostState extends State<MyProfilePost>
                                 }
                               },
                               buildCounter: (context,
-                                  {required currentLength,
-                                  required isFocused,
-                                  maxLength}) {
-                                WidgetsBinding.instance!
-                                    .addPostFrameCallback((timeStamp) {
+                                  {required currentLength, required isFocused, maxLength}) {
+                                WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
                                   setState(() {
                                     aboutCount = currentLength;
                                   });
                                 });
                                 return Text(
                                   "($aboutCount/35)",
-                                  style: ThreeKmTextConstants
-                                      .tk12PXPoppinsWhiteRegular
-                                      .copyWith(
+                                  style: ThreeKmTextConstants.tk12PXPoppinsWhiteRegular.copyWith(
                                     fontSize: 10.5,
                                     fontWeight: FontWeight.w700,
                                     color: Color(0xFF979EA4),
                                   ),
                                 );
                               },
-                              style: ThreeKmTextConstants.tk16PXLatoBlackRegular
-                                  .copyWith(
+                              style: ThreeKmTextConstants.tk16PXLatoBlackRegular.copyWith(
                                 color: Color(0xFF0F0F2D),
                                 fontWeight: FontWeight.w500,
                               ),
@@ -337,24 +309,20 @@ class _MyProfilePostState extends State<MyProfilePost>
                               return GestureDetector(
                                 onTap: () {
                                   controller.updateAbout(
-                                      context: context,
-                                      about: _aboutTextController.text);
+                                      context: context, about: _aboutTextController.text);
                                 },
                                 child: Container(
                                     height: 37,
                                     width: 67,
                                     decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(18),
-                                        color:
-                                            Color(0xff3E7EFF).withOpacity(0.1)),
+                                        color: Color(0xff3E7EFF).withOpacity(0.1)),
                                     child: Center(
                                       child: controller.updateLoading != true
                                           ? Text(
                                               "Save",
-                                              style: ThreeKmTextConstants
-                                                  .tk14PXPoppinsBlackSemiBold
-                                                  .copyWith(
-                                                      color: Color(0xff3E7EFF)),
+                                              style: ThreeKmTextConstants.tk14PXPoppinsBlackSemiBold
+                                                  .copyWith(color: Color(0xff3E7EFF)),
                                             )
                                           : CupertinoActivityIndicator(),
                                     )),
@@ -374,61 +342,48 @@ class _MyProfilePostState extends State<MyProfilePost>
                               )
                             : Container(),
                         Padding(
-                          padding: EdgeInsets.symmetric(
-                              vertical: 18, horizontal: 18),
+                          padding: EdgeInsets.symmetric(vertical: 18, horizontal: 18),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Column(
                                 children: [
-                                  Text(
-                                      selfProfileModel
-                                          .data!.result!.author!.followers
-                                          .toString(),
+                                  Text(selfProfileModel.data!.result!.author!.followers.toString(),
                                       style: GoogleFonts.poppins(
                                           color: Colors.black,
                                           fontWeight: FontWeight.w500,
                                           fontSize: 18)),
                                   Text(
                                     "Followers",
-                                    style: ThreeKmTextConstants
-                                        .tk14PXPoppinsBlackSemiBold
+                                    style: ThreeKmTextConstants.tk14PXPoppinsBlackSemiBold
                                         .copyWith(color: Color(0xff979EA4)),
                                   )
                                 ],
                               ),
                               Column(
                                 children: [
-                                  Text(
-                                      selfProfileModel
-                                          .data!.result!.author!.totalPosts
-                                          .toString(),
+                                  Text(selfProfileModel.data!.result!.author!.totalPosts.toString(),
                                       style: GoogleFonts.poppins(
                                           color: Colors.black,
                                           fontWeight: FontWeight.w500,
                                           fontSize: 18)),
                                   Text(
                                     "Posts",
-                                    style: ThreeKmTextConstants
-                                        .tk14PXPoppinsBlackSemiBold
+                                    style: ThreeKmTextConstants.tk14PXPoppinsBlackSemiBold
                                         .copyWith(color: Color(0xff979EA4)),
                                   )
                                 ],
                               ),
                               Column(
                                 children: [
-                                  Text(
-                                      selfProfileModel
-                                          .data!.result!.author!.following
-                                          .toString(),
+                                  Text(selfProfileModel.data!.result!.author!.following.toString(),
                                       style: GoogleFonts.poppins(
                                           color: Colors.black,
                                           fontWeight: FontWeight.w500,
                                           fontSize: 18)),
                                   Text(
                                     "Following",
-                                    style: ThreeKmTextConstants
-                                        .tk14PXPoppinsBlackSemiBold
+                                    style: ThreeKmTextConstants.tk14PXPoppinsBlackSemiBold
                                         .copyWith(color: Color(0xff979EA4)),
                                   ),
                                 ],
@@ -451,8 +406,7 @@ class _MyProfilePostState extends State<MyProfilePost>
                             width: MediaQuery.of(context).size.width,
                             margin: EdgeInsets.all(8),
                             decoration: BoxDecoration(
-                                color: Color(0xff3E7EFF),
-                                borderRadius: BorderRadius.circular(28)),
+                                color: Color(0xff3E7EFF), borderRadius: BorderRadius.circular(28)),
                             child: Text(
                               "Add Post",
                               style: TextStyle(color: Colors.white),
@@ -479,8 +433,7 @@ class _MyProfilePostState extends State<MyProfilePost>
                   SliverList(
                     delegate: SliverChildBuilderDelegate(
                       (context, _index) {
-                        return NewsCard(
-                            selfProfileModel: selfProfileModel, index: _index);
+                        return NewsCard(selfProfileModel: selfProfileModel, index: _index);
                       },
                       childCount: selfProfileModel.data!.result!.posts!.length,
                     ),
@@ -662,8 +615,7 @@ class _MyProfilePostState extends State<MyProfilePost>
       children: [
         Text(
           value,
-          style: ThreeKmTextConstants.tk14PXPoppinsBlackSemiBold
-              .copyWith(fontSize: 18),
+          style: ThreeKmTextConstants.tk14PXPoppinsBlackSemiBold.copyWith(fontSize: 18),
         ),
         Text(
           text,
@@ -727,8 +679,8 @@ class _MyProfilePostState extends State<MyProfilePost>
                   shape: BoxShape.circle,
                   border: Border.all(color: Colors.white, width: 3),
                   image: DecorationImage(
-                    image: CachedNetworkImageProvider(
-                        selfProfileModel.data!.result!.author!.image!),
+                    image:
+                        CachedNetworkImageProvider(selfProfileModel.data!.result!.author!.image!),
                     fit: BoxFit.fill,
                   ),
                 ),
@@ -736,8 +688,7 @@ class _MyProfilePostState extends State<MyProfilePost>
             : Container(
                 width: 120,
                 height: 120,
-                decoration:
-                    BoxDecoration(shape: BoxShape.circle, color: Colors.grey),
+                decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.grey),
               ),
       ],
     );
@@ -747,8 +698,7 @@ class _MyProfilePostState extends State<MyProfilePost>
 class NewsCard extends StatefulWidget {
   final SelfProfileModel selfProfileModel;
   final int index;
-  NewsCard({required this.selfProfileModel, required this.index, Key? key})
-      : super(key: key);
+  NewsCard({required this.selfProfileModel, required this.index, Key? key}) : super(key: key);
 
   @override
   _NewsCardState createState() => _NewsCardState();
@@ -1079,8 +1029,7 @@ class _NewsCardState extends State<NewsCard> {
                     padding: EdgeInsets.zero,
                     child: TextButton(
                         onPressed: () {
-                          Navigator.push(context,
-                              AnimatedSizeRoute(page: HelpAndSupport()));
+                          Navigator.push(context, AnimatedSizeRoute(page: HelpAndSupport()));
                         },
                         child: Text(
                           "Get Help",
@@ -1089,8 +1038,8 @@ class _NewsCardState extends State<NewsCard> {
                   )
                 ],
               ),
-              decoration: BoxDecoration(
-                  color: Colors.white, borderRadius: BorderRadius.circular(20)),
+              decoration:
+                  BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(20)),
             )
           : SizedBox.shrink()
     ]);
@@ -1119,10 +1068,8 @@ class _NewsCardState extends State<NewsCard> {
                             Row(
                               children: [
                                 Padding(
-                                  padding: EdgeInsets.only(
-                                      top: 24, left: 18, bottom: 34),
-                                  child: Text(
-                                      "$totalLikes People reacted to this"),
+                                  padding: EdgeInsets.only(top: 24, left: 18, bottom: 34),
+                                  child: Text("$totalLikes People reacted to this"),
                                 ),
                               ],
                             ),
@@ -1131,8 +1078,7 @@ class _NewsCardState extends State<NewsCard> {
                               width: double.infinity,
                               child: ListView.builder(
                                 scrollDirection: Axis.horizontal,
-                                itemCount: _likeProvider
-                                    .likeList!.data!.result!.users!.length,
+                                itemCount: _likeProvider.likeList!.data!.result!.users!.length,
                                 shrinkWrap: true,
                                 itemBuilder: (context, index) {
                                   return Container(
@@ -1146,11 +1092,7 @@ class _NewsCardState extends State<NewsCard> {
                                           image: DecorationImage(
                                               fit: BoxFit.cover,
                                               image: NetworkImage(_likeProvider
-                                                  .likeList!
-                                                  .data!
-                                                  .result!
-                                                  .users![index]
-                                                  .avatar
+                                                  .likeList!.data!.result!.users![index].avatar
                                                   .toString()))),
                                       child: Stack(
                                         children: [
@@ -1162,21 +1104,15 @@ class _NewsCardState extends State<NewsCard> {
                                                 width: 15,
                                                 fit: BoxFit.cover,
                                               )),
-                                          _likeProvider
-                                                      .likeList!
-                                                      .data!
-                                                      .result!
-                                                      .users![index]
+                                          _likeProvider.likeList!.data!.result!.users![index]
                                                       .isUnknown !=
                                                   null
                                               ? Center(
                                                   child: Text(
                                                       "+${_likeProvider.likeList!.data!.result!.anonymousCount}",
                                                       style: TextStyle(
-                                                          fontSize: 17,
-                                                          color: Colors.white),
-                                                      textAlign:
-                                                          TextAlign.center),
+                                                          fontSize: 17, color: Colors.white),
+                                                      textAlign: TextAlign.center),
                                                 )
                                               : SizedBox.shrink()
                                         ],
@@ -1225,22 +1161,17 @@ class _NewsCardState extends State<NewsCard> {
                       Row(
                         children: [
                           Container(
-                              height: 20,
-                              width: 20,
-                              child: Image.asset('assets/icons-topic.png')),
+                              height: 20, width: 20, child: Image.asset('assets/icons-topic.png')),
                           Padding(padding: EdgeInsets.only(left: 10)),
-                          Consumer<CommentProvider>(
-                              builder: (context, commentProvider, _) {
+                          Consumer<CommentProvider>(builder: (context, commentProvider, _) {
                             return commentProvider.commentList?.length != null
                                 ? Text(
                                     "${commentProvider.commentList!.length}\tComments",
-                                    style: ThreeKmTextConstants
-                                        .tk14PXPoppinsBlackSemiBold,
+                                    style: ThreeKmTextConstants.tk14PXPoppinsBlackSemiBold,
                                   )
                                 : Text(
                                     "Comments",
-                                    style: ThreeKmTextConstants
-                                        .tk14PXPoppinsBlackSemiBold,
+                                    style: ThreeKmTextConstants.tk14PXPoppinsBlackSemiBold,
                                   );
                           })
                         ],
@@ -1248,10 +1179,8 @@ class _NewsCardState extends State<NewsCard> {
                       SizedBox(
                         height: 10,
                       ),
-                      Consumer<CommentProvider>(
-                          builder: (context, commentProvider, _) {
-                        return context.read<CommentProvider>().commentList !=
-                                null
+                      Consumer<CommentProvider>(builder: (context, commentProvider, _) {
+                        return context.read<CommentProvider>().commentList != null
                             ? Expanded(
                                 child: commentProvider.isGettingComments == true
                                     ? CommentsLoadingEffects()
@@ -1259,8 +1188,7 @@ class _NewsCardState extends State<NewsCard> {
                                         physics: BouncingScrollPhysics(),
                                         shrinkWrap: true,
                                         primary: true,
-                                        itemCount:
-                                            commentProvider.commentList!.length,
+                                        itemCount: commentProvider.commentList!.length,
                                         itemBuilder: (context, commentIndex) {
                                           return Container(
                                             margin: EdgeInsets.all(1),
@@ -1269,19 +1197,15 @@ class _NewsCardState extends State<NewsCard> {
                                             ),
                                             child: ListTile(
                                               trailing: commentProvider
-                                                          .commentList![
-                                                              commentIndex]
-                                                          .isself ==
+                                                          .commentList![commentIndex].isself ==
                                                       true
                                                   ? IconButton(
                                                       onPressed: () {
                                                         context
-                                                            .read<
-                                                                CommentProvider>()
+                                                            .read<CommentProvider>()
                                                             .removeComment(
                                                                 commentProvider
-                                                                    .commentList![
-                                                                        commentIndex]
+                                                                    .commentList![commentIndex]
                                                                     .commentId!,
                                                                 postId);
                                                       },
@@ -1294,31 +1218,24 @@ class _NewsCardState extends State<NewsCard> {
                                                     image: DecorationImage(
                                                         image: CachedNetworkImageProvider(
                                                             commentProvider
-                                                                .commentList![
-                                                                    commentIndex]
-                                                                .avatar
+                                                                .commentList![commentIndex].avatar
                                                                 .toString()))),
                                               ),
                                               title: Text(
-                                                commentProvider
-                                                    .commentList![commentIndex]
-                                                    .username
+                                                commentProvider.commentList![commentIndex].username
                                                     .toString(),
-                                                style: ThreeKmTextConstants
-                                                    .tk14PXPoppinsBlackSemiBold,
+                                                style:
+                                                    ThreeKmTextConstants.tk14PXPoppinsBlackSemiBold,
                                               ),
                                               subtitle: Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
                                                   children: [
                                                     SizedBox(
                                                       height: 4,
                                                     ),
                                                     Text(
                                                       commentProvider
-                                                          .commentList![
-                                                              commentIndex]
-                                                          .comment
+                                                          .commentList[commentIndex].comment
                                                           .toString(),
                                                       style: ThreeKmTextConstants
                                                           .tk14PXLatoBlackMedium,
@@ -1328,13 +1245,10 @@ class _NewsCardState extends State<NewsCard> {
                                                     ),
                                                     Text(
                                                         commentProvider
-                                                            .commentList![
-                                                                commentIndex]
-                                                            .timeLapsed
+                                                            .commentList[commentIndex].timeLapsed
                                                             .toString(),
-                                                        style: TextStyle(
-                                                            fontStyle: FontStyle
-                                                                .italic))
+                                                        style:
+                                                            TextStyle(fontStyle: FontStyle.italic))
                                                   ]),
                                             ),
                                           );
@@ -1347,8 +1261,7 @@ class _NewsCardState extends State<NewsCard> {
                         height: 116,
                         width: 338,
                         decoration: BoxDecoration(
-                            color: Colors.grey.shade200,
-                            borderRadius: BorderRadius.circular(20)),
+                            color: Colors.grey.shade200, borderRadius: BorderRadius.circular(20)),
                         child: TextFormField(
                           controller: _commentController,
                           maxLines: null,
@@ -1377,8 +1290,7 @@ class _NewsCardState extends State<NewsCard> {
                             child: Center(
                               child: Text(
                                 "Submit",
-                                style: ThreeKmTextConstants
-                                    .tk14PXPoppinsWhiteMedium,
+                                style: ThreeKmTextConstants.tk14PXPoppinsWhiteMedium,
                               ),
                             ),
                           ),
@@ -1403,10 +1315,10 @@ class _NewsCardState extends State<NewsCard> {
           child: ListTile(
             title: Text('Copy link'),
             onTap: () {
-              Clipboard.setData(ClipboardData(
-                      text: "https://3km.in/post-detail?id=$postID&lang=en"))
-                  .then((value) => CustomSnackBar(
-                      context, Text("Link has been coppied to clipboard")))
+              Clipboard.setData(
+                      ClipboardData(text: "https://3km.in/post-detail?id=$postID&lang=en"))
+                  .then((value) =>
+                      CustomSnackBar(context, Text("Link has been coppied to clipboard")))
                   .whenComplete(() => Navigator.pop(context));
             },
           ),
@@ -1446,8 +1358,8 @@ class _NewsCardState extends State<NewsCard> {
   }
 
   // previous param String imgUrl, String name, String newsHeadLine, int index
-  handleShare(String authorName, String authorProfile, String headLine,
-      String thumbnail, date, String postId) async {
+  handleShare(String authorName, String authorProfile, String headLine, String thumbnail, date,
+      String postId) async {
     showLoading();
     screenshotController
         .captureFromWidget(Container(
@@ -1470,8 +1382,7 @@ class _NewsCardState extends State<NewsCard> {
                     decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         image: DecorationImage(
-                            fit: BoxFit.cover,
-                            image: CachedNetworkImageProvider(authorProfile))),
+                            fit: BoxFit.cover, image: CachedNetworkImageProvider(authorProfile))),
                   )),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -1518,10 +1429,8 @@ class _NewsCardState extends State<NewsCard> {
                 ),
                 Padding(
                   padding: EdgeInsets.only(right: 15),
-                  child: Container(
-                      height: 30,
-                      width: 30,
-                      child: Image.asset('assets/icon_light.png')),
+                  child:
+                      Container(height: 30, width: 30, child: Image.asset('assets/icon_light.png')),
                 )
               ],
             ),
@@ -1536,8 +1445,7 @@ class _NewsCardState extends State<NewsCard> {
             : await getApplicationDocumentsDirectory();
         File file = await File('${documentDirectory!.path}/image.png').create();
         file.writeAsBytesSync(capturedImage);
-        Share.shareFiles([file.path],
-                text: 'https://3km.in/post-detail?id=$postId&lang=en')
+        Share.shareFiles([file.path], text: 'https://3km.in/post-detail?id=$postId&lang=en')
             .then((value) => hideLoading());
       } on Exception catch (e) {
         hideLoading();
