@@ -647,8 +647,7 @@ class NewsFeedBottomModel {
   dynamic error;
   Data? data;
 
-  factory NewsFeedBottomModel.fromJson(Map<String, dynamic> json) =>
-      NewsFeedBottomModel(
+  factory NewsFeedBottomModel.fromJson(Map<String, dynamic> json) => NewsFeedBottomModel(
         status: json["status"] == null ? null : json["status"],
         message: json["message"],
         error: json["error"],
@@ -683,12 +682,8 @@ class Result {
         posts: json["posts"] == null
             ? null
             : List<Post>.from(json["posts"].map((x) => Post.fromJson(x))),
-        tags: json["tags"] == null
-            ? null
-            : List<dynamic>.from(json["tags"].map((x) => x)),
-        areas: json["areas"] == null
-            ? null
-            : List<dynamic>.from(json["areas"].map((x) => x)),
+        tags: json["tags"] == null ? null : List<dynamic>.from(json["tags"].map((x) => x)),
+        areas: json["areas"] == null ? null : List<dynamic>.from(json["areas"].map((x) => x)),
       );
 }
 
@@ -708,31 +703,30 @@ class Post {
       this.authorType,
       this.authorClassification,
       this.status,
+      this.views,
       this.originalLanguage,
       this.impressions,
-      this.views,
       this.postCreatedDate,
       this.createdDate,
       this.context,
-      this.isUgc,
       this.likes,
+      this.isUgc,
       this.comments,
       this.locations,
-      this.userDetails,
-      this.creatorDetails,
       this.id,
       this.isVerified,
       this.isLiked,
+      this.userDetails,
+      this.creatorDetails,
       this.areas,
+      this.itemType,
+      this.preheaderLike,
+      this.preheaderComment,
       this.slugHeadline,
       this.shares,
       this.origHeadline,
       this.origStory,
-      this.itemType,
-      this.preheaderLike,
-      this.preheaderComment,
-      this.latestComment
-      });
+      this.latestComment});
 
   int? postId;
   String? submittedHeadline;
@@ -775,39 +769,27 @@ class Post {
 
   factory Post.fromJson(Map<String, dynamic> json) => Post(
       postId: json["post_id"] == null ? null : json["post_id"],
-      submittedHeadline: json["submitted_headline"] == null
-          ? null
-          : json["submitted_headline"],
-      submittedStory:
-          json["submitted_story"] == null ? null : json["submitted_story"],
+      submittedHeadline: json["submitted_headline"] == null ? null : json["submitted_headline"],
+      submittedStory: json["submitted_story"] == null ? null : json["submitted_story"],
       headline: json["headline"] == null ? null : json["headline"],
       story: json["story"] == null ? null : json["story"],
-      images: json["images"] == null
-          ? null
-          : List<String>.from(json["images"].map((x) => x)),
+      images: json["images"] == null ? null : List<String>.from(json["images"].map((x) => x)),
       videos: json["videos"] == null
           ? null
           : List<Video>.from(json["videos"].map((x) => Video.fromJson(x))),
       type: json["type"] == null ? null : json["type"],
-      tags: json["tags"] == null
-          ? null
-          : List<String>.from(json["tags"].map((x) => x)),
-      publishFrom: json["publish_from"] == null
-          ? null
-          : DateTime.parse(json["publish_from"]),
+      tags: json["tags"] == null ? null : List<String>.from(json["tags"].map((x) => x)),
+      publishFrom: json["publish_from"] == null ? null : DateTime.parse(json["publish_from"]),
       author: json["author"] == null ? null : Author.fromJson(json["author"]),
       authorType: json["author_type"] == null ? null : json["author_type"],
-      authorClassification: json["author_classification"] == null
-          ? null
-          : json["author_classification"],
+      authorClassification:
+          json["author_classification"] == null ? null : json["author_classification"],
       status: json["status"] == null ? null : json["status"],
-      originalLanguage:
-          json["original_language"] == null ? null : json["original_language"],
+      originalLanguage: json["original_language"] == null ? null : json["original_language"],
       impressions: json["impressions"] == null ? null : json["impressions"],
       views: json["views"] == null ? null : json["views"],
-      postCreatedDate: json["post_created_date"] == null
-          ? null
-          : DateTime.parse(json["post_created_date"]),
+      postCreatedDate:
+          json["post_created_date"] == null ? null : DateTime.parse(json["post_created_date"]),
       createdDate: json["created_date"] == null ? null : json["created_date"],
       context: json["context"],
       isUgc: json["is_ugc"] == null ? null : json["is_ugc"],
@@ -815,12 +797,10 @@ class Post {
       comments: json["comments"] == null ? null : json["comments"],
       locations: json["locations"] == null
           ? null
-          : List<Location>.from(
-              json["locations"].map((x) => Location.fromJson(x))),
+          : List<Location>.from(json["locations"].map((x) => Location.fromJson(x))),
       userDetails: json["user_details"] == null
           ? null
-          : List<UserDetail>.from(
-              json["user_details"].map((x) => UserDetail.fromJson(x))),
+          : List<UserDetail>.from(json["user_details"].map((x) => UserDetail.fromJson(x))),
       creatorDetails: json["creator_details"] == null
           ? null
           : List<dynamic>.from(json["creator_details"].map((x) => x)),
@@ -828,11 +808,9 @@ class Post {
       isVerified: json["is_verified"] == null ? null : json["is_verified"],
       isLiked: json["is_liked"] == null ? null : json["is_liked"],
       areas: json["areas"] == null ? null : json["areas"],
-      slugHeadline:
-          json["slug_headline"] == null ? null : json["slug_headline"],
+      slugHeadline: json["slug_headline"] == null ? null : json["slug_headline"],
       shares: json["shares"] == null ? null : json["shares"],
-      origHeadline:
-          json["orig_headline"] == null ? null : json["orig_headline"],
+      origHeadline: json["orig_headline"] == null ? null : json["orig_headline"],
       origStory: json["orig_story"] == null ? null : json["orig_story"],
       itemType: json["item_type"] == null ? null : json["item_type"],
       preheaderLike: json["preheader_like"],

@@ -370,58 +370,55 @@ class _CardUIState extends State<CardUI> {
             ),
           if (data.comments > 0) Text('${data.comments} comments'),
           if (data.comments > 0 && data.latestComment != null && data.latestComment.user != null)
-            Padding(
-              padding: const EdgeInsets.only(top: 10, bottom: 10),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(50),
-                    child: Image(
-                      image: NetworkImage('${data.latestComment.user.avatar}'),
-                      width: 48,
-                      height: 48,
-                    ),
-                  ),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  Expanded(
-                    child: Container(
-                      padding: const EdgeInsets.only(left: 10, right: 10, top: 8),
-                      decoration: BoxDecoration(
-                          color: Color(0xFFF4F4F4), borderRadius: BorderRadius.circular(10)),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                '${data.latestComment.user.name}',
-                                style: ThreeKmTextConstants.tk14PXPoppinsBlackBold,
-                              ),
-                              // IconButton(
-                              //     onPressed: () {},
-                              //     icon: Image(
-                              //         image: AssetImage(
-                              //             'assets/fluent_delete.png')))
-                            ],
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 10),
-                            child: Text(
-                              '${data.latestComment.comment}',
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 3,
-                            ),
-                          )
-                        ],
+            InkWell(
+              onTap: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => CommentSection(postId: data.postId!)));
+              },
+              splashFactory: InkRipple.splashFactory,
+              child: Padding(
+                padding: const EdgeInsets.only(top: 10, bottom: 10),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(50),
+                      child: Image(
+                        image: NetworkImage('${data.latestComment.user.avatar}'),
+                        width: 48,
+                        height: 48,
                       ),
                     ),
-                  )
-                ],
+                    SizedBox(
+                      width: 10,
+                    ),
+                    Expanded(
+                      child: Container(
+                        padding: const EdgeInsets.only(left: 10, right: 10, top: 8),
+                        decoration: BoxDecoration(
+                            color: Color(0xFFF4F4F4), borderRadius: BorderRadius.circular(10)),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              '${data.latestComment.user.name}',
+                              style: ThreeKmTextConstants.tk14PXPoppinsBlackBold,
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 10),
+                              child: Text(
+                                '${data.latestComment.comment}',
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 3,
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                    )
+                  ],
+                ),
               ),
             )
         ],

@@ -207,10 +207,10 @@ class _LikeListState extends State<LikeList> {
           itemCount: userList.length,
           itemBuilder: (context, index) => ListTile(
                 // TODO: for future build
-                // onTap: () => goToProfile(
-                //   users: userList,
-                //   index: index,
-                // ),
+                onTap: () => goToProfile(
+                  users: userList,
+                  index: index,
+                ),
 
                 leading: Stack(
                   children: [
