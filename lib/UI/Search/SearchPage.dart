@@ -35,17 +35,14 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
   void initState() {
     super.initState();
     //Get.put(SearchController());
-    controller =
-        TabController(length: 3, vsync: this, initialIndex: widget.tabNuber);
+    controller = TabController(length: 3, vsync: this, initialIndex: widget.tabNuber);
     shopScrollController.addListener(() {
-      if (shopScrollController.position.maxScrollExtent ==
-          shopScrollController.position.pixels) {
+      if (shopScrollController.position.maxScrollExtent == shopScrollController.position.pixels) {
         pageNumber = pageNumber + 1;
         print("page number is $pageNumber");
-        context.read<SearchBarProvider>().getShopSearch(
-            query: searchController.text,
-            pageNumber: pageNumber,
-            isNewCall: false);
+        context
+            .read<SearchBarProvider>()
+            .getShopSearch(query: searchController.text, pageNumber: pageNumber, isNewCall: false);
       }
     });
 
@@ -62,12 +59,8 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
     if (_debounce?.isActive ?? false) _debounce?.cancel();
     _debounce = Timer(const Duration(milliseconds: 700), () {
       pageNumber = 1;
-      context
-          .read<SearchBarProvider>()
-          .getNewsSearch(query: query, context: context);
-      context
-          .read<SearchBarProvider>()
-          .getShopSearch(query: query, pageNumber: 1, isNewCall: true);
+      context.read<SearchBarProvider>().getNewsSearch(query: query, context: context);
+      context.read<SearchBarProvider>().getShopSearch(query: query, pageNumber: 1, isNewCall: true);
       context.read<SearchBarProvider>().getBusinessSearch(query: query);
     });
   }
@@ -207,8 +200,7 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
       unselectedLabelColor: Color(0xFF979EA4),
       indicatorColor: Color(0xFF3E7EFF),
       indicatorWeight: 3,
-      labelStyle:
-          GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w500),
+      labelStyle: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w500),
       controller: controller,
     );
   }
@@ -317,8 +309,7 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
                       controller: shopScrollController,
                       shrinkWrap: true,
                       physics: BouncingScrollPhysics(),
-                      itemCount:
-                          controller.shopSearchData!.result!.products!.length,
+                      itemCount: controller.shopSearchData!.result!.products!.length,
                       itemBuilder: (context, index) {
                         return InkWell(
                           onTap: () {
@@ -326,25 +317,20 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) => ProductDetails(
-                                        id: controller.shopSearchData!.result!
-                                            .products![index].catalogId!
+                                        id: controller
+                                            .shopSearchData!.result!.products![index].catalogId!
                                             .toInt())));
                           },
                           child: CategoryCardSearch(
-                              image: controller.shopSearchData!.result!
-                                  .products![index].image
+                              image: controller.shopSearchData!.result!.products![index].image
                                   .toString(),
-                              name: controller
-                                  .shopSearchData!.result!.products![index].name
+                              name: controller.shopSearchData!.result!.products![index].name
                                   .toString(),
-                              by: controller.shopSearchData!.result!
-                                  .products![index].businessName
+                              by: controller.shopSearchData!.result!.products![index].businessName
                                   .toString(),
-                              price: controller.shopSearchData!.result!
-                                  .products![index].price
+                              price: controller.shopSearchData!.result!.products![index].price
                                   .toString(),
-                              id: controller.shopSearchData!.result!
-                                  .products![index].catalogId!
+                              id: controller.shopSearchData!.result!.products![index].catalogId!
                                   .toInt()),
                         );
                       })
@@ -355,17 +341,14 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
 
   Widget buildBiz() {
     return Consumer<SearchBarProvider>(builder: (context, controller, _) {
-      return controller.BusinessSearchData?.data?.result?.creators?.length !=
-              null
+      return controller.BusinessSearchData?.data?.result?.creators?.length != null
           ? controller.isbusinnessLoading
               ? CupertinoActivityIndicator()
-              : controller.BusinessSearchData?.data?.result?.creators?.length !=
-                      0
+              : controller.BusinessSearchData?.data?.result?.creators?.length != 0
                   ? ListView.builder(
                       shrinkWrap: true,
                       physics: BouncingScrollPhysics(),
-                      itemCount: controller
-                          .BusinessSearchData!.data!.result!.creators!.length,
+                      itemCount: controller.BusinessSearchData!.data!.result!.creators!.length,
                       itemBuilder: (context, index) {
                         return InkWell(
                           onTap: () {
@@ -373,29 +356,25 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) => BusinessDetail(
-                                        id: controller
-                                            .BusinessSearchData!
-                                            .data!
-                                            .result!
-                                            .creators![index]
-                                            .creatorId)));
+                                        id: controller.BusinessSearchData!.data!.result!
+                                            .creators![index].creatorId)));
                           },
                           child: BizCategoryCardSearch(
-                              image: controller.BusinessSearchData!.data!
-                                  .result!.creators![index].image
+                              image: controller
+                                  .BusinessSearchData!.data!.result!.creators![index].image
                                   .toString(),
-                              name: controller.BusinessSearchData!.data!.result!
-                                  .creators![index].businessName
+                              name: controller
+                                  .BusinessSearchData!.data!.result!.creators![index].businessName
                                   .toString(),
-                              tags: controller.BusinessSearchData!.data!.result!
-                                          .creators![index].tags?.length !=
+                              tags: controller.BusinessSearchData!.data!.result!.creators![index]
+                                          .tags?.length !=
                                       0
                                   ? "${controller.BusinessSearchData!.data!.result!.creators![index].tags?.first.toString()},  ${controller.BusinessSearchData!.data!.result!.creators![index].tags?.last.toString()}"
                                   : "",
                               ownername:
                                   "${controller.BusinessSearchData!.data!.result!.creators![index].firstname} ${controller.BusinessSearchData!.data!.result!.creators![index].lastname}",
-                              id: controller.BusinessSearchData!.data!.result!
-                                  .creators![index].creatorId!
+                              id: controller
+                                  .BusinessSearchData!.data!.result!.creators![index].creatorId!
                                   .toInt()),
                         );
                       })
@@ -413,21 +392,20 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
                   ? ListView.builder(
                       physics: BouncingScrollPhysics(),
                       shrinkWrap: true,
-                      itemCount: controller
-                          .newsSearchData!.data!.result!.posts!.length,
+                      itemCount: controller.newsSearchData!.data!.result!.posts!.length,
                       itemBuilder: (context, index) {
                         return InkWell(
                           onTap: () {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => Postview(
-                                        postId: controller.newsSearchData!.data!
-                                            .result!.posts![index].postId
+                                    builder: (context) => PostView(
+                                        postId: controller
+                                            .newsSearchData!.data!.result!.posts![index].postId
                                             .toString())));
                           },
-                          child: buildNewsItems(controller
-                              .newsSearchData!.data!.result!.posts![index]),
+                          child: buildNewsItems(
+                              controller.newsSearchData!.data!.result!.posts![index]),
                         );
                       })
                   : NotFound()
@@ -577,10 +555,7 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
             color: Colors.white,
             borderRadius: BorderRadius.circular(10),
             boxShadow: [
-              BoxShadow(
-                  color: Color(0x1A0F0F2D),
-                  offset: Offset(0, 3),
-                  blurRadius: 4),
+              BoxShadow(color: Color(0x1A0F0F2D), offset: Offset(0, 3), blurRadius: 4),
             ],
           ),
           child: Row(
@@ -709,10 +684,7 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
               space(width: 15),
             ],
           ),
-        )
-            .size(height: 97, width: double.infinity)
-            .paddingX(18)
-            .padding(bottom: 24),
+        ).size(height: 97, width: double.infinity).paddingX(18).padding(bottom: 24),
         Positioned(
           top: 0,
           left: 18,
@@ -993,8 +965,7 @@ class BizCategoryCardSearch extends StatelessWidget {
               width: 74,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(15),
-                image: DecorationImage(
-                    image: CachedNetworkImageProvider(image), fit: BoxFit.fill),
+                image: DecorationImage(image: CachedNetworkImageProvider(image), fit: BoxFit.fill),
               ),
             ),
             SizedBox(
@@ -1104,8 +1075,7 @@ class CategoryCardSearch extends StatelessWidget {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(7),
                   image: DecorationImage(
-                      image: CachedNetworkImageProvider(image),
-                      fit: BoxFit.contain),
+                      image: CachedNetworkImageProvider(image), fit: BoxFit.contain),
                 ),
               ),
               SizedBox(
@@ -1129,16 +1099,14 @@ class CategoryCardSearch extends StatelessWidget {
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               softWrap: true,
-                              style:
-                                  ThreeKmTextConstants.tk14PXPoppinsBlackBold,
+                              style: ThreeKmTextConstants.tk14PXPoppinsBlackBold,
                             ),
                             Text(
                               "By $by",
                               maxLines: 1,
                               softWrap: true,
                               overflow: TextOverflow.ellipsis,
-                              style: ThreeKmTextConstants.tk14PXLatoGreyRegular
-                                  .copyWith(
+                              style: ThreeKmTextConstants.tk14PXLatoGreyRegular.copyWith(
                                 color: Color(0XFF979EA4),
                               ),
                             ),

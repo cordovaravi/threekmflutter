@@ -22,8 +22,7 @@ class SelfProfileModel {
   dynamic error;
   Data? data;
 
-  factory SelfProfileModel.fromJson(Map<String, dynamic> json) =>
-      SelfProfileModel(
+  factory SelfProfileModel.fromJson(Map<String, dynamic> json) => SelfProfileModel(
         status: json["status"] == null ? null : json["status"],
         message: json["message"],
         error: json["error"],
@@ -155,11 +154,8 @@ class Post {
 
     return Post(
       postId: json["post_id"] == null ? null : json["post_id"],
-      submittedHeadline: json["submitted_headline"] == null
-          ? null
-          : json["submitted_headline"],
-      submittedStory:
-          json["submitted_story"] == null ? null : json["submitted_story"],
+      submittedHeadline: json["submitted_headline"] == null ? null : json["submitted_headline"],
+      submittedStory: json["submitted_story"] == null ? null : json["submitted_story"],
       headline: json["headline"] == null ? null : json["headline"],
       story: json["story"] == null ? null : json["story"],
       images: json["images"] == null
@@ -171,14 +167,11 @@ class Post {
               ? List<Video>.from(json["videos"].map((x) => Video.fromJson(x)))
               : null,
       type: json["type"] == null ? null : json["type"],
-      tags: json["tags"] == null
-          ? null
-          : List<String>.from(json["tags"].map((x) => x)),
+      tags: json["tags"] == null ? null : List<String>.from(json["tags"].map((x) => x)),
       author: json["author"] == null ? null : Author.fromJson(json["author"]),
       authorType: json["author_type"] == null ? null : json["author_type"],
-      authorClassification: json["author_classification"] == null
-          ? null
-          : json["author_classification"],
+      authorClassification:
+          json["author_classification"] == null ? null : json["author_classification"],
       status: json["status"] == null ? null : json["status"],
       views: json["views"] == null ? null : json["views"],
       createdDate: json["created_date"] == null ? null : json["created_date"],
@@ -191,9 +184,8 @@ class Post {
       itemType: json["item_type"] == null ? null : json["item_type"],
       preheaderLike: json["preheader_like"],
       preheaderComment: json["preheader_comment"],
-      latestComment: json['latest_comment'] == null
-          ? null
-          : LatestComment.fromJson(json['latest_comment']),
+      latestComment:
+          json['latest_comment'] == null ? null : LatestComment.fromJson(json['latest_comment']),
     );
   }
 }
