@@ -170,7 +170,7 @@ class _NewsTabState extends State<NewsTab> with AutomaticKeepAliveClientMixin {
           if (info.updateAvailability == UpdateAvailability.updateAvailable) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text('New Version is deteted.!'),
+                content: Text('New Version is detected.!'),
                 action: SnackBarAction(
                     label: "Update",
                     onPressed: () async {
