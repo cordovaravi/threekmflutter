@@ -337,7 +337,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
             SizedBox(
               height: 24,
             ),
-            Text("version: 5.1.2"),
+            Text("version: 5.1.3"),
             SizedBox(
               height: 15,
             ),
