@@ -91,18 +91,18 @@ class _TabBarNavigationState extends State<TabBarNavigation>
     //_appLocal = Locale(_languageCode);
   }
 
-  getDeviceId() async {
-    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
-    if (Platform.isAndroid) {
-      await deviceInfo.androidInfo.then((value) {
-        thisdeviceId = value.androidId;
-      });
-    } else if (Platform.isIOS) {
-      await deviceInfo.iosInfo.then((value) {
-        thisdeviceId = value.identifierForVendor;
-      });
-    }
-  }
+  // getDeviceId() async {
+  //   DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+  //   if (Platform.isAndroid) {
+  //     await deviceInfo.androidInfo.then((value) {
+  //       thisdeviceId = value.androidId;
+  //     });
+  //   } else if (Platform.isIOS) {
+  //     await deviceInfo.iosInfo.then((value) {
+  //       thisdeviceId = value.identifierForVendor;
+  //     });
+  //   }
+  // }
 
   getAuthStatus() async {
     SharedPreferences _prefs = await SharedPreferences.getInstance();

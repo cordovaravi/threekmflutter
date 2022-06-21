@@ -68,6 +68,8 @@ class SignUpProvider extends ChangeNotifier {
   }
 
   Future<dynamic> sendOTP(requestJson) async {
+    _isLoading = true;
+    notifyListeners();
     final response = await _apiProvider.auth(send_otp, requestJson);
     print(response);
     if (response != null) {

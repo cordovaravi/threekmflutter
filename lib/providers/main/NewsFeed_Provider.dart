@@ -27,8 +27,13 @@ class NewsFeedProvider extends ChangeNotifier {
     notifyListeners();
 
     //request json
-    String requestJson =
-        json.encode({"lat": 18.555217, "lng": 73.799742, "lang": languageCode});
+    String requestJson = json.encode({
+      "lat": 18.555217,
+      "lng": 73.799742,
+      "lang": languageCode,
+      "device": _prefs.getString('deviceID'),
+      "token": _prefs.getString("token")
+    });
     if (await _apiProvider.getConnectivityStatus()) {
       //you are online
       final response = await _apiProvider.post(feedApi, requestJson);

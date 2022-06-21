@@ -61,6 +61,11 @@ class ProfileInfoProvider extends ChangeNotifier {
     return _pref.getString("email");
   }
 
+  static Future<String?> getPhone() async {
+    SharedPreferences _pref = await SharedPreferences.getInstance();
+    return _pref.getString('userphone');
+  }
+
   static Future<String?> _getGender() async {
     SharedPreferences _pref = await SharedPreferences.getInstance();
     return _pref.getString("gender");
@@ -89,7 +94,8 @@ class ProfileInfoProvider extends ChangeNotifier {
       String? Gender,
       String? avatar,
       DateTime? dob,
-      String? email}) async {
+      String? email,
+      String? phone}) async {
     _isUpdating = true;
     notifyListeners();
     SharedPreferences _pref = await SharedPreferences.getInstance();
@@ -101,7 +107,8 @@ class ProfileInfoProvider extends ChangeNotifier {
       "avatar": avatar ?? await _getAvatar(),
       "gender": Gender ?? await _getGender(),
       "email": email ?? await getEmail(),
-      "dob": dob != null ? "${dob.year}-${dob.month}-${dob.day}" : ""
+      "dob": dob != null ? "${dob.year}-${dob.month}-${dob.day}" : "",
+      "phone_no": phone ?? await getPhone()
     });
     final response = await _apiProvider.post(Update_User_Info, requestJson);
     if (response != null) {
@@ -115,6 +122,8 @@ class ProfileInfoProvider extends ChangeNotifier {
         prefs.setString("gender", data.data!.result!.user!.gender ?? "");
         prefs.setString("email", data.data!.result!.user!.email ?? "");
         prefs.setString("dob", data.data!.result!.user?.dob.toString() ?? "");
+        prefs.setString("userphone", data.data!.result!.user?.phoneNo ?? "");
+
         getProfileBasicData();
       }
     }

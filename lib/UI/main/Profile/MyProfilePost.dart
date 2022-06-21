@@ -22,6 +22,7 @@ import 'package:threekm/UI/main/AddPost/AddNewPost.dart';
 import 'package:threekm/UI/main/News/NewsList.dart';
 import 'package:threekm/UI/main/News/Widgets/comment_Loading.dart';
 import 'package:threekm/UI/main/News/Widgets/likes_Loading.dart';
+import 'package:threekm/UI/userkyc/user_kyc_main.dart';
 import 'package:threekm/commenwidgets/CustomSnakBar.dart';
 import 'package:threekm/commenwidgets/commenwidget.dart';
 import 'package:threekm/providers/main/AthorProfile_Provider.dart';
@@ -69,6 +70,52 @@ class _MyProfilePostState extends State<MyProfilePost>
     Future.delayed(Duration.zero, () {
       context.read<AutthorProfileProvider>().getSelfProfile();
     });
+  }
+
+  showKycMessage(context) {
+    return showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            content: Padding(
+              padding: const EdgeInsets.only(top: 20),
+              child: Text(
+                'To post on your wall you have to do one time verification',
+                textAlign: TextAlign.center,
+              ),
+            ),
+            actions: [
+              Align(
+                alignment: Alignment.center,
+                child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      primary: Color(0xFF3E7EFF),
+                      onPrimary: Colors.white,
+                      shadowColor: Colors.blueAccent,
+                      elevation: 3,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(32.0)),
+                      minimumSize: Size(100, 40), //////// HERE
+                    ),
+                    onPressed: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (_) => UserKycMain()));
+                    },
+                    child: Text('Continue')),
+              ),
+              Align(
+                  alignment: Alignment.center,
+                  child: TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: Text('Cancle'))),
+            ],
+            actionsOverflowDirection: VerticalDirection.down,
+            actionsAlignment: MainAxisAlignment.center,
+          );
+        });
   }
 
   @override
@@ -441,9 +488,14 @@ class _MyProfilePostState extends State<MyProfilePost>
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) =>
-                                        //VideoCompress()
-                                        AddNewPost()));
+                                    builder: (_) => UserKycMain()));
+                            // showKycMessage(context);
+                            // Navigator.push(
+                            //     context,
+                            //     MaterialPageRoute(
+                            //         builder: (context) =>
+                            //             //VideoCompress()
+                            //             AddNewPost()));
                           },
                           child: Container(
                             height: 35,

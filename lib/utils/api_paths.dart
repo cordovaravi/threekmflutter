@@ -32,6 +32,8 @@ const String login_with_password = "user/login";
 const String social_login = "user/sociallogin";
 
 // register
+const String send_otp_email = "user/emailkyc";
+const String verify_email_otp = "user/emailkycverify";
 const String send_otp = "user/sendotp?";
 const String register_send_otp = "creator/sendotp";
 const String register_verify_otp = "user/verifyotp";

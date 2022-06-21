@@ -40,9 +40,11 @@ class _SplashScreenState extends State<SplashScreen> {
 
   //ScreenshotController screenshotController = ScreenshotController();
   getDeviceId() async {
+    SharedPreferences _prefs = await SharedPreferences.getInstance();
     DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
     if (Platform.isAndroid) {
       await deviceInfo.androidInfo.then((value) async {
+        _prefs.setString("deviceID", value.androidId);
         String requestJson = json.encode({
           "uuid": value.id,
           "platform": "Android",
@@ -56,6 +58,7 @@ class _SplashScreenState extends State<SplashScreen> {
       });
     } else if (Platform.isIOS) {
       await deviceInfo.iosInfo.then((value) async {
+        _prefs.setString("deviceID", value.identifierForVendor);
         String requestJson = json.encode({
           "uuid": "23423423423423423423",
           "platform": "iOS",
