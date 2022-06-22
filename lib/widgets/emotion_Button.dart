@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:threekm/Custom_library/flutter_reaction_button.dart';
 import 'package:threekm/providers/Global/logged_in_or_not.dart';
 import 'package:threekm/providers/main/AthorProfile_Provider.dart';
+import 'package:threekm/providers/main/NewsFeed_Provider.dart';
 import 'package:threekm/providers/main/newsList_provider.dart';
 import 'package:threekm/widgets/reactions_assets.dart' as reactionAsset;
 
@@ -30,9 +31,13 @@ class EmotionButton extends StatelessWidget {
           ? context
               .read<NewsListProvider>()
               .postLike(this.postId.toString(), label)
-          : context
-              .read<AutthorProfileProvider>()
-              .postLike(this.postId.toString(), label);
+          : providerType == "NewsFeedProvider"
+              ? context
+                  .read<NewsFeedProvider>()
+                  .postLike(this.postId.toString(), label)
+              : context
+                  .read<AutthorProfileProvider>()
+                  .postLike(this.postId.toString(), label);
     }
 
     return FittedBox(
@@ -69,27 +74,27 @@ class EmotionButton extends StatelessWidget {
                   //     .read<NewsListProvider>()
                   //     .postLike(this.postId.toString(), "like");
                 } else if (reaction.id == 2) {
-                  postlike('heart');
+                  postlike('love');
                   // context
                   //     .read<NewsListProvider>()
                   //     .postLike(this.postId.toString(), "heart");
                 } else if (reaction.id == 3) {
-                  postlike('trust');
+                  postlike('care');
                   // context
                   //     .read<NewsListProvider>()
                   //     .postLike(this.postId.toString(), "trust");
                 } else if (reaction.id == 4) {
-                  postlike('sad');
+                  postlike('laugh');
                   // context
                   //     .read<NewsListProvider>()
                   //     .postLike(this.postId.toString(), "sad");
                 } else if (reaction.id == 5) {
-                  postlike('lol');
+                  postlike('sad');
                   // context
                   //     .read<NewsListProvider>()
                   //     .postLike(this.postId.toString(), "lol");
                 } else if (reaction.id == 6) {
-                  postlike('wink');
+                  postlike('angry');
                   // context
                   //     .read<NewsListProvider>()
                   //     .postLike(this.postId.toString(), "wink");

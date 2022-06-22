@@ -85,6 +85,7 @@ class NewsFeedProvider extends ChangeNotifier {
       if (element.postId.toString() == postId && element.isLiked == false) {
         element.likes = element.likes! + 1;
         element.isLiked = true;
+        element.emotion = emotion;
       }
       //notifyListeners();
     });
