@@ -13,6 +13,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:threekm/Models/shopModel/restaurants_model.dart';
 import 'package:threekm/UI/businesses/businesses_detail.dart';
 import 'package:threekm/UI/main/News/PostView.dart';
+
 import 'package:threekm/UI/main/News/poll_page.dart';
 import 'package:threekm/UI/main/navigation.dart';
 import 'package:threekm/UI/Auth/signup/sign_up.dart';
@@ -40,9 +41,11 @@ class _SplashScreenState extends State<SplashScreen> {
 
   //ScreenshotController screenshotController = ScreenshotController();
   getDeviceId() async {
+    SharedPreferences _prefs = await SharedPreferences.getInstance();
     DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
     if (Platform.isAndroid) {
       await deviceInfo.androidInfo.then((value) async {
+        _prefs.setString("deviceID", value.androidId);
         String requestJson = json.encode({
           "uuid": value.id,
           "platform": "Android",
@@ -56,6 +59,7 @@ class _SplashScreenState extends State<SplashScreen> {
       });
     } else if (Platform.isIOS) {
       await deviceInfo.iosInfo.then((value) async {
+        _prefs.setString("deviceID", value.identifierForVendor);
         String requestJson = json.encode({
           "uuid": "23423423423423423423",
           "platform": "iOS",
@@ -155,7 +159,9 @@ class _SplashScreenState extends State<SplashScreen> {
                 id: num.parse(initLink.last),
               );
             })).then((value) => Navigator.pushAndRemoveUntil(
-                context, MaterialPageRoute(builder: (_) => TabBarNavigation()), (route) => false));
+                context,
+                MaterialPageRoute(builder: (_) => TabBarNavigation()),
+                (route) => false));
           });
         } else if (initialLink.contains('/biz/')) {
           await Hive.openBox('cartBox').whenComplete(() {
@@ -164,7 +170,9 @@ class _SplashScreenState extends State<SplashScreen> {
                 id: int.parse(initialLink.split('/').last),
               );
             })).then((value) => Navigator.pushAndRemoveUntil(
-                context, MaterialPageRoute(builder: (_) => TabBarNavigation()), (route) => false));
+                context,
+                MaterialPageRoute(builder: (_) => TabBarNavigation()),
+                (route) => false));
           });
         } else if (initialLink.contains('/category/')) {
           await Hive.openBox('cartBox').whenComplete(() {
@@ -174,7 +182,9 @@ class _SplashScreenState extends State<SplashScreen> {
                 query: '${initLink.last}',
               );
             })).then((value) => Navigator.pushAndRemoveUntil(
-                context, MaterialPageRoute(builder: (_) => TabBarNavigation()), (route) => false));
+                context,
+                MaterialPageRoute(builder: (_) => TabBarNavigation()),
+                (route) => false));
           });
         } else if (initialLink.contains("poll")) {
           Navigator.push(context, MaterialPageRoute(builder: (_) {
@@ -183,33 +193,43 @@ class _SplashScreenState extends State<SplashScreen> {
               PollId: "${int.parse(initialLink.split('/').last)}",
             );
           })).then((value) => Navigator.pushAndRemoveUntil(
-              context, MaterialPageRoute(builder: (_) => TabBarNavigation()), (route) => false));
+              context,
+              MaterialPageRoute(builder: (_) => TabBarNavigation()),
+              (route) => false));
         } else if (initialLink.contains("/food/restaurant/menu/")) {
           await Hive.openBox('restroCartBox').whenComplete(() {
             Navigator.push(context, MaterialPageRoute(builder: (_) {
               return RestaurantMenu(
-                  data: Creators(creatorId: int.parse(initialLink.split('/').last))
+                  data: Creators(
+                      creatorId: int.parse(initialLink.split('/').last))
                   //{creatorId: "${int.parse(initialLink.split('/').last)}"},
                   );
             })).then((value) => Navigator.pushAndRemoveUntil(
-                context, MaterialPageRoute(builder: (_) => TabBarNavigation()), (route) => false));
+                context,
+                MaterialPageRoute(builder: (_) => TabBarNavigation()),
+                (route) => false));
           });
         } else if (initialLink.contains("/food/restaurant/list/")) {
           await Hive.openBox('restroCartBox').whenComplete(() {
             Navigator.push(context, MaterialPageRoute(builder: (_) {
               return BiryaniRestro();
             })).then((value) => Navigator.pushAndRemoveUntil(
-                context, MaterialPageRoute(builder: (_) => TabBarNavigation()), (route) => false));
+                context,
+                MaterialPageRoute(builder: (_) => TabBarNavigation()),
+                (route) => false));
           });
         } else {
-          Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
+          Navigator.push(context,
+              MaterialPageRoute(builder: (BuildContext context) {
             return PostView(postId: "${int.parse(initialLink.split('/').last)}"
                 // initialLink
                 //     .substring(30, initialLink.length)
                 //     .replaceAll('&lang=en', '')
                 );
           })).then((value) => Navigator.pushAndRemoveUntil(
-              context, MaterialPageRoute(builder: (_) => TabBarNavigation()), (route) => false));
+              context,
+              MaterialPageRoute(builder: (_) => TabBarNavigation()),
+              (route) => false));
         }
       } else {
         Future.delayed(Duration(seconds: 2), () {
@@ -230,10 +250,12 @@ class _SplashScreenState extends State<SplashScreen> {
     if (token != null) {
       //handleDeepLink();
       Navigator.pushAndRemoveUntil(
-          context, MaterialPageRoute(builder: (context) => TabBarNavigation()), (route) => false);
+          context,
+          MaterialPageRoute(builder: (context) => TabBarNavigation()),
+          (route) => false);
     } else
-      Navigator.pushAndRemoveUntil(
-          context, MaterialPageRoute(builder: (context) => SignUp()), (route) => false);
+      Navigator.pushAndRemoveUntil(context,
+          MaterialPageRoute(builder: (context) => SignUp()), (route) => false);
   }
 
   @override

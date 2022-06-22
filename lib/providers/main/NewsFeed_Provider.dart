@@ -21,18 +21,18 @@ class NewsFeedProvider extends ChangeNotifier {
   bool _isLoading = false;
   bool get isLoading => _isLoading;
   String? thisdeviceId;
-  getDeviceId() async {
-    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
-    if (Platform.isAndroid) {
-      await deviceInfo.androidInfo.then((value) {
-        thisdeviceId = value.androidId;
-      });
-    } else if (Platform.isIOS) {
-      await deviceInfo.iosInfo.then((value) {
-        thisdeviceId = value.identifierForVendor;
-      });
-    }
-  }
+  // getDeviceId() async {
+  //   DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+  //   if (Platform.isAndroid) {
+  //     await deviceInfo.androidInfo.then((value) {
+  //       thisdeviceId = value.androidId;
+  //     });
+  //   } else if (Platform.isIOS) {
+  //     await deviceInfo.iosInfo.then((value) {
+  //       thisdeviceId = value.identifierForVendor;
+  //     });
+  //   }
+  // }
 
   Future<NewsFeedBottomModel?> getBottomFeed({String? languageCode}) async {
     SharedPreferences _prefs = await SharedPreferences.getInstance();
@@ -45,7 +45,8 @@ class NewsFeedProvider extends ChangeNotifier {
       "lat": 18.555217,
       "lng": 73.799742,
       "lang": languageCode,
-      "device": thisdeviceId,
+      "device": _prefs.getString('deviceID'),
+      "token": _prefs.getString("token")
     });
     if (await _apiProvider.getConnectivityStatus()) {
       //you are online
