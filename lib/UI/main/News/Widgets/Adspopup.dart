@@ -46,31 +46,33 @@ class AdspopUpState extends State<AdspopUp>
             child: Padding(
               padding: EdgeInsets.all(10),
               child: Column(mainAxisSize: MainAxisSize.min, children: [
-                Container(
-                  height: 60,
-                  width: MediaQuery.of(context).size.width,
-                  child: ListTile(
-                    onTap: () {
-                      InAppBrowser.openWithSystemBrowser(
-                              url: Uri.parse("tel:${widget.phoneNumber}"))
-                          .whenComplete(() => Navigator.pop(context));
-                    },
-                    leading: Icon(Icons.phone),
-                    title: Text(widget.phoneNumber),
-                  ),
-                ),
-                Container(
+                if (widget.phoneNumber != "")
+                  Container(
                     height: 60,
                     width: MediaQuery.of(context).size.width,
                     child: ListTile(
                       onTap: () {
-                        ChromeSafariBrowser()
-                            .open(url: Uri.parse(widget.url))
+                        InAppBrowser.openWithSystemBrowser(
+                                url: Uri.parse("tel:${widget.phoneNumber}"))
                             .whenComplete(() => Navigator.pop(context));
                       },
-                      leading: Icon(Icons.web),
-                      title: Text(widget.url),
-                    ))
+                      leading: Icon(Icons.phone),
+                      title: Text(widget.phoneNumber),
+                    ),
+                  ),
+                if (widget.url != "")
+                  Container(
+                      height: 60,
+                      width: MediaQuery.of(context).size.width,
+                      child: ListTile(
+                        onTap: () {
+                          ChromeSafariBrowser()
+                              .open(url: Uri.parse(widget.url))
+                              .whenComplete(() => Navigator.pop(context));
+                        },
+                        leading: Icon(Icons.web),
+                        title: Text(widget.url),
+                      ))
               ]),
             ),
           ),

@@ -478,14 +478,17 @@ class _NewsTabState extends State<NewsTab> with AutomaticKeepAliveClientMixin {
                                   items: finalPost.banners![i].imageswcta!
                                       .map((items) => GestureDetector(
                                             onTap: () => {
-                                              showDialog(
-                                                context: context,
-                                                builder: (_) => AdspopUp(
-                                                  phoneNumber:
-                                                      items.phone.toString(),
-                                                  url: items.website.toString(),
-                                                ),
-                                              )
+                                              if (items.phone != "" ||
+                                                  items.website != "")
+                                                showDialog(
+                                                  context: context,
+                                                  builder: (_) => AdspopUp(
+                                                    phoneNumber:
+                                                        items.phone.toString(),
+                                                    url: items.website
+                                                        .toString(),
+                                                  ),
+                                                )
                                             },
                                             child: Container(
                                               child: CachedNetworkImage(

@@ -97,32 +97,34 @@ class Author {
 }
 
 class Post {
-  Post(
-      {this.postId,
-      this.submittedHeadline,
-      this.submittedStory,
-      this.headline,
-      this.story,
-      this.images,
-      this.videos,
-      this.type,
-      this.tags,
-      this.author,
-      this.authorType,
-      this.authorClassification,
-      this.status,
-      this.views,
-      this.createdDate,
-      this.context,
-      this.likes,
-      this.comments,
-      this.id,
-      this.isVerified,
-      this.isLiked,
-      this.itemType,
-      this.preheaderLike,
-      this.preheaderComment,
-      this.latestComment});
+  Post({
+    this.postId,
+    this.submittedHeadline,
+    this.submittedStory,
+    this.headline,
+    this.story,
+    this.images,
+    this.videos,
+    this.type,
+    this.tags,
+    this.author,
+    this.authorType,
+    this.authorClassification,
+    this.status,
+    this.views,
+    this.createdDate,
+    this.context,
+    this.likes,
+    this.comments,
+    this.id,
+    this.isVerified,
+    this.isLiked,
+    this.itemType,
+    this.preheaderLike,
+    this.preheaderComment,
+    this.latestComment,
+    this.emotion,
+  });
 
   int? postId;
   String? submittedHeadline;
@@ -149,9 +151,10 @@ class Post {
   String? preheaderLike;
   String? preheaderComment;
   LatestComment? latestComment;
+  String? emotion;
 
   factory Post.fromJson(Map<String, dynamic> json) {
-    log('${json["videos"].runtimeType is List<dynamic>}================');
+    log('${json["post_id"]}================');
 
     return Post(
       postId: json["post_id"] == null ? null : json["post_id"],
@@ -167,9 +170,7 @@ class Post {
           : List<String>.from(json["images"].where((x) => x is String)),
       videos: json["videos"] == null
           ? null
-          : json["videos"].runtimeType is List
-              ? List<Video>.from(json["videos"].map((x) => Video.fromJson(x)))
-              : null,
+          : List<Video>.from(json["videos"].map((x) => Video.fromJson(x))),
       type: json["type"] == null ? null : json["type"],
       tags: json["tags"] == null
           ? null
@@ -194,6 +195,7 @@ class Post {
       latestComment: json['latest_comment'] == null
           ? null
           : LatestComment.fromJson(json['latest_comment']),
+      emotion: json['emotion']?? "",
     );
   }
 }
