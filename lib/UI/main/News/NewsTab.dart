@@ -104,10 +104,7 @@ class _NewsTabState extends State<NewsTab> with AutomaticKeepAliveClientMixin {
           "device": widget.deviceId ?? "",
           "token": token ?? ""
         });
-        context
-            .read<HomefirstProvider>()
-            .getNewsfirst(requestJson)
-            .then((value) {
+        context.read<HomefirstProvider>().getNewsfirst(requestJson).then((value) {
           Future.delayed(Duration(milliseconds: 100), () {
             context.read<HomeSecondProvider>().getNewsSecond(requestJson);
           }).whenComplete(() => checkUpdate());
@@ -127,8 +124,7 @@ class _NewsTabState extends State<NewsTab> with AutomaticKeepAliveClientMixin {
       // Future.delayed(Duration(seconds: 1), () {
       //   CustomSnackBar(context, Text("Post has been submmitted"));
       // });
-      Fluttertoast.showToast(
-          msg: "Post has been Submitted", backgroundColor: Color(0xFF0044CE));
+      Fluttertoast.showToast(msg: "Post has been Submitted", backgroundColor: Color(0xFF0044CE));
     }
 
     ///fcm call back
@@ -137,10 +133,8 @@ class _NewsTabState extends State<NewsTab> with AutomaticKeepAliveClientMixin {
     }).onData((data) {
       log(data.notification?.title.toString() ?? "");
       Future.delayed(Duration(seconds: 1), () {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => Postview(postId: data.data["post_id"])));
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => PostView(postId: data.data["post_id"])));
       });
     });
 
@@ -170,7 +164,7 @@ class _NewsTabState extends State<NewsTab> with AutomaticKeepAliveClientMixin {
           if (info.updateAvailability == UpdateAvailability.updateAvailable) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text('New Version is deteted.!'),
+                content: Text('New Version is detected.!'),
                 action: SnackBarAction(
                     label: "Update",
                     onPressed: () async {
@@ -188,16 +182,11 @@ class _NewsTabState extends State<NewsTab> with AutomaticKeepAliveClientMixin {
         });
       });
     }
-    FirebaseMessaging.instance
-        .getInitialMessage()
-        .then((RemoteMessage? message) {
+    FirebaseMessaging.instance.getInitialMessage().then((RemoteMessage? message) {
       if (message != null) {
         log("message from firebase is $message");
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) =>
-                    Postview(postId: message.data["post_id"])));
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => PostView(postId: message.data["post_id"])));
       }
     });
   }
@@ -225,15 +214,11 @@ class _NewsTabState extends State<NewsTab> with AutomaticKeepAliveClientMixin {
     final newsSecondProvider = context.watch<HomeSecondProvider>();
     return RefreshIndicator(
       onRefresh: () {
-        return context
-            .read<HomefirstProvider>()
-            .onRefresh(requestJson)
-            .then((value) {
+        return context.read<HomefirstProvider>().onRefresh(requestJson).then((value) {
           context.read<HomeSecondProvider>().onRefresh(requestJson);
         });
       },
-      child: newsFirstProvider.state == 'loaded' &&
-                  newsSecondProvider.state == 'loaded' ||
+      child: newsFirstProvider.state == 'loaded' && newsSecondProvider.state == 'loaded' ||
               newsSecondProvider.homeNews?.data != null
           ? SingleChildScrollView(
               //controller: _scrollController,
@@ -451,11 +436,10 @@ class _NewsTabState extends State<NewsTab> with AutomaticKeepAliveClientMixin {
                       shrinkWrap: true,
                       primary: true,
                       padding: EdgeInsets.zero,
-                      itemCount: newsFirstProvider
-                          .homeNewsFirst!.data!.result!.finalposts!.length,
+                      itemCount: newsFirstProvider.homeNewsFirst!.data!.result!.finalposts!.length,
                       itemBuilder: (context, index) {
-                        final finalPost = newsFirstProvider
-                            .homeNewsFirst!.data!.result!.finalposts![index];
+                        final finalPost =
+                            newsFirstProvider.homeNewsFirst!.data!.result!.finalposts![index];
 
                         if (finalPost.type == "banner" &&
                             finalPost.banners != null &&
@@ -481,8 +465,7 @@ class _NewsTabState extends State<NewsTab> with AutomaticKeepAliveClientMixin {
                                               showDialog(
                                                 context: context,
                                                 builder: (_) => AdspopUp(
-                                                  phoneNumber:
-                                                      items.phone.toString(),
+                                                  phoneNumber: items.phone.toString(),
                                                   url: items.website.toString(),
                                                 ),
                                               )
@@ -490,11 +473,8 @@ class _NewsTabState extends State<NewsTab> with AutomaticKeepAliveClientMixin {
                                             child: Container(
                                               child: CachedNetworkImage(
                                                 fit: BoxFit.contain,
-                                                imageUrl:
-                                                    items.image.toString(),
-                                                imageBuilder:
-                                                    (context, imageProvider) =>
-                                                        Container(
+                                                imageUrl: items.image.toString(),
+                                                imageBuilder: (context, imageProvider) => Container(
                                                   decoration: BoxDecoration(
                                                     image: DecorationImage(
                                                       image: imageProvider,
@@ -502,9 +482,8 @@ class _NewsTabState extends State<NewsTab> with AutomaticKeepAliveClientMixin {
                                                     ),
                                                   ),
                                                 ),
-                                                errorWidget:
-                                                    (context, url, error) =>
-                                                        Icon(Icons.error),
+                                                errorWidget: (context, url, error) =>
+                                                    Icon(Icons.error),
                                               ),
                                             ),
                                           ))
@@ -515,138 +494,122 @@ class _NewsTabState extends State<NewsTab> with AutomaticKeepAliveClientMixin {
                               } else if (finalPost.bannertype == "BWC") {
                                 return finalPost.banners?.length != null
                                     ? Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
+                                        crossAxisAlignment: CrossAxisAlignment.start,
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
                                           CarouselSlider.builder(
-                                            itemCount:
-                                                finalPost.banners!.length,
-                                            itemBuilder:
-                                                (BuildContext context,
-                                                        int bannerIndex,
-                                                        heroIndex) =>
-                                                    InkWell(
-                                                        onTap: () {
-                                                          if (finalPost
-                                                                  .banners![
-                                                                      bannerIndex]
-                                                                  .imageswcta!
-                                                                  .first
-                                                                  .post !=
-                                                              null) {
-                                                            log("bbbbbbbbbbbbbbbbb");
-                                                            Navigator.push(
-                                                                context,
-                                                                MaterialPageRoute(
-                                                                    builder:
-                                                                        (context) =>
-                                                                            NewsListPage(
-                                                                              title: finalPost.banners![bannerIndex].imageswcta!.first.header.toString(),
-                                                                              hasPostfromBanner: finalPost.banners![bannerIndex].imageswcta!.first.post,
-                                                                            )));
-                                                          } else if (finalPost
-                                                                  .banners![
-                                                                      bannerIndex]
-                                                                  .imageswcta!
-                                                                  .first
-                                                                  .video !=
-                                                              null) {
-                                                            log("aaaaaaaaaaaaaaaaaaaaaaaaaaa");
-                                                            Navigator.push(
-                                                                context,
-                                                                MaterialPageRoute(
-                                                                    builder:
-                                                                        (context) =>
-                                                                            VideoWidget(
-                                                                              url: finalPost.banners![bannerIndex].imageswcta!.first.video.toString(),
-                                                                              play: false,
-                                                                              isVimeo: finalPost.banners?[bannerIndex].imageswcta?.first.vimeoUrl != null ? true : false,
-                                                                              vimeoID: finalPost.banners?[bannerIndex].imageswcta?.first.vimeoUrl?.split("/").last,
-                                                                            )
-                                                                    // VimeoPlayerPage(
-                                                                    //     VimeoUri: finalPost
-                                                                    //         .banners![
-                                                                    //             bannerIndex]
-                                                                    //         .imageswcta!
-                                                                    //         .first
-                                                                    //         .vimeoUrl
-                                                                    //         .toString())
-                                                                    ));
-                                                          } else if (finalPost
-                                                                  .banners![
-                                                                      bannerIndex]
-                                                                  .imageswcta!
-                                                                  .first
-                                                                  .type !=
-                                                              null) {
-                                                            log(">>>>>>>>>>>>>>${finalPost.banners![bannerIndex].imageswcta!.first.type}");
-                                                            if (finalPost
-                                                                    .banners![
-                                                                        bannerIndex]
-                                                                    .imageswcta!
-                                                                    .first
-                                                                    .type ==
-                                                                'biryanifest') {
-                                                              Navigator.push(
-                                                                  context,
-                                                                  MaterialPageRoute(
-                                                                      builder:
-                                                                          (context) =>
-                                                                              BiryaniRestro()));
-                                                            }
-                                                          }
-                                                        },
-                                                        child: Container(
-                                                          margin:
-                                                              EdgeInsets.only(
-                                                                  top: 0,
-                                                                  bottom: 4),
-                                                          decoration: BoxDecoration(
-                                                              boxShadow: [
-                                                                // BoxShadow(
-                                                                //     blurRadius: 10.0,
-                                                                //     color: Colors
-                                                                //         .grey.shade200)
-                                                              ],
-                                                              color:
-                                                                  Colors.white,
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          15)),
-                                                          child:
-                                                              CachedNetworkImage(
-                                                                  fit: BoxFit
-                                                                      .cover,
-                                                                  // width: 1000,
-                                                                  imageUrl: finalPost
-                                                                      .banners![
-                                                                          bannerIndex]
-                                                                      .images!
-                                                                      .first
-                                                                      .toString()),
-                                                        )),
+                                            itemCount: finalPost.banners!.length,
+                                            itemBuilder: (BuildContext context, int bannerIndex,
+                                                    heroIndex) =>
+                                                InkWell(
+                                                    onTap: () {
+                                                      if (finalPost.banners![bannerIndex]
+                                                              .imageswcta!.first.post !=
+                                                          null) {
+                                                        log("bbbbbbbbbbbbbbbbb");
+                                                        Navigator.push(
+                                                            context,
+                                                            MaterialPageRoute(
+                                                                builder: (context) => NewsListPage(
+                                                                      title: finalPost
+                                                                          .banners![bannerIndex]
+                                                                          .imageswcta!
+                                                                          .first
+                                                                          .header
+                                                                          .toString(),
+                                                                      hasPostfromBanner: finalPost
+                                                                          .banners![bannerIndex]
+                                                                          .imageswcta!
+                                                                          .first
+                                                                          .post,
+                                                                    )));
+                                                      } else if (finalPost.banners![bannerIndex]
+                                                              .imageswcta!.first.video !=
+                                                          null) {
+                                                        log("aaaaaaaaaaaaaaaaaaaaaaaaaaa");
+                                                        Navigator.push(
+                                                            context,
+                                                            MaterialPageRoute(
+                                                                builder: (context) => VideoWidget(
+                                                                      url: finalPost
+                                                                          .banners![bannerIndex]
+                                                                          .imageswcta!
+                                                                          .first
+                                                                          .video
+                                                                          .toString(),
+                                                                      play: false,
+                                                                      isVimeo: finalPost
+                                                                                  .banners?[
+                                                                                      bannerIndex]
+                                                                                  .imageswcta
+                                                                                  ?.first
+                                                                                  .vimeoUrl !=
+                                                                              null
+                                                                          ? true
+                                                                          : false,
+                                                                      vimeoID: finalPost
+                                                                          .banners?[bannerIndex]
+                                                                          .imageswcta
+                                                                          ?.first
+                                                                          .vimeoUrl
+                                                                          ?.split("/")
+                                                                          .last,
+                                                                    )
+                                                                // VimeoPlayerPage(
+                                                                //     VimeoUri: finalPost
+                                                                //         .banners![
+                                                                //             bannerIndex]
+                                                                //         .imageswcta!
+                                                                //         .first
+                                                                //         .vimeoUrl
+                                                                //         .toString())
+                                                                ));
+                                                      } else if (finalPost.banners![bannerIndex]
+                                                              .imageswcta!.first.type !=
+                                                          null) {
+                                                        log(">>>>>>>>>>>>>>${finalPost.banners![bannerIndex].imageswcta!.first.type}");
+                                                        if (finalPost.banners![bannerIndex]
+                                                                .imageswcta!.first.type ==
+                                                            'biryanifest') {
+                                                          Navigator.push(
+                                                              context,
+                                                              MaterialPageRoute(
+                                                                  builder: (context) =>
+                                                                      BiryaniRestro()));
+                                                        }
+                                                      }
+                                                    },
+                                                    child: Container(
+                                                      margin: EdgeInsets.only(top: 0, bottom: 4),
+                                                      decoration: BoxDecoration(
+                                                          boxShadow: [
+                                                            // BoxShadow(
+                                                            //     blurRadius: 10.0,
+                                                            //     color: Colors
+                                                            //         .grey.shade200)
+                                                          ],
+                                                          color: Colors.white,
+                                                          borderRadius: BorderRadius.circular(15)),
+                                                      child: CachedNetworkImage(
+                                                          fit: BoxFit.cover,
+                                                          // width: 1000,
+                                                          imageUrl: finalPost
+                                                              .banners![bannerIndex].images!.first
+                                                              .toString()),
+                                                    )),
                                             options: CarouselOptions(
                                                 viewportFraction:
-                                                    finalPost.banners!.length >
-                                                            1
-                                                        ? 0.99
-                                                        : 0.99,
-                                                scrollPhysics: finalPost
-                                                            .banners!.length >
-                                                        1
+                                                    finalPost.banners!.length > 1 ? 0.99 : 0.99,
+                                                scrollPhysics: finalPost.banners!.length > 1
                                                     ? ScrollPhysics()
                                                     : NeverScrollableScrollPhysics(),
                                                 autoPlayAnimationDuration:
-                                                    const Duration(
-                                                        microseconds: 1200),
+                                                    const Duration(microseconds: 1200),
                                                 autoPlay: true,
                                                 enlargeCenterPage: false,
                                                 aspectRatio: 2.3,
                                                 initialPage: 0,
-                                                autoPlayInterval:
-                                                    Duration(seconds: 15),
+                                                autoPlayInterval: Duration(seconds: 15),
                                                 onPageChanged: (index, reason) {
                                                   // setState(() {
                                                   //   _current = index;
@@ -706,9 +669,7 @@ class _NewsTabState extends State<NewsTab> with AutomaticKeepAliveClientMixin {
                                             child: CachedNetworkImage(
                                               fit: BoxFit.contain,
                                               imageUrl: items.toString(),
-                                              imageBuilder:
-                                                  (context, imageProvider) =>
-                                                      Container(
+                                              imageBuilder: (context, imageProvider) => Container(
                                                 decoration: BoxDecoration(
                                                   image: DecorationImage(
                                                     image: imageProvider,
@@ -716,9 +677,8 @@ class _NewsTabState extends State<NewsTab> with AutomaticKeepAliveClientMixin {
                                                   ),
                                                 ),
                                               ),
-                                              errorWidget:
-                                                  (context, url, error) =>
-                                                      Icon(Icons.error),
+                                              errorWidget: (context, url, error) =>
+                                                  Icon(Icons.error),
                                             ),
                                           ),
                                         ))
@@ -737,14 +697,13 @@ class _NewsTabState extends State<NewsTab> with AutomaticKeepAliveClientMixin {
                   // second Api
                   if (newsSecondProvider.homeNews != null)
                     ListView.builder(
-                      itemCount: newsSecondProvider
-                          .homeNews!.data!.result!.finalposts!.length,
+                      itemCount: newsSecondProvider.homeNews!.data!.result!.finalposts!.length,
                       shrinkWrap: true,
                       physics: ScrollPhysics(),
                       //primary: true,
                       itemBuilder: (context, index) {
-                        final finalScondPost = newsSecondProvider
-                            .homeNews!.data!.result!.finalposts![index];
+                        final finalScondPost =
+                            newsSecondProvider.homeNews!.data!.result!.finalposts![index];
                         if (finalScondPost.type == 'news_cat') {
                           return NewsContainer(finalPost: finalScondPost);
                         } else if (finalScondPost.type == "quiz_carousel") {
@@ -754,43 +713,32 @@ class _NewsTabState extends State<NewsTab> with AutomaticKeepAliveClientMixin {
                         } else if (finalScondPost.type == "quiz" &&
                             finalScondPost.quiz!.type == "quiz") {
                           if (finalScondPost.quiz?.isAnswered == true) {
-                            final alreadyAnsIndex = finalScondPost
-                                .quiz!.options!
-                                .indexWhere((element) =>
-                                    element.text ==
-                                    finalScondPost.quiz!.answer);
+                            final alreadyAnsIndex = finalScondPost.quiz!.options!.indexWhere(
+                                (element) => element.text == finalScondPost.quiz!.answer);
                             log("ans index is $alreadyAnsIndex");
-                            final alredaySelectedIndex = finalScondPost
-                                .quiz!.options!
-                                .indexWhere((element) =>
-                                    element.text ==
-                                    finalScondPost.quiz!.selectedOption);
+                            final alredaySelectedIndex = finalScondPost.quiz!.options!.indexWhere(
+                                (element) => element.text == finalScondPost.quiz!.selectedOption);
                             log("selected index is$alredaySelectedIndex");
                             if (mounted) {
-                              if (context.read<QuizProvider>().isAnswred ==
-                                  false) {
+                              if (context.read<QuizProvider>().isAnswred == false) {
                                 Future.microtask(() => context
                                     .read<QuizProvider>()
-                                    .checkAns(
-                                        alredaySelectedIndex, alreadyAnsIndex));
+                                    .checkAns(alredaySelectedIndex, alreadyAnsIndex));
                               }
                             }
                           }
                           return Consumer2<QuizProvider, HomeSecondProvider>(
                             builder: (context, quizProvider, _controller, _) {
                               return Container(
-                                margin: EdgeInsets.only(
-                                    bottom: 8, left: 4, right: 4, top: 0),
-                                height:
-                                    MediaQuery.of(context).size.height * 0.7,
+                                margin: EdgeInsets.only(bottom: 8, left: 4, right: 4, top: 0),
+                                height: MediaQuery.of(context).size.height * 0.7,
                                 width: MediaQuery.of(context).size.width,
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(16),
                                   image: DecorationImage(
                                       fit: BoxFit.fill,
                                       image: CachedNetworkImageProvider(
-                                          finalScondPost.quiz!.image
-                                              .toString())),
+                                          finalScondPost.quiz!.image.toString())),
                                 ),
                                 child: Stack(
                                   children: [
@@ -801,159 +749,134 @@ class _NewsTabState extends State<NewsTab> with AutomaticKeepAliveClientMixin {
                                       child: Container(
                                           decoration: BoxDecoration(
                                               color: Colors.grey.shade600,
-                                              borderRadius:
-                                                  BorderRadius.circular(20),
+                                              borderRadius: BorderRadius.circular(20),
                                               boxShadow: [
-                                                BoxShadow(
-                                                    color: Colors.black38,
-                                                    blurRadius: 0.8)
+                                                BoxShadow(color: Colors.black38, blurRadius: 0.8)
                                               ]),
                                           child: ShakeAnimatedWidget(
-                                            duration:
-                                                Duration(microseconds: 800),
-                                            shakeAngle:
-                                                Rotation.radians(z: 0.05),
+                                            duration: Duration(microseconds: 800),
+                                            shakeAngle: Rotation.radians(z: 0.05),
                                             enabled: quizProvider.shake,
-                                            child: Column(
-                                                mainAxisSize: MainAxisSize.min,
-                                                children: [
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                            8.0),
-                                                    child: Text(
-                                                        finalScondPost
-                                                            .quiz!.question
-                                                            .toString(),
-                                                        style: ThreeKmTextConstants
-                                                            .tk16PXPoppinsWhiteBold,
-                                                        textAlign:
-                                                            TextAlign.center),
-                                                  ),
-                                                  SizedBox(height: 20),
-                                                  Container(
-                                                    padding: EdgeInsets.only(
-                                                        top: 10),
-                                                    decoration: BoxDecoration(
-                                                        color: Colors.white),
-                                                    child: ListView.builder(
-                                                      shrinkWrap: true,
-                                                      physics:
-                                                          NeverScrollableScrollPhysics(),
-                                                      itemCount: finalScondPost
-                                                          .quiz!
-                                                          .options!
-                                                          .length,
-                                                      itemBuilder:
-                                                          (context, quizIndex) {
-                                                        return Padding(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                        .only(
-                                                                    left: 4,
-                                                                    right: 4),
-                                                            child:
-                                                                GestureDetector(
-                                                              onTap: () async {
-                                                                if (await getAuthStatus()) {
-                                                                  if (finalScondPost
-                                                                              .quiz
-                                                                              ?.isAnswered ==
-                                                                          false ||
-                                                                      finalScondPost
-                                                                              .quiz
-                                                                              ?.isAnswered ==
-                                                                          null) {
-                                                                    final ansIndex = finalScondPost
-                                                                        .quiz!
-                                                                        .options!
-                                                                        .indexWhere((element) =>
-                                                                            element.text ==
-                                                                            finalScondPost.quiz!.answer);
-                                                                    log("ans index is $ansIndex");
-                                                                    context
-                                                                        .read<
-                                                                            QuizProvider>()
-                                                                        .checkAns(
-                                                                            quizIndex,
-                                                                            ansIndex);
-                                                                    context.read<QuizProvider>().submitQuiz(
+                                            child:
+                                                Column(mainAxisSize: MainAxisSize.min, children: [
+                                              Padding(
+                                                padding: const EdgeInsets.all(8.0),
+                                                child: Text(
+                                                    finalScondPost.quiz!.question.toString(),
+                                                    style:
+                                                        ThreeKmTextConstants.tk16PXPoppinsWhiteBold,
+                                                    textAlign: TextAlign.center),
+                                              ),
+                                              SizedBox(height: 20),
+                                              Container(
+                                                padding: EdgeInsets.only(top: 10),
+                                                decoration: BoxDecoration(color: Colors.white),
+                                                child: ListView.builder(
+                                                  shrinkWrap: true,
+                                                  physics: NeverScrollableScrollPhysics(),
+                                                  itemCount: finalScondPost.quiz!.options!.length,
+                                                  itemBuilder: (context, quizIndex) {
+                                                    return Padding(
+                                                        padding: const EdgeInsets.only(
+                                                            left: 4, right: 4),
+                                                        child: GestureDetector(
+                                                          onTap: () async {
+                                                            if (await getAuthStatus()) {
+                                                              if (finalScondPost.quiz?.isAnswered ==
+                                                                      false ||
+                                                                  finalScondPost.quiz?.isAnswered ==
+                                                                      null) {
+                                                                final ansIndex = finalScondPost
+                                                                    .quiz!.options!
+                                                                    .indexWhere((element) =>
+                                                                        element.text ==
                                                                         finalScondPost
-                                                                            .quiz!
-                                                                            .quizId!
+                                                                            .quiz!.answer);
+                                                                log("ans index is $ansIndex");
+                                                                context
+                                                                    .read<QuizProvider>()
+                                                                    .checkAns(quizIndex, ansIndex);
+                                                                context
+                                                                    .read<QuizProvider>()
+                                                                    .submitQuiz(
+                                                                        finalScondPost
+                                                                            .quiz!.quizId!
                                                                             .toInt(),
                                                                         finalScondPost
                                                                             .quiz!
                                                                             .options![quizIndex]
                                                                             .text
                                                                             .toString());
-                                                                    _controller.submitQuiz(
-                                                                        quizId: finalScondPost
-                                                                            .quiz!
-                                                                            .quizId!
-                                                                            .toInt());
-                                                                  }
-                                                                } else {
-                                                                  NaviagateToLogin(
-                                                                      context);
-                                                                }
-                                                              },
-                                                              child: Container(
-                                                                  height: 50,
-                                                                  margin:
-                                                                      EdgeInsets
-                                                                          .all(
-                                                                              10),
-                                                                  decoration:
-                                                                      BoxDecoration(
-                                                                          borderRadius: BorderRadius.circular(
-                                                                              15),
-                                                                          color: Colors
-                                                                              .white,
-                                                                          boxShadow: [
-                                                                            BoxShadow(
-                                                                                color: Colors.black45,
-                                                                                blurRadius: 8.0)
-                                                                          ],
-                                                                          border: Border.all(
-                                                                              color: quizProvider.isAnswred
-                                                                                  ? quizIndex == quizProvider.answredIndex
-                                                                                      ? Colors.green
-                                                                                      : quizIndex == quizProvider.selectedIndex
-                                                                                          ? Colors.red
-                                                                                          : Colors.white
-                                                                                  : Colors.white,
-                                                                              width: 2)),
-                                                                  padding: EdgeInsets.only(left: 15),
-                                                                  child: Row(
-                                                                    mainAxisAlignment:
-                                                                        MainAxisAlignment
-                                                                            .spaceBetween,
-                                                                    children: [
-                                                                      Text(
-                                                                        finalScondPost
-                                                                            .quiz!
-                                                                            .options![quizIndex]
-                                                                            .text
-                                                                            .toString(),
-                                                                        style: ThreeKmTextConstants
-                                                                            .tk16PXLatoBlackRegular,
-                                                                      ),
-                                                                      if (quizProvider
-                                                                          .isAnswred)
-                                                                        quizIndex ==
-                                                                                quizProvider.answredIndex
-                                                                            ? IconConatiner(icon: Icons.check_circle, iconColor: Colors.green)
-                                                                            : quizIndex == quizProvider.selectedIndex
-                                                                                ? IconConatiner(icon: Icons.clear_rounded, iconColor: Colors.redAccent)
-                                                                                : SizedBox.shrink()
-                                                                    ],
-                                                                  )),
-                                                            ));
-                                                      },
-                                                    ),
-                                                  )
-                                                ]),
+                                                                _controller.submitQuiz(
+                                                                    quizId: finalScondPost
+                                                                        .quiz!.quizId!
+                                                                        .toInt());
+                                                              }
+                                                            } else {
+                                                              NaviagateToLogin(context);
+                                                            }
+                                                          },
+                                                          child: Container(
+                                                              height: 50,
+                                                              margin: EdgeInsets.all(10),
+                                                              decoration: BoxDecoration(
+                                                                  borderRadius:
+                                                                      BorderRadius.circular(15),
+                                                                  color: Colors.white,
+                                                                  boxShadow: [
+                                                                    BoxShadow(
+                                                                        color: Colors.black45,
+                                                                        blurRadius: 8.0)
+                                                                  ],
+                                                                  border: Border.all(
+                                                                      color: quizProvider.isAnswred
+                                                                          ? quizIndex ==
+                                                                                  quizProvider
+                                                                                      .answredIndex
+                                                                              ? Colors.green
+                                                                              : quizIndex ==
+                                                                                      quizProvider
+                                                                                          .selectedIndex
+                                                                                  ? Colors.red
+                                                                                  : Colors.white
+                                                                          : Colors.white,
+                                                                      width: 2)),
+                                                              padding: EdgeInsets.only(left: 15),
+                                                              child: Row(
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment.spaceBetween,
+                                                                children: [
+                                                                  Text(
+                                                                    finalScondPost.quiz!
+                                                                        .options![quizIndex].text
+                                                                        .toString(),
+                                                                    style: ThreeKmTextConstants
+                                                                        .tk16PXLatoBlackRegular,
+                                                                  ),
+                                                                  if (quizProvider.isAnswred)
+                                                                    quizIndex ==
+                                                                            quizProvider
+                                                                                .answredIndex
+                                                                        ? IconConatiner(
+                                                                            icon:
+                                                                                Icons.check_circle,
+                                                                            iconColor: Colors.green)
+                                                                        : quizIndex ==
+                                                                                quizProvider
+                                                                                    .selectedIndex
+                                                                            ? IconConatiner(
+                                                                                icon: Icons
+                                                                                    .clear_rounded,
+                                                                                iconColor: Colors
+                                                                                    .redAccent)
+                                                                            : SizedBox.shrink()
+                                                                ],
+                                                              )),
+                                                        ));
+                                                  },
+                                                ),
+                                              )
+                                            ]),
                                           )),
                                     ),
                                     quizProvider.showBlast
@@ -980,8 +903,7 @@ class _NewsTabState extends State<NewsTab> with AutomaticKeepAliveClientMixin {
                                 borderRadius: BorderRadius.circular(16),
                                 image: DecorationImage(
                                     fit: BoxFit.cover,
-                                    image: CachedNetworkImageProvider(
-                                        finalScondPost.quiz!.image!)),
+                                    image: CachedNetworkImageProvider(finalScondPost.quiz!.image!)),
                               ),
                               child: Column(
                                 mainAxisSize: MainAxisSize.min,
@@ -989,36 +911,22 @@ class _NewsTabState extends State<NewsTab> with AutomaticKeepAliveClientMixin {
                                   Spacer(),
                                   ClipRect(
                                     child: BackdropFilter(
-                                      filter: ImageFilter.blur(
-                                          sigmaX: 10.0, sigmaY: 10.0),
+                                      filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
                                       child: SimplePollsWidget(
                                         margin: EdgeInsets.all(10),
                                         decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                          color: Color(0xffFFFFFF)
-                                              .withOpacity(0.4),
+                                          borderRadius: BorderRadius.circular(10),
+                                          color: Color(0xffFFFFFF).withOpacity(0.4),
                                         ),
                                         onSelection: (PollFrameModel model,
-                                            PollOptions
-                                                selectedOptionModel) async {
+                                            PollOptions selectedOptionModel) async {
                                           if (await getAuthStatus()) {
-                                            context
-                                                .read<QuizProvider>()
-                                                .submitPollAnswer(
-                                                    answer: selectedOptionModel
-                                                        .label,
-                                                    quizId: finalScondPost
-                                                        .quiz!.id!
-                                                        .toInt());
-                                            context
-                                                .read<HomeSecondProvider>()
-                                                .pollSubmitted(
-                                                    pollId: finalScondPost
-                                                        .quiz!.id!
-                                                        .toInt(),
-                                                    answer: selectedOptionModel
-                                                        .label);
+                                            context.read<QuizProvider>().submitPollAnswer(
+                                                answer: selectedOptionModel.label,
+                                                quizId: finalScondPost.quiz!.id!.toInt());
+                                            context.read<HomeSecondProvider>().pollSubmitted(
+                                                pollId: finalScondPost.quiz!.id!.toInt(),
+                                                answer: selectedOptionModel.label);
                                           } else {
                                             NaviagateToLogin(context);
                                           }
@@ -1028,34 +936,25 @@ class _NewsTabState extends State<NewsTab> with AutomaticKeepAliveClientMixin {
                                         model: PollFrameModel(
                                             title: Container(
                                               alignment: Alignment.center,
-                                              child: Text(
-                                                  finalScondPost.quiz!.question
-                                                      .toString(),
-                                                  style: ThreeKmTextConstants
-                                                      .tk14PXPoppinsBlackBold),
+                                              child: Text(finalScondPost.quiz!.question.toString(),
+                                                  style:
+                                                      ThreeKmTextConstants.tk14PXPoppinsBlackBold),
                                             ),
                                             totalPolls: 100,
-                                            endTime: DateTime.now()
-                                                .toUtc()
-                                                .add(Duration(days: 10)),
-                                            hasVoted: finalScondPost
-                                                .quiz!.isAnswered!,
+                                            endTime: DateTime.now().toUtc().add(Duration(days: 10)),
+                                            hasVoted: finalScondPost.quiz!.isAnswered!,
                                             editablePoll: false,
-                                            options: finalScondPost
-                                                .quiz!.options!
-                                                .map((option) {
+                                            options: finalScondPost.quiz!.options!.map((option) {
                                               print(option.dPercent.toString());
                                               print(option.percent);
                                               print(option.count);
                                               return PollOptions(
-                                                  netWorkPersentage:
-                                                      option.percent,
+                                                  netWorkPersentage: option.percent,
                                                   label: option.text.toString(),
-                                                  pollsCount: option.percent !=
-                                                              0 &&
-                                                          option.percent != null
-                                                      ? option.percent!.toInt()
-                                                      : 0,
+                                                  pollsCount:
+                                                      option.percent != 0 && option.percent != null
+                                                          ? option.percent!.toInt()
+                                                          : 0,
                                                   id: UniqueKey());
                                             }).toList()),
                                       ),
@@ -1147,10 +1046,7 @@ class _NewsTabState extends State<NewsTab> with AutomaticKeepAliveClientMixin {
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(5),
                               gradient: LinearGradient(
-                                  colors: <Color>[
-                                    Color(0xff645AFF),
-                                    Color(0xffA573FF)
-                                  ],
+                                  colors: <Color>[Color(0xff645AFF), Color(0xffA573FF)],
                                   begin: FractionalOffset(0.0, 0.0),
                                   end: FractionalOffset(1.0, 1.0),
                                   stops: <double>[0.0, 1.0],
@@ -1165,12 +1061,10 @@ class _NewsTabState extends State<NewsTab> with AutomaticKeepAliveClientMixin {
                                 children: [
                                   Text(
                                     "Highlight",
-                                    style: ThreeKmTextConstants
-                                        .tk16PXPoppinsWhiteBold,
+                                    style: ThreeKmTextConstants.tk16PXPoppinsWhiteBold,
                                   ),
                                   SizedBox(height: 50),
-                                  HeighlightPost(
-                                      business: finalScondPost.business!)
+                                  HeighlightPost(business: finalScondPost.business!)
                                 ]),
                           );
                         }
@@ -1664,8 +1558,7 @@ class _NewsTabState extends State<NewsTab> with AutomaticKeepAliveClientMixin {
 class IconConatiner extends StatelessWidget {
   final IconData icon;
   final Color iconColor;
-  IconConatiner({Key? key, required this.icon, required this.iconColor})
-      : super(key: key);
+  IconConatiner({Key? key, required this.icon, required this.iconColor}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -1705,8 +1598,7 @@ class NewsContainer extends StatelessWidget {
                     decoration: BoxDecoration(
                         image: DecorationImage(
                             image: this.finalPost.category?.icon != null
-                                ? NetworkImage(
-                                    this.finalPost.category!.icon.toString())
+                                ? NetworkImage(this.finalPost.category!.icon.toString())
                                 : NetworkImage(
                                     "https://png.pngitem.com/pimgs/s/378-3788573_white-circle-fade-transparent-png-download-white-fade.png"))),
                   ),
@@ -1724,8 +1616,8 @@ class NewsContainer extends StatelessWidget {
                   child: IconButton(
                       padding: EdgeInsets.zero,
                       onPressed: () {
-                        Navigator.of(context).push(NewsListRoute(
-                            title: finalPost.category!.name.toString()));
+                        Navigator.of(context)
+                            .push(NewsListRoute(title: finalPost.category!.name.toString()));
                       },
                       icon: Icon(
                         Icons.arrow_forward,
@@ -1752,13 +1644,9 @@ class NewsContainer extends StatelessWidget {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => Postview(
-                                        image: contentPost[postIndex]
-                                            .image
-                                            .toString(),
-                                        postId: contentPost[postIndex]
-                                            .postId
-                                            .toString())));
+                                    builder: (context) => PostView(
+                                        image: contentPost[postIndex].image.toString(),
+                                        postId: contentPost[postIndex].postId.toString())));
                           },
                           child: Padding(
                             padding: EdgeInsets.only(left: 13),
@@ -1769,9 +1657,7 @@ class NewsContainer extends StatelessWidget {
                                     borderRadius: BorderRadius.circular(10),
                                     color: Colors.white,
                                     boxShadow: [
-                                      BoxShadow(
-                                          color: Colors.grey.shade300,
-                                          blurRadius: 8)
+                                      BoxShadow(color: Colors.grey.shade300, blurRadius: 8)
                                     ]),
                                 child: Column(
                                     //mainAxisSize: MainAxisSize.min,
@@ -1790,43 +1676,29 @@ class NewsContainer extends StatelessWidget {
                                               ],
                                               borderRadius: BorderRadius.only(
                                                   topLeft: Radius.circular(10),
-                                                  topRight:
-                                                      Radius.circular(10)),
+                                                  topRight: Radius.circular(10)),
                                               image: DecorationImage(
                                                   fit: BoxFit.fill,
-                                                  image:
-                                                      CachedNetworkImageProvider(
-                                                          contentPost![
-                                                                  postIndex]
-                                                              .image
-                                                              .toString()))),
+                                                  image: CachedNetworkImageProvider(
+                                                      contentPost![postIndex].image.toString()))),
                                           child: Stack(
                                             children: [
-                                              contentPost[postIndex]
-                                                          .postCreatedDate !=
-                                                      ""
+                                              contentPost[postIndex].postCreatedDate != ""
                                                   ? Positioned(
                                                       bottom: 0,
                                                       child: Container(
                                                           height: 21,
                                                           width: 75,
                                                           decoration: BoxDecoration(
-                                                              color: Color(
-                                                                  0xff0F0F2D),
+                                                              color: Color(0xff0F0F2D),
                                                               borderRadius: BorderRadius.only(
-                                                                  topRight: Radius
-                                                                      .circular(
-                                                                          10),
-                                                                  bottomRight: Radius
-                                                                      .circular(
-                                                                          10))),
+                                                                  topRight: Radius.circular(10),
+                                                                  bottomRight:
+                                                                      Radius.circular(10))),
                                                           child: Padding(
-                                                            padding:
-                                                                EdgeInsets.only(
-                                                                    left: 4),
+                                                            padding: EdgeInsets.only(left: 4),
                                                             child: Text(
-                                                              contentPost[
-                                                                      postIndex]
+                                                              contentPost[postIndex]
                                                                   .postCreatedDate
                                                                   .toString(),
                                                               style: ThreeKmTextConstants
@@ -1835,10 +1707,7 @@ class NewsContainer extends StatelessWidget {
                                                           )),
                                                     )
                                                   : SizedBox(),
-                                              contentPost[postIndex]
-                                                          .video
-                                                          .toString() !=
-                                                      ""
+                                              contentPost[postIndex].video.toString() != ""
                                                   ? Center(
                                                       child: Container(
                                                         child: SvgPicture.asset(
@@ -1855,31 +1724,21 @@ class NewsContainer extends StatelessWidget {
                                       Container(
                                         height: 40,
                                         width: 150,
-                                        padding:
-                                            EdgeInsets.only(left: 8, right: 8),
-                                        child: Text(
-                                            contentPost[postIndex]
-                                                .headline
-                                                .toString(),
+                                        padding: EdgeInsets.only(left: 8, right: 8),
+                                        child: Text(contentPost[postIndex].headline.toString(),
                                             overflow: TextOverflow.ellipsis,
                                             maxLines: 2,
-                                            style: ThreeKmTextConstants
-                                                .tk12PXPoppinsBlackSemiBold),
+                                            style: ThreeKmTextConstants.tk12PXPoppinsBlackSemiBold),
                                       ),
                                       Container(
                                         height: 18,
                                         width: 150,
-                                        padding:
-                                            EdgeInsets.only(left: 8, right: 8),
+                                        padding: EdgeInsets.only(left: 8, right: 8),
                                         child: Text(
-                                          contentPost[postIndex]
-                                              .author!
-                                              .name
-                                              .toString(),
+                                          contentPost[postIndex].author!.name.toString(),
                                           overflow: TextOverflow.ellipsis,
                                           maxLines: 1,
-                                          style: TextStyle(
-                                              color: Colors.grey, fontSize: 12),
+                                          style: TextStyle(color: Colors.grey, fontSize: 12),
                                         ),
                                       )
                                     ])),
@@ -1897,15 +1756,13 @@ class NewsContainer extends StatelessWidget {
 class NewsListRoute extends CupertinoPageRoute {
   final String title;
   NewsListRoute({required this.title})
-      : super(
-            builder: (BuildContext context) => new NewsListPage(title: title));
+      : super(builder: (BuildContext context) => new NewsListPage(title: title));
 
   // OPTIONAL IF YOU WISH TO HAVE SOME EXTRA ANIMATION WHILE ROUTING
   @override
-  Widget buildPage(BuildContext context, Animation<double> animation,
-      Animation<double> secondaryAnimation) {
-    return new FadeTransition(
-        opacity: animation, child: NewsListPage(title: title));
+  Widget buildPage(
+      BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation) {
+    return new FadeTransition(opacity: animation, child: NewsListPage(title: title));
   }
 }
 

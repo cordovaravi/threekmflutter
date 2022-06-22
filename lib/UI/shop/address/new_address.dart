@@ -50,14 +50,30 @@ class _NewAddressState extends State<NewAddress> {
 
   setData() {
     setState(() {
+      if (widget.locationResult?.formattedAddress
+              ?.contains(widget.locationResult?.name ?? "^") ??
+          false) {
+        _selecetedAddress = "${widget.locationResult?.formattedAddress}";
+      } else {
+        _selecetedAddress =
+            "${widget.locationResult?.name},  ${widget.locationResult?.formattedAddress}";
+      }
+
+      var raw = _selecetedAddress?.split(",");
+      raw?.removeWhere((element) => element.contains("+"));
       _selecetedAddress =
-          "${widget.locationResult?.name}  ${widget.locationResult?.formattedAddress}";
+          raw.toString().replaceAll("[", "").replaceAll("]", "");
+
+      log("selected address from map is $_selecetedAddress");
+
       searchedText.text = widget.locationResult?.formattedAddress ?? '';
       //geometry = widget.locationResult?.geometry?.location;
       postalCode = widget.locationResult?.postalCode.toString();
-      city = widget.locationResult?.city.toString();
-      state =
-          widget.locationResult?.subLocalityLevel1.toString() ?? "Maharatra";
+      city = widget.locationResult?.city?.name.toString();
+      geometry = Location(
+          lat: widget.locationResult?.latLng?.latitude ?? 0,
+          lng: widget.locationResult?.latLng?.longitude ?? 0);
+      state = "Maharatra";
       // for (var i = 0;
       //     i < widget.locationResult!.addressComponents!.length;
       //     i++) {
@@ -137,12 +153,19 @@ class _NewAddressState extends State<NewAddress> {
                                     ),
                                   ));
 
-                              _selecetedAddress =
-                                  "${result?.name} ${result?.formattedAddress}";
+                              _selecetedAddress = "${result?.formattedAddress}";
+                              var raw = _selecetedAddress?.split(",");
+                              raw?.removeWhere(
+                                  (element) => element.contains("+"));
+                              _selecetedAddress = raw
+                                  .toString()
+                                  .replaceAll("[", "")
+                                  .replaceAll("]", "");
+
+                              log("selected address from map is $_selecetedAddress");
                               postalCode = result?.postalCode.toString();
-                              city = result?.city.toString();
-                              state = result?.subLocalityLevel1.toString() ??
-                                  "Maharatra";
+                              city = result?.city?.name.toString();
+                              state = "Maharatra";
                               setState(() {});
                             }
                           });
@@ -300,8 +323,7 @@ class _NewAddressState extends State<NewAddress> {
                     },
                     autofocus: false,
                     decoration: InputDecoration(
-                      hintText:
-                          'Flat No./House/Society/Building/Street Name No.',
+                      hintText: 'Flat No., Society, Building name',
                       hintStyle: ThreeKmTextConstants.tk16PXPoppinsBlackMedium
                           .copyWith(color: Color(0xFF979EA4)),
                       counterText: '',
@@ -593,7 +615,7 @@ class _NewAddressState extends State<NewAddress> {
                             "longitude": geometry?.lng,
                             "phone_no": phoneNumberText.text,
                             "pincode": postalCode, //postal_code
-                            "state": state, //administrative_area_level_1
+                            "state": "Maharastra", //administrative_area_level_1
                           };
 
                           if (_selecetedAddress != null) {

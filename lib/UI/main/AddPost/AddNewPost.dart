@@ -8,7 +8,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_webservice/directions.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:threekm/Custom_library/GooleMapsWidget/src/place_picker.dart';
+import 'package:threekm/Custom_library/location2.0/lib/place_picker.dart';
 import 'package:threekm/UI/main/AddPost/ImageEdit/editImage.dart';
 import 'package:threekm/UI/main/AddPost/utils/FileUtils.dart';
 import 'package:threekm/UI/main/AddPost/utils/uploadPost.dart';
@@ -318,7 +318,7 @@ class _AddNewPostState extends State<AddNewPost> {
                               context
                                   .read<LocationProvider>()
                                   .getLocation()
-                                  .whenComplete(() {
+                                  .whenComplete(() async {
                                 final _locationProvider = context
                                     .read<LocationProvider>()
                                     .getlocationData;
@@ -326,29 +326,33 @@ class _AddNewPostState extends State<AddNewPost> {
                                     _locationProvider!.latitude!,
                                     _locationProvider.longitude!);
                                 if (_locationProvider != null) {
-                                  Navigator.push(
+                                  LocationResult? result = await Navigator.push(
                                       context,
                                       MaterialPageRoute(
                                         builder: (context) => PlacePicker(
-                                          apiKey: GMap_Api_Key,
+                                          GMap_Api_Key,
+                                          displayLocation: kInitialPosition,
                                           // initialMapType: MapType.satellite,
-                                          onPlacePicked: (result) {
-                                            //print(result.formattedAddress);
-                                            setState(() {
-                                              _selecetdAddress =
-                                                  result.formattedAddress;
-                                              print(result.geometry!.toJson());
-                                              _geometry = result.geometry;
-                                            });
-                                            Navigator.of(context).pop();
-                                          },
-                                          initialPosition: kInitialPosition,
-                                          useCurrentLocation: true,
-                                          selectInitialPosition: true,
-                                          usePinPointingSearch: true,
-                                          usePlaceDetailSearch: true,
+                                          // onPlacePicked: (result) {
+                                          //   //print(result.formattedAddress);
+                                          //   setState(() {
+                                          //     _selecetdAddress =
+                                          //         result.formattedAddress;
+                                          //     print(result.geometry!.toJson());
+                                          //     _geometry = result.geometry;
+                                          //   });
+                                          //   Navigator.of(context).pop();
+                                          // },
+                                          // initialPosition: kInitialPosition,
+                                          // useCurrentLocation: true,
+                                          // selectInitialPosition: true,
+                                          // usePinPointingSearch: true,
+                                          // usePlaceDetailSearch: true,
                                         ),
                                       ));
+                                  setState(() {
+                                    _selecetdAddress = result?.formattedAddress;
+                                  });
                                 }
                               });
                             });

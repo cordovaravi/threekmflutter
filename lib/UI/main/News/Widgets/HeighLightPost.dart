@@ -65,9 +65,8 @@ class _HeighlightPostState extends State<HeighlightPost> {
                                   shape: BoxShape.circle,
                                   image: DecorationImage(
                                       fit: BoxFit.cover,
-                                      image: CachedNetworkImageProvider(widget
-                                          .business.author!.image
-                                          .toString()))),
+                                      image: CachedNetworkImageProvider(
+                                          widget.business.author!.image.toString()))),
                               child: widget.business.isVerified == true
                                   ? Stack(
                                       children: [
@@ -92,8 +91,7 @@ class _HeighlightPostState extends State<HeighlightPost> {
                             width: MediaQuery.of(context).size.width * 0.35,
                             child: Text(
                               widget.business.author!.name.toString(),
-                              style:
-                                  ThreeKmTextConstants.tk14PXPoppinsBlackBold,
+                              style: ThreeKmTextConstants.tk14PXPoppinsBlackBold,
                               overflow: TextOverflow.ellipsis,
                             ),
                           ),
@@ -112,30 +110,28 @@ class _HeighlightPostState extends State<HeighlightPost> {
                   width: 254,
                   decoration: BoxDecoration(
                       image: DecorationImage(
-                          image: CachedNetworkImageProvider(widget
-                              .business.videos!.first.thumbnail
-                              .toString()))),
+                          image: CachedNetworkImageProvider(
+                              widget.business.videos!.first.thumbnail.toString()))),
                 ),
 
                 Row(children: [
-                if(widget.business.likes != 0)  Padding(
-                      padding: EdgeInsets.only(top: 5, left: 5, bottom: 2),
-                      child: InkWell(
-                        onTap: () {
-                          // _showLikedBottomModalSheet(
-                          //     newsData.postId!.toInt(), newsData.likes);
-                        },
-                        child: Row(
-                          children: [
-                            Text('👍 ❤️ '),
-                            Container(
-                              child: Center(
-                                  child: Text(
-                                      '+' + widget.business.likes.toString())),
-                            )
-                          ],
-                        ),
-                      )),
+                  if (widget.business.likes != 0)
+                    Padding(
+                        padding: EdgeInsets.only(top: 5, left: 5, bottom: 2),
+                        child: InkWell(
+                          onTap: () {
+                            // _showLikedBottomModalSheet(
+                            //     newsData.postId!.toInt(), newsData.likes);
+                          },
+                          child: Row(
+                            children: [
+                              Text('👍 ❤️ '),
+                              Container(
+                                child: Center(child: Text('+' + widget.business.likes.toString())),
+                              )
+                            ],
+                          ),
+                        )),
                   Spacer(),
                   Padding(
                       padding: EdgeInsets.only(top: 5, right: 5, bottom: 2),
@@ -151,15 +147,12 @@ class _HeighlightPostState extends State<HeighlightPost> {
                       Navigator.push(
                           context,
                           AnimatedSizeRoute(
-                              page: Postview(
-                                  postId: widget.business.postId.toString())));
+                              page: PostView(postId: widget.business.postId.toString())));
                     },
                     child: Text(
                       "Read More",
-                      style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.blue),
+                      style:
+                          TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.blue),
                     )),
                 SizedBox(
                   height: 35,

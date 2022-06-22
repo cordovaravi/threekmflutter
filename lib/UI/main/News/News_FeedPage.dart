@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:cached_network_image/cached_network_image.dart';
 
 import 'package:flutter/cupertino.dart';
@@ -7,13 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:lazy_load_scrollview/lazy_load_scrollview.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/src/provider.dart';
 import 'package:screenshot/screenshot.dart';
-import 'package:share_plus/share_plus.dart';
 
-import 'package:threekm/commenwidgets/CustomSnakBar.dart';
 import 'package:threekm/commenwidgets/commenwidget.dart';
 
 import 'package:threekm/providers/localization_Provider/appLanguage_provider.dart';
@@ -35,8 +30,7 @@ class FeedPage extends StatefulWidget {
   _FeedPageState createState() => _FeedPageState();
 }
 
-class _FeedPageState extends State<FeedPage>
-    with AutomaticKeepAliveClientMixin {
+class _FeedPageState extends State<FeedPage> with AutomaticKeepAliveClientMixin {
   int postCount = 10;
   final _formKey = GlobalKey<FormState>();
   TextEditingController _commentController = TextEditingController();
@@ -65,8 +59,7 @@ class _FeedPageState extends State<FeedPage>
         ? RefreshIndicator(
             onRefresh: () {
               return context.read<NewsFeedProvider>().getBottomFeed(
-                    languageCode: context.read<AppLanguage>().appLocal ==
-                            Locale("mr")
+                    languageCode: context.read<AppLanguage>().appLocal == Locale("mr")
                         ? "mr"
                         : context.read<AppLanguage>().appLocal == Locale("en")
                             ? "en"
@@ -83,8 +76,7 @@ class _FeedPageState extends State<FeedPage>
             child: RefreshIndicator(
               onRefresh: () {
                 return context.read<NewsFeedProvider>().getBottomFeed(
-                      languageCode: context.read<AppLanguage>().appLocal ==
-                              Locale("mr")
+                      languageCode: context.read<AppLanguage>().appLocal == Locale("mr")
                           ? "mr"
                           : context.read<AppLanguage>().appLocal == Locale("en")
                               ? "en"
@@ -94,12 +86,8 @@ class _FeedPageState extends State<FeedPage>
               child: SingleChildScrollView(
                 child: Column(
                   children: [
-                    if (newsFeedProvider.newsFeedBottomModel?.data?.result
-                                ?.posts?.length !=
-                            0 &&
-                        newsFeedProvider
-                                .newsFeedBottomModel?.data?.result?.posts !=
-                            null) ...{
+                    if (newsFeedProvider.newsFeedBottomModel?.data?.result?.posts?.length != 0 &&
+                        newsFeedProvider.newsFeedBottomModel?.data?.result?.posts != null) ...{
                       ListView.builder(
                         cacheExtent: 999,
                         primary: true,
@@ -109,8 +97,8 @@ class _FeedPageState extends State<FeedPage>
                         //    .newsFeedBottomModel!.data!.result!.posts!.length,
                         itemCount: postCount,
                         itemBuilder: (context, index) {
-                          final newsData = newsFeedProvider
-                              .newsFeedBottomModel!.data!.result!.posts![index];
+                          final newsData =
+                              newsFeedProvider.newsFeedBottomModel!.data!.result!.posts![index];
                           return newsData != null
                               ? CardUI(
                                   providerType: 'NewsListProvider',
@@ -703,22 +691,17 @@ class _FeedPageState extends State<FeedPage>
                       Row(
                         children: [
                           Container(
-                              height: 20,
-                              width: 20,
-                              child: Image.asset('assets/icons-topic.png')),
+                              height: 20, width: 20, child: Image.asset('assets/icons-topic.png')),
                           Padding(padding: EdgeInsets.only(left: 10)),
-                          Consumer<CommentProvider>(
-                              builder: (context, commentProvider, _) {
-                            return commentProvider.commentList?.length != null
+                          Consumer<CommentProvider>(builder: (context, commentProvider, _) {
+                            return commentProvider.commentList.length != null
                                 ? Text(
-                                    "${commentProvider.commentList!.length}\tComments",
-                                    style: ThreeKmTextConstants
-                                        .tk14PXPoppinsBlackSemiBold,
+                                    "${commentProvider.commentList.length}\tComments",
+                                    style: ThreeKmTextConstants.tk14PXPoppinsBlackSemiBold,
                                   )
                                 : Text(
                                     "Comments",
-                                    style: ThreeKmTextConstants
-                                        .tk14PXPoppinsBlackSemiBold,
+                                    style: ThreeKmTextConstants.tk14PXPoppinsBlackSemiBold,
                                   );
                           })
                         ],
@@ -726,10 +709,8 @@ class _FeedPageState extends State<FeedPage>
                       SizedBox(
                         height: 10,
                       ),
-                      Consumer<CommentProvider>(
-                          builder: (context, commentProvider, _) {
-                        return context.read<CommentProvider>().commentList !=
-                                null
+                      Consumer<CommentProvider>(builder: (context, commentProvider, _) {
+                        return context.read<CommentProvider>().commentList != null
                             ? Expanded(
                                 child: commentProvider.isGettingComments == true
                                     ? CommentsLoadingEffects()
@@ -737,8 +718,7 @@ class _FeedPageState extends State<FeedPage>
                                         physics: BouncingScrollPhysics(),
                                         shrinkWrap: true,
                                         primary: true,
-                                        itemCount:
-                                            commentProvider.commentList!.length,
+                                        itemCount: commentProvider.commentList.length,
                                         itemBuilder: (context, commentIndex) {
                                           return Container(
                                             margin: EdgeInsets.all(1),
@@ -747,19 +727,15 @@ class _FeedPageState extends State<FeedPage>
                                             ),
                                             child: ListTile(
                                               trailing: commentProvider
-                                                          .commentList![
-                                                              commentIndex]
-                                                          .isself ==
+                                                          .commentList[commentIndex].isself ==
                                                       true
                                                   ? IconButton(
                                                       onPressed: () {
                                                         context
-                                                            .read<
-                                                                CommentProvider>()
+                                                            .read<CommentProvider>()
                                                             .removeComment(
                                                                 commentProvider
-                                                                    .commentList![
-                                                                        commentIndex]
+                                                                    .commentList[commentIndex]
                                                                     .commentId!,
                                                                 postId);
                                                       },
@@ -772,31 +748,24 @@ class _FeedPageState extends State<FeedPage>
                                                     image: DecorationImage(
                                                         image: CachedNetworkImageProvider(
                                                             commentProvider
-                                                                .commentList![
-                                                                    commentIndex]
-                                                                .avatar
+                                                                .commentList[commentIndex].avatar
                                                                 .toString()))),
                                               ),
                                               title: Text(
-                                                commentProvider
-                                                    .commentList![commentIndex]
-                                                    .username
+                                                commentProvider.commentList[commentIndex].username
                                                     .toString(),
-                                                style: ThreeKmTextConstants
-                                                    .tk14PXPoppinsBlackSemiBold,
+                                                style:
+                                                    ThreeKmTextConstants.tk14PXPoppinsBlackSemiBold,
                                               ),
                                               subtitle: Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
                                                   children: [
                                                     SizedBox(
                                                       height: 4,
                                                     ),
                                                     Text(
                                                       commentProvider
-                                                          .commentList![
-                                                              commentIndex]
-                                                          .comment
+                                                          .commentList[commentIndex].comment
                                                           .toString(),
                                                       style: ThreeKmTextConstants
                                                           .tk14PXLatoBlackMedium,
@@ -806,13 +775,10 @@ class _FeedPageState extends State<FeedPage>
                                                     ),
                                                     Text(
                                                         commentProvider
-                                                            .commentList![
-                                                                commentIndex]
-                                                            .timeLapsed
+                                                            .commentList[commentIndex].timeLapsed
                                                             .toString(),
-                                                        style: TextStyle(
-                                                            fontStyle: FontStyle
-                                                                .italic))
+                                                        style:
+                                                            TextStyle(fontStyle: FontStyle.italic))
                                                   ]),
                                             ),
                                           );
@@ -827,11 +793,9 @@ class _FeedPageState extends State<FeedPage>
                           height: 50,
                           width: 338,
                           decoration: BoxDecoration(
-                              color: Colors.grey.shade200,
-                              borderRadius: BorderRadius.circular(20)),
+                              color: Colors.grey.shade200, borderRadius: BorderRadius.circular(20)),
                           child: TextFormField(
-                            autovalidateMode:
-                                AutovalidateMode.onUserInteraction,
+                            autovalidateMode: AutovalidateMode.onUserInteraction,
                             validator: (String? value) {
                               if (value == null) {
                                 return "  Comment cant be blank";
@@ -842,8 +806,7 @@ class _FeedPageState extends State<FeedPage>
                             controller: _commentController,
                             maxLines: null,
                             keyboardType: TextInputType.multiline,
-                            decoration:
-                                InputDecoration(border: InputBorder.none),
+                            decoration: InputDecoration(border: InputBorder.none),
                           ),
                         ),
                       ),
@@ -855,12 +818,10 @@ class _FeedPageState extends State<FeedPage>
                         child: InkWell(
                           onTap: () {
                             if (_formKey.currentState!.validate() &&
-                                context.read<CommentProvider>().isLoading ==
-                                    false) {
+                                context.read<CommentProvider>().isLoading == false) {
                               context
                                   .read<CommentProvider>()
-                                  .postCommentApi(
-                                      postId, _commentController.text)
+                                  .postCommentApi(postId, _commentController.text)
                                   .then((value) => _commentController.clear());
                             }
                           },
@@ -876,8 +837,7 @@ class _FeedPageState extends State<FeedPage>
                                 return _controller.isLoading == false
                                     ? Text(
                                         "Submit",
-                                        style: ThreeKmTextConstants
-                                            .tk14PXPoppinsWhiteMedium,
+                                        style: ThreeKmTextConstants.tk14PXPoppinsWhiteMedium,
                                       )
                                     : CupertinoActivityIndicator();
                               },
@@ -896,6 +856,7 @@ class _FeedPageState extends State<FeedPage>
     );
   }
 
+  @Deprecated('Replaced by LikeList() screen')
   _showLikedBottomModalSheet(int postId, totalLikes) {
     context.read<LikeListProvider>().showLikes(context, postId);
     showModalBottomSheet<void>(
@@ -919,10 +880,8 @@ class _FeedPageState extends State<FeedPage>
                             Row(
                               children: [
                                 Padding(
-                                  padding: EdgeInsets.only(
-                                      top: 24, left: 18, bottom: 34),
-                                  child: Text(
-                                      "$totalLikes People reacted to this"),
+                                  padding: EdgeInsets.only(top: 24, left: 18, bottom: 34),
+                                  child: Text("$totalLikes People reacted to this"),
                                 ),
                               ],
                             ),
@@ -931,8 +890,7 @@ class _FeedPageState extends State<FeedPage>
                               width: double.infinity,
                               child: ListView.builder(
                                 scrollDirection: Axis.horizontal,
-                                itemCount: _likeProvider
-                                    .likeList!.data!.result!.users!.length,
+                                itemCount: _likeProvider.likeList!.data!.result!.users!.length,
                                 shrinkWrap: true,
                                 itemBuilder: (context, index) {
                                   return Container(
@@ -946,11 +904,7 @@ class _FeedPageState extends State<FeedPage>
                                           image: DecorationImage(
                                               fit: BoxFit.cover,
                                               image: NetworkImage(_likeProvider
-                                                  .likeList!
-                                                  .data!
-                                                  .result!
-                                                  .users![index]
-                                                  .avatar
+                                                  .likeList!.data!.result!.users![index].avatar
                                                   .toString()))),
                                       child: Stack(
                                         children: [
@@ -962,21 +916,15 @@ class _FeedPageState extends State<FeedPage>
                                                 width: 15,
                                                 fit: BoxFit.cover,
                                               )),
-                                          _likeProvider
-                                                      .likeList!
-                                                      .data!
-                                                      .result!
-                                                      .users![index]
+                                          _likeProvider.likeList!.data!.result!.users![index]
                                                       .isUnknown !=
                                                   null
                                               ? Center(
                                                   child: Text(
                                                       "+${_likeProvider.likeList!.data!.result!.anonymousCount}",
                                                       style: TextStyle(
-                                                          fontSize: 17,
-                                                          color: Colors.white),
-                                                      textAlign:
-                                                          TextAlign.center),
+                                                          fontSize: 17, color: Colors.white),
+                                                      textAlign: TextAlign.center),
                                                 )
                                               : SizedBox.shrink()
                                         ],
