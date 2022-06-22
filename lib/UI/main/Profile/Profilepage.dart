@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/cupertino.dart';
@@ -1534,7 +1533,7 @@ class GenderPopUp extends StatelessWidget {
         onTap: () => controller.changeGender(title),
         child: Row(
           children: [
-            if (asset.substring(asset.lastIndexOf(".") + 1) == "png") ...{
+            if (asset.contains(".png")) ...{
               Image.asset(
                 asset,
                 width: 48,

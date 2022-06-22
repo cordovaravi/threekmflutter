@@ -16,6 +16,7 @@ import 'package:share_plus/share_plus.dart';
 import 'package:threekm/Custom_library/src/reaction.dart';
 import 'package:threekm/Models/SelfProfile_Model.dart';
 import 'package:threekm/UI/Animation/AnimatedSizeRoute.dart';
+import 'package:threekm/UI/DayZero/DayZeroforTabs.dart';
 import 'package:threekm/UI/Help_Supportpage.dart';
 import 'package:threekm/UI/Search/SearchPage.dart';
 import 'package:threekm/UI/main/AddPost/AddNewPost.dart';
@@ -470,12 +471,12 @@ class _MyProfilePostState extends State<MyProfilePost>
                 //   ),
                 //   pinned: true,
                 // ),
-                SliverToBoxAdapter(
-                  child: Container(
-                    height: 36,
-                  ),
-                ),
-                if (index == 0) ...{
+                // SliverToBoxAdapter(
+                //   child: Container(
+                //     height: 36,
+                //   ),
+                // ),
+                if (selfProfileModel.data?.result?.posts?.length != 0) ...{
                   SliverList(
                     delegate: SliverChildBuilderDelegate(
                       (context, _index) {
@@ -487,7 +488,7 @@ class _MyProfilePostState extends State<MyProfilePost>
                   ),
                 } else ...{
                   Center(
-                    child: Text("Saved posts"),
+                    child: DayZeroforTabs(ScreenName: "post"),
                   )
                 }
                 // else ...{
@@ -521,70 +522,6 @@ class _MyProfilePostState extends State<MyProfilePost>
                 // }
               ],
             ),
-
-            // NestedScrollView(
-            //   controller: controller,
-            //   body: index == 0
-            //       ? GetBuilder<AuthorProfileController>(
-            //           builder: (_controller) => ListView.builder(
-            //             itemBuilder: (context, _index) {
-            //               return Container(
-            //                 height: 580,
-            //                 padding: EdgeInsets.symmetric(horizontal: 18),
-            //                 child: NewsCardDetail(
-            //                   _controller.posts[_index],
-            //                   index: _index,
-            //                 ),
-            //               );
-            //             },
-            //             itemCount: _controller.posts.length,
-            //           ),
-            //         )
-            //       : Container(
-            //           width: MediaQuery.of(context).size.width,
-            //           child: GetBuilder<AuthorProfileController>(
-            //             builder: (_controller) => GridView.builder(
-            //               gridDelegate:
-            //                   SliverGridDelegateWithFixedCrossAxisCount(
-            //                 crossAxisCount: 3,
-            //                 mainAxisSpacing: 8,
-            //                 crossAxisSpacing: 8,
-            //               ),
-            //               itemBuilder: (context, index) {
-            //                 return Container(
-            //                   decoration: BoxDecoration(
-            //                       borderRadius: BorderRadius.circular(10),
-            //                       color: ThreeKmTextConstants.lightBlue,
-            //                       image: DecorationImage(
-            //                           fit: BoxFit.fill,
-            //                           image: CachedNetworkImageProvider(
-            //                             _controller.posts
-            //                                 .where((e) => e.images!.length > 0)
-            //                                 .toList()[index]
-            //                                 .images!
-            //                                 .first,
-            //                           ))),
-            //                 );
-            //               },
-            //               itemCount: _controller.posts
-            //                   .where((e) => e.images!.length > 0)
-            //                   .toList()
-            //                   .length,
-            //               padding: EdgeInsets.only(
-            //                   top: 24, bottom: 32, left: 18, right: 18),
-            //               shrinkWrap: true,
-            //             ),
-            //           ),
-            //         ),
-            // ),
-            // Center(
-            //   child: Transform.translate(
-            //     offset: Offset(0, 100),
-            //     child: CupertinoActivityIndicator(),
-            //   ),
-            // )
-            //: Container(),
-            // ),
           ],
         ),
       ),
