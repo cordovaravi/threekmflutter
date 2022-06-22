@@ -113,7 +113,7 @@ class _FeedPageState extends State<FeedPage>
                               .newsFeedBottomModel!.data!.result!.posts![index];
                           return newsData != null
                               ? CardUI(
-                                  providerType: 'NewsListProvider',
+                                  providerType: 'NewsFeedProvider',
                                   data: newsData,
                                 )
                               : SizedBox();
