@@ -29,7 +29,7 @@ class AddNewPost extends StatefulWidget {
 }
 
 class _AddNewPostState extends State<AddNewPost> {
-  TextEditingController _tagscontroller = TextEditingController();
+  TextEditingController _tagsController = TextEditingController();
   TextEditingController _storyController = TextEditingController();
   TextEditingController _headLineController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
@@ -45,6 +45,14 @@ class _AddNewPostState extends State<AddNewPost> {
   void initState() {
     Future.microtask(() => context.read<AddPostProvider>());
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _tagsController.dispose();
+    _storyController.dispose();
+    _headLineController.dispose();
+    super.dispose();
   }
 
   @override
@@ -139,37 +147,41 @@ class _AddNewPostState extends State<AddNewPost> {
       body: Form(
         key: _formKey,
         child: ListView(
+          physics: BouncingScrollPhysics(),
           padding: const EdgeInsets.symmetric(horizontal: 16),
           shrinkWrap: true,
-          // keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
           children: [
             SizedBox(height: 30),
             buildHeadline,
-            SizedBox(height: 6),
+            SizedBox(height: 2),
             TextFormField(
               validator: (String? title) {
                 // if (title == null || title.trim().isEmpty) {
                 //   return "*required";
                 // }
-                if ((title?.trim().length ?? 0) > 100) {
-                  return "*Exceeds ${headlineCount - 100} characters";
+                if (title!.length > 100) {
+                  return "*Exceeded ${headlineCount - 100} characters";
                 }
                 return null;
               },
+              onChanged: (String story) {
+                headlineCount = story.length;
+              },
               autovalidateMode: AutovalidateMode.onUserInteraction,
               controller: _headLineController,
-              maxLines: 1,
-              minLines: null,
+              maxLines: null,
+              minLines: 2,
               expands: false,
               // maxLength: 100,
-              textAlignVertical: TextAlignVertical.bottom,
+              textAlignVertical: TextAlignVertical.center,
               maxLengthEnforcement: MaxLengthEnforcement.enforced,
               buildCounter: (context, {required currentLength, required isFocused, maxLength}) {
-                WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
-                  setState(() {
-                    headlineCount = currentLength;
-                  });
-                });
+                // WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+                //   setState(() {
+                //     headlineCount = currentLength;
+                //   });
+                // });
                 return Text("${headlineCount}/100",
                     style: ThreeKmTextConstants.tk12PXPoppinsWhiteRegular.copyWith(
                       fontSize: 10.5,
@@ -186,24 +198,28 @@ class _AddNewPostState extends State<AddNewPost> {
             Divider(color: Color(0xFFa7abad).withOpacity(0.5), thickness: 1),
             SizedBox(height: 30),
             buildDescription,
-            SizedBox(height: 6),
+            SizedBox(height: 2),
             TextFormField(
               validator: (String? story) {
-                if ((story?.trim().length ?? 0) > 2000) {
+                if ((story!.length) > 2000) {
                   return "*Exceeded by ${descriptionCount - 2000} characters";
                 }
                 return null;
+              },
+              onChanged: (String story) {
+                descriptionCount = story.length;
               },
               autovalidateMode: AutovalidateMode.onUserInteraction,
               textAlignVertical: TextAlignVertical.bottom,
               controller: _storyController,
               maxLines: null,
+              minLines: 2,
               buildCounter: (context, {required currentLength, required isFocused, maxLength}) {
-                WidgetsBinding.instance!.addPostFrameCallback((_) {
-                  setState(() {
-                    descriptionCount = currentLength;
-                  });
-                });
+                // WidgetsBinding.instance!.addPostFrameCallback((_) {
+                //   setState(() {
+                //     descriptionCount = currentLength;
+                //   });
+                // });
                 return Text("${descriptionCount}/2000",
                     style: ThreeKmTextConstants.tk12PXPoppinsWhiteRegular.copyWith(
                       fontSize: 10.5,
@@ -264,45 +280,49 @@ class _AddNewPostState extends State<AddNewPost> {
                   // await Navigator.of(context)
                   //     .pushNamed(LocationBasePage.path);
                 },
-                child: Container(
-                  constraints: BoxConstraints(minHeight: 60),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Icon(
-                            Icons.location_on_rounded,
-                            size: 28,
-                            color: const Color(0xFF3E7EFF),
-                          ),
-                          SizedBox(
-                            width: 5,
-                          ),
-                          Text(
-                            _selectedAddress == null ? "Add Post location" : "Change Location",
-                            style: GoogleFonts.poppins(
-                                fontWeight: FontWeight.w600,
-                                color: const Color(0xFF3E7EFF),
-                                fontSize: 16),
-                          ),
-                        ],
-                      ),
-                      if (_selectedAddress != null) ...[
-                        SizedBox(height: 8),
-                        Text(
-                          _selectedAddress!,
-                          style: GoogleFonts.poppins(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                          ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Icon(
+                          Icons.location_on_rounded,
+                          size: 28,
+                          color: const Color(0xFF3E7EFF),
                         ),
-                        SizedBox(height: 13),
+                        SizedBox(width: 5),
+                        Text(
+                          _selectedAddress == null ? "Add Post location" : "Change Location",
+                          style: GoogleFonts.poppins(
+                              fontWeight: FontWeight.w600,
+                              color: const Color(0xFF3E7EFF),
+                              fontSize: 16),
+                        ),
+                        if (_selectedAddress == null)
+                          Text(
+                            " (required)",
+                            style: GoogleFonts.poppins(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w400,
+                              color: Color(0xFFa7abad),
+                            ),
+                          )
                       ],
+                    ),
+                    if (_selectedAddress != null) ...[
+                      SizedBox(height: 8),
+                      Text(
+                        _selectedAddress!,
+                        style: GoogleFonts.poppins(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      // SizedBox(height: 13),
                     ],
-                  ),
+                  ],
                 ),
               ),
             ),
@@ -311,6 +331,7 @@ class _AddNewPostState extends State<AddNewPost> {
             imageList.getMoreImages.length > 0
                 ? Consumer<AddPostProvider>(builder: (context, controller, _) {
                     return GridView.builder(
+                        physics: NeverScrollableScrollPhysics(),
                         shrinkWrap: true,
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 3, mainAxisSpacing: 3, crossAxisSpacing: 3),
@@ -375,11 +396,13 @@ class _AddNewPostState extends State<AddNewPost> {
   InputDecoration get buildInputDecoration {
     return InputDecoration(
         filled: true,
-        fillColor: Color(0xfff1f1f1).withOpacity(0.3),
+        fillColor: Color(0xfff1f1f1).withOpacity(0.8),
         border: InputBorder.none,
         focusedErrorBorder: InputBorder.none,
         focusedBorder: InputBorder.none,
-        enabledBorder: InputBorder.none);
+        enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.transparent),
+            borderRadius: BorderRadius.circular(8)));
   }
 
   Widget get buildHeadline {
@@ -387,7 +410,7 @@ class _AddNewPostState extends State<AddNewPost> {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
-          "Title/Headline".toUpperCase(),
+          "Title/Headline",
           style: GoogleFonts.poppins(
             fontSize: 16,
             fontWeight: FontWeight.w500,
@@ -411,7 +434,7 @@ class _AddNewPostState extends State<AddNewPost> {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
-          "Description".toUpperCase(),
+          "Description",
           style: GoogleFonts.poppins(
             fontSize: 16,
             fontWeight: FontWeight.w500,
@@ -429,15 +452,24 @@ class _AddNewPostState extends State<AddNewPost> {
   }
 
   Widget get buildTagsHeader => Container(
-        child: Text(
-          "Tags".toUpperCase(),
-          style: ThreeKmTextConstants.tk12PXPoppinsWhiteRegular.copyWith(
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-            color: context.read<AddPostProvider>().tagsList.length > 0
-                ? Color(0xFF979EA4)
-                : Color(0xFF0F0F2D),
-          ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(
+              "Tags",
+              style: GoogleFonts.poppins(
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+                color: Color(0xFFa7abad),
+              ),
+            ),
+            Text('(min 3 required)',
+                style: GoogleFonts.poppins(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w400,
+                  color: Color(0xFFa7abad),
+                )),
+          ],
         ),
       );
 
@@ -529,75 +561,42 @@ class _AddNewPostState extends State<AddNewPost> {
         builder: (context, addPostProvider, _) {
           return Wrap(
             runAlignment: WrapAlignment.start,
-            runSpacing: 12,
-            spacing: 12,
+            crossAxisAlignment: WrapCrossAlignment.start,
+            runSpacing: -5,
+            spacing: 5,
             children: [
               ...addPostProvider.tagsList.map((value) {
-                return Container(
-                    height: 40,
-                    // width: 100,
-                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(50),
-                        border: Border.all(color: const Color(0xFF8E8A8A), width: 1)),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Text(
-                          value.toString(),
-                          style: ThreeKmTextConstants.tk12PXPoppinsWhiteRegular.copyWith(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w700,
-                            color: const Color(0xFF8E8A8A),
-                          ),
-                        ),
-                        SizedBox(width: 5),
-                        InkWell(
-                          onTap: () {
-                            context.read<AddPostProvider>().removeTag(value);
-                          },
-                          child: Icon(
-                            Icons.cancel_rounded,
-                            color: const Color(0xFF8E8A8A),
-                            size: 18,
-                          ),
-                        )
-                      ],
-                    ));
-              }).toList(),
-              InkWell(
-                borderRadius: BorderRadius.circular(50),
-                onTap: () => addTag(context),
-                child: Container(
-                  height: 40,
-                  width: 90,
-                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(50),
-                      border: Border.all(color: const Color(0xFF3E7EFF), width: 1)),
-                  child: Row(
-                    // mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.add,
-                        size: 18,
-                        color: const Color(0xff3e7eff),
-                      ),
-                      Text(
-                        "Add",
-                        style: GoogleFonts.poppins(
-                            fontSize: 14,
-                            color: const Color(0xff3e7eff),
-                            fontWeight: FontWeight.w700),
-                      ),
-                    ],
+                return Chip(
+                  label: Text(value.toString()),
+                  backgroundColor: Colors.white,
+                  shape: StadiumBorder(),
+                  side: BorderSide(color: const Color(0xFF8E8A8A)),
+                  labelStyle: GoogleFonts.poppins(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: const Color(0xFF8E8A8A),
                   ),
-                ),
-              )
+                  deleteButtonTooltipMessage: 'Remove tag',
+                  useDeleteButtonTooltip: true,
+                  onDeleted: () {
+                    context.read<AddPostProvider>().removeTag(value);
+                  },
+                  deleteIconColor: const Color(0xFF8E8A8A),
+                  deleteIcon: Icon(Icons.cancel_rounded),
+                  visualDensity: VisualDensity.adaptivePlatformDensity,
+                );
+              }).toList(),
+              ActionChip(
+                label: Text('+ Add'),
+                onPressed: () => addTag(context),
+                backgroundColor: Colors.white,
+                shape: StadiumBorder(),
+                labelStyle: GoogleFonts.poppins(
+                    fontSize: 14, color: const Color(0xff3e7eff), fontWeight: FontWeight.w700),
+                elevation: 0,
+                visualDensity: VisualDensity.adaptivePlatformDensity,
+                side: BorderSide(width: 1, color: const Color(0xFF3E7EFF)),
+              ),
             ],
           );
         },
@@ -617,7 +616,7 @@ class _AddNewPostState extends State<AddNewPost> {
                 .copyWith(color: Colors.black, fontWeight: FontWeight.w900),
           ),
           content: TextField(
-            controller: _tagscontroller,
+            controller: _tagsController,
             decoration: InputDecoration(
                 hintText: "Tag",
                 hintStyle: ThreeKmTextConstants.tk14PXPoppinsBlackSemiBold
@@ -643,7 +642,7 @@ class _AddNewPostState extends State<AddNewPost> {
                 style: ThreeKmTextConstants.tk14PXPoppinsBlackSemiBold.copyWith(color: Colors.blue),
               ),
               onPressed: () {
-                Navigator.of(context).pop(_tagscontroller.text);
+                Navigator.of(context).pop(_tagsController.text.trim());
                 FocusScope.of(context).unfocus();
               },
             )
@@ -651,11 +650,11 @@ class _AddNewPostState extends State<AddNewPost> {
         );
       },
     );
-    if (tag != null && _tagscontroller.text.isNotEmpty) {
+    if (tag != null && _tagsController.text.isNotEmpty) {
       context
           .read<AddPostProvider>()
-          .addTags(_tagscontroller.text)
-          .whenComplete(() => _tagscontroller.clear());
+          .addTags(_tagsController.text)
+          .whenComplete(() => _tagsController.clear());
     }
   }
 
@@ -729,11 +728,11 @@ class _AddNewPostState extends State<AddNewPost> {
                           imageFileList.addAll(images!);
                         }
                         imageFileList.forEach((element) {
-                          print(element.name);
-                          print(element.path);
+                          print("name: " + element.name);
+                          print("path: " + element.path);
                         });
                         Navigator.pop(context);
-                        if (imageFileList != null) {
+                        if (imageFileList.isNotEmpty) {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
