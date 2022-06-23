@@ -7,6 +7,7 @@ import 'package:flutter/painting.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
+import 'package:lottie/lottie.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/src/provider.dart';
@@ -284,82 +285,125 @@ class _CardUIState extends State<CardUI> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  TextButton.icon(
-                      style: ButtonStyle(
-                          foregroundColor:
-                              MaterialStateProperty.all(Colors.black)),
-                      onPressed: () async {
-                        if (await getAuthStatus()) {
-                          if (data.isLiked == true) {
-                            newsFeedProvider.postUnLike(data.postId.toString());
-                          } else {
-                            newsFeedProvider
-                                .postLike(data.postId.toString(), null)
-                                .whenComplete(() => setState(() {
-                                      data.isLiked = true;
-                                    }));
-                          }
-                        } else {
-                          NaviagateToLogin(context);
-                        }
-                      },
-                      icon: EmotionButton(
-                          providerType: widget.providerType,
-                          isLiked: data.isLiked!,
-                          initalReaction: data.isLiked!
-                              ? data.emotion != null && data.emotion != ""
-                                  ? Reaction(
-                                      icon: Image.asset(
-                                        "assets/${data.emotion}.png",
-                                        width: 22,
-                                        height: 19,
-                                      ),
-                                    )
-                                  : Reaction(
-                                      icon: Image.asset(
-                                        "assets/like_icon.png",
-                                        width: 22,
-                                        height: 19,
-                                      ),
-                                    )
-                              : Reaction(
-                                  icon: Image.asset(
-                                  "assets/un_like_icon.png",
-                                  width: 22,
-                                  height: 19,
-                                )),
-                          selectedReaction: data.isLiked!
+                  SizedBox(
+                    width: 10,
+                  ),
+                  EmotionButton(
+                      providerType: widget.providerType,
+                      isLiked: data.isLiked ?? false,
+                      initalReaction: data.isLiked!
+                          ? data.emotion != null &&
+                                  data.emotion != "" &&
+                                  data.emotion != null &&
+                                  data.emotion != "null"
                               ? Reaction(
-                                  icon: Image.asset(
-                                  "assets/like_icon.png",
-                                  width: 22,
-                                  height: 19,
-                                ))
+                                  icon: Lottie.asset(
+                                      "assets/lottie/${data.emotion}.json",
+                                      width: 45,
+                                      height: 45,
+                                      fit: BoxFit.cover),
+                                )
                               : Reaction(
-                                  icon: Image.asset(
-                                  "assets/un_like_icon.png",
-                                  width: 22,
-                                  height: 19,
-                                )),
-                          postId: data.postId!.toInt(),
-                          reactions: reactionAssets.reactions),
-                      // data.isLiked!
-                      //     ? Image.asset(
-                      //         "assets/like_icon.png",
-                      //         width: 22,
-                      //         height: 19,
-                      //       )
-                      //     : Image.asset(
-                      //         "assets/un_like_icon.png",
-                      //         width: 22,
-                      //         height: 19,
-                      //       ),
-                      label: Text(
-                        data.emotion != null && data.emotion != ""
-                            ? '${data.emotion}'
-                            : 'Like',
-                        style: ThreeKmTextConstants.tk12PXPoppinsBlackSemiBold,
-                      )),
+                                  icon: Lottie.asset("assets/lottie/like.json",
+                                      width: 30, height: 30, repeat: false),
+                                )
+                          : Reaction(
+                              icon: Image.asset(
+                              "assets/un_like_icon.png",
+                              width: 22,
+                              height: 19,
+                            )),
+                      selectedReaction: data.isLiked!
+                          ? Reaction(
+                              icon: Image.asset(
+                              "assets/like_icon.png",
+                              width: 22,
+                              height: 19,
+                            ))
+                          : Reaction(
+                              icon: Image.asset(
+                              "assets/un_like_icon.png",
+                              width: 22,
+                              height: 19,
+                            )),
+                      postId: data.postId!.toInt(),
+                      reactions: reactionAssets.reactions),
+                  // TextButton.icon(
+                  //     style: ButtonStyle(
+                  //         foregroundColor:
+                  //             MaterialStateProperty.all(Colors.black)),
+                  //     onPressed: () async {
+                  //       if (await getAuthStatus()) {
+                  //         if (data.isLiked == true) {
+                  //           newsFeedProvider.postUnLike(data.postId.toString());
+                  //         } else {
+                  //           newsFeedProvider
+                  //               .postLike(data.postId.toString(), null)
+                  //               .whenComplete(() => setState(() {
+                  //                     data.isLiked = true;
+                  //                   }));
+                  //         }
+                  //       } else {
+                  //         NaviagateToLogin(context);
+                  //       }
+                  //     },
+                  //     icon: EmotionButton(
+                  //         providerType: widget.providerType,
+                  //         isLiked: data.isLiked!,
+                  //         initalReaction: data.isLiked!
+                  //             ? data.emotion != null && data.emotion != ""
+                  //                 ? Reaction(
+                  //                     icon: Image.asset(
+                  //                       "assets/${data.emotion}.png",
+                  //                       width: 22,
+                  //                       height: 19,
+                  //                     ),
+                  //                   )
+                  //                 : Reaction(
+                  //                     icon: Image.asset(
+                  //                       "assets/like_icon.png",
+                  //                       width: 22,
+                  //                       height: 19,
+                  //                     ),
+                  //                   )
+                  //             : Reaction(
+                  //                 icon: Image.asset(
+                  //                 "assets/un_like_icon.png",
+                  //                 width: 22,
+                  //                 height: 19,
+                  //               )),
+                  //         selectedReaction: data.isLiked!
+                  //             ? Reaction(
+                  //                 icon: Image.asset(
+                  //                 "assets/like_icon.png",
+                  //                 width: 22,
+                  //                 height: 19,
+                  //               ))
+                  //             : Reaction(
+                  //                 icon: Image.asset(
+                  //                 "assets/un_like_icon.png",
+                  //                 width: 22,
+                  //                 height: 19,
+                  //               )),
+                  //         postId: data.postId!.toInt(),
+                  //         reactions: reactionAssets.reactions),
+                  //     // data.isLiked!
+                  //     //     ? Image.asset(
+                  //     //         "assets/like_icon.png",
+                  //     //         width: 22,
+                  //     //         height: 19,
+                  //     //       )
+                  //     //     : Image.asset(
+                  //     //         "assets/un_like_icon.png",
+                  //     //         width: 22,
+                  //     //         height: 19,
+                  //     //       ),
+                  //     label: Text(
+                  //       data.emotion != null && data.emotion != ""
+                  //           ? '${data.emotion}'
+                  //           : 'Like',
+                  //       style: ThreeKmTextConstants.tk12PXPoppinsBlackSemiBold,
+                  //     )),
                   TextButton.icon(
                       style: ButtonStyle(
                           foregroundColor:

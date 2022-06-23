@@ -154,7 +154,7 @@ class _TabBarNavigationState extends State<TabBarNavigation>
       child: Scaffold(
         backgroundColor: Colors.white,
         resizeToAvoidBottomInset: true,
-        body: SafeArea(
+        body: Container(
             child: authStatus
                 ? _pageList[_bottomIndex]
                 : _dayZeroScreens[_bottomIndex]),

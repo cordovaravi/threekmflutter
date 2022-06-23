@@ -14,7 +14,6 @@ import 'package:threekm/UI/main/AddPost/utils/FileUtils.dart';
 import 'package:threekm/UI/main/AddPost/utils/uploadPost.dart';
 import 'package:threekm/UI/main/AddPost/utils/video.dart';
 import 'package:threekm/UI/main/News/NewsList.dart';
-import 'package:threekm/commenwidgets/CustomSnakBar.dart';
 import 'package:threekm/providers/Location/locattion_Provider.dart';
 import 'package:threekm/providers/main/AddPost_Provider.dart';
 import 'package:threekm/utils/api_paths.dart';

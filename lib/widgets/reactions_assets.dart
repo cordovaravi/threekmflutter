@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 import 'package:threekm/Custom_library/flutter_reaction_button.dart';
 
 final defaultInitialReaction = Reaction(
@@ -14,7 +15,7 @@ final defaulLikeReaction = Reaction(
 final reactions = [
   Reaction(
       id: 1,
-      previewIcon: _buildReactionsPreviewIcon('assets/like_icon.png'),
+      previewIcon: _buildReactionsPreviewIcon('assets/lottie/like.json'),
       icon: _buildReactionsIcon(
         'assets/like_icon.png',
       ),
@@ -22,7 +23,7 @@ final reactions = [
   Reaction(
     id: 2,
     title: _buildTitle('Love'),
-    previewIcon: _buildReactionsPreviewIcon('assets/love.png'),
+    previewIcon: _buildReactionsPreviewIcon('assets/lottie/love.json'),
     icon: Image.asset(
       'assets/love.png',
       height: 30,
@@ -32,7 +33,7 @@ final reactions = [
   Reaction(
     id: 3,
     title: _buildTitle('Care'),
-    previewIcon: _buildReactionsPreviewIcon('assets/care.png'),
+    previewIcon: _buildReactionsPreviewIcon('assets/lottie/care.json'),
     icon: _buildReactionsIcon(
       'assets/care.png',
     ),
@@ -40,7 +41,7 @@ final reactions = [
   Reaction(
     id: 4,
     title: _buildTitle('laugh'),
-    previewIcon: _buildReactionsPreviewIcon('assets/laugh.png'),
+    previewIcon: _buildReactionsPreviewIcon('assets/lottie/laugh.json'),
     icon: _buildReactionsIcon(
       'assets/laugh.png',
     ),
@@ -48,7 +49,7 @@ final reactions = [
   Reaction(
     id: 5,
     title: _buildTitle('sad'),
-    previewIcon: _buildReactionsPreviewIcon('assets/sad.png'),
+    previewIcon: _buildReactionsPreviewIcon('assets/lottie/sad.json'),
     icon: _buildReactionsIcon(
       'assets/sad.png',
     ),
@@ -56,7 +57,7 @@ final reactions = [
   Reaction(
     id: 6,
     title: _buildTitle('angry'),
-    previewIcon: _buildReactionsPreviewIcon('assets/angry.png'),
+    previewIcon: _buildReactionsPreviewIcon('assets/lottie/angry.json'),
     icon: _buildReactionsIcon(
       'assets/angry.png',
     ),
@@ -83,9 +84,10 @@ Container _buildTitle(String title) {
 
 Padding _buildReactionsPreviewIcon(String path) {
   return Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 3.5, vertical: 5),
-    child: Image.asset(path, height: 40),
-  );
+      padding: const EdgeInsets.symmetric(horizontal: 3.5, vertical: 5),
+      child: Lottie.asset(path, height: 40)
+      //Image.asset(path, height: 40),
+      );
 }
 
 Image _buildIcon(String path) {

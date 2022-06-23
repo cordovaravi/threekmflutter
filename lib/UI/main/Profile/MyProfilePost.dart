@@ -64,6 +64,7 @@ class _MyProfilePostState extends State<MyProfilePost>
   bool addingAbout = false;
   int aboutCount = 0;
   TextEditingController _aboutTextController = TextEditingController();
+
   @override
   void initState() {
     super.initState();
@@ -114,17 +115,26 @@ class _MyProfilePostState extends State<MyProfilePost>
               mainAxisSize: MainAxisSize.max,
               children: [
                 //  buildBackButton(context),
-                selfProfile.selfProfile != null
-                    ? buildContent(context, selfProfile.selfProfile)
+                selfProfile.selfProfile?.data?.result?.author?.id != null
+                    ? buildContent(context, selfProfile.selfProfile!)
                     : Center(
-                        child: Text("Some error while getting data"),
+                        child: Container(
+                            color: Colors.amber,
+                            height: MediaQuery.of(context).size.height / 1.3,
+                            width: MediaQuery.of(context).size.width,
+                            child: DayZeroforTabs(
+                              ScreenName: "post",
+                              islogin: true,
+                            )
+                            //Text("Some error while getting data"),
+                            ),
                       )
               ],
             ),
     );
   }
 
-  Widget buildContent(context, SelfProfileModel? selfProfileModel) {
+  Widget buildContent(context, SelfProfileModel selfProfileModel) {
     return Expanded(
       child: Container(
         //clipBehavior: Clip.antiAlias,
@@ -137,391 +147,386 @@ class _MyProfilePostState extends State<MyProfilePost>
           //   topRight: Radius.circular(40),
           // ),
         ),
-        child: Stack(
-          children: [
-            CustomScrollView(
-              controller: controller,
-              slivers: [
-                SliverAppBar(
-                  title: Text(""),
-                  collapsedHeight: 0,
-                  expandedHeight: addingAbout == true &&
-                          selfProfileModel!.data!.result!.author!.about == null
-                      ? 320
-                      : 270,
-                  // widget.isFromSelfProfileNavigate != true
-                  //     ? (addingAbout != true ? 250 : 300)
-                  //     : 250,
-                  toolbarHeight: 0,
-                  backgroundColor: Colors.white,
-                  flexibleSpace: FlexibleSpaceBar(
-                    background: Column(
+        child: CustomScrollView(
+          key: UniqueKey(),
+          controller: controller,
+          slivers: [
+            SliverAppBar(
+              title: Text(""),
+              collapsedHeight: 0,
+              expandedHeight: addingAbout == true &&
+                      selfProfileModel.data!.result!.author!.about == null
+                  ? 320
+                  : 270,
+              // widget.isFromSelfProfileNavigate != true
+              //     ? (addingAbout != true ? 250 : 300)
+              //     : 250,
+              toolbarHeight: 0,
+              backgroundColor: Colors.white,
+              flexibleSpace: FlexibleSpaceBar(
+                background: Column(
+                  children: [
+                    Row(
                       children: [
-                        Row(
+                        buildAvatar(selfProfileModel),
+                        SizedBox(
+                          width: 5,
+                        ),
+                        Column(
                           children: [
-                            buildAvatar(selfProfileModel!),
-                            SizedBox(
-                              width: 5,
+                            Container(
+                              child: Center(
+                                child: Text(
+                                  "${selfProfileModel.data!.result!.author!.name}",
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: ThreeKmTextConstants
+                                      .tk14PXPoppinsBlackSemiBold
+                                      .copyWith(fontSize: 18),
+                                ),
+                              ),
                             ),
-                            Column(
-                              children: [
-                                Container(
-                                  child: Center(
-                                    child: Text(
-                                      "${selfProfileModel.data!.result!.author!.name}",
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: ThreeKmTextConstants
-                                          .tk14PXPoppinsBlackSemiBold
-                                          .copyWith(fontSize: 18),
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: 5,
-                                ),
-                                Container(
-                                  child: selfProfileModel
-                                              .data!.result!.author!.about !=
-                                          null
-                                      ? Consumer<AutthorProfileProvider>(
-                                          builder: (context, controller, _) {
-                                          return Column(
-                                            children: [
-                                              Text(
-                                                "${selfProfileModel.data!.result!.author!.about}",
-                                                maxLines: 2,
-                                                overflow: TextOverflow.ellipsis,
-                                                textAlign: TextAlign.center,
+                            SizedBox(
+                              height: 5,
+                            ),
+                            Container(
+                              child: selfProfileModel
+                                          .data!.result!.author!.about !=
+                                      null
+                                  ? Consumer<AutthorProfileProvider>(
+                                      builder: (context, controller, _) {
+                                      return Column(
+                                        children: [
+                                          Text(
+                                            "${selfProfileModel.data!.result!.author!.about}",
+                                            maxLines: 2,
+                                            overflow: TextOverflow.ellipsis,
+                                            textAlign: TextAlign.center,
+                                            style: ThreeKmTextConstants
+                                                .tk14PXPoppinsBlackSemiBold
+                                                .copyWith(
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w400,
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            height: 8,
+                                          ),
+                                          Container(
+                                              height: 26,
+                                              width: 124,
+                                              decoration: BoxDecoration(
+                                                  color: Color(0xff3E7EFF)
+                                                      .withOpacity(0.10),
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          14)),
+                                              child: InkWell(
+                                                onTap: () {
+                                                  controller.editAgain();
+                                                },
+                                                child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      Icon(
+                                                        Icons.edit,
+                                                        color:
+                                                            Color(0xff3E7EFF),
+                                                      ),
+                                                      SizedBox(
+                                                        width: 4,
+                                                      ),
+                                                      Text(
+                                                        "About Me",
+                                                        style: ThreeKmTextConstants
+                                                            .tk12PXPoppinsBlackSemiBold
+                                                            .copyWith(
+                                                                color: Color(
+                                                                    0xff3E7EFF)),
+                                                      )
+                                                    ]),
+                                              ))
+                                        ],
+                                      );
+                                    })
+                                  : addingAbout != true
+                                      ? InkWell(
+                                          onTap: () {
+                                            setState(() {
+                                              addingAbout = true;
+                                            });
+                                          },
+                                          child: Container(
+                                              height: 26,
+                                              width: 124,
+                                              decoration: BoxDecoration(
+                                                  color: Color(0xff3E7EFF)
+                                                      .withOpacity(0.10),
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          14)),
+                                              child: Center(
+                                                  child: Text(
+                                                "Add About Me",
                                                 style: ThreeKmTextConstants
-                                                    .tk14PXPoppinsBlackSemiBold
+                                                    .tk12PXPoppinsBlackSemiBold
                                                     .copyWith(
-                                                  fontSize: 12,
-                                                  fontWeight: FontWeight.w400,
-                                                ),
-                                              ),
-                                              SizedBox(
-                                                height: 8,
-                                              ),
-                                              Container(
-                                                  height: 26,
-                                                  width: 124,
-                                                  decoration: BoxDecoration(
-                                                      color: Color(0xff3E7EFF)
-                                                          .withOpacity(0.10),
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              14)),
-                                                  child: InkWell(
-                                                    onTap: () {
-                                                      controller.editAgain();
-                                                    },
-                                                    child: Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .center,
-                                                        children: [
-                                                          Icon(
-                                                            Icons.edit,
-                                                            color: Color(
-                                                                0xff3E7EFF),
-                                                          ),
-                                                          SizedBox(
-                                                            width: 4,
-                                                          ),
-                                                          Text(
-                                                            "About Me",
-                                                            style: ThreeKmTextConstants
-                                                                .tk12PXPoppinsBlackSemiBold
-                                                                .copyWith(
-                                                                    color: Color(
-                                                                        0xff3E7EFF)),
-                                                          )
-                                                        ]),
-                                                  ))
-                                            ],
-                                          );
-                                        })
-                                      : addingAbout != true
-                                          ? InkWell(
-                                              onTap: () {
-                                                setState(() {
-                                                  addingAbout = true;
-                                                });
-                                              },
-                                              child: Container(
-                                                  height: 26,
-                                                  width: 124,
-                                                  decoration: BoxDecoration(
-                                                      color: Color(0xff3E7EFF)
-                                                          .withOpacity(0.10),
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              14)),
-                                                  child: Center(
-                                                      child: Text(
-                                                    "Add About Me",
-                                                    style: ThreeKmTextConstants
-                                                        .tk12PXPoppinsBlackSemiBold
-                                                        .copyWith(
-                                                            color: Color(
-                                                                0xff3E7EFF)),
-                                                  ))),
-                                            )
-                                          : Container(),
-                                ),
-                              ],
+                                                        color:
+                                                            Color(0xff3E7EFF)),
+                                              ))),
+                                        )
+                                      : Container(),
                             ),
                           ],
                         ),
-                        if (addingAbout &&
-                            selfProfileModel.data!.result!.author!.about ==
-                                null) ...{
-                          Container(
-                            margin: EdgeInsets.only(),
-                            child: TextFormField(
-                              controller: _aboutTextController,
-                              maxLines: 1,
-                              minLines: null,
-                              expands: false,
-                              maxLength: 35,
-                              textAlignVertical: TextAlignVertical.top,
-                              maxLengthEnforcement:
-                                  MaxLengthEnforcement.enforced,
-                              decoration: InputDecoration(
-                                border: InputBorder.none,
-                              ),
-                              validator: (String? about) {
-                                if (about == null) {
-                                  return "Please add About!";
-                                }
-                              },
-                              buildCounter: (context,
-                                  {required currentLength,
-                                  required isFocused,
-                                  maxLength}) {
-                                WidgetsBinding.instance!
-                                    .addPostFrameCallback((timeStamp) {
-                                  setState(() {
-                                    aboutCount = currentLength;
-                                  });
-                                });
-                                return Text(
-                                  "($aboutCount/35)",
-                                  style: ThreeKmTextConstants
-                                      .tk12PXPoppinsWhiteRegular
-                                      .copyWith(
-                                    fontSize: 10.5,
-                                    fontWeight: FontWeight.w700,
-                                    color: Color(0xFF979EA4),
-                                  ),
-                                );
-                              },
-                              style: ThreeKmTextConstants.tk16PXLatoBlackRegular
+                      ],
+                    ),
+                    if (addingAbout &&
+                        selfProfileModel.data!.result!.author!.about ==
+                            null) ...{
+                      Container(
+                        margin: EdgeInsets.only(),
+                        child: TextFormField(
+                          controller: _aboutTextController,
+                          maxLines: 1,
+                          minLines: null,
+                          expands: false,
+                          maxLength: 35,
+                          textAlignVertical: TextAlignVertical.top,
+                          maxLengthEnforcement: MaxLengthEnforcement.enforced,
+                          decoration: InputDecoration(
+                            border: InputBorder.none,
+                          ),
+                          validator: (String? about) {
+                            if (about == null) {
+                              return "Please add About!";
+                            }
+                          },
+                          buildCounter: (context,
+                              {required currentLength,
+                              required isFocused,
+                              maxLength}) {
+                            WidgetsBinding.instance!
+                                .addPostFrameCallback((timeStamp) {
+                              setState(() {
+                                aboutCount = currentLength;
+                              });
+                            });
+                            return Text(
+                              "($aboutCount/35)",
+                              style: ThreeKmTextConstants
+                                  .tk12PXPoppinsWhiteRegular
                                   .copyWith(
-                                color: Color(0xFF0F0F2D),
-                                fontWeight: FontWeight.w500,
+                                fontSize: 10.5,
+                                fontWeight: FontWeight.w700,
+                                color: Color(0xFF979EA4),
                               ),
-                            ),
-                            width: 335,
-                            height: 68,
-                            decoration: BoxDecoration(
-                                color: Color(0xffF4F3F8),
-                                border: Border.all(color: Color(0xffD5D5D5)),
-                                borderRadius: BorderRadius.circular(15)),
+                            );
+                          },
+                          style: ThreeKmTextConstants.tk16PXLatoBlackRegular
+                              .copyWith(
+                            color: Color(0xFF0F0F2D),
+                            fontWeight: FontWeight.w500,
                           ),
-                          SizedBox(
-                            height: 8,
-                          ),
-                          Consumer<AutthorProfileProvider>(
-                            builder: (context, controller, _) {
-                              return GestureDetector(
-                                onTap: () {
-                                  controller.updateAbout(
-                                      context: context,
-                                      about: _aboutTextController.text);
-                                },
-                                child: Container(
-                                    height: 37,
-                                    width: 67,
-                                    decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(18),
-                                        color:
-                                            Color(0xff3E7EFF).withOpacity(0.1)),
-                                    child: Center(
-                                      child: controller.updateLoading != true
-                                          ? Text(
-                                              "Save",
-                                              style: ThreeKmTextConstants
-                                                  .tk14PXPoppinsBlackSemiBold
-                                                  .copyWith(
-                                                      color: Color(0xff3E7EFF)),
-                                            )
-                                          : CupertinoActivityIndicator(),
-                                    )),
-                              );
+                        ),
+                        width: 335,
+                        height: 68,
+                        decoration: BoxDecoration(
+                            color: Color(0xffF4F3F8),
+                            border: Border.all(color: Color(0xffD5D5D5)),
+                            borderRadius: BorderRadius.circular(15)),
+                      ),
+                      SizedBox(
+                        height: 8,
+                      ),
+                      Consumer<AutthorProfileProvider>(
+                        builder: (context, controller, _) {
+                          return GestureDetector(
+                            onTap: () {
+                              controller.updateAbout(
+                                  context: context,
+                                  about: _aboutTextController.text);
                             },
-                          )
+                            child: Container(
+                                height: 37,
+                                width: 67,
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(18),
+                                    color: Color(0xff3E7EFF).withOpacity(0.1)),
+                                child: Center(
+                                  child: controller.updateLoading != true
+                                      ? Text(
+                                          "Save",
+                                          style: ThreeKmTextConstants
+                                              .tk14PXPoppinsBlackSemiBold
+                                              .copyWith(
+                                                  color: Color(0xff3E7EFF)),
+                                        )
+                                      : CupertinoActivityIndicator(),
+                                )),
+                          );
                         },
-                        widget.isFromSelfProfileNavigate == false
-                            ? Column(
-                                children: [
-                                  space(height: 32),
-                                  buildFollowing(context),
-                                  space(height: 32),
-                                  buildFollowingButton,
-                                  buildFollowingButton,
-                                ],
-                              )
-                            : Container(),
-                        Padding(
-                          padding: EdgeInsets.symmetric(
-                              vertical: 18, horizontal: 18),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      )
+                    },
+                    widget.isFromSelfProfileNavigate == false
+                        ? Column(
                             children: [
-                              Column(
-                                children: [
-                                  Text(
-                                      selfProfileModel
-                                          .data!.result!.author!.followers
-                                          .toString(),
-                                      style: GoogleFonts.poppins(
-                                          color: Colors.black,
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: 18)),
-                                  Text(
-                                    "Followers",
-                                    style: ThreeKmTextConstants
-                                        .tk14PXPoppinsBlackSemiBold
-                                        .copyWith(color: Color(0xff979EA4)),
-                                  )
-                                ],
-                              ),
-                              Column(
-                                children: [
-                                  Text(
-                                      selfProfileModel
-                                          .data!.result!.author!.totalPosts
-                                          .toString(),
-                                      style: GoogleFonts.poppins(
-                                          color: Colors.black,
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: 18)),
-                                  Text(
-                                    "Posts",
-                                    style: ThreeKmTextConstants
-                                        .tk14PXPoppinsBlackSemiBold
-                                        .copyWith(color: Color(0xff979EA4)),
-                                  )
-                                ],
-                              ),
-                              Column(
-                                children: [
-                                  Text(
-                                      selfProfileModel
-                                          .data!.result!.author!.following
-                                          .toString(),
-                                      style: GoogleFonts.poppins(
-                                          color: Colors.black,
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: 18)),
-                                  Text(
-                                    "Following",
-                                    style: ThreeKmTextConstants
-                                        .tk14PXPoppinsBlackSemiBold
-                                        .copyWith(color: Color(0xff979EA4)),
-                                  ),
-                                ],
+                              space(height: 32),
+                              buildFollowing(context),
+                              space(height: 32),
+                              buildFollowingButton,
+                              buildFollowingButton,
+                            ],
+                          )
+                        : Container(),
+                    Padding(
+                      padding:
+                          EdgeInsets.symmetric(vertical: 18, horizontal: 18),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Column(
+                            children: [
+                              Text(
+                                  selfProfileModel
+                                      .data!.result!.author!.followers
+                                      .toString(),
+                                  style: GoogleFonts.poppins(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 18)),
+                              Text(
+                                "Followers",
+                                style: ThreeKmTextConstants
+                                    .tk14PXPoppinsBlackSemiBold
+                                    .copyWith(color: Color(0xff979EA4)),
                               )
                             ],
                           ),
-                        ),
-                        InkWell(
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        //VideoCompress()
-                                        AddNewPost()));
-                          },
-                          child: Container(
-                            height: 35,
-                            alignment: Alignment.center,
-                            width: MediaQuery.of(context).size.width,
-                            margin: EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                                color: Color(0xff3E7EFF),
-                                borderRadius: BorderRadius.circular(28)),
-                            child: Text(
-                              "Add Post",
-                              style: TextStyle(color: Colors.white),
-                            ),
+                          Column(
+                            children: [
+                              Text(
+                                  selfProfileModel
+                                      .data!.result!.author!.totalPosts
+                                      .toString(),
+                                  style: GoogleFonts.poppins(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 18)),
+                              Text(
+                                "Posts",
+                                style: ThreeKmTextConstants
+                                    .tk14PXPoppinsBlackSemiBold
+                                    .copyWith(color: Color(0xff979EA4)),
+                              )
+                            ],
                           ),
-                        )
-                      ],
+                          Column(
+                            children: [
+                              Text(
+                                  selfProfileModel
+                                      .data!.result!.author!.following
+                                      .toString(),
+                                  style: GoogleFonts.poppins(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 18)),
+                              Text(
+                                "Following",
+                                style: ThreeKmTextConstants
+                                    .tk14PXPoppinsBlackSemiBold
+                                    .copyWith(color: Color(0xff979EA4)),
+                              ),
+                            ],
+                          )
+                        ],
+                      ),
                     ),
-                  ),
-                ),
-                //////////// tabs widget
-                // SliverPersistentHeader(
-                //   delegate: PersistentHeader(
-                //     widget: buildTabBar,
-                //   ),
-                //   pinned: true,
-                // ),
-                // SliverToBoxAdapter(
-                //   child: Container(
-                //     height: 36,
-                //   ),
-                // ),
-                if (selfProfileModel.data?.result?.posts?.length != 0) ...{
-                  SliverList(
-                    delegate: SliverChildBuilderDelegate(
-                      (context, _index) {
-                        return NewsCard(
-                            selfProfileModel: selfProfileModel, index: _index);
+                    InkWell(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    //VideoCompress()
+                                    AddNewPost()));
                       },
-                      childCount: selfProfileModel.data!.result!.posts!.length,
-                    ),
-                  ),
-                } else ...{
-                  Center(
-                    child: DayZeroforTabs(ScreenName: "post"),
-                  )
-                }
-                // else ...{
-                //   SliverGrid(
-                //     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                //       crossAxisCount: 3,
-                //       mainAxisSpacing: 8,
-                //       crossAxisSpacing: 8,
-                //     ),
-                //     delegate: SliverChildBuilderDelegate((context, index) {
-                //       return Container(
-                //           decoration: BoxDecoration(
-                //             borderRadius: BorderRadius.circular(10),
-                //             color: ThreeKmTextConstants.lightBlue,
-                //             // image: DecorationImage(
-                //             //   fit: BoxFit.fill,
-                //             //   image: CachedNetworkImageProvider(
-                //             //     _controller.posts
-                //             //         .where((e) => e.images!.length > 0)
-                //             //         .toList()[index]
-                //             //         .images!
-                //             //         .first,
-                //             //   ),
-                //             // ),
-                //           ),
-
-                //       );
-                //     },
-                //         childCount: 5,
-                //   )
-                // }
-              ],
+                      child: Container(
+                        height: 35,
+                        alignment: Alignment.center,
+                        width: MediaQuery.of(context).size.width,
+                        margin: EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                            color: Color(0xff3E7EFF),
+                            borderRadius: BorderRadius.circular(28)),
+                        child: Text(
+                          "Add Post",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              ),
             ),
+            //////////// tabs widget
+            // SliverPersistentHeader(
+            //   delegate: PersistentHeader(
+            //     widget: buildTabBar,
+            //   ),
+            //   pinned: true,
+            // ),
+            // SliverToBoxAdapter(
+            //   child: Container(
+            //     height: 36,
+            //   ),
+            // ),
+            if (selfProfileModel.data?.result?.posts?.length != 0) ...{
+              SliverList(
+                delegate: SliverChildBuilderDelegate(
+                  (context, _index) {
+                    return NewsCard(
+                        selfProfileModel: selfProfileModel, index: _index);
+                  },
+                  childCount: selfProfileModel.data!.result!.posts!.length,
+                ),
+              ),
+            } else ...{
+              Center(
+                child: DayZeroforTabs(ScreenName: "post"),
+              )
+            }
+            // else ...{
+            //   SliverGrid(
+            //     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            //       crossAxisCount: 3,
+            //       mainAxisSpacing: 8,
+            //       crossAxisSpacing: 8,
+            //     ),
+            //     delegate: SliverChildBuilderDelegate((context, index) {
+            //       return Container(
+            //           decoration: BoxDecoration(
+            //             borderRadius: BorderRadius.circular(10),
+            //             color: ThreeKmTextConstants.lightBlue,
+            //             // image: DecorationImage(
+            //             //   fit: BoxFit.fill,
+            //             //   image: CachedNetworkImageProvider(
+            //             //     _controller.posts
+            //             //         .where((e) => e.images!.length > 0)
+            //             //         .toList()[index]
+            //             //         .images!
+            //             //         .first,
+            //             //   ),
+            //             // ),
+            //           ),
+
+            //       );
+            //     },
+            //         childCount: 5,
+            //   )
+            // }
           ],
         ),
       ),

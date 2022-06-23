@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
@@ -339,9 +341,39 @@ class ImageLayout extends StatelessWidget {
         width: size(context).width,
         child: LayoutBuilder(
           builder: (BuildContext context, BoxConstraints constraints) {
-            return ImageWidget(
-              imagesList: imagesList[0],
-              fit: BoxFit.fitWidth,
+            return Container(
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  ImageWidget(
+                    imagesList: imagesList[0],
+                    fit: BoxFit.cover,
+                  ),
+                  ClipRRect(
+                    // Clip it cleanly.
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                      child: Container(
+                        color: Colors.grey.withOpacity(0.1),
+                        alignment: Alignment.center,
+                        child: ImageWidget(
+                          imagesList: imagesList[0],
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              // decoration: BoxDecoration(
+              //     image: DecorationImage(
+              //         fit: BoxFit.cover,
+              //         image: NetworkImage(
+              //             "https://previews.123rf.com/images/zven0/zven01601/zven0160100109/51257134-%E7%99%BD%E8%89%B2%E5%85%89%E3%81%A8%E6%8A%BD%E8%B1%A1%E7%9A%84%E3%81%AA%E8%83%8C%E6%99%AF%E3%81%BC%E3%81%8B%E3%81%97.jpg"))),
+              // child: ImageWidget(
+              //   imagesList: imagesList[0],
+              //   fit: BoxFit.contain,
+              // ),
             );
           },
         ),

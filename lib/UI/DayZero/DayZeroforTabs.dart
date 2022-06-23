@@ -43,6 +43,9 @@ getText({required String nameofScreen}) {
 
     case "wishlist":
       return "Uh Oh! looks like your wish list is empty  start your shopping now";
+
+    case "post":
+      return "Uh Oh! You don’t have any posts yet!";
   }
 }
 
@@ -61,7 +64,7 @@ getTextLogin({required String nameofScreen}) {
       return "Uh Oh! looks like your wish list is empty  start your shopping now";
 
     case "post":
-      return "Uh Oh! You don’t have any posts yet!";
+      return "Uh Oh! You don’t have any posts yet! \n \n YOU CAN CREATE POST FROM PROFILE";
   }
 }
 
@@ -78,9 +81,14 @@ class _DayZeroforTabsState extends State<DayZeroforTabs> {
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Text(widget.islogin == false || widget.islogin == null
-                ? getText(nameofScreen: widget.ScreenName)
-                : getTextLogin(nameofScreen: widget.ScreenName)),
+            child: Text(
+              widget.islogin == false || widget.islogin == null
+                  ? getText(
+                      nameofScreen: widget.ScreenName,
+                    )
+                  : getTextLogin(nameofScreen: widget.ScreenName),
+              textAlign: TextAlign.center,
+            ),
           ),
           SizedBox(height: 20),
           widget.islogin != true

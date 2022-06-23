@@ -5,6 +5,7 @@ import 'package:threekm/providers/Global/logged_in_or_not.dart';
 import 'package:threekm/providers/main/AthorProfile_Provider.dart';
 import 'package:threekm/providers/main/NewsFeed_Provider.dart';
 import 'package:threekm/providers/main/newsList_provider.dart';
+import 'package:threekm/providers/main/singlePost_provider.dart';
 import 'package:threekm/widgets/reactions_assets.dart' as reactionAsset;
 
 class EmotionButton extends StatelessWidget {
@@ -27,7 +28,7 @@ class EmotionButton extends StatelessWidget {
   Widget build(BuildContext context) {
     //super.build(context);
     postlike(label) {
-      providerType == "NewsListProvider"
+      this.providerType == "NewsListProvider"
           ? context
               .read<NewsListProvider>()
               .postLike(this.postId.toString(), label)
@@ -35,15 +36,48 @@ class EmotionButton extends StatelessWidget {
               ? context
                   .read<NewsFeedProvider>()
                   .postLike(this.postId.toString(), label)
-              : context
-                  .read<AutthorProfileProvider>()
-                  .postLike(this.postId.toString(), label);
+              : providerType == "postProvider"
+                  ? context
+                      .read<SinglePostProvider>()
+                      .postLike(this.postId.toString(), label)
+                      .whenComplete(() => context
+                          .read<NewsListProvider>()
+                          .postLike(this.postId.toString(), label))
+                      .whenComplete(() => context
+                          .read<NewsFeedProvider>()
+                          .postLike(this.postId.toString(), label))
+                  : context
+                      .read<AutthorProfileProvider>()
+                      .postLike(this.postId.toString(), label);
+    }
+
+    void postUnlike() {
+      this.providerType == "NewsListProvider"
+          ? context.read<NewsListProvider>().postUnLike(this.postId.toString())
+          : providerType == "NewsFeedProvider"
+              ? context
+                  .read<NewsFeedProvider>()
+                  .postUnLike(this.postId.toString())
+              : providerType == "postProvider"
+                  ? context
+                      .read<SinglePostProvider>()
+                      .postUnLike(this.postId.toString())
+                      .whenComplete(() => context
+                          .read<NewsListProvider>()
+                          .postUnLike(this.postId.toString()))
+                      .whenComplete(
+                          () => context.read<NewsFeedProvider>().postUnLike(
+                                this.postId.toString(),
+                              ))
+                  : context
+                      .read<AutthorProfileProvider>()
+                      .postUnLike(this.postId.toString());
     }
 
     return FittedBox(
       child: FlutterReactionButtonCheck(
           boxAlignment: Alignment.center,
-          //boxPosition: Position.TOP,
+          boxPosition: Position.TOP,
           onReactionChanged: (reaction, index, isChecked) async {
             print('reaction selected index: $index');
             print("is checked $isChecked");
@@ -51,9 +85,10 @@ class EmotionButton extends StatelessWidget {
               print(this.isLiked);
               if (isLiked == true && index == -1) {
                 print("remove like");
-                context
-                    .read<NewsListProvider>()
-                    .postUnLike(this.postId.toString());
+                // context
+                //     .read<NewsListProvider>()
+                //     .postUnLike(this.postId.toString());
+                postUnlike();
               } else if (isChecked == true && index == -1) {
                 print("Like");
                 postlike(null);

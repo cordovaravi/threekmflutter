@@ -149,7 +149,7 @@ class _ReactionsBoxState extends State<ReactionsBox>
                   : _getBottomPosition();
 
   double _getTopPosition() =>
-      widget.buttonOffset.dy - widget.buttonSize.height * 0.7;
+      widget.buttonOffset.dy - widget.buttonSize.height * 0.75;
 
   double _getBottomPosition() =>
       widget.buttonOffset.dy + widget.buttonSize.height;

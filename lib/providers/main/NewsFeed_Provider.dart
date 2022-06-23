@@ -45,7 +45,7 @@ class NewsFeedProvider extends ChangeNotifier {
       "lat": 18.555217,
       "lng": 73.799742,
       "lang": languageCode,
-      "device": _prefs.getString('deviceID'),
+      //"device": _prefs.getString('deviceID'),
       "token": _prefs.getString("token")
     });
     if (await _apiProvider.getConnectivityStatus()) {
