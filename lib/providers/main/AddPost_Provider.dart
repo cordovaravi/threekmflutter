@@ -71,6 +71,7 @@ class AddPostProvider extends ChangeNotifier {
 
   void insertImage(int index, File image) {
     _moreImages.insert(index, image);
+    notifyListeners();
   }
 
   void deletImages() {

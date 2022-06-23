@@ -173,9 +173,7 @@ class _PostViewState extends State<PostView> {
                               // newsData.images!.length > 1 ||
                               //         newsData.videos!.length > 1
                               tempList.length == 0
-                                  ? SizedBox(
-                                      child: Text("null"),
-                                    )
+                                  ? SizedBox.shrink()
                                   : tempList.length > 1
                                       ?
                                       //video and image both
