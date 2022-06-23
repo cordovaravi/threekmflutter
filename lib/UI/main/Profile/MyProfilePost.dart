@@ -16,6 +16,7 @@ import 'package:share_plus/share_plus.dart';
 import 'package:threekm/Custom_library/src/reaction.dart';
 import 'package:threekm/Models/SelfProfile_Model.dart';
 import 'package:threekm/UI/Animation/AnimatedSizeRoute.dart';
+import 'package:threekm/UI/DayZero/DayZeroforTabs.dart';
 import 'package:threekm/UI/Help_Supportpage.dart';
 import 'package:threekm/UI/Search/SearchPage.dart';
 import 'package:threekm/UI/main/AddPost/AddNewPost.dart';
@@ -55,13 +56,15 @@ class MyProfilePost extends StatefulWidget {
   _MyProfilePostState createState() => _MyProfilePostState();
 }
 
-class _MyProfilePostState extends State<MyProfilePost> with TickerProviderStateMixin {
+class _MyProfilePostState extends State<MyProfilePost>
+    with TickerProviderStateMixin {
   ScrollController controller = ScrollController();
 
   int index = 0;
   bool addingAbout = false;
   int aboutCount = 0;
   TextEditingController _aboutTextController = TextEditingController();
+
   @override
   void initState() {
     super.initState();
@@ -85,7 +88,9 @@ class _MyProfilePostState extends State<MyProfilePost> with TickerProviderStateM
           IconButton(
               onPressed: () {
                 Navigator.push(
-                    context, MaterialPageRoute(builder: (context) => SearchPage(tabNuber: 0)));
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => SearchPage(tabNuber: 0)));
               },
               icon: Icon(
                 Icons.search,
@@ -93,7 +98,8 @@ class _MyProfilePostState extends State<MyProfilePost> with TickerProviderStateM
               ))
         ],
       ),
-      body: selfProfile.isGettingSelfProfile == true && selfProfile.selfProfile?.data == null
+      body: selfProfile.isGettingSelfProfile == true &&
+              selfProfile.selfProfile?.data == null
           ? Container(
               height: MediaQuery.of(context).size.height,
               width: MediaQuery.of(context).size.width,
@@ -109,17 +115,26 @@ class _MyProfilePostState extends State<MyProfilePost> with TickerProviderStateM
               mainAxisSize: MainAxisSize.max,
               children: [
                 //  buildBackButton(context),
-                selfProfile.selfProfile != null
-                    ? buildContent(context, selfProfile.selfProfile)
+                selfProfile.selfProfile?.data?.result?.author?.id != null
+                    ? buildContent(context, selfProfile.selfProfile!)
                     : Center(
-                        child: Text("Some error while getting data"),
+                        child: Container(
+                            color: Colors.amber,
+                            height: MediaQuery.of(context).size.height / 1.3,
+                            width: MediaQuery.of(context).size.width,
+                            child: DayZeroforTabs(
+                              ScreenName: "post",
+                              islogin: true,
+                            )
+                            //Text("Some error while getting data"),
+                            ),
                       )
               ],
             ),
     );
   }
 
-  Widget buildContent(context, SelfProfileModel? selfProfileModel) {
+  Widget buildContent(context, SelfProfileModel selfProfileModel) {
     return Expanded(
       child: Container(
         //clipBehavior: Clip.antiAlias,
@@ -132,412 +147,386 @@ class _MyProfilePostState extends State<MyProfilePost> with TickerProviderStateM
           //   topRight: Radius.circular(40),
           // ),
         ),
-        child: Stack(
-          children: [
-            CustomScrollView(
-              controller: controller,
-              slivers: [
-                SliverAppBar(
-                  title: Text(""),
-                  collapsedHeight: 0,
-                  expandedHeight:
-                      addingAbout == true && selfProfileModel!.data!.result!.author!.about == null
-                          ? 320
-                          : 270,
-                  // widget.isFromSelfProfileNavigate != true
-                  //     ? (addingAbout != true ? 250 : 300)
-                  //     : 250,
-                  toolbarHeight: 0,
-                  backgroundColor: Colors.white,
-                  flexibleSpace: FlexibleSpaceBar(
-                    background: Column(
+        child: CustomScrollView(
+          key: UniqueKey(),
+          controller: controller,
+          slivers: [
+            SliverAppBar(
+              title: Text(""),
+              collapsedHeight: 0,
+              expandedHeight: addingAbout == true &&
+                      selfProfileModel.data!.result!.author!.about == null
+                  ? 320
+                  : 270,
+              // widget.isFromSelfProfileNavigate != true
+              //     ? (addingAbout != true ? 250 : 300)
+              //     : 250,
+              toolbarHeight: 0,
+              backgroundColor: Colors.white,
+              flexibleSpace: FlexibleSpaceBar(
+                background: Column(
+                  children: [
+                    Row(
                       children: [
-                        Row(
+                        buildAvatar(selfProfileModel),
+                        SizedBox(
+                          width: 5,
+                        ),
+                        Column(
                           children: [
-                            buildAvatar(selfProfileModel!),
-                            SizedBox(
-                              width: 5,
+                            Container(
+                              child: Center(
+                                child: Text(
+                                  "${selfProfileModel.data!.result!.author!.name}",
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: ThreeKmTextConstants
+                                      .tk14PXPoppinsBlackSemiBold
+                                      .copyWith(fontSize: 18),
+                                ),
+                              ),
                             ),
-                            Column(
-                              children: [
-                                Container(
-                                  child: Center(
-                                    child: Text(
-                                      "${selfProfileModel.data!.result!.author!.name}",
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: ThreeKmTextConstants.tk14PXPoppinsBlackSemiBold
-                                          .copyWith(fontSize: 18),
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: 5,
-                                ),
-                                Container(
-                                  child: selfProfileModel.data!.result!.author!.about != null
-                                      ? Consumer<AutthorProfileProvider>(
-                                          builder: (context, controller, _) {
-                                          return Column(
-                                            children: [
-                                              Text(
-                                                "${selfProfileModel.data!.result!.author!.about}",
-                                                maxLines: 2,
-                                                overflow: TextOverflow.ellipsis,
-                                                textAlign: TextAlign.center,
+                            SizedBox(
+                              height: 5,
+                            ),
+                            Container(
+                              child: selfProfileModel
+                                          .data!.result!.author!.about !=
+                                      null
+                                  ? Consumer<AutthorProfileProvider>(
+                                      builder: (context, controller, _) {
+                                      return Column(
+                                        children: [
+                                          Text(
+                                            "${selfProfileModel.data!.result!.author!.about}",
+                                            maxLines: 2,
+                                            overflow: TextOverflow.ellipsis,
+                                            textAlign: TextAlign.center,
+                                            style: ThreeKmTextConstants
+                                                .tk14PXPoppinsBlackSemiBold
+                                                .copyWith(
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w400,
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            height: 8,
+                                          ),
+                                          Container(
+                                              height: 26,
+                                              width: 124,
+                                              decoration: BoxDecoration(
+                                                  color: Color(0xff3E7EFF)
+                                                      .withOpacity(0.10),
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          14)),
+                                              child: InkWell(
+                                                onTap: () {
+                                                  controller.editAgain();
+                                                },
+                                                child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      Icon(
+                                                        Icons.edit,
+                                                        color:
+                                                            Color(0xff3E7EFF),
+                                                      ),
+                                                      SizedBox(
+                                                        width: 4,
+                                                      ),
+                                                      Text(
+                                                        "About Me",
+                                                        style: ThreeKmTextConstants
+                                                            .tk12PXPoppinsBlackSemiBold
+                                                            .copyWith(
+                                                                color: Color(
+                                                                    0xff3E7EFF)),
+                                                      )
+                                                    ]),
+                                              ))
+                                        ],
+                                      );
+                                    })
+                                  : addingAbout != true
+                                      ? InkWell(
+                                          onTap: () {
+                                            setState(() {
+                                              addingAbout = true;
+                                            });
+                                          },
+                                          child: Container(
+                                              height: 26,
+                                              width: 124,
+                                              decoration: BoxDecoration(
+                                                  color: Color(0xff3E7EFF)
+                                                      .withOpacity(0.10),
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          14)),
+                                              child: Center(
+                                                  child: Text(
+                                                "Add About Me",
                                                 style: ThreeKmTextConstants
-                                                    .tk14PXPoppinsBlackSemiBold
+                                                    .tk12PXPoppinsBlackSemiBold
                                                     .copyWith(
-                                                  fontSize: 12,
-                                                  fontWeight: FontWeight.w400,
-                                                ),
-                                              ),
-                                              SizedBox(
-                                                height: 8,
-                                              ),
-                                              Container(
-                                                  height: 26,
-                                                  width: 124,
-                                                  decoration: BoxDecoration(
-                                                      color: Color(0xff3E7EFF).withOpacity(0.10),
-                                                      borderRadius: BorderRadius.circular(14)),
-                                                  child: InkWell(
-                                                    onTap: () {
-                                                      controller.editAgain();
-                                                    },
-                                                    child: Row(
-                                                        mainAxisAlignment: MainAxisAlignment.center,
-                                                        children: [
-                                                          Icon(
-                                                            Icons.edit,
-                                                            color: Color(0xff3E7EFF),
-                                                          ),
-                                                          SizedBox(
-                                                            width: 4,
-                                                          ),
-                                                          Text(
-                                                            "About Me",
-                                                            style: ThreeKmTextConstants
-                                                                .tk12PXPoppinsBlackSemiBold
-                                                                .copyWith(color: Color(0xff3E7EFF)),
-                                                          )
-                                                        ]),
-                                                  ))
-                                            ],
-                                          );
-                                        })
-                                      : addingAbout != true
-                                          ? InkWell(
-                                              onTap: () {
-                                                setState(() {
-                                                  addingAbout = true;
-                                                });
-                                              },
-                                              child: Container(
-                                                  height: 26,
-                                                  width: 124,
-                                                  decoration: BoxDecoration(
-                                                      color: Color(0xff3E7EFF).withOpacity(0.10),
-                                                      borderRadius: BorderRadius.circular(14)),
-                                                  child: Center(
-                                                      child: Text(
-                                                    "Add About Me",
-                                                    style: ThreeKmTextConstants
-                                                        .tk12PXPoppinsBlackSemiBold
-                                                        .copyWith(color: Color(0xff3E7EFF)),
-                                                  ))),
-                                            )
-                                          : Container(),
-                                ),
-                              ],
+                                                        color:
+                                                            Color(0xff3E7EFF)),
+                                              ))),
+                                        )
+                                      : Container(),
                             ),
                           ],
                         ),
-                        if (addingAbout &&
-                            selfProfileModel.data!.result!.author!.about == null) ...{
-                          Container(
-                            margin: EdgeInsets.only(),
-                            child: TextFormField(
-                              controller: _aboutTextController,
-                              maxLines: 1,
-                              minLines: null,
-                              expands: false,
-                              maxLength: 35,
-                              textAlignVertical: TextAlignVertical.top,
-                              maxLengthEnforcement: MaxLengthEnforcement.enforced,
-                              decoration: InputDecoration(
-                                border: InputBorder.none,
-                              ),
-                              validator: (String? about) {
-                                if (about == null) {
-                                  return "Please add About!";
-                                }
-                              },
-                              buildCounter: (context,
-                                  {required currentLength, required isFocused, maxLength}) {
-                                WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
-                                  setState(() {
-                                    aboutCount = currentLength;
-                                  });
-                                });
-                                return Text(
-                                  "($aboutCount/35)",
-                                  style: ThreeKmTextConstants.tk12PXPoppinsWhiteRegular.copyWith(
-                                    fontSize: 10.5,
-                                    fontWeight: FontWeight.w700,
-                                    color: Color(0xFF979EA4),
-                                  ),
-                                );
-                              },
-                              style: ThreeKmTextConstants.tk16PXLatoBlackRegular.copyWith(
-                                color: Color(0xFF0F0F2D),
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            width: 335,
-                            height: 68,
-                            decoration: BoxDecoration(
-                                color: Color(0xffF4F3F8),
-                                border: Border.all(color: Color(0xffD5D5D5)),
-                                borderRadius: BorderRadius.circular(15)),
+                      ],
+                    ),
+                    if (addingAbout &&
+                        selfProfileModel.data!.result!.author!.about ==
+                            null) ...{
+                      Container(
+                        margin: EdgeInsets.only(),
+                        child: TextFormField(
+                          controller: _aboutTextController,
+                          maxLines: 1,
+                          minLines: null,
+                          expands: false,
+                          maxLength: 35,
+                          textAlignVertical: TextAlignVertical.top,
+                          maxLengthEnforcement: MaxLengthEnforcement.enforced,
+                          decoration: InputDecoration(
+                            border: InputBorder.none,
                           ),
-                          SizedBox(
-                            height: 8,
+                          validator: (String? about) {
+                            if (about == null) {
+                              return "Please add About!";
+                            }
+                          },
+                          buildCounter: (context,
+                              {required currentLength,
+                              required isFocused,
+                              maxLength}) {
+                            WidgetsBinding.instance!
+                                .addPostFrameCallback((timeStamp) {
+                              setState(() {
+                                aboutCount = currentLength;
+                              });
+                            });
+                            return Text(
+                              "($aboutCount/35)",
+                              style: ThreeKmTextConstants
+                                  .tk12PXPoppinsWhiteRegular
+                                  .copyWith(
+                                fontSize: 10.5,
+                                fontWeight: FontWeight.w700,
+                                color: Color(0xFF979EA4),
+                              ),
+                            );
+                          },
+                          style: ThreeKmTextConstants.tk16PXLatoBlackRegular
+                              .copyWith(
+                            color: Color(0xFF0F0F2D),
+                            fontWeight: FontWeight.w500,
                           ),
-                          Consumer<AutthorProfileProvider>(
-                            builder: (context, controller, _) {
-                              return GestureDetector(
-                                onTap: () {
-                                  controller.updateAbout(
-                                      context: context, about: _aboutTextController.text);
-                                },
-                                child: Container(
-                                    height: 37,
-                                    width: 67,
-                                    decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(18),
-                                        color: Color(0xff3E7EFF).withOpacity(0.1)),
-                                    child: Center(
-                                      child: controller.updateLoading != true
-                                          ? Text(
-                                              "Save",
-                                              style: ThreeKmTextConstants.tk14PXPoppinsBlackSemiBold
-                                                  .copyWith(color: Color(0xff3E7EFF)),
-                                            )
-                                          : CupertinoActivityIndicator(),
-                                    )),
-                              );
+                        ),
+                        width: 335,
+                        height: 68,
+                        decoration: BoxDecoration(
+                            color: Color(0xffF4F3F8),
+                            border: Border.all(color: Color(0xffD5D5D5)),
+                            borderRadius: BorderRadius.circular(15)),
+                      ),
+                      SizedBox(
+                        height: 8,
+                      ),
+                      Consumer<AutthorProfileProvider>(
+                        builder: (context, controller, _) {
+                          return GestureDetector(
+                            onTap: () {
+                              controller.updateAbout(
+                                  context: context,
+                                  about: _aboutTextController.text);
                             },
-                          )
+                            child: Container(
+                                height: 37,
+                                width: 67,
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(18),
+                                    color: Color(0xff3E7EFF).withOpacity(0.1)),
+                                child: Center(
+                                  child: controller.updateLoading != true
+                                      ? Text(
+                                          "Save",
+                                          style: ThreeKmTextConstants
+                                              .tk14PXPoppinsBlackSemiBold
+                                              .copyWith(
+                                                  color: Color(0xff3E7EFF)),
+                                        )
+                                      : CupertinoActivityIndicator(),
+                                )),
+                          );
                         },
-                        widget.isFromSelfProfileNavigate == false
-                            ? Column(
-                                children: [
-                                  space(height: 32),
-                                  buildFollowing(context),
-                                  space(height: 32),
-                                  buildFollowingButton,
-                                  buildFollowingButton,
-                                ],
-                              )
-                            : Container(),
-                        Padding(
-                          padding: EdgeInsets.symmetric(vertical: 18, horizontal: 18),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      )
+                    },
+                    widget.isFromSelfProfileNavigate == false
+                        ? Column(
                             children: [
-                              Column(
-                                children: [
-                                  Text(selfProfileModel.data!.result!.author!.followers.toString(),
-                                      style: GoogleFonts.poppins(
-                                          color: Colors.black,
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: 18)),
-                                  Text(
-                                    "Followers",
-                                    style: ThreeKmTextConstants.tk14PXPoppinsBlackSemiBold
-                                        .copyWith(color: Color(0xff979EA4)),
-                                  )
-                                ],
-                              ),
-                              Column(
-                                children: [
-                                  Text(selfProfileModel.data!.result!.author!.totalPosts.toString(),
-                                      style: GoogleFonts.poppins(
-                                          color: Colors.black,
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: 18)),
-                                  Text(
-                                    "Posts",
-                                    style: ThreeKmTextConstants.tk14PXPoppinsBlackSemiBold
-                                        .copyWith(color: Color(0xff979EA4)),
-                                  )
-                                ],
-                              ),
-                              Column(
-                                children: [
-                                  Text(selfProfileModel.data!.result!.author!.following.toString(),
-                                      style: GoogleFonts.poppins(
-                                          color: Colors.black,
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: 18)),
-                                  Text(
-                                    "Following",
-                                    style: ThreeKmTextConstants.tk14PXPoppinsBlackSemiBold
-                                        .copyWith(color: Color(0xff979EA4)),
-                                  ),
-                                ],
+                              space(height: 32),
+                              buildFollowing(context),
+                              space(height: 32),
+                              buildFollowingButton,
+                              buildFollowingButton,
+                            ],
+                          )
+                        : Container(),
+                    Padding(
+                      padding:
+                          EdgeInsets.symmetric(vertical: 18, horizontal: 18),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Column(
+                            children: [
+                              Text(
+                                  selfProfileModel
+                                      .data!.result!.author!.followers
+                                      .toString(),
+                                  style: GoogleFonts.poppins(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 18)),
+                              Text(
+                                "Followers",
+                                style: ThreeKmTextConstants
+                                    .tk14PXPoppinsBlackSemiBold
+                                    .copyWith(color: Color(0xff979EA4)),
                               )
                             ],
                           ),
-                        ),
-                        InkWell(
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        //VideoCompress()
-                                        AddNewPost()));
-                          },
-                          child: Container(
-                            height: 35,
-                            alignment: Alignment.center,
-                            width: MediaQuery.of(context).size.width,
-                            margin: EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                                color: Color(0xff3E7EFF), borderRadius: BorderRadius.circular(28)),
-                            child: Text(
-                              "Add Post",
-                              style: TextStyle(color: Colors.white),
-                            ),
+                          Column(
+                            children: [
+                              Text(
+                                  selfProfileModel
+                                      .data!.result!.author!.totalPosts
+                                      .toString(),
+                                  style: GoogleFonts.poppins(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 18)),
+                              Text(
+                                "Posts",
+                                style: ThreeKmTextConstants
+                                    .tk14PXPoppinsBlackSemiBold
+                                    .copyWith(color: Color(0xff979EA4)),
+                              )
+                            ],
                           ),
-                        )
-                      ],
+                          Column(
+                            children: [
+                              Text(
+                                  selfProfileModel
+                                      .data!.result!.author!.following
+                                      .toString(),
+                                  style: GoogleFonts.poppins(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 18)),
+                              Text(
+                                "Following",
+                                style: ThreeKmTextConstants
+                                    .tk14PXPoppinsBlackSemiBold
+                                    .copyWith(color: Color(0xff979EA4)),
+                              ),
+                            ],
+                          )
+                        ],
+                      ),
                     ),
-                  ),
-                ),
-                //////////// tabs widget
-                // SliverPersistentHeader(
-                //   delegate: PersistentHeader(
-                //     widget: buildTabBar,
-                //   ),
-                //   pinned: true,
-                // ),
-                SliverToBoxAdapter(
-                  child: Container(
-                    height: 36,
-                  ),
-                ),
-                if (index == 0) ...{
-                  SliverList(
-                    delegate: SliverChildBuilderDelegate(
-                      (context, _index) {
-                        return NewsCard(selfProfileModel: selfProfileModel, index: _index);
+                    InkWell(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    //VideoCompress()
+                                    AddNewPost()));
                       },
-                      childCount: selfProfileModel.data!.result!.posts!.length,
-                    ),
-                  ),
-                } else ...{
-                  Center(
-                    child: Text("Saved posts"),
-                  )
-                }
-                // else ...{
-                //   SliverGrid(
-                //     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                //       crossAxisCount: 3,
-                //       mainAxisSpacing: 8,
-                //       crossAxisSpacing: 8,
-                //     ),
-                //     delegate: SliverChildBuilderDelegate((context, index) {
-                //       return Container(
-                //           decoration: BoxDecoration(
-                //             borderRadius: BorderRadius.circular(10),
-                //             color: ThreeKmTextConstants.lightBlue,
-                //             // image: DecorationImage(
-                //             //   fit: BoxFit.fill,
-                //             //   image: CachedNetworkImageProvider(
-                //             //     _controller.posts
-                //             //         .where((e) => e.images!.length > 0)
-                //             //         .toList()[index]
-                //             //         .images!
-                //             //         .first,
-                //             //   ),
-                //             // ),
-                //           ),
-
-                //       );
-                //     },
-                //         childCount: 5,
-                //   )
-                // }
-              ],
+                      child: Container(
+                        height: 35,
+                        alignment: Alignment.center,
+                        width: MediaQuery.of(context).size.width,
+                        margin: EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                            color: Color(0xff3E7EFF),
+                            borderRadius: BorderRadius.circular(28)),
+                        child: Text(
+                          "Add Post",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              ),
             ),
-
-            // NestedScrollView(
-            //   controller: controller,
-            //   body: index == 0
-            //       ? GetBuilder<AuthorProfileController>(
-            //           builder: (_controller) => ListView.builder(
-            //             itemBuilder: (context, _index) {
-            //               return Container(
-            //                 height: 580,
-            //                 padding: EdgeInsets.symmetric(horizontal: 18),
-            //                 child: NewsCardDetail(
-            //                   _controller.posts[_index],
-            //                   index: _index,
-            //                 ),
-            //               );
-            //             },
-            //             itemCount: _controller.posts.length,
-            //           ),
-            //         )
-            //       : Container(
-            //           width: MediaQuery.of(context).size.width,
-            //           child: GetBuilder<AuthorProfileController>(
-            //             builder: (_controller) => GridView.builder(
-            //               gridDelegate:
-            //                   SliverGridDelegateWithFixedCrossAxisCount(
-            //                 crossAxisCount: 3,
-            //                 mainAxisSpacing: 8,
-            //                 crossAxisSpacing: 8,
-            //               ),
-            //               itemBuilder: (context, index) {
-            //                 return Container(
-            //                   decoration: BoxDecoration(
-            //                       borderRadius: BorderRadius.circular(10),
-            //                       color: ThreeKmTextConstants.lightBlue,
-            //                       image: DecorationImage(
-            //                           fit: BoxFit.fill,
-            //                           image: CachedNetworkImageProvider(
-            //                             _controller.posts
-            //                                 .where((e) => e.images!.length > 0)
-            //                                 .toList()[index]
-            //                                 .images!
-            //                                 .first,
-            //                           ))),
-            //                 );
-            //               },
-            //               itemCount: _controller.posts
-            //                   .where((e) => e.images!.length > 0)
-            //                   .toList()
-            //                   .length,
-            //               padding: EdgeInsets.only(
-            //                   top: 24, bottom: 32, left: 18, right: 18),
-            //               shrinkWrap: true,
-            //             ),
-            //           ),
-            //         ),
-            // ),
-            // Center(
-            //   child: Transform.translate(
-            //     offset: Offset(0, 100),
-            //     child: CupertinoActivityIndicator(),
+            //////////// tabs widget
+            // SliverPersistentHeader(
+            //   delegate: PersistentHeader(
+            //     widget: buildTabBar,
             //   ),
-            // )
-            //: Container(),
+            //   pinned: true,
             // ),
+            // SliverToBoxAdapter(
+            //   child: Container(
+            //     height: 36,
+            //   ),
+            // ),
+            if (selfProfileModel.data?.result?.posts?.length != 0) ...{
+              SliverList(
+                delegate: SliverChildBuilderDelegate(
+                  (context, _index) {
+                    return NewsCard(
+                        selfProfileModel: selfProfileModel, index: _index);
+                  },
+                  childCount: selfProfileModel.data!.result!.posts!.length,
+                ),
+              ),
+            } else ...{
+              Center(
+                child: DayZeroforTabs(ScreenName: "post"),
+              )
+            }
+            // else ...{
+            //   SliverGrid(
+            //     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            //       crossAxisCount: 3,
+            //       mainAxisSpacing: 8,
+            //       crossAxisSpacing: 8,
+            //     ),
+            //     delegate: SliverChildBuilderDelegate((context, index) {
+            //       return Container(
+            //           decoration: BoxDecoration(
+            //             borderRadius: BorderRadius.circular(10),
+            //             color: ThreeKmTextConstants.lightBlue,
+            //             // image: DecorationImage(
+            //             //   fit: BoxFit.fill,
+            //             //   image: CachedNetworkImageProvider(
+            //             //     _controller.posts
+            //             //         .where((e) => e.images!.length > 0)
+            //             //         .toList()[index]
+            //             //         .images!
+            //             //         .first,
+            //             //   ),
+            //             // ),
+            //           ),
+
+            //       );
+            //     },
+            //         childCount: 5,
+            //   )
+            // }
           ],
         ),
       ),
@@ -615,7 +604,8 @@ class _MyProfilePostState extends State<MyProfilePost> with TickerProviderStateM
       children: [
         Text(
           value,
-          style: ThreeKmTextConstants.tk14PXPoppinsBlackSemiBold.copyWith(fontSize: 18),
+          style: ThreeKmTextConstants.tk14PXPoppinsBlackSemiBold
+              .copyWith(fontSize: 18),
         ),
         Text(
           text,
@@ -679,8 +669,8 @@ class _MyProfilePostState extends State<MyProfilePost> with TickerProviderStateM
                   shape: BoxShape.circle,
                   border: Border.all(color: Colors.white, width: 3),
                   image: DecorationImage(
-                    image:
-                        CachedNetworkImageProvider(selfProfileModel.data!.result!.author!.image!),
+                    image: CachedNetworkImageProvider(
+                        selfProfileModel.data!.result!.author!.image!),
                     fit: BoxFit.fill,
                   ),
                 ),
@@ -688,7 +678,8 @@ class _MyProfilePostState extends State<MyProfilePost> with TickerProviderStateM
             : Container(
                 width: 120,
                 height: 120,
-                decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.grey),
+                decoration:
+                    BoxDecoration(shape: BoxShape.circle, color: Colors.grey),
               ),
       ],
     );
@@ -698,7 +689,8 @@ class _MyProfilePostState extends State<MyProfilePost> with TickerProviderStateM
 class NewsCard extends StatefulWidget {
   final SelfProfileModel selfProfileModel;
   final int index;
-  NewsCard({required this.selfProfileModel, required this.index, Key? key}) : super(key: key);
+  NewsCard({required this.selfProfileModel, required this.index, Key? key})
+      : super(key: key);
 
   @override
   _NewsCardState createState() => _NewsCardState();
@@ -1029,7 +1021,8 @@ class _NewsCardState extends State<NewsCard> {
                     padding: EdgeInsets.zero,
                     child: TextButton(
                         onPressed: () {
-                          Navigator.push(context, AnimatedSizeRoute(page: HelpAndSupport()));
+                          Navigator.push(context,
+                              AnimatedSizeRoute(page: HelpAndSupport()));
                         },
                         child: Text(
                           "Get Help",
@@ -1038,274 +1031,313 @@ class _NewsCardState extends State<NewsCard> {
                   )
                 ],
               ),
-              decoration:
-                  BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(20)),
+              decoration: BoxDecoration(
+                  color: Colors.white, borderRadius: BorderRadius.circular(20)),
             )
           : SizedBox.shrink()
     ]);
   }
 
-  // _showLikedBottomModalSheet(int postId, totalLikes) {
-  //   context.read<LikeListProvider>().showLikes(context, postId);
-  //   showModalBottomSheet<void>(
-  //     backgroundColor: Colors.white,
-  //     context: context,
-  //     builder: (BuildContext context) {
-  //       final _likeProvider = context.watch<LikeListProvider>();
-  //       return Padding(
-  //           padding: EdgeInsets.zero,
-  //           child: StatefulBuilder(
-  //             builder: (context, _) {
-  //               return Container(
-  //                 color: Colors.white,
-  //                 height: 192,
-  //                 width: MediaQuery.of(context).size.width,
-  //                 child: _likeProvider.isLoading
-  //                     ? LikesLoding()
-  //                     : Column(
-  //                         mainAxisSize: MainAxisSize.max,
-  //                         children: [
-  //                           Row(
-  //                             children: [
-  //                               Padding(
-  //                                 padding: EdgeInsets.only(top: 24, left: 18, bottom: 34),
-  //                                 child: Text("$totalLikes People reacted to this"),
-  //                               ),
-  //                             ],
-  //                           ),
-  //                           Container(
-  //                             height: 90,
-  //                             width: double.infinity,
-  //                             child: ListView.builder(
-  //                               scrollDirection: Axis.horizontal,
-  //                               itemCount: _likeProvider.likeList!.data!.result!.users!.length,
-  //                               shrinkWrap: true,
-  //                               itemBuilder: (context, index) {
-  //                                 return Container(
-  //                                     margin: EdgeInsets.only(
-  //                                       left: 21,
-  //                                     ),
-  //                                     height: 85,
-  //                                     width: 85,
-  //                                     decoration: BoxDecoration(
-  //                                         shape: BoxShape.circle,
-  //                                         image: DecorationImage(
-  //                                             fit: BoxFit.cover,
-  //                                             image: NetworkImage(_likeProvider
-  //                                                 .likeList!.data!.result!.users![index].avatar
-  //                                                 .toString()))),
-  //                                     child: Stack(
-  //                                       children: [
-  //                                         Positioned(
-  //                                             right: 0,
-  //                                             child: Image.asset(
-  //                                               'assets/fblike2x.png',
-  //                                               height: 15,
-  //                                               width: 15,
-  //                                               fit: BoxFit.cover,
-  //                                             )),
-  //                                         _likeProvider.likeList!.data!.result!.users![index]
-  //                                                     .isUnknown !=
-  //                                                 null
-  //                                             ? Center(
-  //                                                 child: Text(
-  //                                                     "+${_likeProvider.likeList!.data!.result!.anonymousCount}",
-  //                                                     style: TextStyle(
-  //                                                         fontSize: 17, color: Colors.white),
-  //                                                     textAlign: TextAlign.center),
-  //                                               )
-  //                                             : SizedBox.shrink()
-  //                                       ],
-  //                                     ));
-  //                               },
-  //                             ),
-  //                           ),
-  //                         ],
-  //                       ),
-  //               );
-  //             },
-  //           ));
-  //     },
-  //   );
-  // }
 
-  // _showCommentsBottomModalSheet(BuildContext context, int postId) {
-  //   //print("this is new :$postId");
-  //   context.read<CommentProvider>().getAllCommentsApi(postId);
-  //   showModalBottomSheet<void>(
-  //     backgroundColor: Colors.transparent,
-  //     context: context,
-  //     isScrollControlled: true,
-  //     builder: (BuildContext context) {
-  //       return Padding(
-  //         padding: MediaQuery.of(context).viewInsets,
-  //         child: StatefulBuilder(
-  //           builder: (BuildContext context, StateSetter setModalState) {
-  //             return ClipPath(
-  //               clipper: OvalTopBorderClipper(),
-  //               child: Container(
-  //                 color: Colors.white,
-  //                 height: MediaQuery.of(context).size.height / 2,
-  //                 padding: const EdgeInsets.all(15.0),
-  //                 child: Column(
-  //                   crossAxisAlignment: CrossAxisAlignment.center,
-  //                   children: <Widget>[
-  //                     Container(
-  //                       height: 5,
-  //                       width: 30,
-  //                       color: Colors.grey.shade300,
-  //                     ),
-  //                     SizedBox(
-  //                       height: 10,
-  //                     ),
-  //                     Row(
-  //                       children: [
-  //                         Container(
-  //                             height: 20, width: 20, child: Image.asset('assets/icons-topic.png')),
-  //                         Padding(padding: EdgeInsets.only(left: 10)),
-  //                         Consumer<CommentProvider>(builder: (context, commentProvider, _) {
-  //                           return commentProvider.commentList.length != null
-  //                               ? Text(
-  //                                   "${commentProvider.commentList.length}\tComments",
-  //                                   style: ThreeKmTextConstants.tk14PXPoppinsBlackSemiBold,
-  //                                 )
-  //                               : Text(
-  //                                   "Comments",
-  //                                   style: ThreeKmTextConstants.tk14PXPoppinsBlackSemiBold,
-  //                                 );
-  //                         })
-  //                       ],
-  //                     ),
-  //                     SizedBox(
-  //                       height: 10,
-  //                     ),
-  //                     Consumer<CommentProvider>(builder: (context, commentProvider, _) {
-  //                       return context.read<CommentProvider>().commentList != null
-  //                           ? Expanded(
-  //                               child: commentProvider.isGettingComments == true
-  //                                   ? CommentsLoadingEffects()
-  //                                   : ListView.builder(
-  //                                       physics: BouncingScrollPhysics(),
-  //                                       shrinkWrap: true,
-  //                                       primary: true,
-  //                                       itemCount: commentProvider.commentList.length,
-  //                                       itemBuilder: (context, commentIndex) {
-  //                                         return Container(
-  //                                           margin: EdgeInsets.all(1),
-  //                                           decoration: BoxDecoration(
-  //                                             color: Colors.white,
-  //                                           ),
-  //                                           child: ListTile(
-  //                                             trailing: commentProvider
-  //                                                         .commentList[commentIndex].isself ==
-  //                                                     true
-  //                                                 ? IconButton(
-  //                                                     onPressed: () {
-  //                                                       context
-  //                                                           .read<CommentProvider>()
-  //                                                           .removeComment(
-  //                                                               commentProvider
-  //                                                                   .commentList[commentIndex]
-  //                                                                   .commentId!,
-  //                                                               postId);
-  //                                                     },
-  //                                                     icon: Icon(Icons.delete))
-  //                                                 : SizedBox(),
-  //                                             leading: Container(
-  //                                               height: 40,
-  //                                               width: 40,
-  //                                               decoration: BoxDecoration(
-  //                                                   image: DecorationImage(
-  //                                                       image: CachedNetworkImageProvider(
-  //                                                           commentProvider
-  //                                                               .commentList[commentIndex].avatar
-  //                                                               .toString()))),
-  //                                             ),
-  //                                             title: Text(
-  //                                               commentProvider.commentList[commentIndex].username
-  //                                                   .toString(),
-  //                                               style:
-  //                                                   ThreeKmTextConstants.tk14PXPoppinsBlackSemiBold,
-  //                                             ),
-  //                                             subtitle: Column(
-  //                                                 crossAxisAlignment: CrossAxisAlignment.start,
-  //                                                 children: [
-  //                                                   SizedBox(
-  //                                                     height: 4,
-  //                                                   ),
-  //                                                   Text(
-  //                                                     commentProvider
-  //                                                         .commentList[commentIndex].comment
-  //                                                         .toString(),
-  //                                                     style: ThreeKmTextConstants
-  //                                                         .tk14PXLatoBlackMedium,
-  //                                                   ),
-  //                                                   SizedBox(
-  //                                                     height: 2,
-  //                                                   ),
-  //                                                   Text(
-  //                                                       commentProvider
-  //                                                           .commentList[commentIndex].timeLapsed
-  //                                                           .toString(),
-  //                                                       style:
-  //                                                           TextStyle(fontStyle: FontStyle.italic))
-  //                                                 ]),
-  //                                           ),
-  //                                         );
-  //                                       },
-  //                                     ),
-  //                             )
-  //                           : SizedBox();
-  //                     }),
-  //                     Container(
-  //                       height: 116,
-  //                       width: 338,
-  //                       decoration: BoxDecoration(
-  //                           color: Colors.grey.shade200, borderRadius: BorderRadius.circular(20)),
-  //                       child: TextFormField(
-  //                         controller: _commentController,
-  //                         maxLines: null,
-  //                         keyboardType: TextInputType.multiline,
-  //                         decoration: InputDecoration(border: InputBorder.none),
-  //                       ),
-  //                     ),
-  //                     SizedBox(
-  //                       height: 10,
-  //                     ),
-  //                     Align(
-  //                       alignment: Alignment.centerLeft,
-  //                       child: InkWell(
-  //                         onTap: () {
-  //                           context
-  //                               .read<CommentProvider>()
-  //                               .postCommentApi(postId, _commentController.text)
-  //                               .then((value) => _commentController.clear());
-  //                         },
-  //                         child: Container(
-  //                           height: 36,
-  //                           width: 112,
-  //                           decoration: BoxDecoration(
-  //                               borderRadius: BorderRadius.circular(18),
-  //                               color: ThreeKmTextConstants.blue2),
-  //                           child: Center(
-  //                             child: Text(
-  //                               "Submit",
-  //                               style: ThreeKmTextConstants.tk14PXPoppinsWhiteMedium,
-  //                             ),
-  //                           ),
-  //                         ),
-  //                       ),
-  //                     )
-  //                   ],
-  //                 ),
-  //               ),
-  //             );
-  //           },
-  //         ),
-  //       );
-  //     },
-  //   );
-  // }
+  _showLikedBottomModalSheet(int postId, totalLikes) {
+    context.read<LikeListProvider>().showLikes(context, postId);
+    showModalBottomSheet<void>(
+      backgroundColor: Colors.white,
+      context: context,
+      builder: (BuildContext context) {
+        final _likeProvider = context.watch<LikeListProvider>();
+        return Padding(
+            padding: EdgeInsets.zero,
+            child: StatefulBuilder(
+              builder: (context, _) {
+                return Container(
+                  color: Colors.white,
+                  height: 192,
+                  width: MediaQuery.of(context).size.width,
+                  child: _likeProvider.isLoading
+                      ? LikesLoding()
+                      : Column(
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                            Row(
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.only(
+                                      top: 24, left: 18, bottom: 34),
+                                  child: Text(
+                                      "$totalLikes People reacted to this"),
+                                ),
+                              ],
+                            ),
+                            Container(
+                              height: 90,
+                              width: double.infinity,
+                              child: ListView.builder(
+                                scrollDirection: Axis.horizontal,
+                                itemCount: _likeProvider
+                                    .likeList!.data!.result!.users!.length,
+                                shrinkWrap: true,
+                                itemBuilder: (context, index) {
+                                  return Container(
+                                      margin: EdgeInsets.only(
+                                        left: 21,
+                                      ),
+                                      height: 85,
+                                      width: 85,
+                                      decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          image: DecorationImage(
+                                              fit: BoxFit.cover,
+                                              image: NetworkImage(_likeProvider
+                                                  .likeList!
+                                                  .data!
+                                                  .result!
+                                                  .users![index]
+                                                  .avatar
+                                                  .toString()))),
+                                      child: Stack(
+                                        children: [
+                                          Positioned(
+                                              right: 0,
+                                              child: Image.asset(
+                                                'assets/fblike2x.png',
+                                                height: 15,
+                                                width: 15,
+                                                fit: BoxFit.cover,
+                                              )),
+                                          _likeProvider
+                                                      .likeList!
+                                                      .data!
+                                                      .result!
+                                                      .users![index]
+                                                      .isUnknown !=
+                                                  null
+                                              ? Center(
+                                                  child: Text(
+                                                      "+${_likeProvider.likeList!.data!.result!.anonymousCount}",
+                                                      style: TextStyle(
+                                                          fontSize: 17,
+                                                          color: Colors.white),
+                                                      textAlign:
+                                                          TextAlign.center),
+                                                )
+                                              : SizedBox.shrink()
+                                        ],
+                                      ));
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                );
+              },
+            ));
+      },
+    );
+  }
+
+  _showCommentsBottomModalSheet(BuildContext context, int postId) {
+    //print("this is new :$postId");
+    context.read<CommentProvider>().getAllCommentsApi(postId);
+    showModalBottomSheet<void>(
+      backgroundColor: Colors.transparent,
+      context: context,
+      isScrollControlled: true,
+      builder: (BuildContext context) {
+        return Padding(
+          padding: MediaQuery.of(context).viewInsets,
+          child: StatefulBuilder(
+            builder: (BuildContext context, StateSetter setModalState) {
+              return ClipPath(
+                clipper: OvalTopBorderClipper(),
+                child: Container(
+                  color: Colors.white,
+                  height: MediaQuery.of(context).size.height / 2,
+                  padding: const EdgeInsets.all(15.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      Container(
+                        height: 5,
+                        width: 30,
+                        color: Colors.grey.shade300,
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Row(
+                        children: [
+                          Container(
+                              height: 20,
+                              width: 20,
+                              child: Image.asset('assets/icons-topic.png')),
+                          Padding(padding: EdgeInsets.only(left: 10)),
+                          Consumer<CommentProvider>(
+                              builder: (context, commentProvider, _) {
+                            return commentProvider.commentList.length != null
+                                ? Text(
+                                    "${commentProvider.commentList.length}\tComments",
+                                    style: ThreeKmTextConstants
+                                        .tk14PXPoppinsBlackSemiBold,
+                                  )
+                                : Text(
+                                    "Comments",
+                                    style: ThreeKmTextConstants
+                                        .tk14PXPoppinsBlackSemiBold,
+                                  );
+                          })
+                        ],
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Consumer<CommentProvider>(
+                          builder: (context, commentProvider, _) {
+                        return context.read<CommentProvider>().commentList !=
+                                null
+                            ? Expanded(
+                                child: commentProvider.isGettingComments == true
+                                    ? CommentsLoadingEffects()
+                                    : ListView.builder(
+                                        physics: BouncingScrollPhysics(),
+                                        shrinkWrap: true,
+                                        primary: true,
+                                        itemCount:
+                                            commentProvider.commentList.length,
+                                        itemBuilder: (context, commentIndex) {
+                                          return Container(
+                                            margin: EdgeInsets.all(1),
+                                            decoration: BoxDecoration(
+                                              color: Colors.white,
+                                            ),
+                                            child: ListTile(
+                                              trailing: commentProvider
+                                                          .commentList[
+                                                              commentIndex]
+                                                          .isself ==
+                                                      true
+                                                  ? IconButton(
+                                                      onPressed: () {
+                                                        context
+                                                            .read<
+                                                                CommentProvider>()
+                                                            .removeComment(
+                                                                commentProvider
+                                                                    .commentList[
+                                                                        commentIndex]
+                                                                    .commentId!,
+                                                                postId);
+                                                      },
+                                                      icon: Icon(Icons.delete))
+                                                  : SizedBox(),
+                                              leading: Container(
+                                                height: 40,
+                                                width: 40,
+                                                decoration: BoxDecoration(
+                                                    image: DecorationImage(
+                                                        image: CachedNetworkImageProvider(
+                                                            commentProvider
+                                                                .commentList[
+                                                                    commentIndex]
+                                                                .avatar
+                                                                .toString()))),
+                                              ),
+                                              title: Text(
+                                                commentProvider
+                                                    .commentList[commentIndex]
+                                                    .username
+                                                    .toString(),
+                                                style: ThreeKmTextConstants
+                                                    .tk14PXPoppinsBlackSemiBold,
+                                              ),
+                                              subtitle: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    SizedBox(
+                                                      height: 4,
+                                                    ),
+                                                    Text(
+                                                      commentProvider
+                                                          .commentList[
+                                                              commentIndex]
+                                                          .comment
+                                                          .toString(),
+                                                      style: ThreeKmTextConstants
+                                                          .tk14PXLatoBlackMedium,
+                                                    ),
+                                                    SizedBox(
+                                                      height: 2,
+                                                    ),
+                                                    Text(
+                                                        commentProvider
+                                                            .commentList[
+                                                                commentIndex]
+                                                            .timeLapsed
+                                                            .toString(),
+                                                        style: TextStyle(
+                                                            fontStyle: FontStyle
+                                                                .italic))
+                                                  ]),
+                                            ),
+                                          );
+                                        },
+                                      ),
+                              )
+                            : SizedBox();
+                      }),
+                      Container(
+                        height: 116,
+                        width: 338,
+                        decoration: BoxDecoration(
+                            color: Colors.grey.shade200,
+                            borderRadius: BorderRadius.circular(20)),
+                        child: TextFormField(
+                          controller: _commentController,
+                          maxLines: null,
+                          keyboardType: TextInputType.multiline,
+                          decoration: InputDecoration(border: InputBorder.none),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: InkWell(
+                          onTap: () {
+                            context
+                                .read<CommentProvider>()
+                                .postCommentApi(postId, _commentController.text)
+                                .then((value) => _commentController.clear());
+                          },
+                          child: Container(
+                            height: 36,
+                            width: 112,
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(18),
+                                color: ThreeKmTextConstants.blue2),
+                            child: Center(
+                              child: Text(
+                                "Submit",
+                                style: ThreeKmTextConstants
+                                    .tk14PXPoppinsWhiteMedium,
+                              ),
+                            ),
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+        );
+      },
+    );
+  }
+
 
   PopupMenuButton showPopMenu(String postID, Result newsData) {
     return PopupMenuButton(
@@ -1315,10 +1347,10 @@ class _NewsCardState extends State<NewsCard> {
           child: ListTile(
             title: Text('Copy link'),
             onTap: () {
-              Clipboard.setData(
-                      ClipboardData(text: "https://3km.in/post-detail?id=$postID&lang=en"))
-                  .then((value) =>
-                      CustomSnackBar(context, Text("Link has been coppied to clipboard")))
+              Clipboard.setData(ClipboardData(
+                      text: "https://3km.in/post-detail?id=$postID&lang=en"))
+                  .then((value) => CustomSnackBar(
+                      context, Text("Link has been coppied to clipboard")))
                   .whenComplete(() => Navigator.pop(context));
             },
           ),
@@ -1358,8 +1390,8 @@ class _NewsCardState extends State<NewsCard> {
   }
 
   // previous param String imgUrl, String name, String newsHeadLine, int index
-  handleShare(String authorName, String authorProfile, String headLine, String thumbnail, date,
-      String postId) async {
+  handleShare(String authorName, String authorProfile, String headLine,
+      String thumbnail, date, String postId) async {
     showLoading();
     screenshotController
         .captureFromWidget(Container(
@@ -1382,7 +1414,8 @@ class _NewsCardState extends State<NewsCard> {
                     decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         image: DecorationImage(
-                            fit: BoxFit.cover, image: CachedNetworkImageProvider(authorProfile))),
+                            fit: BoxFit.cover,
+                            image: CachedNetworkImageProvider(authorProfile))),
                   )),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -1429,8 +1462,10 @@ class _NewsCardState extends State<NewsCard> {
                 ),
                 Padding(
                   padding: EdgeInsets.only(right: 15),
-                  child:
-                      Container(height: 30, width: 30, child: Image.asset('assets/icon_light.png')),
+                  child: Container(
+                      height: 30,
+                      width: 30,
+                      child: Image.asset('assets/icon_light.png')),
                 )
               ],
             ),
@@ -1445,7 +1480,8 @@ class _NewsCardState extends State<NewsCard> {
             : await getApplicationDocumentsDirectory();
         File file = await File('${documentDirectory!.path}/image.png').create();
         file.writeAsBytesSync(capturedImage);
-        Share.shareFiles([file.path], text: 'https://3km.in/post-detail?id=$postId&lang=en')
+        Share.shareFiles([file.path],
+                text: 'https://3km.in/post-detail?id=$postId&lang=en')
             .then((value) => hideLoading());
       } on Exception catch (e) {
         hideLoading();

@@ -152,7 +152,11 @@ class _TabBarNavigationState extends State<TabBarNavigation> with AutomaticKeepA
       child: Scaffold(
         backgroundColor: Colors.white,
         resizeToAvoidBottomInset: true,
-        body: SafeArea(child: authStatus ? _pageList[_bottomIndex] : _dayZeroScreens[_bottomIndex]),
+
+        body: Container(
+            child: authStatus
+                ? _pageList[_bottomIndex]
+                : _dayZeroScreens[_bottomIndex]),
         bottomNavigationBar: CustomNavigationBar(
           currentIndex: _bottomIndex,
           onTap: (index) {

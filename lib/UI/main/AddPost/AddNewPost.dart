@@ -8,8 +8,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_webservice/directions.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:provider/provider.dart';
-import 'package:threekm/Custom_library/GooleMapsWidget/src/place_picker.dart';
+import 'package:threekm/Custom_library/location2.0/lib/place_picker.dart';
+
 import 'package:threekm/UI/main/AddPost/ImageEdit/editImage.dart';
 import 'package:threekm/UI/main/AddPost/utils/FileUtils.dart';
 import 'package:threekm/UI/main/AddPost/utils/uploadPost.dart';
@@ -300,6 +300,7 @@ class _AddNewPostState extends State<AddNewPost> {
                               color: const Color(0xFF3E7EFF),
                               fontSize: 16),
                         ),
+
                         if (_selectedAddress == null)
                           Text(
                             " (required)",
@@ -307,6 +308,63 @@ class _AddNewPostState extends State<AddNewPost> {
                               fontSize: 12,
                               fontWeight: FontWeight.w400,
                               color: Color(0xFFa7abad),
+
+                        SizedBox(width: 16),
+                        InkWell(
+                          onTap: () async {
+                            Future.delayed(Duration.zero, () {
+                              context
+                                  .read<LocationProvider>()
+                                  .getLocation()
+                                  .whenComplete(() async {
+                                final _locationProvider = context
+                                    .read<LocationProvider>()
+                                    .getlocationData;
+                                final kInitialPosition = LatLng(
+                                    _locationProvider!.latitude!,
+                                    _locationProvider.longitude!);
+                                if (_locationProvider != null) {
+                                  LocationResult? result = await Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => PlacePicker(
+                                          GMap_Api_Key,
+                                          displayLocation: kInitialPosition,
+                                          // initialMapType: MapType.satellite,
+                                          // onPlacePicked: (result) {
+                                          //   //print(result.formattedAddress);
+                                          //   setState(() {
+                                          //     _selecetdAddress =
+                                          //         result.formattedAddress;
+                                          //     print(result.geometry!.toJson());
+                                          //     _geometry = result.geometry;
+                                          //   });
+                                          //   Navigator.of(context).pop();
+                                          // },
+                                          // initialPosition: kInitialPosition,
+                                          // useCurrentLocation: true,
+                                          // selectInitialPosition: true,
+                                          // usePinPointingSearch: true,
+                                          // usePlaceDetailSearch: true,
+                                        ),
+                                      ));
+                                  setState(() {
+                                    _selecetdAddress = result?.formattedAddress;
+                                  });
+                                }
+                              });
+                            });
+                            FocusScope.of(context).unfocus();
+                            // await Navigator.of(context)
+                            //     .pushNamed(LocationBasePage.path);
+                          },
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                                vertical: 8, horizontal: 12),
+                            decoration: BoxDecoration(
+                              color: Color(0xFFF4F3F8),
+                              borderRadius: BorderRadius.circular(20),
+
                             ),
                           )
                       ],

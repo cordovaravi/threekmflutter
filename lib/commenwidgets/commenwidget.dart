@@ -5,14 +5,14 @@ import 'package:shimmer/shimmer.dart';
 import '../main.dart';
 
 var size = MediaQuery.of(navigatorKey.currentContext!).size;
-late BuildContext dialogContext;
+// BuildContext dialogContext;
 void showLoading() {
   WidgetsBinding.instance?.addPostFrameCallback((_) {
     showDialog(
         context: navigatorKey.currentContext!,
         barrierDismissible: false,
         builder: (context) {
-          dialogContext = context;
+          //dialogContext = context;
           return Center(
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -31,7 +31,7 @@ void showLoading() {
 }
 
 void hideLoading() {
-  Navigator.pop(dialogContext);
+  Navigator.pop(navigatorKey.currentContext!);
   //Navigator.pop(navigatorKey.currentContext!);
 }
 
