@@ -98,31 +98,6 @@ class _PostViewState extends State<PostView> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // SizedBox(
-                  //   height: 44,
-                  // ),
-                  // InkWell(
-                  //   onTap: () {
-                  //     Navigator.of(context).pop(false);
-                  //     // setState(() => showNewsDetails = !showNewsDetails);
-                  //   },
-                  //   child: Container(
-                  //     height: 40,
-                  //     width: 40,
-                  //     margin: EdgeInsets.only(left: 18),
-                  //     decoration: BoxDecoration(
-                  //       shape: BoxShape.circle,
-                  //       color: Colors.white.withOpacity(0.8),
-                  //     ),
-                  //     child: Icon(
-                  //       Icons.arrow_back,
-                  //       color: Color(0xFF0F0F2D),
-                  //     ),
-                  //   ),
-                  // ),
-                  // SizedBox(
-                  //   height: 16,
-                  // ),
                   Expanded(
                     child: Container(
                         decoration: BoxDecoration(
@@ -202,9 +177,7 @@ class _PostViewState extends State<PostView> {
                                         // Text(newsData.author!.type.toString())
                                       ],
                                     ),
-                                    SizedBox(
-                                      width: 10,
-                                    ),
+                                    SizedBox(width: 10),
                                     // newsData.author. == true
                                     //     ? Image.asset(
                                     //         'assets/verified.png',
@@ -222,9 +195,7 @@ class _PostViewState extends State<PostView> {
                               // newsData.images!.length > 1 ||
                               //         newsData.videos!.length > 1
                               tempList.length == 0
-                                  ? SizedBox(
-                                      child: Text("null"),
-                                    )
+                                  ? SizedBox.shrink()
                                   : tempList.length > 1
                                       ?
                                       //video and image both

@@ -1038,6 +1038,7 @@ class _NewsCardState extends State<NewsCard> {
     ]);
   }
 
+
   _showLikedBottomModalSheet(int postId, totalLikes) {
     context.read<LikeListProvider>().showLikes(context, postId);
     showModalBottomSheet<void>(
@@ -1336,6 +1337,7 @@ class _NewsCardState extends State<NewsCard> {
       },
     );
   }
+
 
   PopupMenuButton showPopMenu(String postID, Result newsData) {
     return PopupMenuButton(

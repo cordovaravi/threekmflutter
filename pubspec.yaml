@@ -93,9 +93,11 @@ dependencies:
   positioned_tap_detector_2: ^1.0.4
   webview_flutter: 
   flutter_html:
+
+  html: ^0.15.0
+
   lazy_load_scrollview: 
-  
-  
+
 
 dev_dependencies:
   flutter_test:

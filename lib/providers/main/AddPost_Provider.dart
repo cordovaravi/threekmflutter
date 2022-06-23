@@ -26,6 +26,7 @@ import 'package:threekm/utils/api_paths.dart';
 // }
 
 class AddPostProvider extends ChangeNotifier {
+  bool editMode = false;
   final ApiProvider _apiProvider = ApiProvider();
   List<String> _tagsList = [];
   List<String> get tagsList => _tagsList;
@@ -70,6 +71,7 @@ class AddPostProvider extends ChangeNotifier {
 
   void insertImage(int index, File image) {
     _moreImages.insert(index, image);
+    notifyListeners();
   }
 
   void deletImages() {
@@ -86,8 +88,8 @@ class AddPostProvider extends ChangeNotifier {
   bool _isUploadeerror = false;
   bool get isUploadError => _isUploadeerror;
   //UploadedFileProvider _uploadedFileProvider = UploadedFileProvider();
-  Future<Null> uploadPng(context, String? headLine, String? story,
-      String? address, double? lat, double? long) async {
+  Future<Null> uploadPng(
+      context, String? headLine, String? story, String? address, double? lat, double? long) async {
     if (_moreImages.isNotEmpty && _moreImages.length != null) {
       /// Showing snackbar of uploading
       //  showUploadingSnackbar(context, _moreImages.first);
@@ -99,14 +101,12 @@ class AddPostProvider extends ChangeNotifier {
             element.path.contains(".jpg") ||
             element.path.contains(".jpeg")) {
           try {
-            var request = await http.MultipartRequest(
-                'POST', Uri.parse(upload_Imagefile));
+            var request = await http.MultipartRequest('POST', Uri.parse(upload_Imagefile));
             request.headers['Authorization'] = await _apiProvider.getToken();
             request.fields['storage_url'] = "post";
             request.fields['record_id'] = "0";
             request.fields['filename'] = "post.png";
-            request.files
-                .add(await http.MultipartFile.fromPath('file', element.path));
+            request.files.add(await http.MultipartFile.fromPath('file', element.path));
             var httpresponse = await request.send();
             final res = await http.Response.fromStream(httpresponse);
             final response = json.decode(res.body);
@@ -138,14 +138,12 @@ class AddPostProvider extends ChangeNotifier {
           try {
             String _token = await _apiProvider.getToken();
             print("this is token $_token");
-            var request = await http.MultipartRequest(
-                'POST', Uri.parse(upload_VideoFile));
+            var request = await http.MultipartRequest('POST', Uri.parse(upload_VideoFile));
             request.headers['Authorization'] = _token;
             request.fields['storage_url'] = "post";
             request.fields['record_id'] = "0";
             request.fields['filename'] = "post.mp4";
-            request.files
-                .add(await http.MultipartFile.fromPath('file', element.path));
+            request.files.add(await http.MultipartFile.fromPath('file', element.path));
             var httpresponse = await request.send();
             final res = await http.Response.fromStream(httpresponse);
             final response = json.decode(res.body);
@@ -179,13 +177,11 @@ class AddPostProvider extends ChangeNotifier {
 
   List _videosUrl = [];
 
-  Future<Null> uploadPost(context, String? headLine, String? story,
-      String? address, double? lat, double? long) async {
+  Future<Null> uploadPost(
+      context, String? headLine, String? story, String? address, double? lat, double? long) async {
     List tempImages = [];
     uploadedImagesUrl.forEach((element) {
-      if (element.contains(".png") ||
-          element.contains(".jpg") ||
-          element.contains(".jpeg")) {
+      if (element.contains(".png") || element.contains(".jpg") || element.contains(".jpeg")) {
         tempImages.add(element);
       } else {
         // SubmitVideo submitVideo = SubmitVideo( element);

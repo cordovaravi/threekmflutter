@@ -26,15 +26,13 @@ String avatar = "";
 class TabBarNavigation extends StatefulWidget {
   final bool? redirectedFromPost;
   final bool? isPostUploaded;
-  TabBarNavigation({this.redirectedFromPost, this.isPostUploaded, Key? key})
-      : super(key: key);
+  TabBarNavigation({this.redirectedFromPost, this.isPostUploaded, Key? key}) : super(key: key);
 
   @override
   _TabBarNavigationState createState() => _TabBarNavigationState();
 }
 
-class _TabBarNavigationState extends State<TabBarNavigation>
-    with AutomaticKeepAliveClientMixin {
+class _TabBarNavigationState extends State<TabBarNavigation> with AutomaticKeepAliveClientMixin {
   String? thisdeviceId;
   DateTime? currentBackPressTime;
   TabController? controller;
@@ -154,6 +152,7 @@ class _TabBarNavigationState extends State<TabBarNavigation>
       child: Scaffold(
         backgroundColor: Colors.white,
         resizeToAvoidBottomInset: true,
+
         body: Container(
             child: authStatus
                 ? _pageList[_bottomIndex]
@@ -187,7 +186,7 @@ class _TabBarNavigationState extends State<TabBarNavigation>
               ),
             ),
             CustomNavigationBarItem(
-              icon: Icon(Icons.notifications_none_outlined),
+              icon: Icon(Icons.notifications),
               title: Text(
                 "Notifications",
                 style: TextStyle(fontSize: 12, color: Color(0xff7C7C7C)),
@@ -206,8 +205,7 @@ class _TabBarNavigationState extends State<TabBarNavigation>
                 child: Image.network(
                   context.read<ProfileInfoProvider>().Avatar ??
                       "https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/User-avatar.svg/2048px-User-avatar.svg.png",
-                  color: _bottomIndex == 4 &&
-                          context.read<ProfileInfoProvider>().Avatar == null
+                  color: _bottomIndex == 4 && context.read<ProfileInfoProvider>().Avatar == null
                       ? Colors.blueAccent
                       : context.read<ProfileInfoProvider>().Avatar != null
                           ? null
