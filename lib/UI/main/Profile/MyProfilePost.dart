@@ -76,61 +76,68 @@ class _MyProfilePostState extends State<MyProfilePost>
   @override
   Widget build(BuildContext context) {
     final selfProfile = context.watch<AutthorProfileProvider>();
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0.0,
-        title: Text(
-          "My profile",
-          style: ThreeKmTextConstants.tk18PXLatoBlackMedium,
+    return RefreshIndicator(
+      onRefresh: () async {
+        Future.delayed(Duration.zero, () {
+          context.read<AutthorProfileProvider>().getSelfProfile();
+        });
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          elevation: 0.0,
+          title: Text(
+            "My profile",
+            style: ThreeKmTextConstants.tk18PXLatoBlackMedium,
+          ),
+          actions: [
+            IconButton(
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => SearchPage(tabNuber: 0)));
+                },
+                icon: Icon(
+                  Icons.search,
+                  color: Colors.black,
+                ))
+          ],
         ),
-        actions: [
-          IconButton(
-              onPressed: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => SearchPage(tabNuber: 0)));
-              },
-              icon: Icon(
-                Icons.search,
-                color: Colors.black,
-              ))
-        ],
-      ),
-      body: selfProfile.isGettingSelfProfile == true &&
-              selfProfile.selfProfile?.data == null
-          ? Container(
-              height: MediaQuery.of(context).size.height,
-              width: MediaQuery.of(context).size.width,
-              color: Colors.white,
-              child: Center(
-                child: Transform.translate(
-                  offset: Offset(0, 0),
-                  child: CupertinoActivityIndicator(),
+        body: selfProfile.isGettingSelfProfile == true &&
+                selfProfile.selfProfile?.data == null
+            ? Container(
+                height: MediaQuery.of(context).size.height,
+                width: MediaQuery.of(context).size.width,
+                color: Colors.white,
+                child: Center(
+                  child: Transform.translate(
+                    offset: Offset(0, 0),
+                    child: CupertinoActivityIndicator(),
+                  ),
                 ),
+              )
+            : Column(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  //  buildBackButton(context),
+                  selfProfile.selfProfile?.data?.result?.author?.id != null
+                      ? buildContent(context, selfProfile.selfProfile!)
+                      : Center(
+                          child: Container(
+                              color: Colors.amber,
+                              height: MediaQuery.of(context).size.height / 1.3,
+                              width: MediaQuery.of(context).size.width,
+                              child: DayZeroforTabs(
+                                ScreenName: "post",
+                                islogin: true,
+                              )
+                              //Text("Some error while getting data"),
+                              ),
+                        )
+                ],
               ),
-            )
-          : Column(
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                //  buildBackButton(context),
-                selfProfile.selfProfile?.data?.result?.author?.id != null
-                    ? buildContent(context, selfProfile.selfProfile!)
-                    : Center(
-                        child: Container(
-                            color: Colors.amber,
-                            height: MediaQuery.of(context).size.height / 1.3,
-                            width: MediaQuery.of(context).size.width,
-                            child: DayZeroforTabs(
-                              ScreenName: "post",
-                              islogin: true,
-                            )
-                            //Text("Some error while getting data"),
-                            ),
-                      )
-              ],
-            ),
+      ),
     );
   }
 
@@ -1038,7 +1045,6 @@ class _NewsCardState extends State<NewsCard> {
     ]);
   }
 
-
   _showLikedBottomModalSheet(int postId, totalLikes) {
     context.read<LikeListProvider>().showLikes(context, postId);
     showModalBottomSheet<void>(
@@ -1337,7 +1343,6 @@ class _NewsCardState extends State<NewsCard> {
       },
     );
   }
-
 
   PopupMenuButton showPopMenu(String postID, Result newsData) {
     return PopupMenuButton(

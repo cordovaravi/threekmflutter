@@ -28,7 +28,7 @@ class ImageLayout extends StatelessWidget {
     ];
     List imagesList = [...images, ...video];
 
-    if (imagesList.length > 5) {
+    if (imagesList.length >= 5) {
       return Container(
           constraints: BoxConstraints(
             minHeight: 20,

@@ -8,13 +8,13 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_webservice/directions.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 import 'package:threekm/Custom_library/location2.0/lib/place_picker.dart';
 
 import 'package:threekm/UI/main/AddPost/ImageEdit/editImage.dart';
 import 'package:threekm/UI/main/AddPost/utils/FileUtils.dart';
 import 'package:threekm/UI/main/AddPost/utils/uploadPost.dart';
 import 'package:threekm/UI/main/AddPost/utils/video.dart';
-import 'package:threekm/UI/main/News/NewsList.dart';
 import 'package:threekm/providers/Location/locattion_Provider.dart';
 import 'package:threekm/providers/main/AddPost_Provider.dart';
 import 'package:threekm/utils/api_paths.dart';
@@ -75,7 +75,8 @@ class _AddNewPostState extends State<AddNewPost> {
                       imageList.getMoreImages.isNotEmpty ||
                       headlineCount > 0)) {
                     Fluttertoast.showToast(
-                        msg: "Add either a headline, description or upload image/video");
+                        msg:
+                            "Add either a headline, description or upload image/video");
                     return;
                   }
                   if (context.read<AddPostProvider>().tagsList.length < 3) {
@@ -125,7 +126,8 @@ class _AddNewPostState extends State<AddNewPost> {
               },
               child: Text(
                 "Post",
-                style: GoogleFonts.poppins(fontWeight: FontWeight.w500, fontSize: 16),
+                style: GoogleFonts.poppins(
+                    fontWeight: FontWeight.w500, fontSize: 16),
               ),
               style: ElevatedButton.styleFrom(
                 primary: _selectedAddress != null &&
@@ -134,7 +136,8 @@ class _AddNewPostState extends State<AddNewPost> {
                     : const Color(0xffF1F2F6),
                 elevation: 0,
                 shape: const StadiumBorder(),
-                padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
               ),
             ),
           ),
@@ -176,14 +179,16 @@ class _AddNewPostState extends State<AddNewPost> {
               // maxLength: 100,
               textAlignVertical: TextAlignVertical.center,
               maxLengthEnforcement: MaxLengthEnforcement.enforced,
-              buildCounter: (context, {required currentLength, required isFocused, maxLength}) {
+              buildCounter: (context,
+                  {required currentLength, required isFocused, maxLength}) {
                 // WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
                 //   setState(() {
                 //     headlineCount = currentLength;
                 //   });
                 // });
                 return Text("${headlineCount}/100",
-                    style: ThreeKmTextConstants.tk12PXPoppinsWhiteRegular.copyWith(
+                    style:
+                        ThreeKmTextConstants.tk12PXPoppinsWhiteRegular.copyWith(
                       fontSize: 10.5,
                       fontWeight: FontWeight.normal,
                       color: Color(0xFF7c7c7c),
@@ -214,14 +219,16 @@ class _AddNewPostState extends State<AddNewPost> {
               controller: _storyController,
               maxLines: null,
               minLines: 2,
-              buildCounter: (context, {required currentLength, required isFocused, maxLength}) {
+              buildCounter: (context,
+                  {required currentLength, required isFocused, maxLength}) {
                 // WidgetsBinding.instance!.addPostFrameCallback((_) {
                 //   setState(() {
                 //     descriptionCount = currentLength;
                 //   });
                 // });
                 return Text("${descriptionCount}/2000",
-                    style: ThreeKmTextConstants.tk12PXPoppinsWhiteRegular.copyWith(
+                    style:
+                        ThreeKmTextConstants.tk12PXPoppinsWhiteRegular.copyWith(
                       fontSize: 10.5,
                       fontWeight: FontWeight.normal,
                       color: Color(0xFF7c7c7c),
@@ -247,35 +254,58 @@ class _AddNewPostState extends State<AddNewPost> {
                 onTap: () async {
                   FocusScope.of(context).unfocus();
                   Future.delayed(Duration.zero, () {
-                    context.read<LocationProvider>().getLocation().whenComplete(() {
-                      final _locationProvider = context.read<LocationProvider>().getlocationData;
-                      final kInitialPosition =
-                          LatLng(_locationProvider!.latitude!, _locationProvider.longitude!);
+                    context
+                        .read<LocationProvider>()
+                        .getLocation()
+                        .whenComplete(() async {
+                      final _locationProvider =
+                          context.read<LocationProvider>().getlocationData;
+                      final kInitialPosition = LatLng(
+                          _locationProvider!.latitude!,
+                          _locationProvider.longitude!);
                       if (_locationProvider != null) {
-                        Navigator.push(
+                        LocationResult? result = await Navigator.push(
                             context,
                             MaterialPageRoute(
                               builder: (context) => PlacePicker(
-                                apiKey: GMap_Api_Key,
-                                // initialMapType: MapType.satellite,
-                                onPlacePicked: (result) {
-                                  //print(result.formattedAddress);
-                                  setState(() {
-                                    _selectedAddress = result.formattedAddress;
-                                    print(result.geometry!.toJson());
-                                    _geometry = result.geometry;
-                                  });
-                                  Navigator.of(context).pop();
-                                },
-                                initialPosition: kInitialPosition,
-                                useCurrentLocation: true,
-                                selectInitialPosition: true,
-                                usePinPointingSearch: true,
-                                usePlaceDetailSearch: true,
+                                GMap_Api_Key,
+                                displayLocation: kInitialPosition,
                               ),
                             ));
+                        setState(() {
+                          _selectedAddress = result?.formattedAddress;
+                        });
                       }
                     });
+                    // context.read<LocationProvider>().getLocation().whenComplete(() {
+                    //   final _locationProvider = context.read<LocationProvider>().getlocationData;
+                    //   final kInitialPosition =
+                    //       LatLng(_locationProvider!.latitude!, _locationProvider.longitude!);
+                    //   if (_locationProvider != null) {
+                    //     Navigator.push(
+                    //         context,
+                    //         MaterialPageRoute(
+                    //           builder: (context) => PlacePicker(
+                    //              GMap_Api_Key,
+                    //             // initialMapType: MapType.satellite,
+                    //             onPlacePicked: (result) {
+                    //               //print(result.formattedAddress);
+                    //               setState(() {
+                    //                 _selectedAddress = result.formattedAddress;
+                    //                 print(result.geometry!.toJson());
+                    //                 _geometry = result.geometry;
+                    //               });
+                    //               Navigator.of(context).pop();
+                    //             },
+                    //             initialPosition: kInitialPosition,
+                    //             useCurrentLocation: true,
+                    //             selectInitialPosition: true,
+                    //             usePinPointingSearch: true,
+                    //             usePlaceDetailSearch: true,
+                    //           ),
+                    //         ));
+                    //   }
+                    // });
                   });
                   // await Navigator.of(context)
                   //     .pushNamed(LocationBasePage.path);
@@ -294,79 +324,66 @@ class _AddNewPostState extends State<AddNewPost> {
                         ),
                         SizedBox(width: 5),
                         Text(
-                          _selectedAddress == null ? "Add Post location" : "Change Location",
+                          _selectedAddress == null
+                              ? "Add Post location"
+                              : "Change Location",
                           style: GoogleFonts.poppins(
                               fontWeight: FontWeight.w600,
                               color: const Color(0xFF3E7EFF),
                               fontSize: 16),
                         ),
-
-                        if (_selectedAddress == null)
-                          Text(
-                            " (required)",
-                            style: GoogleFonts.poppins(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w400,
-                              color: Color(0xFFa7abad),
-
+                        if (_selectedAddress == null) ...{
+                          Text(" (required)",
+                              style: GoogleFonts.poppins(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w400,
+                                color: Color(0xFFa7abad),
+                              ))
+                        },
                         SizedBox(width: 16),
                         InkWell(
-                          onTap: () async {
-                            Future.delayed(Duration.zero, () {
-                              context
-                                  .read<LocationProvider>()
-                                  .getLocation()
-                                  .whenComplete(() async {
-                                final _locationProvider = context
+                            onTap: () async {
+                              Future.delayed(Duration.zero, () {
+                                context
                                     .read<LocationProvider>()
-                                    .getlocationData;
-                                final kInitialPosition = LatLng(
-                                    _locationProvider!.latitude!,
-                                    _locationProvider.longitude!);
-                                if (_locationProvider != null) {
-                                  LocationResult? result = await Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => PlacePicker(
-                                          GMap_Api_Key,
-                                          displayLocation: kInitialPosition,
-                                          // initialMapType: MapType.satellite,
-                                          // onPlacePicked: (result) {
-                                          //   //print(result.formattedAddress);
-                                          //   setState(() {
-                                          //     _selecetdAddress =
-                                          //         result.formattedAddress;
-                                          //     print(result.geometry!.toJson());
-                                          //     _geometry = result.geometry;
-                                          //   });
-                                          //   Navigator.of(context).pop();
-                                          // },
-                                          // initialPosition: kInitialPosition,
-                                          // useCurrentLocation: true,
-                                          // selectInitialPosition: true,
-                                          // usePinPointingSearch: true,
-                                          // usePlaceDetailSearch: true,
-                                        ),
-                                      ));
-                                  setState(() {
-                                    _selecetdAddress = result?.formattedAddress;
-                                  });
-                                }
+                                    .getLocation()
+                                    .whenComplete(() async {
+                                  final _locationProvider = context
+                                      .read<LocationProvider>()
+                                      .getlocationData;
+                                  final kInitialPosition = LatLng(
+                                      _locationProvider!.latitude!,
+                                      _locationProvider.longitude!);
+                                  if (_locationProvider != null) {
+                                    LocationResult? result =
+                                        await Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) => PlacePicker(
+                                                GMap_Api_Key,
+                                                displayLocation:
+                                                    kInitialPosition,
+                                              ),
+                                            ));
+                                    setState(() {
+                                      _selectedAddress =
+                                          result?.formattedAddress;
+                                    });
+                                  }
+                                });
                               });
-                            });
-                            FocusScope.of(context).unfocus();
-                            // await Navigator.of(context)
-                            //     .pushNamed(LocationBasePage.path);
-                          },
-                          child: Container(
-                            padding: EdgeInsets.symmetric(
-                                vertical: 8, horizontal: 12),
-                            decoration: BoxDecoration(
-                              color: Color(0xFFF4F3F8),
-                              borderRadius: BorderRadius.circular(20),
-
-                            ),
-                          )
+                              FocusScope.of(context).unfocus();
+                              // await Navigator.of(context)
+                              //     .pushNamed(LocationBasePage.path);
+                            },
+                            child: Container(
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 8, horizontal: 12),
+                              decoration: BoxDecoration(
+                                color: Color(0xFFF4F3F8),
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                            ))
                       ],
                     ),
                     if (_selectedAddress != null) ...[
@@ -392,7 +409,9 @@ class _AddNewPostState extends State<AddNewPost> {
                         physics: NeverScrollableScrollPhysics(),
                         shrinkWrap: true,
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 3, mainAxisSpacing: 3, crossAxisSpacing: 3),
+                            crossAxisCount: 3,
+                            mainAxisSpacing: 3,
+                            crossAxisSpacing: 3),
                         itemCount: imageList.getMoreImages.length,
                         itemBuilder: (BuildContext context, int index) {
                           return Stack(
@@ -405,12 +424,14 @@ class _AddNewPostState extends State<AddNewPost> {
                                   decoration: BoxDecoration(
                                       color: const Color(0xffD9D9D9),
                                       borderRadius: BorderRadius.circular(8)),
-                                  child: imageList.getMoreImages[index].path.contains("mp4")
+                                  child: imageList.getMoreImages[index].path
+                                          .contains("mp4")
                                       ? Image.asset(
                                           "assets/ring_icon.png",
                                           fit: BoxFit.cover,
                                         )
-                                      : Image.file(imageList.getMoreImages[index],
+                                      : Image.file(
+                                          imageList.getMoreImages[index],
                                           fit: BoxFit.cover),
                                 ),
                               ),
@@ -426,7 +447,9 @@ class _AddNewPostState extends State<AddNewPost> {
                                         borderRadius: BorderRadius.circular(8)),
                                     child: InkWell(
                                       onTap: () {
-                                        context.read<AddPostProvider>().removeImages(index);
+                                        context
+                                            .read<AddPostProvider>()
+                                            .removeImages(index);
                                       },
                                       child: Icon(
                                         FeatherIcons.x,
@@ -602,9 +625,13 @@ class _AddNewPostState extends State<AddNewPost> {
               border: Border.all(color: Color(0xff3E7EFF), width: 2),
             ),
             child: Text(
-              imageList.getMoreImages.length > 0 ? "Add More Media" : "Upload Image/Video",
+              imageList.getMoreImages.length > 0
+                  ? "Add More Media"
+                  : "Upload Image/Video",
               style: GoogleFonts.poppins(
-                  fontWeight: FontWeight.w600, fontSize: 16, color: const Color(0xff3E7EFF)),
+                  fontWeight: FontWeight.w600,
+                  fontSize: 16,
+                  color: const Color(0xff3E7EFF)),
             ),
           ),
         ),
@@ -650,7 +677,9 @@ class _AddNewPostState extends State<AddNewPost> {
                 backgroundColor: Colors.white,
                 shape: StadiumBorder(),
                 labelStyle: GoogleFonts.poppins(
-                    fontSize: 14, color: const Color(0xff3e7eff), fontWeight: FontWeight.w700),
+                    fontSize: 14,
+                    color: const Color(0xff3e7eff),
+                    fontWeight: FontWeight.w700),
                 elevation: 0,
                 visualDensity: VisualDensity.adaptivePlatformDensity,
                 side: BorderSide(width: 1, color: const Color(0xFF3E7EFF)),
@@ -667,7 +696,8 @@ class _AddNewPostState extends State<AddNewPost> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
           title: Text(
             "Add Tag",
             style: ThreeKmTextConstants.tk14PXPoppinsBlackSemiBold
@@ -687,7 +717,8 @@ class _AddNewPostState extends State<AddNewPost> {
             TextButton(
               child: Text(
                 "Cancel",
-                style: ThreeKmTextConstants.tk14PXPoppinsBlackSemiBold.copyWith(color: Colors.red),
+                style: ThreeKmTextConstants.tk14PXPoppinsBlackSemiBold
+                    .copyWith(color: Colors.red),
               ),
               onPressed: () {
                 Navigator.of(context).pop();
@@ -697,7 +728,8 @@ class _AddNewPostState extends State<AddNewPost> {
             TextButton(
               child: Text(
                 "Continue",
-                style: ThreeKmTextConstants.tk14PXPoppinsBlackSemiBold.copyWith(color: Colors.blue),
+                style: ThreeKmTextConstants.tk14PXPoppinsBlackSemiBold
+                    .copyWith(color: Colors.blue),
               ),
               onPressed: () {
                 Navigator.of(context).pop(_tagsController.text.trim());
@@ -781,7 +813,8 @@ class _AddNewPostState extends State<AddNewPost> {
                     InkWell(
                       onTap: () async {
                         List<XFile>? imageFileList = [];
-                        final List<XFile>? images = await _imagePicker.pickMultiImage();
+                        final List<XFile>? images =
+                            await _imagePicker.pickMultiImage();
                         if (imageFileList.isEmpty) {
                           imageFileList.addAll(images!);
                         }
@@ -794,7 +827,8 @@ class _AddNewPostState extends State<AddNewPost> {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => EditImage(images: imageFileList)));
+                                  builder: (context) =>
+                                      EditImage(images: imageFileList)));
                         }
                       },
                       child: Container(
@@ -818,16 +852,16 @@ class _AddNewPostState extends State<AddNewPost> {
                     SizedBox(height: 10),
                     InkWell(
                       onTap: () async {
-                        final pickedVideo =
-                            await _imagePicker.pickVideo(source: ImageSource.gallery);
+                        final pickedVideo = await _imagePicker.pickVideo(
+                            source: ImageSource.gallery);
                         //final file = XFile(pickedVideo!.path);
                         Navigator.pop(context);
                         if (pickedVideo != null) {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) =>
-                                      VideoCompress(videoFile: File(pickedVideo.path))));
+                                  builder: (context) => VideoCompress(
+                                      videoFile: File(pickedVideo.path))));
                           // final size =
                           //     getVideoSize(file: File(pickedVideo.path));
                           // log("size is $size");
