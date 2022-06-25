@@ -17,7 +17,7 @@
 //
 // class EditPost extends StatefulWidget {
 //   const EditPost({Key? key, required this.postId}) : super(key: key);
-//   final int postId;
+//   final String postId;
 //
 //   @override
 //   State<EditPost> createState() => _EditPostState();

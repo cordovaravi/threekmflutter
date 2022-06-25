@@ -102,8 +102,7 @@ class DraggableHome extends StatefulWidget {
     this.floatingActionButton,
     this.floatingActionButtonLocation,
     this.floatingActionButtonAnimator,
-  })  : assert(headerExpandedHeight > 0.0 &&
-            headerExpandedHeight < stretchMaxHeight),
+  })  : assert(headerExpandedHeight > 0.0 && headerExpandedHeight < stretchMaxHeight),
         assert(
           (stretchMaxHeight > headerExpandedHeight) && (stretchMaxHeight < .99),
         ),
@@ -111,10 +110,8 @@ class DraggableHome extends StatefulWidget {
 }
 
 class _DraggableHomeState extends State<DraggableHome> {
-  final BehaviorSubject<bool> isFullyExpanded =
-      BehaviorSubject<bool>.seeded(false);
-  final BehaviorSubject<bool> isFullyCollapsed =
-      BehaviorSubject<bool>.seeded(false);
+  final BehaviorSubject<bool> isFullyExpanded = BehaviorSubject<bool>.seeded(false);
+  final BehaviorSubject<bool> isFullyCollapsed = BehaviorSubject<bool>.seeded(false);
 
   @override
   void dispose() {
@@ -130,8 +127,7 @@ class _DraggableHomeState extends State<DraggableHome> {
 
     // final double topPadding = MediaQuery.of(context).padding.top;
 
-    final double expandedHeight =
-        MediaQuery.of(context).size.height * widget.headerExpandedHeight;
+    final double expandedHeight = MediaQuery.of(context).size.height * widget.headerExpandedHeight;
 
     final double fullyExpandedHeight =
         MediaQuery.of(context).size.height * 0.43 * (widget.stretchMaxHeight);
@@ -144,15 +140,14 @@ class _DraggableHomeState extends State<DraggableHome> {
         onNotification: (notification) {
           if (notification.metrics.axis == Axis.vertical) {
             // isFullyCollapsed
-            if ((isFullyExpanded.value) &&
-                notification.metrics.extentBefore > 100) {
+            if ((isFullyExpanded.value ?? false) && notification.metrics.extentBefore > 100) {
               isFullyExpanded.add(false);
             }
             //isFullyCollapsed
             if (notification.metrics.extentBefore > expandedHeight) {
-              if (!(isFullyCollapsed.value)) isFullyCollapsed.add(true);
+              if (!(isFullyCollapsed.value ?? false)) isFullyCollapsed.add(true);
             } else {
-              if ((isFullyCollapsed.value)) isFullyCollapsed.add(false);
+              if ((isFullyCollapsed.value ?? false)) isFullyCollapsed.add(false);
             }
           }
           return false;
@@ -179,8 +174,7 @@ class _DraggableHomeState extends State<DraggableHome> {
       slivers: [
         //////// removed jan 4 update
         StreamBuilder<List<bool>>(
-          stream: CombineLatestStream.list<bool>(
-              [isFullyCollapsed.stream, isFullyExpanded.stream]),
+          stream: CombineLatestStream.list<bool>([isFullyCollapsed.stream, isFullyExpanded.stream]),
           builder: (BuildContext context, AsyncSnapshot<List<bool>> snapshot) {
             List<bool> streams = (snapshot.data ?? [false, false]);
             // return SliverAppBar(
@@ -223,9 +217,7 @@ class _DraggableHomeState extends State<DraggableHome> {
                   FlexibleSpaceBar(
                     background: Container(
                         child: streams[1]
-                            ? (widget.expandedBody == null
-                                ? Container()
-                                : widget.expandedBody)
+                            ? (widget.expandedBody == null ? Container() : widget.expandedBody)
                             // old is widget.headerwidget
                             : Container()),
                   ),
@@ -276,8 +268,7 @@ class _DraggableHomeState extends State<DraggableHome> {
     return Container(
       height: widget.curvedBodyRadius,
       decoration: BoxDecoration(
-        color:
-            widget.backgroundColor ?? Theme.of(context).scaffoldBackgroundColor,
+        color: widget.backgroundColor ?? Theme.of(context).scaffoldBackgroundColor,
         borderRadius: BorderRadius.vertical(
           top: Radius.circular(widget.curvedBodyRadius),
         ),

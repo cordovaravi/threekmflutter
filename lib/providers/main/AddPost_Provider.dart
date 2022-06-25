@@ -3,12 +3,15 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:google_maps_webservice/directions.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
+import 'package:light_compressor/light_compressor.dart';
 import 'package:threekm/UI/main/AddPost/BottomSnack.dart';
 import 'package:threekm/UI/main/navigation.dart';
 import 'package:threekm/commenwidgets/CustomSnakBar.dart';
 import 'package:threekm/main.dart';
+import 'package:path_provider/path_provider.dart' as path;
 
 import 'package:threekm/networkservice/Api_Provider.dart';
 import 'package:threekm/utils/api_paths.dart';
@@ -33,11 +36,6 @@ class AddPostProvider extends ChangeNotifier {
 
   Future<Null> addTags(String tagItem) async {
     _tagsList.add(tagItem);
-    notifyListeners();
-  }
-
-  Future<Null> deletTag(int index) async {
-    _tagsList.removeAt(index);
     notifyListeners();
   }
 
@@ -80,6 +78,19 @@ class AddPostProvider extends ChangeNotifier {
   }
 
   /// Post
+  String? _selectedAddress;
+  String? get selectedAddress => _selectedAddress;
+  set selectedAddress(String? text) {
+    _selectedAddress = text;
+    notifyListeners();
+  }
+
+  Geometry? _geometry;
+  Geometry? get geometry => _geometry;
+  set geometry(Geometry? geometry) {
+    _geometry = geometry;
+    notifyListeners();
+  }
 
   List<String> _uploadImageUrls = [];
   List<String> get uploadedImagesUrl => _uploadImageUrls;
@@ -247,6 +258,60 @@ class AddPostProvider extends ChangeNotifier {
     _videosUrl.clear();
     notifyListeners();
     // CustomSnackBar(context, Text("Post has been submmitted"));
+  }
+
+  // compression process
+  LightCompressor? lightCompressor;
+  bool isCompressionOngoing = false;
+  void compressVideoFile(File pickedFile) async {
+    String? _filePath;
+    String _desFile;
+
+    final File file = File(pickedFile.path);
+
+    _filePath = file.path;
+
+    lightCompressor = LightCompressor();
+    isCompressionOngoing = true;
+    notifyListeners();
+
+    _desFile = await _destinationFile;
+
+    final dynamic response = await lightCompressor?.compressVideo(
+        path: _filePath,
+        destinationPath: _desFile,
+        videoQuality: VideoQuality.medium,
+        isMinBitrateCheckEnabled: false,
+        iosSaveInGallery: false);
+
+    isCompressionOngoing = false;
+    lightCompressor = null;
+    notifyListeners();
+
+    if (response is OnSuccess) {
+      _desFile = response.destinationPath;
+      addImages(File(response.destinationPath));
+    } else if (response is OnFailure) {
+      print("compression failed");
+    } else if (response is OnCancelled) {
+      print("compression cancelled");
+    }
+  }
+
+  Future<String> get _destinationFile async {
+    String directory;
+    final String videoName = '${DateTime.now().millisecondsSinceEpoch}.mp4';
+    if (Platform.isAndroid) {
+      // Handle this part the way you want to save it in any directory you wish.
+      final List<Directory>? dir =
+          await path.getExternalStorageDirectories(type: path.StorageDirectory.movies);
+      directory = dir!.first.path;
+      return File('$directory/$videoName').path;
+    } else {
+      final Directory dir = await path.getLibraryDirectory();
+      directory = dir.path;
+      return File('$directory/$videoName').path;
+    }
   }
 }
 
