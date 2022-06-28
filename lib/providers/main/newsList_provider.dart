@@ -138,6 +138,7 @@ class NewsListProvider extends ChangeNotifier {
         log("removing like from post $postId");
         element.isLiked = false;
         element.likes = element.likes! - 1;
+        element.emotion = null;
         notifyListeners();
       }
     });

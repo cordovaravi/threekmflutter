@@ -15,6 +15,7 @@ import 'package:threekm/UI/main/AddPost/ImageEdit/editImage.dart';
 import 'package:threekm/UI/main/AddPost/utils/FileUtils.dart';
 import 'package:threekm/UI/main/AddPost/utils/uploadPost.dart';
 import 'package:threekm/UI/main/AddPost/utils/video.dart';
+import 'package:threekm/commenwidgets/commenwidget.dart';
 import 'package:threekm/providers/Location/locattion_Provider.dart';
 import 'package:threekm/providers/main/AddPost_Provider.dart';
 import 'package:threekm/utils/api_paths.dart';
@@ -35,7 +36,7 @@ class _AddNewPostState extends State<AddNewPost> {
   final _formKey = GlobalKey<FormState>();
   final ImagePicker _imagePicker = ImagePicker();
 
-  Geometry? _geometry;
+  LatLng? _geometry;
 
   int headlineCount = 0;
   int descriptionCount = 0;
@@ -95,8 +96,8 @@ class _AddNewPostState extends State<AddNewPost> {
                                 Title: _headLineController.text,
                                 Story: _storyController.text,
                                 address: _selectedAddress ?? "",
-                                lat: _geometry?.location.lat,
-                                long: _geometry?.location.lng,
+                                lat: _geometry?.latitude,
+                                long: _geometry?.longitude,
                               )));
                 }
                 // if (_formKey.currentState!.validate()) {
@@ -253,6 +254,7 @@ class _AddNewPostState extends State<AddNewPost> {
               builder: (_controller) => InkWell(
                 onTap: () async {
                   FocusScope.of(context).unfocus();
+                  showLoading();
                   Future.delayed(Duration.zero, () {
                     context
                         .read<LocationProvider>()
@@ -272,8 +274,10 @@ class _AddNewPostState extends State<AddNewPost> {
                                 displayLocation: kInitialPosition,
                               ),
                             ));
+                        hideLoading();
                         setState(() {
                           _selectedAddress = result?.formattedAddress;
+                          _geometry = result?.latLng;
                         });
                       }
                     });
@@ -333,7 +337,7 @@ class _AddNewPostState extends State<AddNewPost> {
                               fontSize: 16),
                         ),
                         if (_selectedAddress == null) ...{
-                          Text(" (required)",
+                          Text("(required)",
                               style: GoogleFonts.poppins(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w400,
@@ -341,49 +345,6 @@ class _AddNewPostState extends State<AddNewPost> {
                               ))
                         },
                         SizedBox(width: 16),
-                        InkWell(
-                            onTap: () async {
-                              Future.delayed(Duration.zero, () {
-                                context
-                                    .read<LocationProvider>()
-                                    .getLocation()
-                                    .whenComplete(() async {
-                                  final _locationProvider = context
-                                      .read<LocationProvider>()
-                                      .getlocationData;
-                                  final kInitialPosition = LatLng(
-                                      _locationProvider!.latitude!,
-                                      _locationProvider.longitude!);
-                                  if (_locationProvider != null) {
-                                    LocationResult? result =
-                                        await Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) => PlacePicker(
-                                                GMap_Api_Key,
-                                                displayLocation:
-                                                    kInitialPosition,
-                                              ),
-                                            ));
-                                    setState(() {
-                                      _selectedAddress =
-                                          result?.formattedAddress;
-                                    });
-                                  }
-                                });
-                              });
-                              FocusScope.of(context).unfocus();
-                              // await Navigator.of(context)
-                              //     .pushNamed(LocationBasePage.path);
-                            },
-                            child: Container(
-                              padding: EdgeInsets.symmetric(
-                                  vertical: 8, horizontal: 12),
-                              decoration: BoxDecoration(
-                                color: Color(0xFFF4F3F8),
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                            ))
                       ],
                     ),
                     if (_selectedAddress != null) ...[

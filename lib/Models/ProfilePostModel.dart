@@ -112,6 +112,7 @@ class Post {
       this.slugHeadline,
       this.preheaderLike,
       this.preheaderComment,
+      this.emotion,
       this.latestComment});
 
   int? postId;
@@ -140,23 +141,32 @@ class Post {
   String? preheaderLike;
   String? preheaderComment;
   LatestComment? latestComment;
+  String? emotion;
 
   factory Post.fromJson(Map<String, dynamic> json) => Post(
         postId: json["post_id"] == null ? null : json["post_id"],
-        submittedHeadline: json["submitted_headline"] == null ? null : json["submitted_headline"],
-        submittedStory: json["submitted_story"] == null ? null : json["submitted_story"],
+        submittedHeadline: json["submitted_headline"] == null
+            ? null
+            : json["submitted_headline"],
+        submittedStory:
+            json["submitted_story"] == null ? null : json["submitted_story"],
         headline: json["headline"] == null ? null : json["headline"],
         story: json["story"] == null ? null : json["story"],
-        images: json["images"] == null ? null : List<String>.from(json["images"].map((x) => x)),
+        images: json["images"] == null
+            ? null
+            : List<String>.from(json["images"].map((x) => x)),
         videos: json["videos"] == null
             ? null
             : List<Video>.from(json["videos"].map((x) => Video.fromJson(x))),
         type: json["type"] == null ? null : json["type"],
-        tags: json["tags"] == null ? null : List<String>.from(json["tags"].map((x) => x)),
+        tags: json["tags"] == null
+            ? null
+            : List<String>.from(json["tags"].map((x) => x)),
         author: json["author"] == null ? null : Author.fromJson(json["author"]),
         authorType: json["author_type"] == null ? null : json["author_type"],
-        authorClassification:
-            json["author_classification"] == null ? null : json["author_classification"],
+        authorClassification: json["author_classification"] == null
+            ? null
+            : json["author_classification"],
         status: json["status"] == null ? null : json["status"],
         views: json["views"] == null ? null : json["views"],
         createdDate: json["created_date"] == null ? null : json["created_date"],
@@ -170,8 +180,12 @@ class Post {
         slugHeadline: json["slug_headline"],
         preheaderLike: json["preheader_like"],
         preheaderComment: json["preheader_comment"],
-        latestComment:
-            json['latest_comment'] == null ? null : LatestComment.fromJson(json['latest_comment']),
+        emotion: json["emotion"] ?? null,
+        latestComment: json['latest_comment'] == null
+            ? null
+            : LatestComment.fromJson(
+                json['latest_comment'],
+              ),
       );
 }
 

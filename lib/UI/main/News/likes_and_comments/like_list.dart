@@ -54,13 +54,20 @@ class _LikeListState extends State<LikeList> {
                     // ALL Likes
                     reactionList(
                         userList: provider.users,
-                        anonymousCount: provider.likeList?.data?.result?.anonymousCount),
-                if (provider.likeCount != 0) reactionList(userList: provider.likeUsers),
-                if (provider.loveCount != 0) reactionList(userList: provider.loveUsers),
-                if (provider.careCount != 0) reactionList(userList: provider.careUsers),
-                if (provider.laughCount != 0) reactionList(userList: provider.laughUsers),
-                if (provider.sadCount != 0) reactionList(userList: provider.sadUsers),
-                if (provider.angryCount != 0) reactionList(userList: provider.angryUsers),
+                        anonymousCount:
+                            provider.likeList?.data?.result?.anonymousCount),
+                if (provider.likeCount != 0)
+                  reactionList(userList: provider.likeUsers),
+                if (provider.loveCount != 0)
+                  reactionList(userList: provider.loveUsers),
+                if (provider.careCount != 0)
+                  reactionList(userList: provider.careUsers),
+                if (provider.laughCount != 0)
+                  reactionList(userList: provider.laughUsers),
+                if (provider.sadCount != 0)
+                  reactionList(userList: provider.sadUsers),
+                if (provider.angryCount != 0)
+                  reactionList(userList: provider.angryUsers),
               ])),
             ],
           ),
@@ -196,7 +203,9 @@ class _LikeListState extends State<LikeList> {
   void initState() {
     super.initState();
     Future.delayed(
-        Duration.zero, () => context.read<LikeListProvider>().showLikes(context, widget.postId));
+        Duration.zero,
+        () =>
+            context.read<LikeListProvider>().showLikes(context, widget.postId));
   }
 
   ListView reactionList({
@@ -222,26 +231,36 @@ class _LikeListState extends State<LikeList> {
                             image: (index < userList.length)
                                 ? DecorationImage(
                                     fit: BoxFit.cover,
-                                    image: NetworkImage(userList[index].avatar.toString()))
+                                    image: NetworkImage(
+                                        userList[index].avatar.toString()))
                                 : null),
                         child: userList[index].isUnknown != null
                             ? Center(
                                 child: Text(
                                     // "+${provider.likeList!.data!.result!.anonymousCount}",
                                     "+",
-                                    style: TextStyle(fontSize: 22, color: Colors.white),
+                                    style: TextStyle(
+                                        fontSize: 22, color: Colors.white),
                                     textAlign: TextAlign.center),
                               )
                             : SizedBox.shrink()),
                     Positioned(
                       right: 0,
                       top: 0,
-                      child: Image.asset(
-                        'assets/reactions/${userList[index].emotion ?? 'like'}.png',
-                        height: 15,
-                        width: 15,
-                        // color: Colors.blue,
-                      ),
+                      child: userList[index].emotion != null &&
+                              userList[index].emotion != "null"
+                          ? Image.asset(
+                              'assets/reactions/${userList[index].emotion ?? 'like'}.png',
+                              height: 15,
+                              width: 15,
+                              // color: Colors.blue,
+                            )
+                          : Image.asset(
+                              'assets/reactions/like.png',
+                              height: 15,
+                              width: 15,
+                              // color: Colors.blue,
+                            ),
                     )
                   ],
                 ),
