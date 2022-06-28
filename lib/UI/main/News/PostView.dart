@@ -20,6 +20,9 @@ import 'package:threekm/commenwidgets/CustomSnakBar.dart';
 import 'package:threekm/commenwidgets/commenwidget.dart';
 import 'package:threekm/providers/Global/logged_in_or_not.dart';
 import 'package:threekm/providers/localization_Provider/appLanguage_provider.dart';
+import 'package:threekm/providers/main/AthorProfile_Provider.dart';
+import 'package:threekm/providers/main/NewsFeed_Provider.dart';
+import 'package:threekm/providers/main/newsList_provider.dart';
 import 'package:threekm/providers/main/singlePost_provider.dart';
 import 'package:threekm/utils/slugUrl.dart';
 import 'package:threekm/utils/threekm_textstyles.dart';
@@ -71,10 +74,24 @@ class _PostViewState extends State<PostView> {
 
   final _imageKey = GlobalKey();
 
+  postlike(label, postId) {
+    context.read<SinglePostProvider>().postLike(postId.toString(), label);
+    context.read<NewsListProvider>().postLike(postId.toString(), label);
+    context.read<NewsFeedProvider>().postLike(postId.toString(), label);
+    context.read<AutthorProfileProvider>().postLike(postId.toString(), label);
+  }
+
+  void postUnlike(postId) {
+    context.read<NewsListProvider>().postUnLike(postId.toString());
+    context.read<NewsFeedProvider>().postUnLike(postId.toString());
+    context.read<AutthorProfileProvider>().postUnLike(postId.toString());
+  }
+
   @override
   Widget build(BuildContext context) {
     final postData = context.watch<SinglePostProvider>();
     final newsData = postData.postDetails?.data?.result?.post;
+
     List videoUrls =
         newsData != null ? newsData.videos!.map((e) => e.src).toList() : [];
     List tempList = newsData != null
@@ -506,47 +523,66 @@ class _PostViewState extends State<PostView> {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceEvenly,
                                   children: [
-                                    EmotionButton(
-                                        providerType: "postProvider",
-                                        isLiked: newsData.isLiked ?? false,
-                                        initalReaction: newsData.isLiked!
-                                            ? newsData.emotion != null &&
-                                                    newsData.emotion != ""
-                                                ? Reaction(
-                                                    icon: Lottie.asset(
-                                                        "assets/lottie/${newsData.emotion}.json",
-                                                        width: 45,
-                                                        height: 45,
-                                                        fit: BoxFit.cover),
-                                                  )
-                                                : Reaction(
-                                                    icon: Lottie.asset(
-                                                        "assets/lottie/like.json",
-                                                        width: 30,
-                                                        height: 30,
-                                                        repeat: false),
-                                                  )
-                                            : Reaction(
-                                                icon: Image.asset(
-                                                "assets/un_like_icon.png",
-                                                width: 22,
-                                                height: 19,
-                                              )),
-                                        selectedReaction: newsData.isLiked!
-                                            ? Reaction(
-                                                icon: Image.asset(
-                                                "assets/like_icon.png",
-                                                width: 22,
-                                                height: 19,
-                                              ))
-                                            : Reaction(
-                                                icon: Image.asset(
-                                                "assets/un_like_icon.png",
-                                                width: 22,
-                                                height: 19,
-                                              )),
-                                        postId: newsData.postId!.toInt(),
-                                        reactions: reactions),
+                                    TextButton.icon(
+                                      label: Text(
+                                        'Like',
+                                        style: ThreeKmTextConstants
+                                            .tk12PXPoppinsBlackSemiBold,
+                                      ),
+                                      onPressed: () async {
+                                        if (await getAuthStatus()) {
+                                          if (newsData.isLiked == true) {
+                                            postUnlike(newsData.postId);
+                                          } else {
+                                            postlike("like", newsData.postId);
+                                          }
+                                        } else {
+                                          NaviagateToLogin(context);
+                                        }
+                                      },
+                                      icon: SinglePostEmotionButton(
+                                          isLiked: newsData.isLiked ?? false,
+                                          initalReaction: newsData.isLiked ??
+                                                  false
+                                              ? newsData.emotion != null &&
+                                                      newsData.emotion != ""
+                                                  ? Reaction(
+                                                      icon: Lottie.asset(
+                                                          "assets/lottie/${newsData.emotion}.json",
+                                                          width: 45,
+                                                          height: 45,
+                                                          repeat: false,
+                                                          fit: BoxFit.cover),
+                                                    )
+                                                  : Reaction(
+                                                      icon: Lottie.asset(
+                                                          "assets/lottie/like.json",
+                                                          width: 30,
+                                                          height: 30,
+                                                          repeat: false),
+                                                    )
+                                              : Reaction(
+                                                  icon: Image.asset(
+                                                  "assets/un_like_icon.png",
+                                                  width: 22,
+                                                  height: 19,
+                                                )),
+                                          selectedReaction: newsData.isLiked!
+                                              ? Reaction(
+                                                  icon: Image.asset(
+                                                  "assets/like_icon.png",
+                                                  width: 22,
+                                                  height: 19,
+                                                ))
+                                              : Reaction(
+                                                  icon: Image.asset(
+                                                  "assets/un_like_icon.png",
+                                                  width: 22,
+                                                  height: 19,
+                                                )),
+                                          postId: newsData.postId!.toInt(),
+                                          reactions: reactions),
+                                    ),
                                     // TextButton.icon(
                                     //     style: ButtonStyle(
                                     //         foregroundColor:
@@ -581,6 +617,11 @@ class _PostViewState extends State<PostView> {
                                     //       'Like',
                                     //       style: ThreeKmTextConstants.tk12PXPoppinsBlackSemiBold,
                                     //     )),
+                                    Container(
+                                      height: 15,
+                                      width: 2,
+                                      color: Colors.grey,
+                                    ),
                                     TextButton.icon(
                                         style: ButtonStyle(
                                             foregroundColor:
@@ -608,6 +649,11 @@ class _PostViewState extends State<PostView> {
                                           style: ThreeKmTextConstants
                                               .tk12PXPoppinsBlackSemiBold,
                                         )),
+                                    Container(
+                                      height: 15,
+                                      width: 2,
+                                      color: Colors.grey,
+                                    ),
                                     TextButton.icon(
                                         style: ButtonStyle(
                                             foregroundColor:

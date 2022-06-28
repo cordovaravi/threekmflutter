@@ -4,7 +4,8 @@
 
 import 'dart:convert';
 
-LikeListModel likeListModelFromJson(String str) => LikeListModel.fromJson(json.decode(str));
+LikeListModel likeListModelFromJson(String str) =>
+    LikeListModel.fromJson(json.decode(str));
 
 class LikeListModel {
   LikeListModel({
@@ -58,7 +59,13 @@ class Result {
 }
 
 class User {
-  User({this.id, this.name, this.avatar, this.emotion, this.isUnknown, this.userType});
+  User(
+      {this.id,
+      this.name,
+      this.avatar,
+      this.emotion,
+      this.isUnknown,
+      this.userType});
 
   int? id;
   String? name;
@@ -71,7 +78,7 @@ class User {
         id: json["id"],
         name: json["name"],
         avatar: json["avatar"],
-        emotion: json["emotion"],
+        emotion: json["emotion"] ?? null,
         isUnknown: json["is_unknown"],
         userType: json["user_type"],
       );

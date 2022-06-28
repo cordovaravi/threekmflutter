@@ -20,7 +20,8 @@ class NewsbyCategoryModel {
   dynamic error;
   Data? data;
 
-  factory NewsbyCategoryModel.fromJson(Map<String, dynamic> json) => NewsbyCategoryModel(
+  factory NewsbyCategoryModel.fromJson(Map<String, dynamic> json) =>
+      NewsbyCategoryModel(
         status: json["status"],
         message: json["message"],
         error: json["error"],
@@ -286,9 +287,15 @@ class UserDetail {
 }
 
 class Video {
-  Video({this.src, this.thumbnail, this.player, this.vimeoUrl, this.height, this.width});
+  Video(
+      {this.src,
+      this.thumbnail,
+      this.player,
+      this.vimeoUrl,
+      this.height,
+      this.width});
 
-  String? src;
+  dynamic src;
   String? thumbnail;
   String? player;
   String? vimeoUrl;
@@ -296,7 +303,7 @@ class Video {
   int? height;
 
   factory Video.fromJson(Map<String, dynamic> json) => Video(
-        src: json["src"] == null ? null : json["src"],
+        src: json["src"] == null && json["src"] is Object ? null : json["src"],
         thumbnail: json["thumbnail"] == null ? null : json["thumbnail"],
         player: json["player"] == null ? null : json["player"],
         vimeoUrl: json["vimeo_url"] == null ? null : json["vimeo_url"],

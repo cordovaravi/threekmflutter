@@ -123,18 +123,19 @@ class _MyProfilePostState extends State<MyProfilePost>
                   //  buildBackButton(context),
                   selfProfile.selfProfile?.data?.result?.author?.id != null
                       ? buildContent(context, selfProfile.selfProfile!)
-                      : Center(
-                          child: Container(
-                              color: Colors.amber,
-                              height: MediaQuery.of(context).size.height / 1.3,
-                              width: MediaQuery.of(context).size.width,
-                              child: DayZeroforTabs(
-                                ScreenName: "post",
-                                islogin: true,
-                              )
-                              //Text("Some error while getting data"),
-                              ),
-                        )
+                      : Center(child: Text("Some error while getting data")),
+                  // : Center(
+                  //     child: Container(
+                  //         color: Colors.amber,
+                  //         height: MediaQuery.of(context).size.height / 1.3,
+                  //         width: MediaQuery.of(context).size.width,
+                  //         child: DayZeroforTabs(
+                  //           ScreenName: "post",
+                  //           islogin: true,
+                  //         )
+                  //         //Text("Some error while getting data"),
+                  //         ),
+                  //   )
                 ],
               ),
       ),
@@ -490,8 +491,10 @@ class _MyProfilePostState extends State<MyProfilePost>
             //     height: 36,
             //   ),
             // ),
-            if (selfProfileModel.data?.result?.posts?.length != 0) ...{
+            if (selfProfileModel.data?.result?.posts?.length != 0 ||
+                selfProfileModel.data?.result?.posts != null) ...{
               SliverList(
+                //itemExtent: 1000,
                 delegate: SliverChildBuilderDelegate(
                   (context, _index) {
                     return NewsCard(
@@ -500,9 +503,19 @@ class _MyProfilePostState extends State<MyProfilePost>
                   childCount: selfProfileModel.data!.result!.posts!.length,
                 ),
               ),
-            } else ...{
-              Center(
-                child: DayZeroforTabs(ScreenName: "post"),
+            },
+            if (selfProfileModel.data?.result?.posts?.length == 0 ||
+                selfProfileModel.data?.result?.posts == null) ...{
+              SliverToBoxAdapter(
+                child: Center(
+                  child: Container(
+                      height: 400,
+                      width: MediaQuery.of(context).size.width,
+                      child: DayZeroforTabs(
+                        ScreenName: "post",
+                        islogin: true,
+                      )),
+                ),
               )
             }
             // else ...{
