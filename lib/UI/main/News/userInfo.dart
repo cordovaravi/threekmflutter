@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/material.dart' as materialDegin;
 import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/src/provider.dart';
 
@@ -747,12 +748,38 @@ class _UserInfoState extends State<UserInfo> {
                                                                       0xFFFF0000)
                                                                 ],
                                                                 onPressed: () {
-                                                                  controller.nextPage(
-                                                                      duration: const Duration(
-                                                                          seconds:
-                                                                              1),
-                                                                      curve: Curves
-                                                                          .easeInOut);
+                                                                  if (selectedDate != null &&
+                                                                      selectedMonth !=
+                                                                          null &&
+                                                                      selectedYear !=
+                                                                          null &&
+                                                                      !_isSkip[
+                                                                          i]) {
+                                                                    String
+                                                                        strDt =
+                                                                        "$selectedYear-${selectedMonth}-$selectedDate";
+                                                                    DateFormat
+                                                                        formatter =
+                                                                        new DateFormat(
+                                                                            'yyyy-MMM-dd');
+                                                                    DateTime
+                                                                        parseDt =
+                                                                        formatter
+                                                                            .parse(strDt);
+                                                                    log(strDt);
+                                                                    log(parseDt
+                                                                        .toString());
+                                                                    context
+                                                                        .read<
+                                                                            ProfileInfoProvider>()
+                                                                        .updateProfileInfo(
+                                                                            dob:
+                                                                                parseDt)
+                                                                        .whenComplete(() => controller.nextPage(
+                                                                            duration:
+                                                                                const Duration(seconds: 1),
+                                                                            curve: Curves.easeInOut));
+                                                                  }
                                                                 },
                                                                 child: Text(
                                                                   _isSkip[i]
