@@ -42,6 +42,7 @@ import 'package:threekm/providers/main/Quiz_Provider.dart';
 import 'package:threekm/providers/main/home1_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:threekm/providers/main/home2_provider.dart';
+import 'package:threekm/providers/userKyc/verify_credential.dart';
 
 import 'package:threekm/utils/threekm_textstyles.dart';
 import 'package:threekm/widgets/video_widget.dart';
@@ -109,6 +110,7 @@ class _NewsTabState extends State<NewsTab> with AutomaticKeepAliveClientMixin {
             context.read<HomeSecondProvider>().getNewsSecond(requestJson);
           }).whenComplete(() => checkUpdate());
         });
+         context.read<VerifyKYCCredential>().getUserProfileInfo();
         // Future.microtask(() => context.read<NewsFeedProvider>().getBottomFeed(
         //       languageCode: context.read<AppLanguage>().appLocal == Locale("mr")
         //           ? "mr"

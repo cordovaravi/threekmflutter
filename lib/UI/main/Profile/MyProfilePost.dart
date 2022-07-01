@@ -140,7 +140,7 @@ class _MyProfilePostState extends State<MyProfilePost>
     super.initState();
     Future.delayed(Duration.zero, () {
       context.read<AutthorProfileProvider>().getSelfProfile();
-      context.read<VerifyKYCCredential>().getUserProfileInfo();
+     // context.read<VerifyKYCCredential>().getUserProfileInfo();
     });
   }
 

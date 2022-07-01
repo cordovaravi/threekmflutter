@@ -2,17 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/src/provider.dart';
-import 'package:rive/rive.dart';
+
+import 'package:threekm/Models/getUserInfoModel.dart';
+import 'package:threekm/UI/main/News/Widgets/gradiant_button.dart';
 
 import 'package:threekm/providers/ProfileInfo/ProfileInfo_Provider.dart';
-
-
+import 'package:rive/rive.dart';
 
 import 'dart:developer';
 
+import 'package:threekm/providers/userKyc/verify_credential.dart';
+
 class UserInfo extends StatefulWidget {
   const UserInfo({Key? key, this.authUserDetails}) : super(key: key);
-  final AuthUserDetailsModel? authUserDetails;
+  final GetUserInfoModel? authUserDetails;
   @override
   State<UserInfo> createState() => _UserInfoState();
 }
@@ -132,7 +135,7 @@ class _UserInfoState extends State<UserInfo> {
 
   List<int> checkUserData() {
     if (widget.authUserDetails != null) {
-      var data = widget.authUserDetails?.data.result;
+      var data = widget.authUserDetails?.data?.result;
       List<String> emptyData = [];
       List<int> emptyDataint = [];
       if (data?.bloodGroup == null || data?.bloodGroup == "") {
@@ -514,8 +517,8 @@ class _UserInfoState extends State<UserInfo> {
                                                                           () {
                                                                     context
                                                                         .read<
-                                                                            AuthUserDetailsProvider>()
-                                                                        .getAuthUserDetails()
+                                                                            VerifyKYCCredential>()
+                                                                        .getUserProfileInfo()
                                                                         .whenComplete(() =>
                                                                             setState(() {}));
                                                                     ;
@@ -961,8 +964,8 @@ class _UserInfoState extends State<UserInfo> {
                                                                             .updateProfileInfo(language: _selectedLang)
                                                                             .whenComplete(() {
                                                                           context
-                                                                              .read<AuthUserDetailsProvider>()
-                                                                              .getAuthUserDetails()
+                                                                              .read<VerifyKYCCredential>()
+                                                                              .getUserProfileInfo()
                                                                               .whenComplete(() => setState(() {}));
                                                                         });
                                                                     },
