@@ -88,6 +88,7 @@ class Post {
       this.attachedBusiness,
       this.itemType,
       this.slugHeadline,
+      this.displayDate,
       this.emotion});
 
   int? postId;
@@ -114,6 +115,7 @@ class Post {
   int? impressions;
   int? views;
   DateTime? postCreatedDate;
+  String? displayDate;
   bool? isUgc;
   int? likes;
   List<Comment>? comments;
@@ -151,7 +153,9 @@ class Post {
         products: List<dynamic>.from(json["products"].map((x) => x)),
         impressions: json["impressions"],
         views: json["views"],
+
         postCreatedDate: DateTime.parse(json["post_created_date"]),
+        displayDate: json["display_date"],
         isUgc: json["is_ugc"],
         likes: json["likes"],
         comments: List<Comment>.from(

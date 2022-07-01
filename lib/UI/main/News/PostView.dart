@@ -187,8 +187,9 @@ class _PostViewState extends State<PostView> {
                                         ),
                                         Row(
                                           children: [
-                                            Text(
-                                                '${DateFormat('dd MMM yyyy HH:mm a').format(newsData.postCreatedDate!)}'),
+                                            Text(newsData.displayDate.toString()
+                                                // '${DateFormat('dd MMM yyyy HH:mm a').format(newsData.postCreatedDate!)}'
+                                                ),
                                           ],
                                         )
                                         // Text(newsData.author!.type.toString())

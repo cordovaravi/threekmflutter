@@ -67,27 +67,25 @@ class _CardUIState extends State<CardUI> {
   Widget build(BuildContext context) {
     final newsFeedProvider = context.watch<NewsFeedProvider>();
     var data = widget.data;
-    return InkWell(
-      onTap: () {
-        Navigator.push(context,
-            MaterialPageRoute(builder: (BuildContext context) {
-          return PostView(
-            postId: data.postId.toString(),
-          );
-        }));
-      },
-      child: Container(
-        decoration: BoxDecoration(
-            color: Colors.white,
-            boxShadow: const [
-              BoxShadow(
-                  blurRadius: 40,
-                  offset: Offset(0, 8),
-                  color: Color(0x29092C4C))
-            ],
-            borderRadius: BorderRadius.circular(8)),
-        padding: const EdgeInsets.only(top: 20, left: 10, right: 10),
-        margin: const EdgeInsets.only(top: 20, left: 20, right: 20),
+    return Container(
+      decoration: BoxDecoration(
+          color: Colors.white,
+          boxShadow: const [
+            BoxShadow(
+                blurRadius: 40, offset: Offset(0, 8), color: Color(0x29092C4C))
+          ],
+          borderRadius: BorderRadius.circular(8)),
+      padding: const EdgeInsets.only(top: 20, left: 10, right: 10),
+      margin: const EdgeInsets.only(top: 20, left: 20, right: 20),
+      child: InkWell(
+        onTap: () {
+          Navigator.push(context,
+              MaterialPageRoute(builder: (BuildContext context) {
+            return PostView(
+              postId: data.postId.toString(),
+            );
+          }));
+        },
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

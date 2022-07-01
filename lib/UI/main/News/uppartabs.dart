@@ -4,6 +4,7 @@ import 'package:device_info/device_info.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -77,19 +78,21 @@ class _ThreeKMUpperTabState extends State<ThreeKMUpperTab>
           length: 5,
           child: NestedScrollView(
               headerSliverBuilder: (context, value) {
+                SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+                  statusBarIconBrightness:
+                      Brightness.dark, // For Android (dark icons)
+                  statusBarBrightness: Brightness.light,
+                ));
                 return [
                   SliverAppBar(
                     floating: true,
-                    //pinned: true,
+                    // pinned: true,
                     automaticallyImplyLeading: false,
                     backgroundColor: Colors.transparent,
                     elevation: 0.0,
                     titleSpacing: 0,
                     bottom: PreferredSize(
                         child: Container(
-                          padding: EdgeInsets.only(
-                            left: 10,
-                          ),
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -136,7 +139,7 @@ class _ThreeKMUpperTabState extends State<ThreeKMUpperTab>
                             ],
                           ),
                         ),
-                        preferredSize: Size.fromHeight(30)),
+                        preferredSize: Size.fromHeight(20)),
                     title: Container(
                       padding: EdgeInsets.only(top: 0, left: 10),
                       //color: Colors.amber,
@@ -233,7 +236,7 @@ class _ThreeKMUpperTabState extends State<ThreeKMUpperTab>
                       Container(
                         // margin: EdgeInsets.only(bottom: 5),
                         width: MediaQuery.of(context).size.width,
-                        child: const TabBar(
+                        child: TabBar(
                             isScrollable: true,
                             labelColor: Colors.black,
                             indicatorColor: Color(0xFF000000),
@@ -257,7 +260,7 @@ class _ThreeKMUpperTabState extends State<ThreeKMUpperTab>
                               ),
                             ]),
                       ),
-                      Flexible(
+                      Expanded(
                         child: TabBarView(
                             dragStartBehavior: DragStartBehavior.down,
                             children: [

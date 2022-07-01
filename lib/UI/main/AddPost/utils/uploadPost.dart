@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
+import 'package:provider/provider.dart';
 import 'package:provider/src/provider.dart';
+import 'package:threekm/Custom_library/progress_indicator/CircularProgress.dart';
 import 'package:threekm/providers/main/AddPost_Provider.dart';
 import 'package:threekm/utils/threekm_textstyles.dart';
 
@@ -83,11 +85,31 @@ class _PostUploadPageState extends State<PostUploadPage> {
           ),
           Center(
             child: Container(
-              height: 219,
-              width: 219,
-              //color: Colors.amber,
-              child: CircularProgressIndicator(),
-            ),
+                height: 219,
+                width: 219,
+                //color: Colors.amber,
+                child: Consumer<AddPostProvider>(
+                  builder: (context, controller, _) {
+                    return CircularPercentIndicator(
+                      radius: 80.0,
+                      lineWidth: 20.0,
+                      backgroundColor: Colors.grey.shade300,
+                      circularStrokeCap: CircularStrokeCap.round,
+                      percent: double.parse(
+                              double.parse(controller.uploadPercent)
+                                  .toStringAsFixed(0)) /
+                          100,
+                      center: Text(
+                        "${double.parse(controller.uploadPercent).toStringAsFixed(2)}" +
+                            "%",
+                        style: TextStyle(
+                            fontSize: 12.0,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black),
+                      ),
+                    );
+                  },
+                )),
           ),
           SizedBox(
             height: 20,

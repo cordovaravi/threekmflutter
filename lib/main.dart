@@ -275,7 +275,10 @@ class MyApp extends StatelessWidget {
 
           //Login or not check
           ChangeNotifierProvider<CheckLoginProvider>(
-              create: (context) => CheckLoginProvider())
+              create: (context) => CheckLoginProvider()),
+
+          ChangeNotifierProvider<UploadedFileProvider>(
+              create: (context) => UploadedFileProvider())
         ],
         child: Consumer<AppLanguage>(
           builder: (context, controller, child) {

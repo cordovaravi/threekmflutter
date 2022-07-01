@@ -12,6 +12,7 @@ import 'package:threekm/UI/main/DrawerScreen.dart';
 import 'package:threekm/UI/main/News/uppartabs.dart';
 import 'package:threekm/UI/main/Profile/MyProfilePost.dart';
 import 'package:threekm/UI/shop/checkout/past_order.dart';
+import 'package:threekm/commenwidgets/CustomSnakBar.dart';
 import 'package:threekm/providers/ProfileInfo/ProfileInfo_Provider.dart';
 
 import 'package:threekm/providers/localization_Provider/appLanguage_provider.dart';
@@ -26,13 +27,15 @@ String avatar = "";
 class TabBarNavigation extends StatefulWidget {
   final bool? redirectedFromPost;
   final bool? isPostUploaded;
-  TabBarNavigation({this.redirectedFromPost, this.isPostUploaded, Key? key}) : super(key: key);
+  TabBarNavigation({this.redirectedFromPost, this.isPostUploaded, Key? key})
+      : super(key: key);
 
   @override
   _TabBarNavigationState createState() => _TabBarNavigationState();
 }
 
-class _TabBarNavigationState extends State<TabBarNavigation> with AutomaticKeepAliveClientMixin {
+class _TabBarNavigationState extends State<TabBarNavigation>
+    with AutomaticKeepAliveClientMixin {
   String? thisdeviceId;
   DateTime? currentBackPressTime;
   TabController? controller;
@@ -62,6 +65,7 @@ class _TabBarNavigationState extends State<TabBarNavigation> with AutomaticKeepA
   @override
   void didChangeDependencies() {
     ThreeKmScreenUtil().init(context);
+
     super.didChangeDependencies();
   }
 
@@ -152,7 +156,6 @@ class _TabBarNavigationState extends State<TabBarNavigation> with AutomaticKeepA
       child: Scaffold(
         backgroundColor: Colors.white,
         resizeToAvoidBottomInset: true,
-
         body: Container(
             child: authStatus
                 ? _pageList[_bottomIndex]
@@ -205,7 +208,8 @@ class _TabBarNavigationState extends State<TabBarNavigation> with AutomaticKeepA
                 child: Image.network(
                   context.read<ProfileInfoProvider>().Avatar ??
                       "https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/User-avatar.svg/2048px-User-avatar.svg.png",
-                  color: _bottomIndex == 4 && context.read<ProfileInfoProvider>().Avatar == null
+                  color: _bottomIndex == 4 &&
+                          context.read<ProfileInfoProvider>().Avatar == null
                       ? Colors.blueAccent
                       : context.read<ProfileInfoProvider>().Avatar != null
                           ? null
