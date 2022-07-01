@@ -10,8 +10,8 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import 'package:provider/provider.dart';
 import 'package:provider/src/provider.dart';
+import 'package:threekm/Custom_library/location2.0/lib/place_picker.dart';
 
-import 'package:threekm/Custom_library/GooleMapsWidget/src/place_picker.dart';
 import 'package:threekm/UI/Search/SearchPage.dart';
 import 'package:threekm/UI/businesses/businesses_home.dart';
 import 'package:threekm/UI/main/News/NewsTab.dart';
@@ -82,7 +82,7 @@ class _ThreeKMUpperTabState extends State<ThreeKMUpperTab>
                     floating: true,
                     //pinned: true,
                     automaticallyImplyLeading: false,
-                    backgroundColor: Colors.white,
+                    backgroundColor: Colors.transparent,
                     elevation: 0.0,
                     titleSpacing: 0,
                     bottom: PreferredSize(
@@ -157,7 +157,7 @@ class _ThreeKMUpperTabState extends State<ThreeKMUpperTab>
                                     context
                                         .read<LocationProvider>()
                                         .getLocation()
-                                        .whenComplete(() {
+                                        .whenComplete(() async {
                                       final _locationProvider = context
                                           .read<LocationProvider>()
                                           .getlocationData;
@@ -165,31 +165,39 @@ class _ThreeKMUpperTabState extends State<ThreeKMUpperTab>
                                           _locationProvider!.latitude!,
                                           _locationProvider.longitude!);
                                       if (_locationProvider.latitude != null) {
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) => PlacePicker(
-                                                apiKey: GMap_Api_Key,
-                                                // initialMapType: MapType.satellite,
-                                                onPlacePicked: (result) {
-                                                  //print(result.formattedAddress);
-                                                  setState(() {
-                                                    _selecetdAddress =
-                                                        result.formattedAddress;
-                                                    print(result.geometry!
-                                                        .toJson());
-                                                    //  _geometry = result.geometry;
-                                                  });
-                                                  Navigator.of(context).pop();
-                                                },
-                                                initialPosition:
-                                                    kInitialPosition,
-                                                useCurrentLocation: true,
-                                                selectInitialPosition: true,
-                                                usePinPointingSearch: true,
-                                                usePlaceDetailSearch: true,
-                                              ),
-                                            ));
+                                        LocationResult? result =
+                                            await Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      PlacePicker(
+                                                    GMap_Api_Key,
+                                                    displayLocation:
+                                                        kInitialPosition,
+                                                    // initialMapType: MapType.satellite,
+                                                    // onPlacePicked: (result) {
+                                                    //   //print(result.formattedAddress);
+                                                    //   setState(() {
+                                                    //     _selecetdAddress =
+                                                    //         result.formattedAddress;
+                                                    //     print(result.geometry!
+                                                    //         .toJson());
+                                                    //     //  _geometry = result.geometry;
+                                                    //   });
+                                                    //   Navigator.of(context).pop();
+                                                    // },
+                                                    // initialPosition:
+                                                    //     kInitialPosition,
+                                                    // useCurrentLocation: true,
+                                                    // selectInitialPosition: true,
+                                                    // usePinPointingSearch: true,
+                                                    // usePlaceDetailSearch: true,
+                                                  ),
+                                                ));
+                                        setState(() {
+                                          _selecetdAddress =
+                                              result?.formattedAddress;
+                                        });
                                       } else {
                                         Fluttertoast.showToast(
                                             msg:

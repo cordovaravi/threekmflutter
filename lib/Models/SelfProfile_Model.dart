@@ -22,8 +22,7 @@ class SelfProfileModel {
   dynamic error;
   Data? data;
 
-  factory SelfProfileModel.fromJson(Map<String, dynamic> json) =>
-      SelfProfileModel(
+  factory SelfProfileModel.fromJson(Map<String, dynamic> json) => SelfProfileModel(
         status: json["status"] == null ? null : json["status"],
         message: json["message"],
         error: json["error"],
@@ -97,32 +96,34 @@ class Author {
 }
 
 class Post {
-  Post(
-      {this.postId,
-      this.submittedHeadline,
-      this.submittedStory,
-      this.headline,
-      this.story,
-      this.images,
-      this.videos,
-      this.type,
-      this.tags,
-      this.author,
-      this.authorType,
-      this.authorClassification,
-      this.status,
-      this.views,
-      this.createdDate,
-      this.context,
-      this.likes,
-      this.comments,
-      this.id,
-      this.isVerified,
-      this.isLiked,
-      this.itemType,
-      this.preheaderLike,
-      this.preheaderComment,
-      this.latestComment});
+  Post({
+    this.postId,
+    this.submittedHeadline,
+    this.submittedStory,
+    this.headline,
+    this.story,
+    this.images,
+    this.videos,
+    this.type,
+    this.tags,
+    this.author,
+    this.authorType,
+    this.authorClassification,
+    this.status,
+    this.views,
+    this.createdDate,
+    this.context,
+    this.likes,
+    this.comments,
+    this.id,
+    this.isVerified,
+    this.isLiked,
+    this.itemType,
+    this.preheaderLike,
+    this.preheaderComment,
+    this.latestComment,
+    this.emotion,
+  });
 
   int? postId;
   String? submittedHeadline;
@@ -149,17 +150,15 @@ class Post {
   String? preheaderLike;
   String? preheaderComment;
   LatestComment? latestComment;
+  String? emotion;
 
   factory Post.fromJson(Map<String, dynamic> json) {
-    log('${json["videos"].runtimeType is List<dynamic>}================');
+    log('${json["post_id"]}================');
 
     return Post(
       postId: json["post_id"] == null ? null : json["post_id"],
-      submittedHeadline: json["submitted_headline"] == null
-          ? null
-          : json["submitted_headline"],
-      submittedStory:
-          json["submitted_story"] == null ? null : json["submitted_story"],
+      submittedHeadline: json["submitted_headline"] == null ? null : json["submitted_headline"],
+      submittedStory: json["submitted_story"] == null ? null : json["submitted_story"],
       headline: json["headline"] == null ? null : json["headline"],
       story: json["story"] == null ? null : json["story"],
       images: json["images"] == null
@@ -167,18 +166,13 @@ class Post {
           : List<String>.from(json["images"].where((x) => x is String)),
       videos: json["videos"] == null
           ? null
-          : json["videos"].runtimeType is List
-              ? List<Video>.from(json["videos"].map((x) => Video.fromJson(x)))
-              : null,
+          : List<Video>.from(json["videos"].map((x) => Video.fromJson(x))),
       type: json["type"] == null ? null : json["type"],
-      tags: json["tags"] == null
-          ? null
-          : List<String>.from(json["tags"].map((x) => x)),
+      tags: json["tags"] == null ? null : List<String>.from(json["tags"].map((x) => x)),
       author: json["author"] == null ? null : Author.fromJson(json["author"]),
       authorType: json["author_type"] == null ? null : json["author_type"],
-      authorClassification: json["author_classification"] == null
-          ? null
-          : json["author_classification"],
+      authorClassification:
+          json["author_classification"] == null ? null : json["author_classification"],
       status: json["status"] == null ? null : json["status"],
       views: json["views"] == null ? null : json["views"],
       createdDate: json["created_date"] == null ? null : json["created_date"],
@@ -194,6 +188,7 @@ class Post {
       latestComment: json['latest_comment'] == null
           ? null
           : LatestComment.fromJson(json['latest_comment']),
+      emotion: json['emotion']?? "",
     );
   }
 }

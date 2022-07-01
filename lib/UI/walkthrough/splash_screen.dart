@@ -13,6 +13,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:threekm/Models/shopModel/restaurants_model.dart';
 import 'package:threekm/UI/businesses/businesses_detail.dart';
 import 'package:threekm/UI/main/News/PostView.dart';
+
 import 'package:threekm/UI/main/News/poll_page.dart';
 import 'package:threekm/UI/main/navigation.dart';
 import 'package:threekm/UI/Auth/signup/sign_up.dart';
@@ -220,7 +221,7 @@ class _SplashScreenState extends State<SplashScreen> {
         } else {
           Navigator.push(context,
               MaterialPageRoute(builder: (BuildContext context) {
-            return Postview(postId: "${int.parse(initialLink.split('/').last)}"
+            return PostView(postId: "${int.parse(initialLink.split('/').last)}"
                 // initialLink
                 //     .substring(30, initialLink.length)
                 //     .replaceAll('&lang=en', '')

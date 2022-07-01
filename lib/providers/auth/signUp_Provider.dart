@@ -115,7 +115,7 @@ class SignUpProvider extends ChangeNotifier {
       hideLoading();
       if (response['status'] == 'success') {
         CustomSnackBar(context, Text("User Registeerd Successfully"));
-        Navigator.push(
+        Navigator.pushReplacement(
             context, MaterialPageRoute(builder: (context) => SignInScreen()));
       } else {
         CustomSnackBar(context, Text("Error Occured"));

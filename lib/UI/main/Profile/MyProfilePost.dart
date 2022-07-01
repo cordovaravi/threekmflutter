@@ -1472,9 +1472,9 @@ class _NewsCardState extends State<NewsCard> {
                           Padding(padding: EdgeInsets.only(left: 10)),
                           Consumer<CommentProvider>(
                               builder: (context, commentProvider, _) {
-                            return commentProvider.commentList?.length != null
+                            return commentProvider.commentList.length != null
                                 ? Text(
-                                    "${commentProvider.commentList!.length}\tComments",
+                                    "${commentProvider.commentList.length}\tComments",
                                     style: ThreeKmTextConstants
                                         .tk14PXPoppinsBlackSemiBold,
                                   )
@@ -1501,7 +1501,7 @@ class _NewsCardState extends State<NewsCard> {
                                         shrinkWrap: true,
                                         primary: true,
                                         itemCount:
-                                            commentProvider.commentList!.length,
+                                            commentProvider.commentList.length,
                                         itemBuilder: (context, commentIndex) {
                                           return Container(
                                             margin: EdgeInsets.all(1),
@@ -1510,7 +1510,7 @@ class _NewsCardState extends State<NewsCard> {
                                             ),
                                             child: ListTile(
                                               trailing: commentProvider
-                                                          .commentList![
+                                                          .commentList[
                                                               commentIndex]
                                                           .isself ==
                                                       true
@@ -1521,7 +1521,7 @@ class _NewsCardState extends State<NewsCard> {
                                                                 CommentProvider>()
                                                             .removeComment(
                                                                 commentProvider
-                                                                    .commentList![
+                                                                    .commentList[
                                                                         commentIndex]
                                                                     .commentId!,
                                                                 postId);
@@ -1535,14 +1535,14 @@ class _NewsCardState extends State<NewsCard> {
                                                     image: DecorationImage(
                                                         image: CachedNetworkImageProvider(
                                                             commentProvider
-                                                                .commentList![
+                                                                .commentList[
                                                                     commentIndex]
                                                                 .avatar
                                                                 .toString()))),
                                               ),
                                               title: Text(
                                                 commentProvider
-                                                    .commentList![commentIndex]
+                                                    .commentList[commentIndex]
                                                     .username
                                                     .toString(),
                                                 style: ThreeKmTextConstants
@@ -1557,7 +1557,7 @@ class _NewsCardState extends State<NewsCard> {
                                                     ),
                                                     Text(
                                                       commentProvider
-                                                          .commentList![
+                                                          .commentList[
                                                               commentIndex]
                                                           .comment
                                                           .toString(),
@@ -1569,7 +1569,7 @@ class _NewsCardState extends State<NewsCard> {
                                                     ),
                                                     Text(
                                                         commentProvider
-                                                            .commentList![
+                                                            .commentList[
                                                                 commentIndex]
                                                             .timeLapsed
                                                             .toString(),
