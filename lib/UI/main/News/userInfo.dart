@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' as materialDegin;
 import 'package:flutter/services.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/src/provider.dart';
@@ -12,6 +13,7 @@ import 'package:rive/rive.dart';
 import 'dart:developer';
 
 import 'package:threekm/providers/userKyc/verify_credential.dart';
+import 'package:threekm/utils/threekm_textstyles.dart';
 
 class UserInfo extends StatefulWidget {
   const UserInfo({Key? key, this.authUserDetails}) : super(key: key);
@@ -93,6 +95,15 @@ class _UserInfoState extends State<UserInfo> {
   List<bool> _isSkip = [true, true, true, true];
   //AuthUserDetailsModel? _authUserDetails;
   int previousPageViewIndex = 0;
+
+  var list = List<int>.generate(30, (i) => i + 1);
+  var yearlist =
+      List<int>.generate(90, (i) => DateTime.now().year - i - 1).reversed;
+
+  var selectedYear;
+  var selectedMonth;
+  var selectedDate;
+
   @override
   void initState() {
     super.initState();
@@ -335,8 +346,8 @@ class _UserInfoState extends State<UserInfo> {
                                                                     () {
                                                               context
                                                                   .read<
-                                                                      AuthUserDetailsProvider>()
-                                                                  .getAuthUserDetails()
+                                                                      VerifyKYCCredential>()
+                                                                  .getUserProfileInfo()
                                                                   .whenComplete(() =>
                                                                       setState(
                                                                           () {}));
@@ -545,233 +556,176 @@ class _UserInfoState extends State<UserInfo> {
                                         checkUserData().contains(2) &&
                                                 checkUserData().elementAt(i) ==
                                                     2
-                                            ? Container(
-                                                margin: const EdgeInsets.only(
-                                                    top: 150),
-                                                padding: const EdgeInsets.only(
-                                                    left: 30),
-                                                height: size.height / 2.3,
+                                            ? Expanded(
                                                 child: Column(
                                                   mainAxisAlignment:
-                                                      MainAxisAlignment.start,
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
+                                                      MainAxisAlignment.center,
                                                   children: [
-                                                    Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .start,
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .end,
-                                                      children: [
-                                                        const Padding(
-                                                          padding:
-                                                              EdgeInsets.only(
-                                                                  top: 20,
-                                                                  right: 20),
-                                                          child: Text(
-                                                            'Date',
-                                                            style: TextStyle(
-                                                                height: 0,
-                                                                color: Colors
-                                                                    .white),
+                                                    const Spacer(),
+                                                    Container(
+                                                      margin:
+                                                          const EdgeInsets.only(
+                                                              // top: 190,
+                                                              left: 30,
+                                                              right: 30),
+                                                      height: 231,
+                                                      width: 328,
+                                                      decoration: BoxDecoration(
+                                                        // color: Colors.white,
+                                                        border: Border.all(
+                                                            width: 2,
+                                                            color:
+                                                                Colors.white),
+                                                        boxShadow: const [
+                                                          BoxShadow(
+                                                              blurRadius: 4,
+                                                              color: Color(
+                                                                  0x40000040),
+                                                              offset:
+                                                                  Offset(0, 4))
+                                                        ],
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(4),
+                                                        gradient: const materialDegin
+                                                                .LinearGradient(
+                                                            stops: [0.1, 1],
+                                                            begin:
+                                                                FractionalOffset(
+                                                                    0.0, 0.0),
+                                                            end:
+                                                                FractionalOffset(
+                                                                    0.1, 2.0),
+                                                            colors: [
+                                                              Color(0xFF4D0EFF),
+                                                              Color(0xFFFFFFFF)
+                                                            ]),
+                                                        // border: Border.all(color: const Color(0xFFA7ABAD))
+                                                      ),
+                                                      child: Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceEvenly,
+                                                        children: [
+                                                          SizedBox(
+                                                            height: 240,
+                                                            width: 80,
+                                                            child: ListWheelScrollView(
+                                                                // clipBehavior: Clip.none,
+                                                                // renderChildrenOutsideViewport: true,
+                                                                physics: const FixedExtentScrollPhysics(),
+                                                                itemExtent: 90,
+                                                                perspective: 0.01,
+                                                                overAndUnderCenterOpacity: 0.3,
+                                                                onSelectedItemChanged: (i) {
+                                                                  log("$i ${list.elementAt(i)} days");
+                                                                  setState(() {
+                                                                    selectedDate =
+                                                                        list.elementAt(
+                                                                            i);
+                                                                  });
+                                                                },
+                                                                children: list
+                                                                    .map((e) => Container(
+                                                                          decoration:
+                                                                              const BoxDecoration(
+                                                                            border:
+                                                                                Border(
+                                                                              bottom: BorderSide(color: Colors.white),
+                                                                              // top: BorderSide(),
+                                                                            ),
+                                                                          ),
+                                                                          child:
+                                                                              Center(
+                                                                            child:
+                                                                                Text(
+                                                                              e.toString(),
+                                                                              style: ThreeKmTextConstants.tk18PXPoppinsBlackMedium.copyWith(color: Colors.white),
+                                                                            ),
+                                                                          ),
+                                                                        ))
+                                                                    .toList()),
                                                           ),
-                                                        ),
-                                                        WaveSlider(
-                                                          color: Colors.white,
-                                                          sliderWidth:
-                                                              size.width / 1.8,
-                                                          onChanged:
-                                                              (double val) {
-                                                            setState(() {
-                                                              _date = ((val * 100) /
-                                                                              3.3)
-                                                                          .round() ==
-                                                                      0
-                                                                  ? 1
-                                                                  : ((val * 100) /
-                                                                          3.3)
-                                                                      .round();
-                                                            });
-                                                            // year log('${(DateTime.now().year - 100 + ((val * 100)).round())}');
-                                                          },
-                                                          onChangeEnd:
-                                                              (double value) {},
-                                                          onChangeStart:
-                                                              (double value) {},
-                                                        ),
-                                                        Container(
-                                                          margin:
-                                                              const EdgeInsets
-                                                                      .only(
-                                                                  left: 20),
-                                                          width: 40,
-                                                          height: 40,
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        4),
-                                                            color: Colors.white,
+                                                          SizedBox(
+                                                            height: 240,
+                                                            width: 80,
+                                                            child: ListWheelScrollView(
+                                                                // clipBehavior: Clip.none,
+                                                                // renderChildrenOutsideViewport: true,
+                                                                physics: const FixedExtentScrollPhysics(),
+                                                                itemExtent: 90,
+                                                                perspective: 0.01,
+                                                                overAndUnderCenterOpacity: 0.3,
+                                                                onSelectedItemChanged: (i) {
+                                                                  log("$i ${month.elementAt(i)} month");
+                                                                  setState(() {
+                                                                    selectedMonth =
+                                                                        month.elementAt(
+                                                                            i);
+                                                                  });
+                                                                },
+                                                                children: month
+                                                                    .map((e) => Container(
+                                                                          decoration:
+                                                                              const BoxDecoration(
+                                                                            border:
+                                                                                Border(
+                                                                              bottom: BorderSide(color: Colors.white),
+                                                                              // top: BorderSide(),
+                                                                            ),
+                                                                          ),
+                                                                          child:
+                                                                              Center(
+                                                                            child:
+                                                                                Text(
+                                                                              e,
+                                                                              style: ThreeKmTextConstants.tk18PXPoppinsBlackMedium.copyWith(color: Colors.white),
+                                                                            ),
+                                                                          ),
+                                                                        ))
+                                                                    .toList()),
                                                           ),
-                                                          child: Center(
-                                                            child: Text(
-                                                              _date.toString(),
-                                                              style:
-                                                                  const TextStyle(
-                                                                      //height: 0,
-                                                                      color: Colors
-                                                                          .grey),
-                                                            ),
+                                                          SizedBox(
+                                                            height: 240,
+                                                            width: 80,
+                                                            child: ListWheelScrollView(
+                                                                // clipBehavior: Clip.none,
+                                                                // renderChildrenOutsideViewport: true,
+                                                                physics: const FixedExtentScrollPhysics(),
+                                                                itemExtent: 90,
+                                                                perspective: 0.01,
+                                                                overAndUnderCenterOpacity: 0.3,
+                                                                onSelectedItemChanged: (i) {
+                                                                  log("$i ${yearlist.elementAt(i)} year");
+                                                                  setState(() {
+                                                                    selectedYear =
+                                                                        yearlist
+                                                                            .elementAt(i);
+                                                                  });
+                                                                },
+                                                                children: yearlist
+                                                                    .map((e) => Container(
+                                                                          decoration:
+                                                                              const BoxDecoration(
+                                                                            border:
+                                                                                Border(
+                                                                              bottom: BorderSide(color: Colors.white),
+                                                                              // top: BorderSide(),
+                                                                            ),
+                                                                          ),
+                                                                          child:
+                                                                              Center(
+                                                                            child:
+                                                                                Text(
+                                                                              e.toString(),
+                                                                              style: ThreeKmTextConstants.tk18PXPoppinsBlackMedium.copyWith(color: Colors.white),
+                                                                            ),
+                                                                          ),
+                                                                        ))
+                                                                    .toList()),
                                                           ),
-                                                        )
-                                                      ],
-                                                    ),
-                                                    const SizedBox(
-                                                      height: 80,
-                                                    ),
-                                                    Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .start,
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .end,
-                                                      children: [
-                                                        const Padding(
-                                                          padding:
-                                                              EdgeInsets.only(
-                                                                  top: 20,
-                                                                  right: 10),
-                                                          child: Text(
-                                                            'Month',
-                                                            style: TextStyle(
-                                                                height: 0,
-                                                                color: Colors
-                                                                    .white),
-                                                          ),
-                                                        ),
-                                                        WaveSlider(
-                                                          color: Colors.white,
-                                                          sliderWidth:
-                                                              size.width / 1.8,
-                                                          onChanged:
-                                                              (double val) {
-                                                            setState(() {
-                                                              _month = ((val * 100) /
-                                                                              8.3)
-                                                                          .round() >
-                                                                      11
-                                                                  ? 11
-                                                                  : ((val * 100) /
-                                                                          8.3)
-                                                                      .round();
-                                                            });
-                                                            // year log('${(DateTime.now().year - 100 + ((val * 100)).round())}');
-                                                          },
-                                                          onChangeEnd:
-                                                              (double value) {},
-                                                          onChangeStart:
-                                                              (double value) {},
-                                                        ),
-                                                        Container(
-                                                          margin:
-                                                              const EdgeInsets
-                                                                      .only(
-                                                                  left: 20),
-                                                          width: 40,
-                                                          height: 40,
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        4),
-                                                            color: Colors.white,
-                                                          ),
-                                                          child: Center(
-                                                            child: Text(
-                                                              month[_month],
-                                                              style: const TextStyle(
-                                                                  color: Colors
-                                                                      .grey),
-                                                            ),
-                                                          ),
-                                                        )
-                                                      ],
-                                                    ),
-                                                    const SizedBox(
-                                                      height: 80,
-                                                    ),
-                                                    Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .start,
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .end,
-                                                      children: [
-                                                        const Padding(
-                                                          padding:
-                                                              EdgeInsets.only(
-                                                                  top: 20,
-                                                                  right: 20),
-                                                          child: Text(
-                                                            'Year',
-                                                            style: TextStyle(
-                                                                height: 0,
-                                                                color: Colors
-                                                                    .white),
-                                                          ),
-                                                        ),
-                                                        WaveSlider(
-                                                          color: Colors.white,
-                                                          sliderWidth:
-                                                              size.width / 1.8,
-                                                          onChanged:
-                                                              (double val) {
-                                                            setState(() {
-                                                              _year = (DateTime
-                                                                          .now()
-                                                                      .year -
-                                                                  100 +
-                                                                  ((val * 100))
-                                                                      .round());
-                                                            });
-                                                            // year log('${(DateTime.now().year - 100 + ((val * 100)).round())}');
-                                                          },
-                                                          onChangeEnd:
-                                                              (double value) {},
-                                                          onChangeStart:
-                                                              (double value) {},
-                                                        ),
-                                                        Container(
-                                                          margin:
-                                                              const EdgeInsets
-                                                                      .only(
-                                                                  left: 20),
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        4),
-                                                            color: Colors.white,
-                                                          ),
-                                                          width: 40,
-                                                          height: 40,
-                                                          child: Center(
-                                                            child: Text(
-                                                              _year.toString(),
-                                                              style: const TextStyle(
-                                                                  color: Colors
-                                                                      .grey),
-                                                            ),
-                                                          ),
-                                                        )
-                                                      ],
+                                                        ],
+                                                      ),
                                                     ),
                                                     const Spacer(),
                                                     Align(
@@ -780,7 +734,8 @@ class _UserInfoState extends State<UserInfo> {
                                                         child: Padding(
                                                           padding:
                                                               const EdgeInsets
-                                                                  .all(15.0),
+                                                                      .only(
+                                                                  bottom: 30),
                                                           child: SizedBox(
                                                               width: 150,
                                                               child:
@@ -798,20 +753,6 @@ class _UserInfoState extends State<UserInfo> {
                                                                               1),
                                                                       curve: Curves
                                                                           .easeInOut);
-                                                                  // context
-                                                                  //     .read<
-                                                                  //         ProfileInfoProvider>()
-                                                                  //     .updateProfileInfo(
-                                                                  //         dob: DateTime.parse(''))
-                                                                  //     .whenComplete(
-                                                                  //         () {
-                                                                  //   context
-                                                                  //       .read<
-                                                                  //           AuthUserDetailsProvider>()
-                                                                  //       .getAuthUserDetails()
-                                                                  //       .whenComplete(() =>
-                                                                  //           setState(() {}));
-                                                                  // });
                                                                 },
                                                                 child: Text(
                                                                   _isSkip[i]

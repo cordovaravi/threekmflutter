@@ -88,17 +88,18 @@ class ProfileInfoProvider extends ChangeNotifier {
 
   bool _isUpdating = false;
   bool get isUpdating => this._isUpdating;
-  Future<Null> updateProfileInfo({
-    String? fname,
-    String? lname,
-    String? Gender,
-    String? avatar,
-    DateTime? dob,
-    String? email,
-    String? phone,
-    bool? is_verified,
-    bool? is_document_verified,
-  }) async {
+  Future<Null> updateProfileInfo(
+      {String? fname,
+      String? lname,
+      String? Gender,
+      String? avatar,
+      DateTime? dob,
+      String? email,
+      String? phone,
+      bool? is_verified,
+      bool? is_document_verified,
+      String? bloodGroup,
+      List<String>? language}) async {
     _isUpdating = true;
     notifyListeners();
     SharedPreferences _pref = await SharedPreferences.getInstance();
@@ -115,6 +116,8 @@ class ProfileInfoProvider extends ChangeNotifier {
       "is_verified": is_verified ?? _pref.getBool('is_verified'),
       "is_document_verified":
           is_document_verified ?? _pref.getBool('is_document_verified'),
+      "blood_group": bloodGroup ?? null,
+      "languages": language ?? null
     });
     final response = await _apiProvider.post(Update_User_Info, requestJson);
     if (response != null) {
@@ -128,6 +131,7 @@ class ProfileInfoProvider extends ChangeNotifier {
         prefs.setString("gender", data.data!.result!.user!.gender ?? "");
         prefs.setString("email", data.data!.result!.user!.email ?? "");
         prefs.setString("dob", data.data!.result!.user?.dob.toString() ?? "");
+        prefs.setString("userphone", data.data!.result!.user?.phoneNo ?? "");
         prefs.setString("userphone", data.data!.result!.user?.phoneNo ?? "");
 
         getProfileBasicData();
