@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/src/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:threekm/UI/main/navigation.dart';
 import 'package:threekm/UI/userkyc/birth_date.dart';
 import 'package:threekm/providers/ProfileInfo/ProfileInfo_Provider.dart';
 import 'package:threekm/utils/constants.dart';
@@ -96,8 +98,29 @@ class _BasicInfoState extends State<BasicInfo> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Basic Information',
+              'Step 3/5',
               style: ThreeKmTextConstants.tk18PXPoppinsBlackMedium,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Basic Information',
+                  style: ThreeKmTextConstants.tk18PXPoppinsBlackMedium,
+                ),
+                InkWell(
+                  onTap: () {
+                    Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(builder: (_) => TabBarNavigation(bottomIndex: 3,)),
+                        (route) => false);
+                  },
+                  child: Text(
+                    'Cancel',
+                    style: ThreeKmTextConstants.tk18PXPoppinsBlackMedium,
+                  ),
+                ),
+              ],
             ),
             const SizedBox(
               height: 24,
@@ -107,7 +130,7 @@ class _BasicInfoState extends State<BasicInfo> {
               minHeight: 3,
               color: Colors.amber[400],
               backgroundColor: const Color(0xFFE7E7E7),
-              value: 0.2,
+              value: 0.4,
               semanticsLabel: 'Linear progress indicator',
             ),
             const SizedBox(
@@ -123,7 +146,7 @@ class _BasicInfoState extends State<BasicInfo> {
               maxLines: 1,
               maxLength: 20,
               decoration: InputDecoration(
-                suffix: Text('${_fname.length}/20'),
+                suffix: Text(_fname.length == 0 ? '' : '${_fname.length}/20'),
                 hintText: "First name",
                 counterText: "",
                 hintStyle: ThreeKmTextConstants.tk16PXPoppinsBlackMedium
@@ -170,7 +193,7 @@ class _BasicInfoState extends State<BasicInfo> {
               maxLines: 1,
               maxLength: 20,
               decoration: InputDecoration(
-                suffix: Text('${_lname.length}/20'),
+                suffix: Text(_lname.length == 0 ? '' : '${_lname.length}/20'),
                 hintText: "Last name",
                 counterText: "",
                 hintStyle: ThreeKmTextConstants.tk16PXPoppinsBlackMedium
@@ -247,7 +270,11 @@ class _BasicInfoState extends State<BasicInfo> {
                                 context,
                                 MaterialPageRoute(
                                     builder: (_) => BirthDate())));
+                      } else {
+                        Fluttertoast.showToast(
+                            msg: "Please add First and last name");
                       }
+                      ;
                     },
                     child: Padding(
                       padding: const EdgeInsets.all(15.0),

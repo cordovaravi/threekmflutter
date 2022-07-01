@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:threekm/UI/userkyc/mobile_verification.dart';
+import 'package:threekm/UI/userkyc/confirm_info.dart';
+
+import 'package:threekm/UI/userkyc/verify_account.dart';
 
 class UserKycMain extends StatefulWidget {
   const UserKycMain({Key? key}) : super(key: key);
@@ -13,19 +15,23 @@ class _UserKycMainState extends State<UserKycMain> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // body: VerifyAccount(),
-      body: MobileVerification(),
+      body: VerifyAccount(),
+      //body: ConfirmInfo(),
     );
   }
 }
 
+typedef void VoidCallback();
+
 class OtpBox extends StatelessWidget {
-  const OtpBox({
-    Key? key,
-    required this.i,
-    required this.focusNode,
-    required this.controller,
-  }) : super(key: key);
+  final VoidCallback? onChange;
+  const OtpBox(
+      {Key? key,
+      required this.i,
+      required this.focusNode,
+      required this.controller,
+      this.onChange})
+      : super(key: key);
   final int i;
   final List<FocusNode> focusNode;
   final List<TextEditingController> controller;
@@ -66,6 +72,7 @@ class OtpBox extends StatelessWidget {
                   ? FocusScope.of(context).unfocus()
                   : focusNode[i + 1].requestFocus();
             }
+            if (onChange != null) onChange!();
 
             // FocusScope.of(context).requestFocus(focusNode[i + 1]);
           }),

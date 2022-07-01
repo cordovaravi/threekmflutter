@@ -88,14 +88,17 @@ class ProfileInfoProvider extends ChangeNotifier {
 
   bool _isUpdating = false;
   bool get isUpdating => this._isUpdating;
-  Future<Null> updateProfileInfo(
-      {String? fname,
-      String? lname,
-      String? Gender,
-      String? avatar,
-      DateTime? dob,
-      String? email,
-      String? phone}) async {
+  Future<Null> updateProfileInfo({
+    String? fname,
+    String? lname,
+    String? Gender,
+    String? avatar,
+    DateTime? dob,
+    String? email,
+    String? phone,
+    bool? is_verified,
+    bool? is_document_verified,
+  }) async {
     _isUpdating = true;
     notifyListeners();
     SharedPreferences _pref = await SharedPreferences.getInstance();
@@ -108,7 +111,10 @@ class ProfileInfoProvider extends ChangeNotifier {
       "gender": Gender ?? await _getGender(),
       "email": email ?? await getEmail(),
       "dob": dob != null ? "${dob.year}-${dob.month}-${dob.day}" : "",
-      "phone_no": phone ?? await getPhone()
+      "phone_no": phone ?? await getPhone(),
+      "is_verified": is_verified ?? _pref.getBool('is_verified'),
+      "is_document_verified":
+          is_document_verified ?? _pref.getBool('is_document_verified'),
     });
     final response = await _apiProvider.post(Update_User_Info, requestJson);
     if (response != null) {

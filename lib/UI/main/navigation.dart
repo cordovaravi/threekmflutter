@@ -26,7 +26,12 @@ String avatar = "";
 class TabBarNavigation extends StatefulWidget {
   final bool? redirectedFromPost;
   final bool? isPostUploaded;
-  TabBarNavigation({this.redirectedFromPost, this.isPostUploaded, Key? key})
+  final int? bottomIndex;
+  TabBarNavigation(
+      {this.redirectedFromPost,
+      this.isPostUploaded,
+      this.bottomIndex,
+      Key? key})
       : super(key: key);
 
   @override
@@ -109,7 +114,9 @@ class _TabBarNavigationState extends State<TabBarNavigation>
     String? token = _prefs.getString("token");
     if (token != null) {
       authStatus = true;
-      setState(() {});
+      setState(() {
+        if (widget.bottomIndex != null) _bottomIndex = widget.bottomIndex!;
+      });
     } else {
       authStatus = false;
     }

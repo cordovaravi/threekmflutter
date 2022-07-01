@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/src/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:threekm/UI/main/navigation.dart';
 import 'package:threekm/UI/userkyc/profile_pic.dart';
 import 'package:threekm/providers/userKyc/verify_credential.dart';
 import 'package:threekm/utils/threekm_textstyles.dart';
@@ -38,8 +39,29 @@ class _UploadProfilePictureState extends State<UploadProfilePicture> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Upload Profile',
+              'Step 2/5',
               style: ThreeKmTextConstants.tk18PXPoppinsBlackMedium,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Upload Profile',
+                  style: ThreeKmTextConstants.tk18PXPoppinsBlackMedium,
+                ),
+                InkWell(
+                  onTap: () {
+                    Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(builder: (_) => TabBarNavigation( bottomIndex: 3,)),
+                        (route) => false);
+                  },
+                  child: Text(
+                    'Cancel',
+                    style: ThreeKmTextConstants.tk18PXPoppinsBlackMedium,
+                  ),
+                ),
+              ],
             ),
             const SizedBox(
               height: 24,
@@ -111,7 +133,7 @@ class _UploadProfilePictureState extends State<UploadProfilePicture> {
                     Padding(
                       padding: const EdgeInsets.only(left: 30, right: 30),
                       child: Text(
-                        'Make your profile varified by uploading your best ptofile picture',
+                        'Make your profile verified by uploading your best profile picture',
                         style: ThreeKmTextConstants.tk16PXPoppinsBlackMedium
                             .copyWith(color: const Color(0xFF988F8F)),
                         textAlign: TextAlign.center,

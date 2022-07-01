@@ -6,11 +6,14 @@ import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/src/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:threekm/UI/main/navigation.dart';
 import 'package:threekm/UI/userkyc/user_kyc_main.dart';
 import 'package:threekm/providers/auth/signUp_Provider.dart';
 import 'package:threekm/providers/userKyc/verify_credential.dart';
 import 'package:threekm/utils/constants.dart';
 import 'package:threekm/utils/threekm_textstyles.dart';
+
+import 'email_verification.dart';
 
 class MobileVerification extends StatefulWidget {
   const MobileVerification({
@@ -27,7 +30,7 @@ class _MobileVerificationState extends State<MobileVerification> {
   TextEditingController phonenumber = TextEditingController();
   bool isSendOtp = false;
   bool isVisibleResendOtp = false;
-
+  SharedPreferences? _pref;
   Widget get buildPhoneNumber {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -53,6 +56,7 @@ class _MobileVerificationState extends State<MobileVerification> {
             SizedBox(
                 width: size(context).width / 1.4,
                 child: TextFormField(
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
                   controller: phonenumber,
                   keyboardType: TextInputType.number,
                   inputFormatters: [
@@ -61,17 +65,42 @@ class _MobileVerificationState extends State<MobileVerification> {
                     FilteringTextInputFormatter.deny(RegExp("[\\.|\\,]")),
                   ],
                   decoration: const InputDecoration(
+                    hintText: '6589425412',
                     filled: true,
                     border: OutlineInputBorder(
                       borderSide: BorderSide.none,
                       borderRadius: BorderRadius.all(Radius.circular(8.0)),
                     ),
                   ),
+                  onChanged: (val) {
+                    WidgetsBinding.instance?.addPostFrameCallback((_) {
+                      setState(() {});
+                    });
+                  },
+                  validator: (val) {
+                    if (val!.isEmpty || val == null) {
+                      return "Phone number is empty";
+                    } else if (val.length <= 9) {
+                      return "Please enter valid Phone Number";
+                    } else if (val.contains(" ")) {
+                      return "Space is not allowed";
+                    }
+                  },
                 ))
           ],
         ),
       ],
     );
+  }
+
+  @override
+  void initState() {
+    WidgetsBinding.instance?.addPostFrameCallback((_) async {
+      _pref = await SharedPreferences.getInstance();
+      phonenumber.text = _pref?.getString("userphone") ?? "";
+      setState(() {});
+    });
+    super.initState();
   }
 
   @override
@@ -85,7 +114,30 @@ class _MobileVerificationState extends State<MobileVerification> {
   Widget build(BuildContext context) {
     var state = context.watch<SignUpProvider>().isLoding;
     var provider = context.read<SignUpProvider>();
-    var Kycprovider = context.read<VerifyKYCCredential>();
+    var Kycprovider = context.watch<VerifyKYCCredential>();
+    var verifyotpfn = () async {
+      log('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
+      var otp = [
+        _controllers[0].text,
+        _controllers[1].text,
+        _controllers[2].text,
+        _controllers[3].text
+      ].join();
+      if (otp.length == 4) {
+        SharedPreferences _prefs = await SharedPreferences.getInstance();
+        if (isSendOtp) {
+          var res = json.encode({
+            "phone_no": phonenumber.text,
+            "otp": otp,
+            "device": _prefs.getString('deviceID')
+          });
+          log(otp);
+          log(res.toString());
+
+          Kycprovider.verifyOTPKYC(res, phonenumber.text, context);
+        }
+      }
+    };
 
     return WillPopScope(
       onWillPop: () {
@@ -99,8 +151,29 @@ class _MobileVerificationState extends State<MobileVerification> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Mobile verification',
+                'Step 1/5',
                 style: ThreeKmTextConstants.tk18PXPoppinsBlackMedium,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Mobile verification',
+                    style: ThreeKmTextConstants.tk18PXPoppinsBlackMedium,
+                  ),
+                  InkWell(
+                    onTap: () {
+                      Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(builder: (_) => TabBarNavigation( bottomIndex: 3,)),
+                          (route) => false);
+                    },
+                    child: Text(
+                      'Cancel',
+                      style: ThreeKmTextConstants.tk18PXPoppinsBlackMedium,
+                    ),
+                  ),
+                ],
               ),
               const SizedBox(
                 height: 24,
@@ -127,50 +200,47 @@ class _MobileVerificationState extends State<MobileVerification> {
               const SizedBox(
                 height: 38,
               ),
-              if (isSendOtp)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 16),
-                  child: Text(
-                    'Please Enter 4 Digit OTP ',
-                    style: ThreeKmTextConstants.tk16PXPoppinsBlackMedium
-                        .copyWith(fontWeight: FontWeight.w400),
-                  ),
+              //  if (isSendOtp)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 16),
+                child: Text(
+                  'Please Enter 4 Digit OTP ',
+                  style: ThreeKmTextConstants.tk16PXPoppinsBlackMedium
+                      .copyWith(fontWeight: FontWeight.w400),
                 ),
-              if (isSendOtp)
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    OtpBox(
+              ),
+              //if (isSendOtp)
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  OtpBox(
                       i: 0,
                       focusNode: _focusNodes,
                       controller: _controllers,
-                    ),
-                    OtpBox(
+                      onChange: verifyotpfn),
+                  OtpBox(
                       i: 1,
                       focusNode: _focusNodes,
                       controller: _controllers,
-                    ),
-                    OtpBox(
+                      onChange: verifyotpfn),
+                  OtpBox(
                       i: 2,
                       focusNode: _focusNodes,
                       controller: _controllers,
-                    ),
-                    OtpBox(
+                      onChange: verifyotpfn),
+                  OtpBox(
                       i: 3,
                       focusNode: _focusNodes,
                       controller: _controllers,
-                    ),
-                  ],
-                ),
+                      onChange: verifyotpfn),
+                ],
+              ),
               if (Kycprovider.iswrongOTP)
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: 16),
-                    child: Text(
-                      'Wrong OTP',
-                      style: TextStyle(color: Colors.red[300]),
-                    ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 16),
+                  child: Text(
+                    'Incorrect OTP',
+                    style: TextStyle(color: Colors.red[300]),
                   ),
                 ),
               if (Kycprovider.isTrueOTP)
@@ -187,13 +257,15 @@ class _MobileVerificationState extends State<MobileVerification> {
                   ),
                 ),
               Spacer(),
+              //  if (phonenumber.text != "")
               Align(
                 alignment: Alignment.bottomCenter,
                 child: Column(
                   children: [
-                    if (state == false)
+                    // Kycprovider.iswrongOTP
+                    if (state == false && isSendOtp)
                       SizedBox(
-                        child: isVisibleResendOtp
+                        child: isVisibleResendOtp && isSendOtp
                             ? InkWell(
                                 onTap: () {
                                   provider
@@ -229,7 +301,7 @@ class _MobileVerificationState extends State<MobileVerification> {
                                       padding: const EdgeInsets.symmetric(
                                           vertical: 5),
                                       child: Text(
-                                          'Resend confirmation code  $minutes:$seconds',
+                                          'Resend OTP  $minutes:$seconds Sec',
                                           textAlign: TextAlign.center,
                                           style: ThreeKmTextConstants
                                               .tk12PXPoppinsBlackSemiBold));
@@ -253,49 +325,34 @@ class _MobileVerificationState extends State<MobileVerification> {
                                       shape: MaterialStateProperty.all<
                                               OutlinedBorder>(
                                           const StadiumBorder())),
-                                  onPressed: () async {
-                                    SharedPreferences _prefs =
-                                        await SharedPreferences.getInstance();
-                                    if (isSendOtp) {
-                                      var otp = [
-                                        _controllers[0].text,
-                                        _controllers[1].text,
-                                        _controllers[2].text,
-                                        _controllers[3].text
-                                      ].join();
-                                      var res = json.encode({
-                                        "phone_no": phonenumber.text,
-                                        "otp": otp,
-                                        "device": _prefs.getString('deviceID')
-                                      });
-                                      log(otp);
-                                      log(res.toString());
-                                      if (otp.length == 4) {
-                                        Kycprovider.verifyOTPKYC(
-                                            res, phonenumber.text, context);
-                                      } else {
-                                        Fluttertoast.showToast(
-                                            msg: "Please enter OTP");
-                                      }
-                                    } else {
-                                      provider
-                                          .sendOTP(json.encode(
-                                              {"phone_no": phonenumber.text}))
-                                          .whenComplete(() => setState(() {
-                                                isSendOtp = true;
-                                                isVisibleResendOtp = false;
-                                              }));
-                                    }
-                                    // Navigator.push(
-                                    //     context,
-                                    //     MaterialPageRoute(
-                                    //         builder: (_) =>
-                                    //             const EmailVerification()));
-                                  },
+                                  onPressed: phonenumber.text.length == 10
+                                      ? () async {
+                                          if (!isSendOtp) {
+                                            if (phonenumber.text.length == 10) {
+                                              provider
+                                                  .sendOTP(json.encode({
+                                                    "phone_no": phonenumber.text
+                                                  }))
+                                                  .whenComplete(
+                                                      () => setState(() {
+                                                            isSendOtp = true;
+                                                            isVisibleResendOtp =
+                                                                false;
+                                                          }));
+                                            }
+                                          }
+                                          if (Kycprovider.isTrueOTP)
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (_) =>
+                                                        const EmailVerification()));
+                                        }
+                                      : null,
                                   child: Padding(
                                     padding: const EdgeInsets.all(15.0),
                                     child: Text(
-                                      isSendOtp ? "Verify OTP" : 'Send OTP',
+                                      isSendOtp ? "Next" : 'Send OTP',
                                       style: ThreeKmTextConstants
                                           .tk16PXPoppinsWhiteBold,
                                     ),

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/src/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:threekm/UI/main/navigation.dart';
 import 'package:threekm/UI/userkyc/profile_picture.dart';
 import 'package:threekm/UI/userkyc/user_kyc_main.dart';
 import 'package:threekm/providers/userKyc/verify_credential.dart';
@@ -23,10 +24,12 @@ class EmailVerification extends StatefulWidget {
 class _EmailVerificationState extends State<EmailVerification> {
   var _focusNodes = List.generate(4, (index) => FocusNode());
   var _controllers = List.generate(4, (index) => TextEditingController());
+  bool isValidEmail = false;
   bool isSendOtp = false;
   bool isVisibleResendOtp = false;
   TextEditingController _emailController = TextEditingController();
   TextEditingController _otpController = TextEditingController();
+  SharedPreferences? _pref;
   Widget buildEmail({required TextEditingController emailController}) {
     // return Consumer<ProfileInfoProvider>(builder: (context, controller, _) {
     return SizedBox(
@@ -41,6 +44,7 @@ class _EmailVerificationState extends State<EmailVerification> {
         textAlignVertical: TextAlignVertical.top,
         maxLines: 1,
         decoration: const InputDecoration(
+          hintText: 'email@address.com',
           filled: true,
           border: OutlineInputBorder(
             borderSide: BorderSide.none,
@@ -69,6 +73,12 @@ class _EmailVerificationState extends State<EmailVerification> {
             return "Space is not allowed";
           } else if (!val.contains("@")) {
             return "Please enter valid Email";
+          } else {
+            WidgetsBinding.instance?.addPostFrameCallback((_) {
+              setState(() {
+                isValidEmail = true;
+              });
+            });
           }
         },
       ),
@@ -77,9 +87,21 @@ class _EmailVerificationState extends State<EmailVerification> {
   }
 
   @override
+  void initState() {
+    context.read<VerifyKYCCredential>().disposeAllData();
+    WidgetsBinding.instance?.addPostFrameCallback((_) async {
+      _pref = await SharedPreferences.getInstance();
+      _emailController.text = _pref?.getString("email") ?? "";
+      setState(() {});
+    });
+    super.initState();
+  }
+
+  @override
   void dispose() {
     _controllers.forEach((e) => e.dispose());
     _emailController.dispose();
+    context.read<VerifyKYCCredential>().disposeAllData();
     // TODO: implement dispose
     super.dispose();
   }
@@ -96,8 +118,29 @@ class _EmailVerificationState extends State<EmailVerification> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Email verification',
+              'Step 1/5',
               style: ThreeKmTextConstants.tk18PXPoppinsBlackMedium,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Email verification',
+                  style: ThreeKmTextConstants.tk18PXPoppinsBlackMedium,
+                ),
+                InkWell(
+                  onTap: () {
+                    Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(builder: (_) => TabBarNavigation(bottomIndex: 3,)),
+                        (route) => false);
+                  },
+                  child: Text(
+                    'Cancel',
+                    style: ThreeKmTextConstants.tk18PXPoppinsBlackMedium,
+                  ),
+                ),
+              ],
             ),
             const SizedBox(
               height: 24,
@@ -158,12 +201,33 @@ class _EmailVerificationState extends State<EmailVerification> {
                 ),
               ),
             ),
+            if (Kycprovider.iswrongOTP)
+              Padding(
+                padding: const EdgeInsets.only(top: 16),
+                child: Text(
+                  'Incorrect OTP',
+                  style: TextStyle(color: Colors.red[300]),
+                ),
+              ),
+            if (Kycprovider.isTrueOTP)
+              Padding(
+                padding: const EdgeInsets.only(top: 16),
+                child: Row(
+                  children: [
+                    Image(image: AssetImage('assets/verified2.png')),
+                    Text(
+                      '  Your email is Verified now',
+                      style: ThreeKmTextConstants.tk14PXPoppinsBlackMedium,
+                    ),
+                  ],
+                ),
+              ),
             Spacer(),
             Align(
               alignment: Alignment.bottomCenter,
               child: Column(
                 children: [
-                  if (state == false)
+                  if (state == false && isSendOtp && !Kycprovider.isTrueOTP)
                     SizedBox(
                       child: isVisibleResendOtp
                           ? InkWell(
@@ -223,50 +287,56 @@ class _EmailVerificationState extends State<EmailVerification> {
                                 style: ButtonStyle(
                                     shape: MaterialStateProperty.all<
                                         OutlinedBorder>(const StadiumBorder())),
-                                onPressed: () async {
-                                  SharedPreferences _prefs =
-                                      await SharedPreferences.getInstance();
-                                  if (isSendOtp) {
-                                    // var otp = [
-                                    //   _controllers[0].text,
-                                    //   _controllers[1].text,
-                                    //   _controllers[2].text,
-                                    //   _controllers[3].text
-                                    // ].join();
-                                    var otp = _otpController.text;
-                                    var res = json.encode({
-                                      "email": _emailController.text,
-                                      "otp": otp,
-                                      "device": _prefs.getString('deviceID')
-                                    });
-                                    log(otp);
-                                    log(res.toString());
-                                    if (otp.length > 4) {
-                                      Kycprovider.verifyEmailOTPKYC(
-                                          res, _emailController.text, context);
-                                    } else {
-                                      Fluttertoast.showToast(
-                                          msg: "Please enter OTP");
-                                    }
-                                  } else {
-                                    if (_emailController.text.isNotEmpty) {
-                                      Kycprovider.sendOtpEmail(json.encode(
-                                              {"email": _emailController.text}))
-                                          .whenComplete(() => setState(() {
-                                                isSendOtp = true;
-                                                isVisibleResendOtp = false;
-                                              }));
-                                    } else {
-                                      Fluttertoast.showToast(
-                                          msg: "Please enter your Email");
-                                    }
-                                  }
-                                  // Navigator.push(
-                                  //     context,
-                                  //     MaterialPageRoute(
-                                  //         builder: (_) =>
-                                  //             const EmailVerification()));
-                                },
+                                onPressed: isValidEmail
+                                    ? () async {
+                                        SharedPreferences _prefs =
+                                            await SharedPreferences
+                                                .getInstance();
+                                        if (isSendOtp) {
+                                          // var otp = [
+                                          //   _controllers[0].text,
+                                          //   _controllers[1].text,
+                                          //   _controllers[2].text,
+                                          //   _controllers[3].text
+                                          // ].join();
+                                          var otp = _otpController.text;
+                                          var res = json.encode({
+                                            "email": _emailController.text,
+                                            "otp": otp,
+                                            "device":
+                                                _prefs.getString('deviceID')
+                                          });
+                                          log(otp);
+                                          log(res.toString());
+                                          if (otp.length > 4) {
+                                            Kycprovider.verifyEmailOTPKYC(res,
+                                                _emailController.text, context);
+                                          } else {
+                                            Fluttertoast.showToast(
+                                                msg: "Please enter OTP");
+                                          }
+                                        } else {
+                                          if (_emailController
+                                              .text.isNotEmpty) {
+                                            Kycprovider.sendOtpEmail(json
+                                                .encode({
+                                              "email": _emailController.text
+                                            })).whenComplete(() => setState(() {
+                                                  isSendOtp = true;
+                                                  isVisibleResendOtp = false;
+                                                }));
+                                          } else {
+                                            Fluttertoast.showToast(
+                                                msg: "Please enter your Email");
+                                          }
+                                        }
+                                        // Navigator.push(
+                                        //     context,
+                                        //     MaterialPageRoute(
+                                        //         builder: (_) =>
+                                        //             const EmailVerification()));
+                                      }
+                                    : null,
                                 child: Padding(
                                   padding: const EdgeInsets.all(15.0),
                                   child: Text(

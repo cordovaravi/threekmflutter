@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/src/provider.dart';
+import 'package:threekm/UI/main/navigation.dart';
 import 'package:threekm/UI/userkyc/confirm_info.dart';
 import 'package:threekm/providers/ProfileInfo/ProfileInfo_Provider.dart';
 import 'package:threekm/utils/threekm_textstyles.dart';
@@ -18,7 +19,7 @@ class _BirthDateState extends State<BirthDate> {
   var list = List<int>.generate(30, (i) => i + 1);
 
   var yearlist =
-      List<int>.generate(90, (i) => DateTime.now().year - i).reversed;
+      List<int>.generate(90, (i) => DateTime.now().year - i - 1).reversed;
   List<String> month = [
     "Jan",
     "Feb",
@@ -46,12 +47,33 @@ class _BirthDateState extends State<BirthDate> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Align(
-              alignment: Alignment.bottomLeft,
-              child: Text(
-                'Birthdate',
-                style: ThreeKmTextConstants.tk18PXPoppinsBlackMedium,
-              ),
+            Text(
+              'Step 4/5',
+              style: ThreeKmTextConstants.tk18PXPoppinsBlackMedium,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Align(
+                  alignment: Alignment.bottomLeft,
+                  child: Text(
+                    'Birthdate',
+                    style: ThreeKmTextConstants.tk18PXPoppinsBlackMedium,
+                  ),
+                ),
+                InkWell(
+                  onTap: () {
+                    Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(builder: (_) => TabBarNavigation(bottomIndex: 3,)),
+                        (route) => false);
+                  },
+                  child: Text(
+                    'Cancel',
+                    style: ThreeKmTextConstants.tk18PXPoppinsBlackMedium,
+                  ),
+                ),
+              ],
             ),
             const SizedBox(
               height: 24,
@@ -61,7 +83,7 @@ class _BirthDateState extends State<BirthDate> {
               minHeight: 3,
               color: Colors.amber[400],
               backgroundColor: const Color(0xFFE7E7E7),
-              value: 0.2,
+              value: 0.6,
               semanticsLabel: 'Linear progress indicator',
             ),
             const SizedBox(

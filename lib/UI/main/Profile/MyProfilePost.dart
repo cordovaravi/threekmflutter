@@ -6,19 +6,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
+
 import 'package:google_fonts/google_fonts.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/src/provider.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:threekm/Custom_library/src/reaction.dart';
+
 import 'package:threekm/Models/SelfProfile_Model.dart';
+import 'package:threekm/Models/getUserInfoModel.dart' as UserInfoModel;
 import 'package:threekm/UI/Animation/AnimatedSizeRoute.dart';
 import 'package:threekm/UI/Help_Supportpage.dart';
-import 'package:threekm/UI/Search/SearchPage.dart';
 import 'package:threekm/UI/main/AddPost/AddNewPost.dart';
+
 import 'package:threekm/UI/main/News/NewsList.dart';
 import 'package:threekm/UI/main/News/Widgets/comment_Loading.dart';
 import 'package:threekm/UI/main/News/Widgets/likes_Loading.dart';
@@ -28,12 +29,10 @@ import 'package:threekm/commenwidgets/commenwidget.dart';
 import 'package:threekm/providers/main/AthorProfile_Provider.dart';
 import 'package:threekm/providers/main/LikeList_Provider.dart';
 import 'package:threekm/providers/main/comment_Provider.dart';
+import 'package:threekm/providers/userKyc/verify_credential.dart';
 import 'package:threekm/widgets/NewCardUI/card_ui.dart';
-import 'package:threekm/widgets/reactions_assets.dart' as reactionAssets;
 
 import 'package:threekm/utils/utils.dart';
-import 'package:threekm/widgets/emotion_Button.dart';
-import 'package:threekm/widgets/video_widget.dart';
 
 class MyProfilePost extends StatefulWidget {
   final int id;
@@ -64,11 +63,84 @@ class _MyProfilePostState extends State<MyProfilePost>
   bool addingAbout = false;
   int aboutCount = 0;
   TextEditingController _aboutTextController = TextEditingController();
+
+  List<String> questions = [
+    "What can you share/post on 3km?",
+    "What can you share/post on 3km?",
+    "What not to share/Post on 3km?"
+  ];
+  List<String> subtitle = ["As a citizen..", "As a Business..", ""];
+  List<dynamic> As_a_Business = [
+    {
+      "title": "New Launches",
+      "subtitle": "Products, Franchises, Services",
+    },
+    {
+      "title": "Business Offers",
+      "subtitle": "Any special offers, sale on your goods & services",
+    },
+    {
+      "title": "Business specialities",
+      "subtitle": "Notable custom products made by you",
+    },
+    {
+      "title": "Business Events",
+      "subtitle": "Invitation for seminars, camps, competitions",
+    },
+    {
+      "title": "Business News",
+      "subtitle": "Industry news, market news,",
+    },
+    {
+      "title": "Business Facts",
+      "subtitle":
+          "Facts related to Business, Educational content related to business",
+    },
+    {
+      "title": "Startups News",
+      "subtitle": "Success stories, New events",
+    }
+  ];
+  List<dynamic> As_a_citizen = [
+    {
+      "title": "Informative Post",
+      "subtitle": "Food & Product Reviews, Quick Tutorials"
+    },
+    {"title": "Report", "subtitle": "Accidents, Crime, Utility failure, Scam"},
+    {
+      "title": "Events",
+      "subtitle": "Invites, Marathons, Competitions, Sports, Flea Markets"
+    },
+    {"title": "Ask help", "subtitle": "Blood Requirement, Find Missing Pet"},
+    {"title": "Showcase your talent", "subtitle": "Dance, Music, Baking etc"},
+    {"title": "Entertainment", "subtitle": "One-Act Plays, Poems"},
+    {
+      "title": "Cityscape",
+      "subtitle": "Good photos of the city and its moods."
+    },
+  ];
+
+  List<dynamic> not_to_Share = [
+    {
+      "title": "No Greetings ",
+      "subtitle": "No Good Morning, Birthday and Anniversary wishes"
+    },
+    {
+      "title": "No Selfies/ Personal photos",
+      "subtitle": "Personal Photos(Unless you are a professional model)"
+    },
+    {
+      "title": "Quotes Posts",
+      "subtitle": "No Inspirational / Motivational Quotes"
+    },
+  ];
+
   @override
   void initState() {
     super.initState();
     Future.delayed(Duration.zero, () {
       context.read<AutthorProfileProvider>().getSelfProfile();
+      context.read<VerifyKYCCredential>().getUserProfileInfo();
     });
   }
 
@@ -110,7 +182,7 @@ class _MyProfilePostState extends State<MyProfilePost>
                       onPressed: () {
                         Navigator.pop(context);
                       },
-                      child: Text('Cancle'))),
+                      child: Text('Cancel'))),
             ],
             actionsOverflowDirection: VerticalDirection.down,
             actionsAlignment: MainAxisAlignment.center,
@@ -121,27 +193,30 @@ class _MyProfilePostState extends State<MyProfilePost>
   @override
   Widget build(BuildContext context) {
     final selfProfile = context.watch<AutthorProfileProvider>();
+    final userInfo = context.watch<VerifyKYCCredential>().userProfileInfo;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
+        foregroundColor: Colors.black,
         elevation: 0.0,
         title: Text(
-          "My profile",
+          "My posts",
           style: ThreeKmTextConstants.tk18PXLatoBlackMedium,
         ),
-        actions: [
-          IconButton(
-              onPressed: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => SearchPage(tabNuber: 0)));
-              },
-              icon: Icon(
-                Icons.search,
-                color: Colors.black,
-              ))
-        ],
+
+        // actions: [
+        //   IconButton(
+        //       onPressed: () {
+        //         Navigator.push(
+        //             context,
+        //             MaterialPageRoute(
+        //                 builder: (context) => SearchPage(tabNuber: 0)));
+        //       },
+        //       icon: Icon(
+        //         Icons.search,
+        //         color: Colors.black,
+        //       ))
+        // ],
       ),
       body: selfProfile.isGettingSelfProfile == true &&
               selfProfile.selfProfile?.data == null
@@ -161,7 +236,7 @@ class _MyProfilePostState extends State<MyProfilePost>
               children: [
                 //  buildBackButton(context),
                 selfProfile.selfProfile != null
-                    ? buildContent(context, selfProfile.selfProfile)
+                    ? buildContent(context, selfProfile.selfProfile, userInfo)
                     : Center(
                         child: Text("Some error while getting data"),
                       )
@@ -170,7 +245,9 @@ class _MyProfilePostState extends State<MyProfilePost>
     );
   }
 
-  Widget buildContent(context, SelfProfileModel? selfProfileModel) {
+  Widget buildContent(context, SelfProfileModel? selfProfileModel,
+      UserInfoModel.GetUserInfoModel userInfo) {
+    var data = userInfo.data?.result;
     return Expanded(
       child: Container(
         //clipBehavior: Clip.antiAlias,
@@ -191,10 +268,11 @@ class _MyProfilePostState extends State<MyProfilePost>
                 SliverAppBar(
                   title: Text(""),
                   collapsedHeight: 0,
-                  expandedHeight: addingAbout == true &&
-                          selfProfileModel!.data!.result!.author!.about == null
-                      ? 320
-                      : 270,
+                  expandedHeight: 450,
+                  // addingAbout == true &&
+                  //         selfProfileModel!.data!.result!.author!.about == null
+                  //     ? 340
+                  //     : 290,
                   // widget.isFromSelfProfileNavigate != true
                   //     ? (addingAbout != true ? 250 : 300)
                   //     : 250,
@@ -203,212 +281,109 @@ class _MyProfilePostState extends State<MyProfilePost>
                   flexibleSpace: FlexibleSpaceBar(
                     background: Column(
                       children: [
-                        Row(
-                          children: [
-                            buildAvatar(selfProfileModel!),
-                            SizedBox(
-                              width: 5,
-                            ),
-                            Column(
-                              children: [
-                                Container(
-                                  child: Center(
-                                    child: Text(
-                                      "${selfProfileModel.data!.result!.author!.name}",
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: ThreeKmTextConstants
-                                          .tk14PXPoppinsBlackSemiBold
-                                          .copyWith(fontSize: 18),
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: 5,
-                                ),
-                                Container(
-                                  child: selfProfileModel
-                                              .data!.result!.author!.about !=
-                                          null
-                                      ? Consumer<AutthorProfileProvider>(
-                                          builder: (context, controller, _) {
-                                          return Column(
-                                            children: [
-                                              Text(
-                                                "${selfProfileModel.data!.result!.author!.about}",
-                                                maxLines: 2,
-                                                overflow: TextOverflow.ellipsis,
-                                                textAlign: TextAlign.center,
-                                                style: ThreeKmTextConstants
-                                                    .tk14PXPoppinsBlackSemiBold
-                                                    .copyWith(
-                                                  fontSize: 12,
-                                                  fontWeight: FontWeight.w400,
-                                                ),
-                                              ),
-                                              SizedBox(
-                                                height: 8,
-                                              ),
-                                              Container(
-                                                  height: 26,
-                                                  width: 124,
-                                                  decoration: BoxDecoration(
-                                                      color: Color(0xff3E7EFF)
-                                                          .withOpacity(0.10),
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              14)),
-                                                  child: InkWell(
-                                                    onTap: () {
-                                                      controller.editAgain();
-                                                    },
-                                                    child: Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .center,
-                                                        children: [
-                                                          Icon(
-                                                            Icons.edit,
-                                                            color: Color(
-                                                                0xff3E7EFF),
-                                                          ),
-                                                          SizedBox(
-                                                            width: 4,
-                                                          ),
-                                                          Text(
-                                                            "About Me",
-                                                            style: ThreeKmTextConstants
-                                                                .tk12PXPoppinsBlackSemiBold
-                                                                .copyWith(
-                                                                    color: Color(
-                                                                        0xff3E7EFF)),
-                                                          )
-                                                        ]),
-                                                  ))
-                                            ],
-                                          );
-                                        })
-                                      : addingAbout != true
-                                          ? InkWell(
-                                              onTap: () {
-                                                setState(() {
-                                                  addingAbout = true;
-                                                });
-                                              },
-                                              child: Container(
-                                                  height: 26,
-                                                  width: 124,
-                                                  decoration: BoxDecoration(
-                                                      color: Color(0xff3E7EFF)
-                                                          .withOpacity(0.10),
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              14)),
-                                                  child: Center(
-                                                      child: Text(
-                                                    "Add About Me",
-                                                    style: ThreeKmTextConstants
-                                                        .tk12PXPoppinsBlackSemiBold
-                                                        .copyWith(
-                                                            color: Color(
-                                                                0xff3E7EFF)),
-                                                  ))),
-                                            )
-                                          : Container(),
-                                ),
-                              ],
-                            ),
-                          ],
+                        buildAvatar(selfProfileModel!),
+                        SizedBox(
+                          width: 5,
                         ),
-                        if (addingAbout &&
-                            selfProfileModel.data!.result!.author!.about ==
-                                null) ...{
-                          Container(
-                            margin: EdgeInsets.only(),
-                            child: TextFormField(
-                              controller: _aboutTextController,
-                              maxLines: 1,
-                              minLines: null,
-                              expands: false,
-                              maxLength: 35,
-                              textAlignVertical: TextAlignVertical.top,
-                              maxLengthEnforcement:
-                                  MaxLengthEnforcement.enforced,
-                              decoration: InputDecoration(
-                                border: InputBorder.none,
-                              ),
-                              validator: (String? about) {
-                                if (about == null) {
-                                  return "Please add About!";
-                                }
-                              },
-                              buildCounter: (context,
-                                  {required currentLength,
-                                  required isFocused,
-                                  maxLength}) {
-                                WidgetsBinding.instance!
-                                    .addPostFrameCallback((timeStamp) {
-                                  setState(() {
-                                    aboutCount = currentLength;
-                                  });
-                                });
-                                return Text(
-                                  "($aboutCount/35)",
-                                  style: ThreeKmTextConstants
-                                      .tk12PXPoppinsWhiteRegular
-                                      .copyWith(
-                                    fontSize: 10.5,
-                                    fontWeight: FontWeight.w700,
-                                    color: Color(0xFF979EA4),
-                                  ),
-                                );
-                              },
-                              style: ThreeKmTextConstants.tk16PXLatoBlackRegular
-                                  .copyWith(
-                                color: Color(0xFF0F0F2D),
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            width: 335,
-                            height: 68,
-                            decoration: BoxDecoration(
-                                color: Color(0xffF4F3F8),
-                                border: Border.all(color: Color(0xffD5D5D5)),
-                                borderRadius: BorderRadius.circular(15)),
+                        Center(
+                          child: Text(
+                            "${selfProfileModel.data!.result!.author!.name}",
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: ThreeKmTextConstants
+                                .tk14PXPoppinsBlackSemiBold
+                                .copyWith(fontSize: 18),
                           ),
-                          SizedBox(
-                            height: 8,
-                          ),
-                          Consumer<AutthorProfileProvider>(
-                            builder: (context, controller, _) {
-                              return GestureDetector(
-                                onTap: () {
-                                  controller.updateAbout(
-                                      context: context,
-                                      about: _aboutTextController.text);
-                                },
-                                child: Container(
-                                    height: 37,
-                                    width: 67,
-                                    decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(18),
-                                        color:
-                                            Color(0xff3E7EFF).withOpacity(0.1)),
-                                    child: Center(
-                                      child: controller.updateLoading != true
-                                          ? Text(
-                                              "Save",
-                                              style: ThreeKmTextConstants
-                                                  .tk14PXPoppinsBlackSemiBold
-                                                  .copyWith(
-                                                      color: Color(0xff3E7EFF)),
-                                            )
-                                          : CupertinoActivityIndicator(),
-                                    )),
-                              );
-                            },
-                          )
-                        },
+                        ),
+                        // if (addingAbout &&
+                        //     selfProfileModel.data!.result!.author!.about ==
+                        //         null) ...{
+                        //   Container(
+                        //     margin: EdgeInsets.only(),
+                        //     child: TextFormField(
+                        //       controller: _aboutTextController,
+                        //       maxLines: 1,
+                        //       minLines: null,
+                        //       expands: false,
+                        //       maxLength: 35,
+                        //       textAlignVertical: TextAlignVertical.top,
+                        //       maxLengthEnforcement:
+                        //           MaxLengthEnforcement.enforced,
+                        //       decoration: InputDecoration(
+                        //         border: InputBorder.none,
+                        //       ),
+                        //       validator: (String? about) {
+                        //         if (about == null) {
+                        //           return "Please add About!";
+                        //         }
+                        //       },
+                        //       buildCounter: (context,
+                        //           {required currentLength,
+                        //           required isFocused,
+                        //           maxLength}) {
+                        //         WidgetsBinding.instance!
+                        //             .addPostFrameCallback((timeStamp) {
+                        //           setState(() {
+                        //             aboutCount = currentLength;
+                        //           });
+                        //         });
+                        //         return Text(
+                        //           "($aboutCount/35)",
+                        //           style: ThreeKmTextConstants
+                        //               .tk12PXPoppinsWhiteRegular
+                        //               .copyWith(
+                        //             fontSize: 10.5,
+                        //             fontWeight: FontWeight.w700,
+                        //             color: Color(0xFF979EA4),
+                        //           ),
+                        //         );
+                        //       },
+                        //       style: ThreeKmTextConstants.tk16PXLatoBlackRegular
+                        //           .copyWith(
+                        //         color: Color(0xFF0F0F2D),
+                        //         fontWeight: FontWeight.w500,
+                        //       ),
+                        //     ),
+                        //     width: 335,
+                        //     height: 68,
+                        //     decoration: BoxDecoration(
+                        //         color: Color(0xffF4F3F8),
+                        //         border: Border.all(color: Color(0xffD5D5D5)),
+                        //         borderRadius: BorderRadius.circular(15)),
+                        //   ),
+                        //   SizedBox(
+                        //     height: 8,
+                        //   ),
+                        //   Consumer<AutthorProfileProvider>(
+                        //     builder: (context, controller, _) {
+                        //       return GestureDetector(
+                        //         onTap: () {
+                        //           controller.updateAbout(
+                        //               context: context,
+                        //               about: _aboutTextController.text);
+                        //         },
+                        //         child: Container(
+                        //             height: 37,
+                        //             width: 67,
+                        //             decoration: BoxDecoration(
+                        //                 borderRadius: BorderRadius.circular(18),
+                        //                 color:
+                        //                     Color(0xff3E7EFF).withOpacity(0.1)),
+                        //             child: Center(
+                        //               child: controller.updateLoading != true
+                        //                   ? Text(
+                        //                       "Save",
+                        //                       style: ThreeKmTextConstants
+                        //                           .tk14PXPoppinsBlackSemiBold
+                        //                           .copyWith(
+                        //                               color: Color(0xff3E7EFF)),
+                        //                     )
+                        //                   : CupertinoActivityIndicator(),
+                        //             )),
+                        //       );
+                        //     },
+                        //   )
+                        // },
                         widget.isFromSelfProfileNavigate == false
                             ? Column(
                                 children: [
@@ -422,28 +397,10 @@ class _MyProfilePostState extends State<MyProfilePost>
                             : Container(),
                         Padding(
                           padding: EdgeInsets.symmetric(
-                              vertical: 18, horizontal: 18),
+                              vertical: 18, horizontal: 55),
                           child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: [
-                              Column(
-                                children: [
-                                  Text(
-                                      selfProfileModel
-                                          .data!.result!.author!.followers
-                                          .toString(),
-                                      style: GoogleFonts.poppins(
-                                          color: Colors.black,
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: 18)),
-                                  Text(
-                                    "Followers",
-                                    style: ThreeKmTextConstants
-                                        .tk14PXPoppinsBlackSemiBold
-                                        .copyWith(color: Color(0xff979EA4)),
-                                  )
-                                ],
-                              ),
                               Column(
                                 children: [
                                   Text(
@@ -456,6 +413,24 @@ class _MyProfilePostState extends State<MyProfilePost>
                                           fontSize: 18)),
                                   Text(
                                     "Posts",
+                                    style: ThreeKmTextConstants
+                                        .tk14PXPoppinsBlackSemiBold
+                                        .copyWith(color: Color(0xff979EA4)),
+                                  )
+                                ],
+                              ),
+                              Column(
+                                children: [
+                                  Text(
+                                      selfProfileModel
+                                          .data!.result!.author!.followers
+                                          .toString(),
+                                      style: GoogleFonts.poppins(
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: 18)),
+                                  Text(
+                                    "Followers",
                                     style: ThreeKmTextConstants
                                         .tk14PXPoppinsBlackSemiBold
                                         .copyWith(color: Color(0xff979EA4)),
@@ -483,34 +458,160 @@ class _MyProfilePostState extends State<MyProfilePost>
                             ],
                           ),
                         ),
-                        InkWell(
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (_) => UserKycMain()));
-                            // showKycMessage(context);
-                            // Navigator.push(
-                            //     context,
-                            //     MaterialPageRoute(
-                            //         builder: (context) =>
-                            //             //VideoCompress()
-                            //             AddNewPost()));
-                          },
-                          child: Container(
-                            height: 35,
-                            alignment: Alignment.center,
-                            width: MediaQuery.of(context).size.width,
-                            margin: EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                                color: Color(0xff3E7EFF),
-                                borderRadius: BorderRadius.circular(28)),
+                        // InkWell(
+                        //   onTap: null,
+                        //   //  () {
+                        //   //   // Navigator.push(
+                        //   //   //     context,
+                        //   //   //     MaterialPageRoute(
+                        //   //   //         builder: (_) => UserKycMain()));
+                        //   //   // showKycMessage(context);
+                        //   //   // Navigator.push(
+                        //   //   //     context,
+                        //   //   //     MaterialPageRoute(
+                        //   //   //         builder: (context) =>
+                        //   //   //             //VideoCompress()
+                        //   //   //             AddNewPost()));
+                        //   // },
+                        //   child: Container(
+                        //     height: 47,
+                        //     alignment: Alignment.center,
+                        //     width: MediaQuery.of(context).size.width,
+                        //     margin: EdgeInsets.only(left: 16, right: 16),
+                        //     decoration: BoxDecoration(
+                        //         color: Color(0xff3E7EFF),
+                        //         borderRadius: BorderRadius.circular(28)),
+                        //     child: Text(
+                        //       "Add Post",
+                        //       style: TextStyle(color: Colors.white),
+                        //     ),
+                        //   ),
+                        // ),
+                        Container(
+                          margin: EdgeInsets.only(left: 16, right: 16),
+                          width: size.width,
+                          height: 50,
+                          child: ElevatedButton(
+                            style: ButtonStyle(
+                                shape:
+                                    MaterialStateProperty.all(StadiumBorder()),
+                                backgroundColor:
+                                    MaterialStateProperty.resolveWith<Color>(
+                                  (Set<MaterialState> states) {
+                                    if (states.contains(MaterialState.pressed))
+                                      return Theme.of(context)
+                                          .colorScheme
+                                          .primary
+                                          .withOpacity(0.5);
+                                    else if (states
+                                        .contains(MaterialState.disabled))
+                                      return Colors.grey[300]!;
+                                    return Color(
+                                        0xFF3E7EFF); // Use the component's default.
+                                  },
+                                ),
+                                foregroundColor:
+                                    MaterialStateProperty.all(Colors.black),
+                                enableFeedback: true,
+                                padding: MaterialStateProperty.all(
+                                    const EdgeInsets.only(
+                                        left: 30,
+                                        right: 30,
+                                        top: 15,
+                                        bottom: 15))),
                             child: Text(
-                              "Add Post",
+                              'Add Post',
                               style: TextStyle(color: Colors.white),
                             ),
+                            onPressed: data != null && data.isVerified
+                                ? () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                //VideoCompress()
+                                                AddNewPost()));
+                                  }
+                                : null,
                           ),
-                        )
+                        ),
+                        Container(
+                          margin: EdgeInsets.only(left: 16, right: 16, top: 24),
+                          padding: EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                              color: Color(0xFFF8F8F8),
+                              borderRadius: BorderRadius.circular(10)),
+                          child: Column(
+                            children: [
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Image(
+                                    image: AssetImage('assets/verified3.png'),
+                                  ),
+                                  SizedBox(
+                                    width: 11,
+                                  ),
+                                  SizedBox(
+                                    width: size.width / 1.4,
+                                    child: RichText(
+                                      maxLines: 2,
+                                      softWrap: true,
+                                      textAlign: TextAlign.left,
+                                      text: TextSpan(children: [
+                                        TextSpan(
+                                            text: data != null &&
+                                                    data.isVerified
+                                                ? 'Stay connected with the community by sharing posts with them'
+                                                : 'To share post on your wall you need a basic verification',
+                                            style: ThreeKmTextConstants
+                                                .tk14PXPoppinsBlackMedium),
+                                        TextSpan(
+                                            text: ' -Know more',
+                                            style: ThreeKmTextConstants
+                                                .tk14PXPoppinsBlueMedium)
+                                      ]),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(
+                                height: 16,
+                              ),
+                              InkWell(
+                                onTap: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (_) => UserKycMain()));
+                                  // showKycMessage(context);
+                                  // Navigator.push(
+                                  //     context,
+                                  //     MaterialPageRoute(
+                                  //         builder: (context) =>
+                                  //             //VideoCompress()
+                                  //             AddNewPost()));
+                                },
+                                child: Container(
+                                  height: 47,
+                                  alignment: Alignment.center,
+                                  width: MediaQuery.of(context).size.width,
+                                  margin: EdgeInsets.only(left: 16, right: 16),
+                                  decoration: BoxDecoration(
+                                      color: Color(0xff3E7EFF),
+                                      borderRadius: BorderRadius.circular(28)),
+                                  child: Text(
+                                    data != null && data.isVerified
+                                        ? "Identity verification"
+                                        : "Start verification",
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -528,15 +629,103 @@ class _MyProfilePostState extends State<MyProfilePost>
                   ),
                 ),
                 if (index == 0) ...{
-                  SliverList(
-                    delegate: SliverChildBuilderDelegate(
-                      (context, _index) {
-                        return NewsCard(
-                            selfProfileModel: selfProfileModel, index: _index);
-                      },
-                      childCount: selfProfileModel.data!.result!.posts!.length,
-                    ),
-                  ),
+                  selfProfileModel.data!.result!.posts!.length != 0
+                      ? SliverList(
+                          delegate: SliverChildBuilderDelegate(
+                            (context, _index) {
+                              return NewsCard(
+                                  selfProfileModel: selfProfileModel,
+                                  index: _index);
+                            },
+                            childCount:
+                                selfProfileModel.data!.result!.posts!.length,
+                          ),
+                        )
+                      : SliverToBoxAdapter(
+                          child: SizedBox(
+                            height: 650,
+                            child: ListView.builder(
+                              padding: EdgeInsets.only(left: 16, right: 16),
+                              shrinkWrap: true,
+                              scrollDirection: Axis.horizontal,
+                              itemCount: 3,
+                              itemBuilder: (context, indexQ) {
+                                return Container(
+                                    // height: 600,
+                                    width: size.width / 1.14,
+                                    margin: EdgeInsets.only(right: 10),
+                                    padding: EdgeInsets.all(10),
+                                    decoration: BoxDecoration(
+                                        border: Border.all(
+                                            color: Colors.grey[100]!, width: 1),
+                                        borderRadius: BorderRadius.circular(10),
+                                        image: DecorationImage(
+                                            alignment: Alignment.topCenter,
+                                            image: AssetImage(
+                                                'assets/postNull.png'),
+                                            fit: BoxFit.fitWidth)),
+                                    child: Column(children: [
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(questions[indexQ],
+                                              style: ThreeKmTextConstants
+                                                  .tk16PXPoppinsBlackSemiBold
+                                                  .copyWith(
+                                                      color: Colors.white)),
+                                          Text(subtitle[indexQ],
+                                              style: ThreeKmTextConstants
+                                                  .tk16PXPoppinsBlackSemiBold
+                                                  .copyWith(
+                                                      color: Colors.white)),
+                                          SizedBox(
+                                            height: 30,
+                                          ),
+                                          ListView.builder(
+                                              physics:
+                                                  NeverScrollableScrollPhysics(),
+                                              shrinkWrap: true,
+                                              itemCount: indexQ == 0
+                                                  ? As_a_citizen.length
+                                                  : indexQ == 1
+                                                      ? As_a_Business.length
+                                                      : not_to_Share.length,
+                                              itemBuilder: (context, i) {
+                                                return ListTile(
+                                                  minLeadingWidth: 20,
+                                                  leading: Text("\u2022"),
+                                                  title: indexQ == 0
+                                                      ? Text(As_a_citizen[i]
+                                                          ['title'])
+                                                      : indexQ == 1
+                                                          ? Text(
+                                                              As_a_Business[i]
+                                                                  ['title'])
+                                                          : Text(not_to_Share[i]
+                                                              ['title']),
+                                                  subtitle: indexQ == 0
+                                                      ? Text(As_a_citizen[i]
+                                                          ['subtitle'])
+                                                      : indexQ == 1
+                                                          ? Text(
+                                                              As_a_Business[i]
+                                                                  ['subtitle'])
+                                                          : Text(not_to_Share[i]
+                                                              ['subtitle']),
+                                                  contentPadding:
+                                                      EdgeInsets.zero,
+                                                  enableFeedback: true,
+                                                  horizontalTitleGap: 0,
+                                                );
+                                              })
+                                        ],
+                                      )
+                                    ]));
+                              },
+                            ),
+                          ),
+                        )
                 } else ...{
                   Center(
                     child: Text("Saved posts"),

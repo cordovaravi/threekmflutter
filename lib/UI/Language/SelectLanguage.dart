@@ -359,7 +359,6 @@ class _SelectLanguageState extends State<SelectLanguage>
                               (route) => false);
                         });
                       }
-
                       ///update Language here
                       // await controller.updateSelectionState();
                       // context.toBaseNamed(HomePage.path);

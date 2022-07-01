@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/src/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:threekm/Models/getUserInfoModel.dart';
 import 'package:threekm/UI/userkyc/email_verification.dart';
 import 'package:threekm/UI/userkyc/profile_picture.dart';
 import 'package:threekm/networkservice/Api_Provider.dart';
@@ -19,6 +20,18 @@ class VerifyKYCCredential extends ChangeNotifier {
   bool get isTrueOTP => _trueOTP;
   String? _avtar = "";
   String? get avtar => _avtar;
+
+  bool? _kycDoc = false;
+  bool? get kycDoc => _kycDoc;
+  GetUserInfoModel _UserProfileInfo = GetUserInfoModel();
+  GetUserInfoModel get userProfileInfo => _UserProfileInfo;
+
+  disposeAllData() {
+    _isLoading = false;
+    _trueOTP = false;
+    _wrongOTP = false;
+    notifyListeners();
+  }
 
   getAvatar() async {
     SharedPreferences _pref = await SharedPreferences.getInstance();
@@ -42,10 +55,6 @@ class VerifyKYCCredential extends ChangeNotifier {
         context
             .read<ProfileInfoProvider>()
             .updateProfileInfo(phone: phoneNumber);
-        Future.delayed(
-            Duration(seconds: 1),
-            () => Navigator.push(context,
-                MaterialPageRoute(builder: (_) => const EmailVerification())));
       } else {
         //  hideLoading();
         _wrongOTP = true;
@@ -67,6 +76,7 @@ class VerifyKYCCredential extends ChangeNotifier {
       if (response['status'] == 'success') {
         // hideLoading();
         _wrongOTP = false;
+        _trueOTP = true;
         notifyListeners();
         context.read<ProfileInfoProvider>().updateProfileInfo(email: email);
 
@@ -94,5 +104,40 @@ class VerifyKYCCredential extends ChangeNotifier {
       notifyListeners();
     }
     return response;
+  }
+
+  Future<dynamic> getUserProfileInfo() async {
+    SharedPreferences _pref = await SharedPreferences.getInstance();
+    _isLoading = true;
+    try {
+      final response = await _apiProvider.get(Get_User_info);
+      if (response != null) {
+        _UserProfileInfo = GetUserInfoModel.fromJson(response);
+        _pref.setBool(
+            "is_verified", _UserProfileInfo.data?.result.isVerified ?? false);
+        _pref.setBool("is_document_verified",
+            _UserProfileInfo.data?.result.isDocumentVerified ?? false);
+        _isLoading = false;
+        notifyListeners();
+      }
+    } catch (e) {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<dynamic> updateKYCDoc(requestJson) async {
+//Update_kyc_doc
+    try {
+      final response = await _apiProvider.post(Update_kyc_doc, requestJson);
+      if (response != null) {
+        if (response['status'] == 'success') {
+          _kycDoc = true;
+          notifyListeners();
+        }
+      }
+    } catch (e) {
+      notifyListeners();
+    }
   }
 }

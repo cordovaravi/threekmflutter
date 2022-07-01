@@ -64,6 +64,8 @@ const String Author_Profile = "newspost/authorprofilenew";
 const String Self_Profile = "newspost/selfprofile";
 const String add_About = "user/about";
 const String Update_User_Info = "user/update";
+const String Get_User_info = "user/user_details";
+const String Update_kyc_doc = "user/updatekycdoc";
 
 // Follow
 const String follow_User = "follow";
