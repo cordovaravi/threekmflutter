@@ -113,7 +113,9 @@ class Post {
       this.preheaderLike,
       this.preheaderComment,
       this.emotion,
-      this.latestComment});
+      this.latestComment,
+      this.preaheaderLikeUser,
+      this.preheaderCommentUSer});
 
   int? postId;
   String? slugHeadline;
@@ -142,6 +144,8 @@ class Post {
   String? preheaderComment;
   LatestComment? latestComment;
   String? emotion;
+  String? preaheaderLikeUser;
+  String? preheaderCommentUSer;
 
   factory Post.fromJson(Map<String, dynamic> json) => Post(
         postId: json["post_id"] == null ? null : json["post_id"],
@@ -186,6 +190,12 @@ class Post {
             : LatestComment.fromJson(
                 json['latest_comment'],
               ),
+        preaheaderLikeUser: json["preheader_like_user"] == null
+            ? null
+            : json["preheader_like_user"],
+        preheaderCommentUSer: json["preheader_comment_user"] == null
+            ? null
+            : json["preheader_comment_user"],
       );
 }
 

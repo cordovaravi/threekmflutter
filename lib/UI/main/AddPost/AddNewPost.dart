@@ -6,7 +6,6 @@ import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:google_maps_webservice/directions.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:threekm/Custom_library/location2.0/lib/place_picker.dart';
@@ -776,7 +775,7 @@ class _AddNewPostState extends State<AddNewPost> {
                       onTap: () async {
                         List<XFile>? imageFileList = [];
                         final List<XFile>? images =
-                            await _imagePicker.pickMultiImage();
+                            await _imagePicker.pickMultiImage(imageQuality: 60);
                         if (imageFileList.isEmpty) {
                           imageFileList.addAll(images!);
                         }

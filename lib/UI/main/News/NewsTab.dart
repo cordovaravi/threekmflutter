@@ -72,7 +72,7 @@ class _NewsTabState extends State<NewsTab> with AutomaticKeepAliveClientMixin {
     super.initState();
 
     Future.microtask(() => context.read<AppLanguage>().fetchLocale());
-    if (widget.reload != true) {
+    if (widget.reload != true && mounted) {
       Future.delayed(Duration.zero, () async {
         String? token = await ApiProvider().getToken() ?? "";
         requestJson = json.encode({
@@ -200,6 +200,8 @@ class _NewsTabState extends State<NewsTab> with AutomaticKeepAliveClientMixin {
               //controller: _scrollController,
               physics: BouncingScrollPhysics(),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   //Add baner lokamanya Banner
                   if (newsFirstProvider.homeNewsFirst != null)
@@ -295,7 +297,6 @@ class _NewsTabState extends State<NewsTab> with AutomaticKeepAliveClientMixin {
                                                                   .first
                                                                   .post !=
                                                               null) {
-                                                            log("bbbbbbbbbbbbbbbbb");
                                                             Navigator.push(
                                                                 context,
                                                                 MaterialPageRoute(
@@ -312,7 +313,6 @@ class _NewsTabState extends State<NewsTab> with AutomaticKeepAliveClientMixin {
                                                                   .first
                                                                   .video !=
                                                               null) {
-                                                            log("aaaaaaaaaaaaaaaaaaaaaaaaaaa");
                                                             Navigator.push(
                                                                 context,
                                                                 MaterialPageRoute(

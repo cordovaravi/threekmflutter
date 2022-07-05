@@ -270,43 +270,44 @@ class Author {
 }
 
 class Business {
-  Business({
-    this.postId,
-    this.submittedHeadline,
-    this.submittedStory,
-    this.headline,
-    this.story,
-    this.images,
-    this.videos,
-    this.type,
-    this.tags,
-    this.publishFrom,
-    this.author,
-    this.authorType,
-    this.authorClassification,
-    this.business,
-    this.status,
-    this.originalLanguage,
-    this.impressions,
-    this.views,
-    this.postCreatedDate,
-    this.createdDate,
-    this.context,
-    this.isUgc,
-    this.likes,
-    this.comments,
-    this.locations,
-    this.userDetails,
-    this.creatorDetails,
-    this.id,
-    this.isVerified,
-    this.isLiked,
-    this.areas,
-    this.shares,
-    this.origHeadline,
-    this.origStory,
-    this.itemType,
-  });
+  Business(
+      {this.postId,
+      this.submittedHeadline,
+      this.submittedStory,
+      this.headline,
+      this.story,
+      this.images,
+      this.videos,
+      this.type,
+      this.tags,
+      this.publishFrom,
+      this.author,
+      this.authorType,
+      this.authorClassification,
+      this.business,
+      this.status,
+      this.originalLanguage,
+      this.impressions,
+      this.views,
+      this.postCreatedDate,
+      this.createdDate,
+      this.context,
+      this.isUgc,
+      this.likes,
+      this.comments,
+      this.locations,
+      this.userDetails,
+      this.creatorDetails,
+      this.id,
+      this.isVerified,
+      this.isLiked,
+      this.areas,
+      this.shares,
+      this.origHeadline,
+      this.origStory,
+      this.itemType,
+      this.preaheaderLike,
+      this.preheaderComment});
 
   int? postId;
   String? submittedHeadline;
@@ -343,6 +344,8 @@ class Business {
   String? origHeadline;
   String? origStory;
   String? itemType;
+  String? preaheaderLike;
+  String? preheaderComment;
 
   factory Business.fromJson(Map<String, dynamic> json) => Business(
         postId: json["post_id"] == null ? null : json["post_id"],
@@ -410,6 +413,12 @@ class Business {
             json["orig_headline"] == null ? null : json["orig_headline"],
         origStory: json["orig_story"] == null ? null : json["orig_story"],
         itemType: json["item_type"] == null ? null : json["item_type"],
+        preaheaderLike: json["preheader_like_user"] == null
+            ? null
+            : json["preheader_like_user"],
+        preheaderComment: json["preheader_comment_user"] == null
+            ? null
+            : json["preheader_comment_user"],
       );
 }
 

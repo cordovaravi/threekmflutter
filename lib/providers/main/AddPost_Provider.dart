@@ -5,7 +5,7 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mime/mime.dart';
 import 'package:threekm/Models/SignedUrl_model.dart';
@@ -18,20 +18,21 @@ import 'package:threekm/networkservice/Api_Provider.dart';
 import 'package:threekm/utils/api_paths.dart';
 
 // // for callback of upload
-typedef void OnUploadProgressCallback(int sentBytes, int totalBytes);
-bool trustSelfSigned = true;
-HttpClient getHttpClient() {
-  HttpClient httpClient = new HttpClient()
-    ..connectionTimeout = const Duration(seconds: 10)
-    ..badCertificateCallback =
-        ((X509Certificate cert, String host, int port) => trustSelfSigned);
+// typedef void OnUploadProgressCallback(int sentBytes, int totalBytes);
+// bool trustSelfSigned = true;
+// HttpClient getHttpClient() {
+//   HttpClient httpClient = new HttpClient()
+//     ..connectionTimeout = const Duration(seconds: 10)
+//     ..badCertificateCallback =
+//         ((X509Certificate cert, String host, int port) => trustSelfSigned);
 
-  return httpClient;
-}
+//   return httpClient;
+// }
 
 class AddPostProvider extends ChangeNotifier {
   bool editMode = false;
   final ApiProvider _apiProvider = ApiProvider();
+  final client = Dio();
   List<String> _tagsList = [];
   List<String> get tagsList => _tagsList;
 
@@ -93,6 +94,7 @@ class AddPostProvider extends ChangeNotifier {
   bool? get ispostUploaded => _isUploaded;
   bool _isUploadeerror = false;
   bool get isUploadError => _isUploadeerror;
+  bool _islastUpload = false;
   //UploadedFileProvider _uploadedFileProvider = UploadedFileProvider();
   Future<Null> uploadPng(context, String? headLine, String? story,
       String? address, double? lat, double? long) async {
@@ -113,41 +115,9 @@ class AddPostProvider extends ChangeNotifier {
                 uploadFile: element, requestJson: requestJson);
             log("more img ${_moreImages.length}");
             log("upload imgs ${_uploadImageUrls.length}");
-            // if (_moreImages.length == _uploadImageUrls.length) {
-            //   uploadPost(context, headLine, story, address, lat, long);
-            //   //notifyListeners();
-            // }
-            // var request = await http.MultipartRequest(
-            //     'POST', Uri.parse(upload_Imagefile));
-            // request.headers['Authorization'] = await _apiProvider.getToken();
-            // request.fields['storage_url'] = "post";
-            // request.fields['record_id'] = "0";
-            // request.fields['filename'] = "post.png";
-            // request.files
-            //     .add(await http.MultipartFile.fromPath('file', element.path));
-            // var httpresponse = await request.send();
-            // final res = await http.Response.fromStream(httpresponse);
-            // final response = json.decode(res.body);
-
-            // if (httpresponse.statusCode == 200) {
-            //   print("uploaded");
-            //   if (response["status"] == "success") {
-            //     log(response["photo"]["photo"]);
-            //     _uploadImageUrls.add(response["photo"]["photo"]);
-            //     //log(_uploadImageUrls.toList().toString());
-            //     if (_moreImages.length == _uploadImageUrls.length) {
-            //       log("progress is 100");
-            //       uploadPost(context, headLine, story, address, lat, long);
-            //       notifyListeners();
-            //     }
-            //   }
-            // } else {
-            //   CustomSnackBar(context, Text("Upload Failed.!"));
-            // }
           } on Exception catch (e) {
             print(e);
             CustomSnackBar(context, Text("Upload Failed.!"));
-            // ScaffoldMessenger.of(context).hideCurrentSnackBar();
           }
         } else if (element.path.contains(".mp4") ||
             element.path.contains(".mpeg") ||
@@ -158,46 +128,9 @@ class AddPostProvider extends ChangeNotifier {
                 json.encode({"fileextention": "mp4", "modulename": "news"});
             initalizeUpload(context, headLine, story, address, lat, long,
                 uploadFile: element, requestJson: requestJson);
-            // if (_moreImages.length == _uploadImageUrls.length) {
-            //   log("more images lenght${_moreImages.length}");
-            //   log("upload imges lenght ${_uploadImageUrls.length}");
-            //   log("video progress is 100");
-            //   uploadPost(context, headLine, story, address, lat, long);
-            //   //notifyListeners();
-            // }
-            // String _token = await _apiProvider.getToken();
-            // print("this is token $_token");
-            // var request = await http.MultipartRequest(
-            //     'POST', Uri.parse(upload_VideoFile));
-            // request.headers['Authorization'] = _token;
-            // request.fields['storage_url'] = "post";
-            // request.fields['record_id'] = "0";
-            // request.fields['filename'] = "post.mp4";
-            // request.files
-            //     .add(await http.MultipartFile.fromPath('file', element.path));
-            // var httpresponse = await request.send();
-            // final res = await http.Response.fromStream(httpresponse);
-            // final response = json.decode(res.body);
-            // if (httpresponse.statusCode == 200) {
-            //   print("video uploaded");
-            //   if (response["status"] == "success") {
-            //     log("this is video response${response.toString()}");
-            //     log(response["video"]["video"]);
-            //     _uploadImageUrls.add(response["video"]["video"]);
-            //     //log(_uploadImageUrls.toList().toString());
-            //     if (_moreImages.length == _uploadImageUrls.length) {
-            //       log("video progress is 100");
-            //       uploadPost(context, headLine, story, address, lat, long);
-            //       notifyListeners();
-            //     }
-            //   }
-            // } else {
-            //   CustomSnackBar(context, Text("Upload Failed.!"));
-            // }
           } on Exception catch (e) {
             print(e);
             CustomSnackBar(context, Text("Upload Failed.!"));
-            // ScaffoldMessenger.of(context).hideCurrentSnackBar();
           }
         }
       });
@@ -212,7 +145,7 @@ class AddPostProvider extends ChangeNotifier {
   //get signed urrl from
   SignedUrlModel? signedUrlData;
 
-  String _uploadPercent = "";
+  String _uploadPercent = "0.0";
   String get uploadPercent => _uploadPercent;
 
   Future<String?> getsignedURl({required String requestJson}) async {
@@ -235,7 +168,7 @@ class AddPostProvider extends ChangeNotifier {
     String? signedUrl = await getsignedURl(requestJson: requestJson);
     log("\n");
     log(signedUrl ?? "nul");
-    //////////// working code
+
     if (signedUrl != null) {
       try {
         Uint8List image = uploadFile.readAsBytesSync();
@@ -247,29 +180,25 @@ class AddPostProvider extends ChangeNotifier {
           'Connection': 'keep-alive',
           'User-Agent': 'ClinicPlush'
         });
-        final response = await Dio().put(signedUrl,
+        final fileUploadResponse = await client.put(signedUrl,
             data: uploadFile.openRead(),
             options: options, onSendProgress: (val1, val2) {
           log("${val1 / val2 * 100}");
           _uploadPercent = "${val1 / val2 * 100}";
           notifyListeners();
         });
-        if (response.statusCode == 200) {
+        if (fileUploadResponse.statusCode == 200) {
           log("file uploaded ");
-          // _uploadImageUrls.add(signedUrlData?.data?.result?.resourceUrl ?? "");
-
-          if (_moreImages.length == _uploadImageUrls.length) {
+          log(_moreImages.length.toString());
+          if (_moreImages.length == _uploadImageUrls.length &&
+              _uploadPercent.contains("100.")) {
             uploadPost(context, headLine, story, address, lat, long);
-            // Future.delayed(Duration(seconds: 2), () {
-            //   uploadPost(context, headLine, story, address, lat, long);
-            // });
           }
           //notifyListeners();
           log(_uploadImageUrls.toList().toString());
           log(_moreImages.length.toString());
         } else {
-          log(response.statusCode.toString());
-          log(response.toString());
+          log(fileUploadResponse.statusCode.toString());
           CustomSnackBar(context, Text("Something went wrong"));
         }
       } on Exception catch (e) {
@@ -278,6 +207,7 @@ class AddPostProvider extends ChangeNotifier {
     }
   }
 
+  int postUploaded = 0;
   Future<Null> uploadPost(context, String? headLine, String? story,
       String? address, double? lat, double? long) async {
     List tempImages = [];
@@ -288,10 +218,6 @@ class AddPostProvider extends ChangeNotifier {
           element.contains(".jpeg")) {
         tempImages.add(element);
       } else {
-        // SubmitVideo submitVideo = SubmitVideo( element);
-        // String objVideo = json.encode({submitVideo});
-        // print(objVideo);
-        // _videosUrl.add(objVideo);
         SubmitVideo objvideoUrls = SubmitVideo(element);
         _videosUrl.add(objvideoUrls);
       }
@@ -311,31 +237,41 @@ class AddPostProvider extends ChangeNotifier {
       // "business": [],
       // "products": []
     });
-    final response = await _apiProvider.post(upload_post, requestJson);
-    log(response.toString());
-    //hideCurrentSnackBar(navigatorKey.currentContext);
-    if (response != null) {
-      hideCurrentSnackBar(navigatorKey.currentContext);
-      if (response["status"] == "success") {
-        Future.delayed(Duration(seconds: 1), () {
-          //CustomSnackBar(context, Text("Post Submitted"));
-          _isUploaded = true;
-          Future.delayed(Duration.zero, () {
-            Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => TabBarNavigation(
-                          redirectedFromPost: false,
-                          isPostUploaded: true,
-                        )),
-                (route) => false);
+
+    if (postUploaded == 0) {
+      final response = await _apiProvider.post(upload_post, requestJson);
+      log(response.toString());
+      //hideCurrentSnackBar(navigatorKey.currentContext);
+      if (response != null) {
+        hideCurrentSnackBar(navigatorKey.currentContext);
+        if (response["status"] == "success") {
+          postUploaded++;
+          log("post uploaded once $postUploaded");
+          Future.delayed(Duration(seconds: 1), () {
+            //CustomSnackBar(context, Text("Post Submitted"));
+            Fluttertoast.showToast(
+                msg: "Post has been Submitted",
+                backgroundColor: Color(0xFF0044CE));
+            _isUploaded = true;
+            notifyListeners();
+            Future.delayed(Duration.zero, () {
+              Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => TabBarNavigation(
+                            redirectedFromPost: false,
+                            isPostUploaded: true,
+                          )),
+                  (route) => false);
+            });
           });
-          resetUpload(context);
+          Future.delayed(Duration(seconds: 3), () {
+            resetUpload();
+          });
+        } else {
+          _isUploadeerror = true;
           notifyListeners();
-        });
-      } else {
-        _isUploadeerror = true;
-        notifyListeners();
+        }
       }
     }
   }
@@ -345,12 +281,9 @@ class AddPostProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void resetUpload(context) {
+  void resetUpload() {
     _uploadImageUrls.clear();
     _moreImages.clear();
-    //_videosUrl.clear();
-    notifyListeners();
-    // CustomSnackBar(context, Text("Post has been submmitted"));
   }
 }
 
@@ -362,59 +295,59 @@ class SubmitVideo {
       };
 }
 
-class UploadedFileProvider extends ChangeNotifier {
-  List<String> _uploadImageUrls = [];
-  List<String> get uploadedImagesUrl => _uploadImageUrls;
+// // class UploadedFileProvider extends ChangeNotifier {
+// //   List<String> _uploadImageUrls = [];
+// //   List<String> get uploadedImagesUrl => _uploadImageUrls;
 
-  ApiProvider _apiProvider = ApiProvider();
+// //   ApiProvider _apiProvider = ApiProvider();
 
-  String requestJson =
-      json.encode({"fileextention": "mp4", "modulename": "news"});
+// //   String requestJson =
+// //       json.encode({"fileextention": "mp4", "modulename": "news"});
 
-  //get signed urrl from
-  Future<String?> getsignedURl() async {
-    final response = await _apiProvider.post(getSignedUrl, requestJson);
+// //   //get signed urrl from
+// //   Future<String?> getsignedURl() async {
+// //     final response = await _apiProvider.post(getSignedUrl, requestJson);
 
-    if (response["status"] == "success") {
-      log(response.toString());
-      final signedUrlData = SignedUrlModel.fromJson(response);
-      uploadedImagesUrl.add(signedUrlData.data?.result?.uploadUrl ?? "");
-      log(signedUrlData.data?.result?.resourceUrl ?? "null");
-      return signedUrlData.data?.result?.uploadUrl;
-    }
-  }
+// //     if (response["status"] == "success") {
+// //       log(response.toString());
+// //       final signedUrlData = SignedUrlModel.fromJson(response);
+// //       uploadedImagesUrl.add(signedUrlData.data?.result?.uploadUrl ?? "");
+// //       log(signedUrlData.data?.result?.resourceUrl ?? "null");
+// //       return signedUrlData.data?.result?.uploadUrl;
+// //     }
+// //   }
 
-  Future<Null> initalize({required File uploadFile}) async {
-    String? signedUrl = await getsignedURl();
-    log("\n");
-    log(signedUrl ?? "nul");
-    //////////// working code
-    if (signedUrl != null) {
-      try {
-        Uint8List image = uploadFile.readAsBytesSync();
+// //   Future<Null> initalize({required File uploadFile}) async {
+// //     String? signedUrl = await getsignedURl();
+// //     log("\n");
+// //     log(signedUrl ?? "nul");
+// //     //////////// working code
+// //     if (signedUrl != null) {
+// //       try {
+// //         Uint8List image = uploadFile.readAsBytesSync();
 
-        Options options =
-            Options(contentType: lookupMimeType(uploadFile.path), headers: {
-          'Accept': "*/*",
-          'Content-Length': image.length,
-          'Connection': 'keep-alive',
-          'User-Agent': 'ClinicPlush'
-        });
-        final response = await Dio().put(signedUrl,
-            data: uploadFile.openRead(),
-            options: options, onSendProgress: (val1, val2) {
-          log("${val1 / val2 * 100}");
-        });
-        if (response.statusCode == 200) {
-          log("file uploaded ");
-        } else {
-          log(response.toString());
-        }
-      } on Exception catch (e) {
-        log(e.toString());
-      }
-    }
-  }
+// //         Options options =
+// //             Options(contentType: lookupMimeType(uploadFile.path), headers: {
+// //           'Accept': "*/*",
+// //           'Content-Length': image.length,
+// //           'Connection': 'keep-alive',
+// //           'User-Agent': 'ClinicPlush'
+// //         });
+// //         final response = await Dio().put(signedUrl,
+// //             data: uploadFile.openRead(),
+// //             options: options, onSendProgress: (val1, val2) {
+// //           log("${val1 / val2 * 100}");
+// //         });
+// //         if (response.statusCode == 200) {
+// //           log("file uploaded ");
+// //         } else {
+// //           log(response.toString());
+// //         }
+// //       } on Exception catch (e) {
+// //         log(e.toString());
+// //       }
+// //     }
+// //   }
 
   ///
 //   Future<String?> fileUploadMultipart(
@@ -513,4 +446,4 @@ class UploadedFileProvider extends ChangeNotifier {
   //   print("this is compliter ${completer.future}");
   //   return completer.future;
   // }
-}
+//}

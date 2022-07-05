@@ -13,6 +13,7 @@ import 'package:provider/provider.dart';
 import 'package:provider/src/provider.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:threekm/Custom_library/BoldText/Text_chunking.dart';
 import 'package:threekm/Custom_library/src/reaction.dart';
 import 'package:threekm/UI/main/News/PostView.dart';
 import 'package:threekm/UI/main/Profile/AuthorProfile.dart';
@@ -90,12 +91,29 @@ class _CardUIState extends State<CardUI> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             if (data.preheaderLike != "" && data.preheaderComment == "")
-              Text('${data.preheaderLike}'),
+              // Text(
+              //   '${data.preheaderLike}',
+              // ),
+              TextChunkStyling(
+                text: '${data.preheaderLike}',
+                highlightText: ['${data.preaheaderLikeUser}'],
+                multiTextStyles: const [
+                  TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+                ],
+              ),
             if (data.preheaderLike != "" && data.preheaderComment == "")
               Divider(
                 thickness: 2,
               ),
-            if (data.preheaderComment != "") Text('${data.preheaderComment}'),
+            if (data.preheaderComment != "")
+              TextChunkStyling(
+                text: '${data.preheaderComment}',
+                highlightText: ['${data.preheaderCommentUSer}'],
+                multiTextStyles: const [
+                  TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+                ],
+              ),
+            //Text('${data.preheaderComment}'),
             if (data.preheaderComment != "")
               Divider(
                 thickness: 2,

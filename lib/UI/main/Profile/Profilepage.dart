@@ -767,7 +767,8 @@ class _ProfileImagePopUpState extends State<ProfileImagePopUp> {
           buildProfileButton(
             title: "Select other Photo",
             onTap: () async {
-              image = await _imagePicker.pickImage(source: ImageSource.gallery);
+              image = await _imagePicker.pickImage(
+                  source: ImageSource.gallery, imageQuality: 60);
               if (image != null) {
                 //Navigator.pop(context);
                 setState(() {});

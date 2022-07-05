@@ -76,164 +76,170 @@ class _ThreeKMUpperTabState extends State<ThreeKMUpperTab>
     return Scaffold(
       body: DefaultTabController(
           length: 5,
-          child: NestedScrollView(
-              headerSliverBuilder: (context, value) {
-                SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-                  statusBarIconBrightness:
-                      Brightness.dark, // For Android (dark icons)
-                  statusBarBrightness: Brightness.light,
-                ));
-                return [
-                  SliverAppBar(
-                    floating: true,
-                    // pinned: true,
-                    automaticallyImplyLeading: false,
-                    backgroundColor: Colors.transparent,
-                    elevation: 0.0,
-                    titleSpacing: 0,
-                    bottom: PreferredSize(
-                        child: Container(
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Container(
-                                padding: EdgeInsets.only(
-                                    top: 8, right: 8, bottom: 8),
-                                height: 45,
-                                width: 50,
-                                child: Image.asset("assets/icon_light.png"),
-                              ),
-                              Container(
-                                height: 40,
-                                width: MediaQuery.of(context).size.width * 0.8,
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(24),
-                                    color: Color(0xffFAFAFA)),
-                                child: InkWell(
-                                    onTap: () => Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                SearchPage(tabNuber: 0))),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Row(
-                                        children: [
-                                          Icon(
-                                            Icons.search,
-                                            color: Color(0xffA7A6A6),
-                                          ),
-                                          SizedBox(
-                                            width: 5,
-                                          ),
-                                          Text(
-                                            "Start your search here",
-                                            style: TextStyle(
+          child: SafeArea(
+            child: NestedScrollView(
+                headerSliverBuilder: (context, value) {
+                  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+                    statusBarIconBrightness:
+                        Brightness.dark, // For Android (dark icons)
+                    statusBarBrightness: Brightness.light,
+                  ));
+                  return [
+                    SliverAppBar(
+                      floating: true,
+                      // pinned: true,
+                      automaticallyImplyLeading: false,
+                      backgroundColor: Colors.transparent,
+                      elevation: 0.0,
+                      titleSpacing: 0,
+                      bottom: PreferredSize(
+                          child: Container(
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  padding: EdgeInsets.only(
+                                      top: 8, right: 8, bottom: 8),
+                                  height: 45,
+                                  width: 50,
+                                  child: Image.asset("assets/icon_light.png"),
+                                ),
+                                Container(
+                                  height: 40,
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.8,
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(24),
+                                      color: Color(0xffFAFAFA)),
+                                  child: InkWell(
+                                      onTap: () => Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  SearchPage(tabNuber: 0))),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Row(
+                                          children: [
+                                            Icon(
+                                              Icons.search,
                                               color: Color(0xffA7A6A6),
                                             ),
-                                          ),
-                                        ],
-                                      ),
-                                    )),
-                              ),
-                            ],
-                          ),
-                        ),
-                        preferredSize: Size.fromHeight(20)),
-                    title: Container(
-                      padding: EdgeInsets.only(top: 0, left: 10),
-                      //color: Colors.amber,
-                      child: Row(
-                        children: [
-                          Icon(
-                            Icons.location_on_rounded,
-                            color: Colors.blueAccent,
-                            size: 22,
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(left: 0, top: 5),
-                            child: SizedBox(
-                              width: MediaQuery.of(context).size.width * 0.88,
-                              child: GestureDetector(
-                                onTap: () {
-                                  Future.delayed(Duration.zero, () {
-                                    context
-                                        .read<LocationProvider>()
-                                        .getLocation()
-                                        .whenComplete(() async {
-                                      final _locationProvider = context
-                                          .read<LocationProvider>()
-                                          .getlocationData;
-                                      final kInitialPosition = LatLng(
-                                          _locationProvider!.latitude!,
-                                          _locationProvider.longitude!);
-                                      if (_locationProvider.latitude != null) {
-                                        LocationResult? result =
-                                            await Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      PlacePicker(
-                                                    GMap_Api_Key,
-                                                    displayLocation:
-                                                        kInitialPosition,
-                                                    // initialMapType: MapType.satellite,
-                                                    // onPlacePicked: (result) {
-                                                    //   //print(result.formattedAddress);
-                                                    //   setState(() {
-                                                    //     _selecetdAddress =
-                                                    //         result.formattedAddress;
-                                                    //     print(result.geometry!
-                                                    //         .toJson());
-                                                    //     //  _geometry = result.geometry;
-                                                    //   });
-                                                    //   Navigator.of(context).pop();
-                                                    // },
-                                                    // initialPosition:
-                                                    //     kInitialPosition,
-                                                    // useCurrentLocation: true,
-                                                    // selectInitialPosition: true,
-                                                    // usePinPointingSearch: true,
-                                                    // usePlaceDetailSearch: true,
-                                                  ),
-                                                ));
-                                        setState(() {
-                                          _selecetdAddress =
-                                              result?.formattedAddress;
-                                        });
-                                      } else {
-                                        Fluttertoast.showToast(
-                                            msg:
-                                                "Something went wrong. Please try later!",
-                                            backgroundColor: Colors.red);
-                                      }
-                                    });
-                                  });
-                                },
-                                child: Text(
-                                    _selecetdAddress ??
-                                        locationProvider.AddressFromCordinate ??
-                                        "Click here to select location!",
-                                    style: ThreeKmTextConstants
-                                        .tk12PXPoppinsBlackSemiBold
-                                        .copyWith(color: Color(0xffABABAB)),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis),
-                              ),
+                                            SizedBox(
+                                              width: 5,
+                                            ),
+                                            Text(
+                                              "Start your search here",
+                                              style: TextStyle(
+                                                color: Color(0xffA7A6A6),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      )),
+                                ),
+                              ],
                             ),
-                          )
-                        ],
+                          ),
+                          preferredSize: Size.fromHeight(10)),
+                      title: Container(
+                        padding: EdgeInsets.only(top: 0, left: 10),
+                        // color: Colors.pink,
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.location_on_rounded,
+                              color: Colors.blueAccent,
+                              size: 22,
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(left: 0, top: 5),
+                              child: SizedBox(
+                                width: MediaQuery.of(context).size.width * 0.88,
+                                child: GestureDetector(
+                                  onTap: () {
+                                    Future.delayed(Duration.zero, () {
+                                      context
+                                          .read<LocationProvider>()
+                                          .getLocation()
+                                          .whenComplete(() async {
+                                        final _locationProvider = context
+                                            .read<LocationProvider>()
+                                            .getlocationData;
+                                        final kInitialPosition = LatLng(
+                                            _locationProvider!.latitude!,
+                                            _locationProvider.longitude!);
+                                        if (_locationProvider.latitude !=
+                                            null) {
+                                          LocationResult? result =
+                                              await Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        PlacePicker(
+                                                      GMap_Api_Key,
+                                                      displayLocation:
+                                                          kInitialPosition,
+                                                      // initialMapType: MapType.satellite,
+                                                      // onPlacePicked: (result) {
+                                                      //   //print(result.formattedAddress);
+                                                      //   setState(() {
+                                                      //     _selecetdAddress =
+                                                      //         result.formattedAddress;
+                                                      //     print(result.geometry!
+                                                      //         .toJson());
+                                                      //     //  _geometry = result.geometry;
+                                                      //   });
+                                                      //   Navigator.of(context).pop();
+                                                      // },
+                                                      // initialPosition:
+                                                      //     kInitialPosition,
+                                                      // useCurrentLocation: true,
+                                                      // selectInitialPosition: true,
+                                                      // usePinPointingSearch: true,
+                                                      // usePlaceDetailSearch: true,
+                                                    ),
+                                                  ));
+                                          setState(() {
+                                            _selecetdAddress =
+                                                result?.formattedAddress;
+                                          });
+                                        } else {
+                                          Fluttertoast.showToast(
+                                              msg:
+                                                  "Something went wrong. Please try later!",
+                                              backgroundColor: Colors.red);
+                                        }
+                                      });
+                                    });
+                                  },
+                                  child: Text(
+                                      _selecetdAddress ??
+                                          locationProvider
+                                              .AddressFromCordinate ??
+                                          "Click here to select location!",
+                                      style: ThreeKmTextConstants
+                                          .tk12PXPoppinsBlackSemiBold
+                                          .copyWith(color: Color(0xffABABAB)),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis),
+                                ),
+                              ),
+                            )
+                          ],
+                        ),
                       ),
-                    ),
-                  )
-                ];
-              },
-              body: Material(
-                child: Container(
+                    )
+                  ];
+                },
+                body: Container(
                   // margin: const EdgeInsets.only(top: 10),
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Container(
+                        //color: Colors.amber,
                         // margin: EdgeInsets.only(bottom: 5),
                         width: MediaQuery.of(context).size.width,
                         child: TabBar(
@@ -264,11 +270,15 @@ class _ThreeKMUpperTabState extends State<ThreeKMUpperTab>
                         child: TabBarView(
                             dragStartBehavior: DragStartBehavior.down,
                             children: [
-                              NewsTab(
-                                reload: false, //widget.redirectedFromPost
-                                isPostUploaded: false, // widget.isPostUploaded,
-                                appLanguage: languageProvider.appLocal,
-                                deviceId: deviceId,
+                              Padding(
+                                padding: EdgeInsets.only(top: 20),
+                                child: NewsTab(
+                                  reload: false, //widget.redirectedFromPost
+                                  isPostUploaded:
+                                      false, // widget.isPostUploaded,
+                                  appLanguage: languageProvider.appLocal,
+                                  deviceId: deviceId,
+                                ),
                               ),
                               FeedPage(),
                               //Container(),
@@ -279,8 +289,8 @@ class _ThreeKMUpperTabState extends State<ThreeKMUpperTab>
                       )
                     ],
                   ),
-                ),
-              ))),
+                )),
+          )),
     );
   }
 }
