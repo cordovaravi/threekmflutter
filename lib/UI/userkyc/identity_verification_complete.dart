@@ -1,60 +1,92 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
+import 'package:provider/src/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:threekm/UI/main/Profile/MyProfilePost.dart';
 import 'package:threekm/UI/main/navigation.dart';
+import 'package:threekm/providers/ProfileInfo/ProfileInfo_Provider.dart';
+import 'package:threekm/providers/main/AthorProfile_Provider.dart';
+import 'package:threekm/providers/userKyc/verify_credential.dart';
 import 'package:threekm/utils/constants.dart';
 import 'package:threekm/utils/threekm_textstyles.dart';
 
-class IdentityComplete extends StatelessWidget {
+class IdentityComplete extends StatefulWidget {
   const IdentityComplete({Key? key}) : super(key: key);
 
   @override
+  State<IdentityComplete> createState() => _IdentityCompleteState();
+}
+
+class _IdentityCompleteState extends State<IdentityComplete> {
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Spacer(),
-          Lottie.asset(
-            'assets/json/check.json',
-            fit: BoxFit.cover,
-            alignment: Alignment.center,
-            repeat: true,
-          ),
-          Spacer(),
-          SizedBox(
-            width: size(context).width / 1.2,
-            child: Text(
-              'We recived your documents we will verify it soon! till then Explore 3km..',
-              style: ThreeKmTextConstants.tk16PXPoppinsBlackMedium,
-              textAlign: TextAlign.center,
+    return WillPopScope(
+      onWillPop: () {
+        return Future.value(false);
+      },
+      child: Scaffold(
+        body: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Spacer(),
+            Lottie.asset(
+              'assets/json/check.json',
+              fit: BoxFit.cover,
+              alignment: Alignment.center,
+              repeat: true,
             ),
-          ),
-          Container(
-              margin: EdgeInsets.only(top: 20, left: 10, right: 10),
-              width: double.infinity,
-              child: ElevatedButton(
-                  style: ButtonStyle(
-                      shape: MaterialStateProperty.all<OutlinedBorder>(
-                          StadiumBorder())),
-                  onPressed: () async {
-                    Navigator.pushAndRemoveUntil(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => TabBarNavigation(
-                                  bottomIndex: 3,
-                                )),
-                        (route) => route.isFirst && route.isCurrent != true);
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.all(15.0),
-                    child: Text(
-                      'Done',
-                      style: ThreeKmTextConstants.tk16PXPoppinsWhiteBold,
-                    ),
-                  )))
-        ],
+            Spacer(),
+            SizedBox(
+              width: size(context).width / 1.2,
+              child: Text(
+                'We recived your documents we will verify it soon! till then Explore 3km..',
+                style: ThreeKmTextConstants.tk16PXPoppinsBlackMedium,
+                textAlign: TextAlign.center,
+              ),
+            ),
+            Container(
+                margin: EdgeInsets.only(top: 20, left: 10, right: 10),
+                width: double.infinity,
+                child: ElevatedButton(
+                    style: ButtonStyle(
+                        shape: MaterialStateProperty.all<OutlinedBorder>(
+                            StadiumBorder())),
+                    onPressed: () async {
+                      context
+                          .read<ProfileInfoProvider>()
+                          .updateProfileInfo(isDocumentUploaded: true);
+                      Navigator.pushAndRemoveUntil(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => TabBarNavigation(
+                                        bottomIndex: 3,
+                                      )),
+                              (route) =>
+                                  route.isFirst && route.isCurrent != true)
+                          .whenComplete(() {
+                        context
+                            .read<ProfileInfoProvider>()
+                            .updateProfileInfo(is_verified: true);
+                        context.read<AutthorProfileProvider>().getSelfProfile();
+                        Future.delayed(Duration(seconds: 2), () {
+                          Navigator.pop(context);
+                          Navigator.pop(context);
+                          context
+                              .read<VerifyKYCCredential>()
+                              .getUserProfileInfo();
+                          setState(() {});
+                        });
+                      });
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.all(15.0),
+                      child: Text(
+                        'Done',
+                        style: ThreeKmTextConstants.tk16PXPoppinsWhiteBold,
+                      ),
+                    )))
+          ],
+        ),
       ),
     );
   }

@@ -65,7 +65,8 @@ class _MobileVerificationState extends State<MobileVerification> {
                     FilteringTextInputFormatter.deny(RegExp("[\\.|\\,]")),
                   ],
                   decoration: const InputDecoration(
-                    hintText: '6589425412',
+                    hintText: '0123456789',
+                    hintStyle: TextStyle(color: Colors.grey),
                     filled: true,
                     border: OutlineInputBorder(
                       borderSide: BorderSide.none,
@@ -151,7 +152,7 @@ class _MobileVerificationState extends State<MobileVerification> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Step 1/5',
+                'Step 1/6',
                 style: ThreeKmTextConstants.tk18PXPoppinsBlackMedium,
               ),
               Row(
@@ -165,7 +166,10 @@ class _MobileVerificationState extends State<MobileVerification> {
                     onTap: () {
                       Navigator.pushAndRemoveUntil(
                           context,
-                          MaterialPageRoute(builder: (_) => TabBarNavigation( bottomIndex: 3,)),
+                          MaterialPageRoute(
+                              builder: (_) => TabBarNavigation(
+                                    bottomIndex: 3,
+                                  )),
                           (route) => false);
                     },
                     child: Text(
@@ -263,7 +267,7 @@ class _MobileVerificationState extends State<MobileVerification> {
                 child: Column(
                   children: [
                     // Kycprovider.iswrongOTP
-                    if (state == false && isSendOtp)
+                    if (state == false && isSendOtp && !Kycprovider.isTrueOTP)
                       SizedBox(
                         child: isVisibleResendOtp && isSendOtp
                             ? InkWell(

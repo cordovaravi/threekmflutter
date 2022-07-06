@@ -80,8 +80,7 @@ class VerifyKYCCredential extends ChangeNotifier {
         notifyListeners();
         context.read<ProfileInfoProvider>().updateProfileInfo(email: email);
 
-        Navigator.push(context,
-            MaterialPageRoute(builder: (_) => const UploadProfilePicture()));
+     
       } else {
         //  hideLoading();
         _wrongOTP = true;

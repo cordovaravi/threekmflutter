@@ -1,35 +1,25 @@
-import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
-import 'package:flutter/services.dart';
+
 import 'package:flutter/widgets.dart';
-import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
+
 import 'package:google_fonts/google_fonts.dart';
-import 'package:path_provider/path_provider.dart';
+
 import 'package:provider/provider.dart';
 import 'package:provider/src/provider.dart';
-import 'package:screenshot/screenshot.dart';
-import 'package:share_plus/share_plus.dart';
-import 'package:threekm/Custom_library/flutter_reaction_button.dart';
+
 import 'package:threekm/Models/ProfilePostModel.dart';
-import 'package:threekm/UI/main/News/NewsList.dart';
-import 'package:threekm/UI/main/News/Widgets/comment_Loading.dart';
-import 'package:threekm/UI/main/News/Widgets/likes_Loading.dart';
-import 'package:threekm/commenwidgets/CustomSnakBar.dart';
-import 'package:threekm/commenwidgets/commenwidget.dart';
+import 'package:threekm/commenwidgets/fullImage.dart';
+
 import 'package:threekm/providers/Global/logged_in_or_not.dart';
 import 'package:threekm/providers/localization_Provider/appLanguage_provider.dart';
 import 'package:threekm/providers/main/AthorProfile_Provider.dart';
-import 'package:threekm/providers/main/LikeList_Provider.dart';
-import 'package:threekm/providers/main/comment_Provider.dart';
+
 import 'package:threekm/widgets/NewCardUI/card_ui.dart';
-import 'package:threekm/widgets/emotion_Button.dart';
-import 'package:threekm/widgets/reactions_assets.dart' as reactionAssets;
 
 import 'package:threekm/utils/utils.dart';
-import 'package:threekm/widgets/video_widget.dart';
 
 class AuthorProfile extends StatefulWidget {
   final int id;
@@ -551,16 +541,29 @@ class _AuthorProfileState extends State<AuthorProfile>
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Container(
-          height: 120,
-          width: 120,
-          //margin: EdgeInsets.only(top: 44),
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            border: Border.all(color: Colors.white, width: 3),
-            image: DecorationImage(
-              image: CachedNetworkImageProvider(widget.avatar),
-              fit: BoxFit.fill,
+        Material(
+          child: InkWell(
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (_) => ProfileFullImage(
+                            src: widget.avatar,
+                            Imagetag: "AuthorPhoto",
+                          )));
+            },
+            child: Container(
+              height: 120,
+              width: 120,
+              //margin: EdgeInsets.only(top: 44),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(color: Colors.white, width: 3),
+                image: DecorationImage(
+                  image: CachedNetworkImageProvider(widget.avatar),
+                  fit: BoxFit.fill,
+                ),
+              ),
             ),
           ),
         ),

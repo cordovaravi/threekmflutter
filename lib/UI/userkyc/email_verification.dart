@@ -30,6 +30,16 @@ class _EmailVerificationState extends State<EmailVerification> {
   TextEditingController _emailController = TextEditingController();
   TextEditingController _otpController = TextEditingController();
   SharedPreferences? _pref;
+  RegExp emailExp = RegExp(r"^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$");
+
+  validEmail() {
+    WidgetsBinding.instance?.addPostFrameCallback((_) {
+      setState(() {
+        isValidEmail = false;
+      });
+    });
+  }
+
   Widget buildEmail({required TextEditingController emailController}) {
     // return Consumer<ProfileInfoProvider>(builder: (context, controller, _) {
     return SizedBox(
@@ -65,13 +75,12 @@ class _EmailVerificationState extends State<EmailVerification> {
         //   fontWeight: FontWeight.normal,
         // ),
         validator: (val) {
-          if (val!.isEmpty || val == null) {
+          log(emailExp.hasMatch(val.toString()).toString());
+          if (val!.isEmpty) {
+            validEmail();
             return "Email is empty";
-          } else if (!val.contains(".")) {
-            return "Please enter valid Email";
-          } else if (val.contains(" ")) {
-            return "Space is not allowed";
-          } else if (!val.contains("@")) {
+          } else if (!emailExp.hasMatch(val)) {
+            validEmail();
             return "Please enter valid Email";
           } else {
             WidgetsBinding.instance?.addPostFrameCallback((_) {
@@ -91,7 +100,10 @@ class _EmailVerificationState extends State<EmailVerification> {
     context.read<VerifyKYCCredential>().disposeAllData();
     WidgetsBinding.instance?.addPostFrameCallback((_) async {
       _pref = await SharedPreferences.getInstance();
-      _emailController.text = _pref?.getString("email") ?? "";
+      _emailController.text = _pref?.getString("email") != null &&
+              _pref?.getString("email").toString() != "bulbandkey@gmail.com"
+          ? _pref?.getString("email") ?? ""
+          : "";
       setState(() {});
     });
     super.initState();
@@ -110,250 +122,262 @@ class _EmailVerificationState extends State<EmailVerification> {
   Widget build(BuildContext context) {
     var Kycprovider = context.read<VerifyKYCCredential>();
     var state = Kycprovider.isLoding;
-    return Scaffold(
-      body: Container(
-        margin: const EdgeInsets.only(top: 20),
-        padding: const EdgeInsets.all(15),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Step 1/5',
-              style: ThreeKmTextConstants.tk18PXPoppinsBlackMedium,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Email verification',
-                  style: ThreeKmTextConstants.tk18PXPoppinsBlackMedium,
-                ),
-                InkWell(
-                  onTap: () {
-                    Navigator.pushAndRemoveUntil(
-                        context,
-                        MaterialPageRoute(builder: (_) => TabBarNavigation(bottomIndex: 3,)),
-                        (route) => false);
-                  },
-                  child: Text(
-                    'Cancel',
-                    style: ThreeKmTextConstants.tk18PXPoppinsBlackMedium,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(
-              height: 24,
-            ),
-            LinearProgressIndicator(
-              valueColor: const AlwaysStoppedAnimation(Color(0xFF3E7EFF)),
-              minHeight: 3,
-              color: Colors.amber[400],
-              backgroundColor: Color(0xFFE7E7E7),
-              value: 0.2,
-              semanticsLabel: 'Linear progress indicator',
-            ),
-            const SizedBox(
-              height: 46,
-            ),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 16),
-              child: Text(
-                'Enter your email',
+    var verifyEmail = () async {
+      var otp = _otpController.text;
+      if (otp.length == 10) {
+        SharedPreferences _prefs = await SharedPreferences.getInstance();
+        if (isSendOtp) {
+          // var otp = [
+          //   _controllers[0].text,
+          //   _controllers[1].text,
+          //   _controllers[2].text,
+          //   _controllers[3].text
+          // ].join();
+
+          var res = json.encode({
+            "email": _emailController.text,
+            "otp": otp,
+            "device": _prefs.getString('deviceID')
+          });
+
+          Kycprovider.verifyEmailOTPKYC(res, _emailController.text, context);
+        }
+      }
+    };
+    return WillPopScope(
+      onWillPop: () {
+        return Future.value(false);
+      },
+      child: Scaffold(
+        body: Container(
+          margin: const EdgeInsets.only(top: 20),
+          padding: const EdgeInsets.all(15),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Step 2/6',
                 style: ThreeKmTextConstants.tk18PXPoppinsBlackMedium,
               ),
-            ),
-            buildEmail(emailController: _emailController),
-            const SizedBox(
-              height: 38,
-            ),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 16),
-              child: Text(
-                'Please Enter OTP ',
-                style: ThreeKmTextConstants.tk16PXPoppinsBlackMedium
-                    .copyWith(fontWeight: FontWeight.w400),
-              ),
-            ),
-            // Row(
-            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //   children: [
-            //     OtpBox(
-            //       i: 0,
-            //       focusNode: _focusNodes,
-            //       controller: _controllers,
-            //     ),
-            //     OtpBox(i: 1, focusNode: _focusNodes, controller: _controllers),
-            //     OtpBox(i: 2, focusNode: _focusNodes, controller: _controllers),
-            //     OtpBox(i: 3, focusNode: _focusNodes, controller: _controllers),
-            //   ],
-            // ),
-            TextFormField(
-              controller: _otpController,
-              textAlign: TextAlign.start,
-              textAlignVertical: TextAlignVertical.top,
-              maxLines: 1,
-              decoration: const InputDecoration(
-                filled: true,
-                border: OutlineInputBorder(
-                  borderSide: BorderSide.none,
-                  borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                ),
-              ),
-            ),
-            if (Kycprovider.iswrongOTP)
-              Padding(
-                padding: const EdgeInsets.only(top: 16),
-                child: Text(
-                  'Incorrect OTP',
-                  style: TextStyle(color: Colors.red[300]),
-                ),
-              ),
-            if (Kycprovider.isTrueOTP)
-              Padding(
-                padding: const EdgeInsets.only(top: 16),
-                child: Row(
-                  children: [
-                    Image(image: AssetImage('assets/verified2.png')),
-                    Text(
-                      '  Your email is Verified now',
-                      style: ThreeKmTextConstants.tk14PXPoppinsBlackMedium,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Email verification',
+                    style: ThreeKmTextConstants.tk18PXPoppinsBlackMedium,
+                  ),
+                  InkWell(
+                    onTap: () {
+                      Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(
+                              builder: (_) => TabBarNavigation(
+                                    bottomIndex: 3,
+                                  )),
+                          (route) => false);
+                    },
+                    child: Text(
+                      'Cancel',
+                      style: ThreeKmTextConstants.tk18PXPoppinsBlackMedium,
                     ),
+                  ),
+                ],
+              ),
+              const SizedBox(
+                height: 24,
+              ),
+              LinearProgressIndicator(
+                valueColor: const AlwaysStoppedAnimation(Color(0xFF3E7EFF)),
+                minHeight: 3,
+                color: Colors.amber[400],
+                backgroundColor: Color(0xFFE7E7E7),
+                value: 0.2,
+                semanticsLabel: 'Linear progress indicator',
+              ),
+              const SizedBox(
+                height: 46,
+              ),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 16),
+                child: Text(
+                  'Enter your email',
+                  style: ThreeKmTextConstants.tk18PXPoppinsBlackMedium,
+                ),
+              ),
+              buildEmail(emailController: _emailController),
+              const SizedBox(
+                height: 38,
+              ),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 16),
+                child: Text(
+                  'Please Enter OTP ',
+                  style: ThreeKmTextConstants.tk16PXPoppinsBlackMedium
+                      .copyWith(fontWeight: FontWeight.w400),
+                ),
+              ),
+              // Row(
+              //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //   children: [
+              //     OtpBox(
+              //       i: 0,
+              //       focusNode: _focusNodes,
+              //       controller: _controllers,
+              //     ),
+              //     OtpBox(i: 1, focusNode: _focusNodes, controller: _controllers),
+              //     OtpBox(i: 2, focusNode: _focusNodes, controller: _controllers),
+              //     OtpBox(i: 3, focusNode: _focusNodes, controller: _controllers),
+              //   ],
+              // ),
+              TextFormField(
+                controller: _otpController,
+                textAlign: TextAlign.start,
+                textAlignVertical: TextAlignVertical.top,
+                maxLines: 1,
+                onChanged: (i) {
+                  verifyEmail();
+                },
+                decoration: const InputDecoration(
+                  filled: true,
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide.none,
+                    borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                  ),
+                ),
+              ),
+              if (Kycprovider.iswrongOTP)
+                Padding(
+                  padding: const EdgeInsets.only(top: 16),
+                  child: Text(
+                    'Incorrect OTP',
+                    style: TextStyle(color: Colors.red[300]),
+                  ),
+                ),
+              if (Kycprovider.isTrueOTP)
+                Padding(
+                  padding: const EdgeInsets.only(top: 16),
+                  child: Row(
+                    children: [
+                      Image(image: AssetImage('assets/verified2.png')),
+                      Text(
+                        '  Your email is Verified now',
+                        style: ThreeKmTextConstants.tk14PXPoppinsBlackMedium,
+                      ),
+                    ],
+                  ),
+                ),
+              Spacer(),
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: Column(
+                  children: [
+                    if (state == false && isSendOtp && !Kycprovider.isTrueOTP)
+                      SizedBox(
+                        child: isVisibleResendOtp
+                            ? InkWell(
+                                onTap: () {
+                                  Kycprovider.sendOtpEmail(json.encode(
+                                          {"email": _emailController.text}))
+                                      .whenComplete(() => setState(() {
+                                            isSendOtp = true;
+                                            isVisibleResendOtp = false;
+                                          }));
+                                },
+                                child: Text(
+                                  'Resend OTP',
+                                  style: ThreeKmTextConstants
+                                      .tk16PXPoppinsBlackSemiBold
+                                      .copyWith(color: const Color(0xFF979EA4)),
+                                ))
+                            : TweenAnimationBuilder<Duration>(
+                                duration: Duration(minutes: 1, seconds: 30),
+                                tween: Tween(
+                                    begin: Duration(minutes: 1, seconds: 30),
+                                    end: Duration.zero),
+                                onEnd: () {
+                                  print('Timer ended');
+                                  setState(() {
+                                    isVisibleResendOtp = true;
+                                  });
+                                },
+                                builder: (BuildContext context, Duration value,
+                                    Widget? child) {
+                                  final minutes = value.inMinutes;
+                                  final seconds = value.inSeconds % 60;
+                                  return Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 5),
+                                      child: Text(
+                                          'Resend OTP  $minutes:$seconds',
+                                          textAlign: TextAlign.center,
+                                          style: ThreeKmTextConstants
+                                              .tk12PXPoppinsBlackSemiBold));
+                                }),
+                      ),
+                    AnimatedSwitcher(
+                      duration: Duration(milliseconds: 500),
+                      transitionBuilder: (_, ani) {
+                        return ScaleTransition(
+                          scale: ani,
+                          child: _,
+                        );
+                      },
+                      child: state == false
+                          ? Container(
+                              key: ValueKey(1),
+                              margin: const EdgeInsets.only(top: 20),
+                              width: double.infinity,
+                              child: ElevatedButton(
+                                  style: ButtonStyle(
+                                      shape: MaterialStateProperty.all<
+                                              OutlinedBorder>(
+                                          const StadiumBorder())),
+                                  onPressed: isValidEmail
+                                      ? () async {
+                                          if (!isSendOtp) {
+                                            if (_emailController
+                                                .text.isNotEmpty) {
+                                              Kycprovider.sendOtpEmail(json
+                                                  .encode({
+                                                "email": _emailController.text
+                                              })).whenComplete(
+                                                  () => setState(() {
+                                                        isSendOtp = true;
+                                                        isVisibleResendOtp =
+                                                            false;
+                                                      }));
+                                            } else {
+                                              Fluttertoast.showToast(
+                                                  msg:
+                                                      "Please enter your Email");
+                                            }
+                                          }
+                                          if (Kycprovider.isTrueOTP)
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (_) =>
+                                                        const UploadProfilePicture()));
+                                        }
+                                      : null,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(15.0),
+                                    child: Text(
+                                      isSendOtp ? "Next" : 'Send OTP',
+                                      style: ThreeKmTextConstants
+                                          .tk16PXPoppinsWhiteBold,
+                                    ),
+                                  )))
+                          : Container(
+                              key: ValueKey(2),
+                              child: const CircularProgressIndicator(),
+                            ),
+                    )
                   ],
                 ),
               ),
-            Spacer(),
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: Column(
-                children: [
-                  if (state == false && isSendOtp && !Kycprovider.isTrueOTP)
-                    SizedBox(
-                      child: isVisibleResendOtp
-                          ? InkWell(
-                              onTap: () {
-                                Kycprovider.sendOtpEmail(json.encode(
-                                        {"email": _emailController.text}))
-                                    .whenComplete(() => setState(() {
-                                          isSendOtp = true;
-                                          isVisibleResendOtp = false;
-                                        }));
-                              },
-                              child: Text(
-                                'Resend OTP',
-                                style: ThreeKmTextConstants
-                                    .tk16PXPoppinsBlackSemiBold
-                                    .copyWith(color: const Color(0xFF979EA4)),
-                              ))
-                          : TweenAnimationBuilder<Duration>(
-                              duration: Duration(minutes: 1, seconds: 30),
-                              tween: Tween(
-                                  begin: Duration(minutes: 1, seconds: 30),
-                                  end: Duration.zero),
-                              onEnd: () {
-                                print('Timer ended');
-                                setState(() {
-                                  isVisibleResendOtp = true;
-                                });
-                              },
-                              builder: (BuildContext context, Duration value,
-                                  Widget? child) {
-                                final minutes = value.inMinutes;
-                                final seconds = value.inSeconds % 60;
-                                return Padding(
-                                    padding:
-                                        const EdgeInsets.symmetric(vertical: 5),
-                                    child: Text(
-                                        'Resend confirmation code  $minutes:$seconds',
-                                        textAlign: TextAlign.center,
-                                        style: ThreeKmTextConstants
-                                            .tk12PXPoppinsBlackSemiBold));
-                              }),
-                    ),
-                  AnimatedSwitcher(
-                    duration: Duration(milliseconds: 500),
-                    transitionBuilder: (_, ani) {
-                      return ScaleTransition(
-                        scale: ani,
-                        child: _,
-                      );
-                    },
-                    child: state == false
-                        ? Container(
-                            key: ValueKey(1),
-                            margin: const EdgeInsets.only(top: 20),
-                            width: double.infinity,
-                            child: ElevatedButton(
-                                style: ButtonStyle(
-                                    shape: MaterialStateProperty.all<
-                                        OutlinedBorder>(const StadiumBorder())),
-                                onPressed: isValidEmail
-                                    ? () async {
-                                        SharedPreferences _prefs =
-                                            await SharedPreferences
-                                                .getInstance();
-                                        if (isSendOtp) {
-                                          // var otp = [
-                                          //   _controllers[0].text,
-                                          //   _controllers[1].text,
-                                          //   _controllers[2].text,
-                                          //   _controllers[3].text
-                                          // ].join();
-                                          var otp = _otpController.text;
-                                          var res = json.encode({
-                                            "email": _emailController.text,
-                                            "otp": otp,
-                                            "device":
-                                                _prefs.getString('deviceID')
-                                          });
-                                          log(otp);
-                                          log(res.toString());
-                                          if (otp.length > 4) {
-                                            Kycprovider.verifyEmailOTPKYC(res,
-                                                _emailController.text, context);
-                                          } else {
-                                            Fluttertoast.showToast(
-                                                msg: "Please enter OTP");
-                                          }
-                                        } else {
-                                          if (_emailController
-                                              .text.isNotEmpty) {
-                                            Kycprovider.sendOtpEmail(json
-                                                .encode({
-                                              "email": _emailController.text
-                                            })).whenComplete(() => setState(() {
-                                                  isSendOtp = true;
-                                                  isVisibleResendOtp = false;
-                                                }));
-                                          } else {
-                                            Fluttertoast.showToast(
-                                                msg: "Please enter your Email");
-                                          }
-                                        }
-                                        // Navigator.push(
-                                        //     context,
-                                        //     MaterialPageRoute(
-                                        //         builder: (_) =>
-                                        //             const EmailVerification()));
-                                      }
-                                    : null,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(15.0),
-                                  child: Text(
-                                    isSendOtp ? "Verify OTP" : 'Send OTP',
-                                    style: ThreeKmTextConstants
-                                        .tk16PXPoppinsWhiteBold,
-                                  ),
-                                )))
-                        : Container(
-                            key: ValueKey(2),
-                            child: const CircularProgressIndicator(),
-                          ),
-                  )
-                ],
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

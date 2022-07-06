@@ -98,6 +98,7 @@ class ProfileInfoProvider extends ChangeNotifier {
       String? phone,
       bool? is_verified,
       bool? is_document_verified,
+      bool? isDocumentUploaded,
       String? bloodGroup,
       List<String>? language}) async {
     _isUpdating = true;
@@ -114,8 +115,8 @@ class ProfileInfoProvider extends ChangeNotifier {
       "dob": dob != null ? "${dob.year}-${dob.month}-${dob.day}" : "",
       "phone_no": phone ?? await getPhone(),
       "is_verified": is_verified ?? _pref.getBool('is_verified'),
-      "is_document_verified":
-          is_document_verified ?? _pref.getBool('is_document_verified'),
+      "is_document_verified": is_document_verified ?? null,
+      "is_document_uploaded": isDocumentUploaded ?? null,
       "blood_group": bloodGroup ?? null,
       "languages": language ?? null
     });
@@ -132,9 +133,10 @@ class ProfileInfoProvider extends ChangeNotifier {
         prefs.setString("email", data.data!.result!.user!.email ?? "");
         prefs.setString("dob", data.data!.result!.user?.dob.toString() ?? "");
         prefs.setString("userphone", data.data!.result!.user?.phoneNo ?? "");
-        prefs.setString("userphone", data.data!.result!.user?.phoneNo ?? "");
 
         getProfileBasicData();
+        _isUpdating = false;
+        notifyListeners();
       }
     }
   }

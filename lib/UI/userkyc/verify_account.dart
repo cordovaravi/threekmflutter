@@ -37,158 +37,166 @@ class _VerifyAccountState extends State<VerifyAccount> {
   Widget build(BuildContext context) {
     final userInfo =
         context.watch<VerifyKYCCredential>().userProfileInfo.data?.result;
-    return Scaffold(
-      body: Container(
-        //padding: EdgeInsets.only(top: 100),
-        height: size(context).height,
-        width: size(context).width,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          //mainAxisSize: MainAxisSize.min,
-          children: [
-            Padding(
-              padding: EdgeInsets.only(top: 30, left: 16, right: 16),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'verification',
-                    style: ThreeKmTextConstants.tk18PXPoppinsBlackMedium,
-                  ),
-                  InkWell(
-                    onTap: () {
-                      Navigator.pushAndRemoveUntil(
-                          context,
-                          MaterialPageRoute(builder: (_) => TabBarNavigation( bottomIndex: 3,)),
-                          (route) => false);
-                    },
-                    child: Text(
-                      'Cancel',
+    return WillPopScope(
+      onWillPop: () {
+        return Future.value(false);
+      },
+      child: Scaffold(
+        body: Container(
+          //padding: EdgeInsets.only(top: 100),
+          height: size(context).height,
+          width: size(context).width,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            //mainAxisSize: MainAxisSize.min,
+            children: [
+              Padding(
+                padding: EdgeInsets.only(top: 30, left: 16, right: 16),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'verification',
                       style: ThreeKmTextConstants.tk18PXPoppinsBlackMedium,
                     ),
-                  ),
-                ],
-              ),
-            ),
-            Spacer(),
-            SizedBox(
-              height: size(context).height / 1.5,
-              child: PageView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: 5,
-                  physics: const PageScrollPhysics(),
-                  onPageChanged: (i) {
-                    setState(() {
-                      currentIndex = i;
-                    });
-                  },
-                  itemBuilder: (_, i) {
-                    return Container(
-                      height: 300,
-                      width: 350,
-                      margin: const EdgeInsets.only(left: 10, right: 10),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          SizedBox(
-                            width: size(context).width / 1.5,
-                            child: Text(
-                              'Why are we Verifying your Account?',
-                              style: ThreeKmTextConstants.tk20PXPoppinsRedBold
-                                  .copyWith(
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.normal),
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                          const SizedBox(
-                            height: 42,
-                          ),
-                          Container(
-                            height: size(context).height / 2.6,
-                            width: size(context).width / 1.3,
-                            padding: EdgeInsets.only(bottom: 10),
-                            decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(20)),
-                            child: Lottie.asset(
-                              animation[i],
-                              fit: BoxFit.cover,
-                              alignment: Alignment.center,
-                              repeat: true,
-                            ),
-                          ),
-                          SizedBox(
-                            height: size(context).height / 14,
-                          ),
-                          SizedBox(
-                            width: size(context).width / 1.2,
-                            child: Text(
-                              lowerLabel[i],
-                              style: ThreeKmTextConstants.tk20PXPoppinsRedBold
-                                  .copyWith(color: Colors.black),
-                              textAlign: TextAlign.center,
-                            ),
-                          )
-                        ],
+                    InkWell(
+                      onTap: () {
+                        Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(
+                                builder: (_) => TabBarNavigation(
+                                      bottomIndex: 3,
+                                    )),
+                            (route) => false);
+                      },
+                      child: Text(
+                        'Cancel',
+                        style: ThreeKmTextConstants.tk18PXPoppinsBlackMedium,
                       ),
-                    );
-                  }),
-            ),
-            Spacer(),
-            SizedBox(
-              width: size(context).width,
-              height: 30,
-              child: Center(
-                child: ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: 5,
+                    ),
+                  ],
+                ),
+              ),
+              Spacer(),
+              SizedBox(
+                height: size(context).height / 1.5,
+                child: PageView.builder(
                     scrollDirection: Axis.horizontal,
+                    itemCount: 5,
+                    physics: const PageScrollPhysics(),
+                    onPageChanged: (i) {
+                      setState(() {
+                        currentIndex = i;
+                      });
+                    },
                     itemBuilder: (_, i) {
                       return Container(
-                        margin: const EdgeInsets.all(10),
-                        height: 10,
-                        width: 10,
-                        decoration: BoxDecoration(
-                            color: currentIndex == i
-                                ? Color(0xFF5B5959)
-                                : Color(0xFFC4C4C4),
-                            shape: BoxShape.circle),
+                        height: 300,
+                        width: 350,
+                        margin: const EdgeInsets.only(left: 10, right: 10),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SizedBox(
+                              width: size(context).width / 1.5,
+                              child: Text(
+                                'Why are we Verifying your Account?',
+                                style: ThreeKmTextConstants.tk20PXPoppinsRedBold
+                                    .copyWith(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.normal),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 42,
+                            ),
+                            Container(
+                              height: size(context).height / 2.6,
+                              width: size(context).width / 1.3,
+                              padding: EdgeInsets.only(bottom: 10),
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(20)),
+                              child: Lottie.asset(
+                                animation[i],
+                                fit: BoxFit.cover,
+                                alignment: Alignment.center,
+                                repeat: true,
+                              ),
+                            ),
+                            SizedBox(
+                              height: size(context).height / 14,
+                            ),
+                            SizedBox(
+                              width: size(context).width / 1.2,
+                              child: Text(
+                                lowerLabel[i],
+                                style: ThreeKmTextConstants.tk20PXPoppinsRedBold
+                                    .copyWith(color: Colors.black),
+                                textAlign: TextAlign.center,
+                              ),
+                            )
+                          ],
+                        ),
                       );
                     }),
               ),
-            ),
-            Container(
-                margin:
-                    EdgeInsets.only(top: 20, left: 38, right: 38, bottom: 20),
-                width: double.infinity,
-                child: ElevatedButton(
-                    style: ButtonStyle(
-                        shape: MaterialStateProperty.all<OutlinedBorder>(
-                            StadiumBorder())),
-                    onPressed: () {
-                      userInfo != null && userInfo.isVerified
-                          ? Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (_) => IdentityVerification()))
-                          : Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (_) => MobileVerification()));
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.all(15.0),
-                      child: Text(
+              Spacer(),
+              SizedBox(
+                width: size(context).width,
+                height: 30,
+                child: Center(
+                  child: ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: 5,
+                      scrollDirection: Axis.horizontal,
+                      itemBuilder: (_, i) {
+                        return Container(
+                          margin: const EdgeInsets.all(10),
+                          height: 10,
+                          width: 10,
+                          decoration: BoxDecoration(
+                              color: currentIndex == i
+                                  ? Color(0xFF5B5959)
+                                  : Color(0xFFC4C4C4),
+                              shape: BoxShape.circle),
+                        );
+                      }),
+                ),
+              ),
+              Container(
+                  margin:
+                      EdgeInsets.only(top: 20, left: 38, right: 38, bottom: 20),
+                  width: double.infinity,
+                  child: ElevatedButton(
+                      style: ButtonStyle(
+                          shape: MaterialStateProperty.all<OutlinedBorder>(
+                              StadiumBorder())),
+                      onPressed: () {
                         userInfo != null && userInfo.isVerified
-                            ? "Identity verification"
-                            : 'Verify Your Account',
-                        style: ThreeKmTextConstants.tk16PXPoppinsWhiteBold,
-                      ),
-                    )))
-          ],
+                            ? Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (_) => IdentityVerification()))
+                            : Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (_) => MobileVerification()));
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(15.0),
+                        child: Text(
+                          userInfo != null && userInfo.isVerified
+                              ? "Identity verification"
+                              : 'Verify Your Account',
+                          style: ThreeKmTextConstants.tk16PXPoppinsWhiteBold,
+                        ),
+                      )))
+            ],
+          ),
         ),
       ),
     );

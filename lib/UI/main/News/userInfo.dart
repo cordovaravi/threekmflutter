@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/material.dart' as materialDegin;
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/src/provider.dart';
 
 import 'package:threekm/Models/getUserInfoModel.dart';
 import 'package:threekm/UI/main/News/Widgets/gradiant_button.dart';
+import 'package:threekm/providers/Global/logged_in_or_not.dart';
 
 import 'package:threekm/providers/ProfileInfo/ProfileInfo_Provider.dart';
 import 'package:rive/rive.dart';
@@ -43,9 +45,6 @@ class _UserInfoState extends State<UserInfo> {
   String? gender;
   bool isGenderChanged = false;
 
-  int _date = 1;
-  int _month = 0;
-  int _year = DateTime.now().year - 100;
   List<String> month = [
     "Jan",
     "Feb",
@@ -90,8 +89,8 @@ class _UserInfoState extends State<UserInfo> {
     "other"
   ];
 
-  List<int> _selectedLangIndex = [1];
-  List<String> _selectedLang = ["en"];
+  List<int> _selectedLangIndex = [];
+  List<String> _selectedLang = [];
   bool _viewall = false;
   List<bool> _isSkip = [true, true, true, true];
   //AuthUserDetailsModel? _authUserDetails;
@@ -132,9 +131,10 @@ class _UserInfoState extends State<UserInfo> {
       },
     );
     Future.delayed(const Duration(seconds: 5), () {
-      setState(() {
-        _isSkip[0] = false;
-      });
+      if (mounted)
+        setState(() {
+          _isSkip[0] = false;
+        });
     });
   }
 
@@ -146,23 +146,24 @@ class _UserInfoState extends State<UserInfo> {
   }
 
   List<int> checkUserData() {
-    if (widget.authUserDetails != null) {
-      var data = widget.authUserDetails?.data?.result;
+    var data =
+        context.watch<VerifyKYCCredential>().userProfileInfo.data?.result;
+    if (data != null) {
       List<String> emptyData = [];
       List<int> emptyDataint = [];
-      if (data?.bloodGroup == null || data?.bloodGroup == "") {
+      if (data.bloodGroup == null || data.bloodGroup == "") {
         emptyData.add('bloodGroup');
         emptyDataint.add(0);
       }
-      if (data?.gender == null || data?.gender == "") {
+      if (data.gender == null || data.gender == "") {
         emptyData.add('gender');
         emptyDataint.add(1);
       }
-      if (data?.dob == null || data?.dob == "") {
+      if (data.dob == null || data.dob == "") {
         emptyData.add('dob');
         emptyDataint.add(2);
       }
-      if (data?.languages.isEmpty == true) {
+      if (data.languages.isEmpty == true) {
         emptyData.add('languages');
         emptyDataint.add(3);
       }
@@ -323,58 +324,62 @@ class _UserInfoState extends State<UserInfo> {
                                                           Color(0xFF0E17FF),
                                                           Color(0xFFFF0000)
                                                         ],
-                                                        onPressed: () {
+                                                        onPressed: () async {
                                                           // log('????????????');
-                                                          if (!_isSkip[i] &&
-                                                              _selectedIndex !=
-                                                                  null) {
-                                                            controller.nextPage(
-                                                                duration:
-                                                                    const Duration(
-                                                                        seconds:
-                                                                            1),
-                                                                curve: Curves
-                                                                    .easeInOut);
+                                                          if (await getAuthStatus()) {
+                                                            if (_selectedIndex !=
+                                                                null) {
+                                                              // controller.nextPage(
+                                                              //     duration:
+                                                              //         const Duration(
+                                                              //             seconds:
+                                                              //                 1),
+                                                              //     curve: Curves
+                                                              //         .easeInOut);
 
-                                                            context
-                                                                .read<
-                                                                    ProfileInfoProvider>()
-                                                                .updateProfileInfo(
-                                                                    bloodGroup:
-                                                                        bloodGroup[
-                                                                            _selectedIndex!])
-                                                                .whenComplete(
-                                                                    () {
                                                               context
                                                                   .read<
-                                                                      VerifyKYCCredential>()
-                                                                  .getUserProfileInfo()
-                                                                  .whenComplete(() =>
-                                                                      setState(
-                                                                          () {}));
-                                                            });
-                                                            log('????????????');
-                                                          } else if (_isSkip[
-                                                              i]) {
-                                                            controller.nextPage(
-                                                                duration:
-                                                                    const Duration(
-                                                                        seconds:
-                                                                            1),
-                                                                curve: Curves
-                                                                    .easeInOut);
-                                                            log('+++++++++++');
+                                                                      ProfileInfoProvider>()
+                                                                  .updateProfileInfo(
+                                                                      bloodGroup:
+                                                                          bloodGroup[
+                                                                              _selectedIndex!])
+                                                                  .whenComplete(
+                                                                      () {
+                                                                context
+                                                                    .read<
+                                                                        VerifyKYCCredential>()
+                                                                    .getUserProfileInfo()
+                                                                    .whenComplete(() =>
+                                                                        setState(
+                                                                            () {}));
+                                                              });
+                                                            } else {
+                                                              Fluttertoast
+                                                                  .showToast(
+                                                                msg:
+                                                                    "Please select a bloodGroup",
+                                                              );
+                                                            }
+                                                          } else {
+                                                            NaviagateToLogin(
+                                                                context);
                                                           }
                                                         },
-                                                        child: Text(
-                                                          _isSkip[i]
-                                                              ? 'Skip For Now'
-                                                              : "Next",
-                                                          style:
-                                                              const TextStyle(
-                                                            color: Colors.white,
-                                                          ),
-                                                        ),
+                                                        child: context
+                                                                .read<
+                                                                    ProfileInfoProvider>()
+                                                                .isUpdating
+                                                            ? CircularProgressIndicator
+                                                                .adaptive()
+                                                            : Text(
+                                                                "Next",
+                                                                style:
+                                                                    const TextStyle(
+                                                                  color: Colors
+                                                                      .white,
+                                                                ),
+                                                              ),
                                                       )),
                                                 ))
                                           ],
@@ -499,26 +504,17 @@ class _UserInfoState extends State<UserInfo> {
                                                               Color(0xFF0E17FF),
                                                               Color(0xFFFF0000)
                                                             ],
-                                                            onPressed: () {
-                                                              if (!_isSkip[i] &&
-                                                                  gender !=
-                                                                      null) {
-                                                                controller.nextPage(
-                                                                    duration: const Duration(
-                                                                        seconds:
-                                                                            1),
-                                                                    curve: Curves
-                                                                        .easeInOut);
-                                                              } else if (_isSkip[
-                                                                  i]) {
-                                                                controller.nextPage(
-                                                                    duration: const Duration(
-                                                                        seconds:
-                                                                            1),
-                                                                    curve: Curves
-                                                                        .easeInOut);
+                                                            onPressed:
+                                                                () async {
+                                                              if (await getAuthStatus()) {
                                                                 if (gender !=
-                                                                    null)
+                                                                    null) {
+                                                                  // controller.nextPage(
+                                                                  //     duration: const Duration(
+                                                                  //         seconds:
+                                                                  //             1),
+                                                                  //     curve: Curves
+                                                                  //         .easeInOut);
                                                                   context
                                                                       .read<
                                                                           ProfileInfoProvider>()
@@ -535,18 +531,31 @@ class _UserInfoState extends State<UserInfo> {
                                                                             setState(() {}));
                                                                     ;
                                                                   });
+                                                                } else {
+                                                                  Fluttertoast
+                                                                      .showToast(
+                                                                          msg:
+                                                                              "Please Select your gender");
+                                                                }
+                                                              } else {
+                                                                NaviagateToLogin(
+                                                                    context);
                                                               }
                                                             },
-                                                            child: Text(
-                                                              _isSkip[i]
-                                                                  ? 'Skip For Now'
-                                                                  : "Next",
-                                                              style:
-                                                                  const TextStyle(
-                                                                color: Colors
-                                                                    .white,
-                                                              ),
-                                                            ),
+                                                            child: context
+                                                                    .read<
+                                                                        ProfileInfoProvider>()
+                                                                    .isUpdating
+                                                                ? CircularProgressIndicator
+                                                                    .adaptive()
+                                                                : Text(
+                                                                    "Next",
+                                                                    style:
+                                                                        const TextStyle(
+                                                                      color: Colors
+                                                                          .white,
+                                                                    ),
+                                                                  ),
                                                           )),
                                                     ))
                                               ],
@@ -747,50 +756,73 @@ class _UserInfoState extends State<UserInfo> {
                                                                   Color(
                                                                       0xFFFF0000)
                                                                 ],
-                                                                onPressed: () {
-                                                                  if (selectedDate != null &&
-                                                                      selectedMonth !=
-                                                                          null &&
-                                                                      selectedYear !=
-                                                                          null &&
-                                                                      !_isSkip[
-                                                                          i]) {
-                                                                    String
-                                                                        strDt =
-                                                                        "$selectedYear-${selectedMonth}-$selectedDate";
-                                                                    DateFormat
-                                                                        formatter =
-                                                                        new DateFormat(
-                                                                            'yyyy-MMM-dd');
-                                                                    DateTime
-                                                                        parseDt =
-                                                                        formatter
-                                                                            .parse(strDt);
-                                                                    log(strDt);
-                                                                    log(parseDt
-                                                                        .toString());
-                                                                    context
-                                                                        .read<
-                                                                            ProfileInfoProvider>()
-                                                                        .updateProfileInfo(
-                                                                            dob:
-                                                                                parseDt)
-                                                                        .whenComplete(() => controller.nextPage(
-                                                                            duration:
-                                                                                const Duration(seconds: 1),
-                                                                            curve: Curves.easeInOut));
+                                                                onPressed:
+                                                                    () async {
+                                                                  if (await getAuthStatus()) {
+                                                                    if (selectedDate != null &&
+                                                                        selectedMonth !=
+                                                                            null &&
+                                                                        selectedYear !=
+                                                                            null) {
+                                                                      // controller.nextPage(
+                                                                      //     duration: const Duration(
+                                                                      //         seconds:
+                                                                      //             1),
+                                                                      //     curve: Curves
+                                                                      //         .easeInOut);
+                                                                      String
+                                                                          strDt =
+                                                                          "$selectedYear-${selectedMonth}-$selectedDate";
+                                                                      DateFormat
+                                                                          formatter =
+                                                                          new DateFormat(
+                                                                              'yyyy-MMM-dd');
+                                                                      DateTime
+                                                                          parseDt =
+                                                                          formatter
+                                                                              .parse(strDt);
+
+                                                                      context
+                                                                          .read<
+                                                                              ProfileInfoProvider>()
+                                                                          .updateProfileInfo(
+                                                                              dob:
+                                                                                  parseDt)
+                                                                          .whenComplete(
+                                                                              () {
+                                                                        context
+                                                                            .read<VerifyKYCCredential>()
+                                                                            .getUserProfileInfo();
+
+                                                                        setState(
+                                                                            () {});
+                                                                      });
+                                                                    } else {
+                                                                      Fluttertoast
+                                                                          .showToast(
+                                                                        msg:
+                                                                            "Please select your date of birth",
+                                                                      );
+                                                                    }
+                                                                  } else {
+                                                                    NaviagateToLogin(
+                                                                        context);
                                                                   }
                                                                 },
-                                                                child: Text(
-                                                                  _isSkip[i]
-                                                                      ? 'Skip For Now'
-                                                                      : "Next",
-                                                                  style:
-                                                                      const TextStyle(
-                                                                    color: Colors
-                                                                        .white,
-                                                                  ),
-                                                                ),
+                                                                child: context
+                                                                        .read<
+                                                                            ProfileInfoProvider>()
+                                                                        .isUpdating
+                                                                    ? CircularProgressIndicator
+                                                                        .adaptive()
+                                                                    : Text(
+                                                                        "Next",
+                                                                        style:
+                                                                            const TextStyle(
+                                                                          color:
+                                                                              Colors.white,
+                                                                        ),
+                                                                      ),
                                                               )),
                                                         ))
                                                   ],
@@ -918,29 +950,25 @@ class _UserInfoState extends State<UserInfo> {
                                                                           0xFFFF0000)
                                                                     ],
                                                                     onPressed:
-                                                                        () {
-                                                                      controller.nextPage(
-                                                                          duration: const Duration(
-                                                                              seconds:
-                                                                                  1),
-                                                                          curve:
-                                                                              Curves.easeInOut);
-                                                                      if (_selectedIndex !=
-                                                                          null)
-                                                                        context
-                                                                            .read<ProfileInfoProvider>()
-                                                                            .updateProfileInfo(language: _selectedLang)
-                                                                            .whenComplete(() {
+                                                                        () async {
+                                                                      if (await getAuthStatus()) {
+                                                                        if (_selectedLang
+                                                                            .isNotEmpty) {
                                                                           context
-                                                                              .read<VerifyKYCCredential>()
-                                                                              .getUserProfileInfo()
-                                                                              .whenComplete(() => setState(() {}));
-                                                                        });
+                                                                              .read<ProfileInfoProvider>()
+                                                                              .updateProfileInfo(language: _selectedLang)
+                                                                              .whenComplete(() {
+                                                                            context.read<VerifyKYCCredential>().getUserProfileInfo().whenComplete(() =>
+                                                                                setState(() {}));
+                                                                          });
+                                                                        }
+                                                                      } else {
+                                                                        NaviagateToLogin(
+                                                                            context);
+                                                                      }
                                                                     },
                                                                     child: Text(
-                                                                      _isSkip[i]
-                                                                          ? 'Skip For Now'
-                                                                          : "Next",
+                                                                      "Done",
                                                                       style:
                                                                           const TextStyle(
                                                                         color: Colors
@@ -974,7 +1002,7 @@ class _UserInfoState extends State<UserInfo> {
                                       ? 'Become a life saver for someone in your neighbourhood'
                                       : checkUserData().contains(1) &&
                                               checkUserData().elementAt(i) == 1
-                                          ? 'We will curate content & shopping experience accordingly'
+                                          ? 'We will create content & shopping experience accordingly'
                                           : checkUserData().contains(2) &&
                                                   checkUserData()
                                                           .elementAt(i) ==
@@ -1001,7 +1029,7 @@ class _UserInfoState extends State<UserInfo> {
                                                   checkUserData()
                                                           .elementAt(i) ==
                                                       2
-                                              ? 'Tell Us Your BIrthdate'
+                                              ? 'Tell Us Your Birthdate'
                                               : checkUserData().contains(3) &&
                                                       checkUserData()
                                                               .elementAt(i) ==

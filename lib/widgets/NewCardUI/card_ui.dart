@@ -17,6 +17,7 @@ import 'package:threekm/UI/main/News/PostView.dart';
 import 'package:threekm/UI/main/Profile/AuthorProfile.dart';
 import 'package:threekm/commenwidgets/CustomSnakBar.dart';
 import 'package:threekm/commenwidgets/commenwidget.dart';
+import 'package:threekm/commenwidgets/fullImage.dart';
 import 'package:threekm/providers/Global/logged_in_or_not.dart';
 import 'package:threekm/providers/main/NewsFeed_Provider.dart';
 import 'package:threekm/utils/slugUrl.dart';

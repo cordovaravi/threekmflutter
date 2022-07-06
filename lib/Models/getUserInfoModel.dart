@@ -1,16 +1,16 @@
 class GetUserInfoModel {
   GetUserInfoModel({
-     this.status,
-     this.message,
-     this.error,
-     this.data,
+    this.status,
+    this.message,
+    this.error,
+    this.data,
   });
   late final String? status;
   late final Null message;
   late final Null error;
   late final Data? data;
-  
-  GetUserInfoModel.fromJson(Map<String, dynamic> json){
+
+  GetUserInfoModel.fromJson(Map<String, dynamic> json) {
     status = json['status'];
     message = null;
     error = null;
@@ -32,8 +32,8 @@ class Data {
     required this.result,
   });
   late final Result result;
-  
-  Data.fromJson(Map<String, dynamic> json){
+
+  Data.fromJson(Map<String, dynamic> json) {
     result = Result.fromJson(json['result']);
   }
 
@@ -53,16 +53,17 @@ class Result {
     required this.countryCode,
     required this.email,
     required this.avatar,
-     this.context,
+    this.context,
     required this.isVerified,
     required this.isEmailVerified,
     required this.isDocumentVerified,
+    required this.isDocumentUploaded,
     required this.gender,
     required this.dob,
     required this.bloodGroup,
     required this.languages,
     required this.usersAddress,
-     this.id,
+    this.id,
   });
   late final int userId;
   late final String firstname;
@@ -75,14 +76,15 @@ class Result {
   late final bool isVerified;
   late final bool isEmailVerified;
   late final bool isDocumentVerified;
+  late final bool isDocumentUploaded;
   late final String gender;
   late final String dob;
   late final String bloodGroup;
   late final List<String> languages;
   late final List<dynamic> usersAddress;
   late final Null id;
-  
-  Result.fromJson(Map<String, dynamic> json){
+
+  Result.fromJson(Map<String, dynamic> json) {
     userId = json['user_id'];
     firstname = json['firstname'];
     lastname = json['lastname'];
@@ -94,8 +96,9 @@ class Result {
     isVerified = json['is_verified'];
     isEmailVerified = json['is_email_verified'];
     isDocumentVerified = json['is_document_verified'];
+    isDocumentUploaded = json['is_document_uploaded'];
     gender = json['gender'];
-    dob = json['dob'];
+    dob = json['dob'] ?? "";
     bloodGroup = json['blood_group'];
     languages = List.castFrom<dynamic, String>(json['languages']);
     usersAddress = List.castFrom<dynamic, dynamic>(json['users_address']);
