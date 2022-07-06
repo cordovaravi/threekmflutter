@@ -239,13 +239,13 @@ class AddPostProvider extends ChangeNotifier {
     });
 
     if (postUploaded == 0) {
+      postUploaded++;
       final response = await _apiProvider.post(upload_post, requestJson);
       log(response.toString());
       //hideCurrentSnackBar(navigatorKey.currentContext);
       if (response != null) {
         hideCurrentSnackBar(navigatorKey.currentContext);
         if (response["status"] == "success") {
-          postUploaded++;
           log("post uploaded once $postUploaded");
           Future.delayed(Duration(seconds: 1), () {
             //CustomSnackBar(context, Text("Post Submitted"));
@@ -265,15 +265,13 @@ class AddPostProvider extends ChangeNotifier {
                   (route) => false);
             });
           });
-          Future.delayed(Duration(seconds: 3), () {
-            resetUpload();
-          });
+          resetUpload();
         } else {
           _isUploadeerror = true;
           notifyListeners();
         }
       }
-    }
+    } else {}
   }
 
   void removeSnack() {
@@ -284,6 +282,10 @@ class AddPostProvider extends ChangeNotifier {
   void resetUpload() {
     _uploadImageUrls.clear();
     _moreImages.clear();
+  }
+
+  void setPostUploaded() {
+    postUploaded = 0;
   }
 }
 

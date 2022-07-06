@@ -13,7 +13,6 @@ import 'package:provider/provider.dart';
 import 'package:provider/src/provider.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:threekm/Custom_library/src/reaction.dart';
 import 'package:threekm/Models/SelfProfile_Model.dart';
 import 'package:threekm/UI/Animation/AnimatedSizeRoute.dart';
 import 'package:threekm/UI/DayZero/DayZeroforTabs.dart';
@@ -25,6 +24,7 @@ import 'package:threekm/UI/main/News/Widgets/comment_Loading.dart';
 import 'package:threekm/UI/main/News/Widgets/likes_Loading.dart';
 import 'package:threekm/commenwidgets/CustomSnakBar.dart';
 import 'package:threekm/commenwidgets/commenwidget.dart';
+import 'package:threekm/providers/main/AddPost_Provider.dart';
 import 'package:threekm/providers/main/AthorProfile_Provider.dart';
 import 'package:threekm/providers/main/LikeList_Provider.dart';
 import 'package:threekm/providers/main/comment_Provider.dart';
@@ -32,8 +32,6 @@ import 'package:threekm/widgets/NewCardUI/card_ui.dart';
 import 'package:threekm/widgets/reactions_assets.dart' as reactionAssets;
 
 import 'package:threekm/utils/utils.dart';
-import 'package:threekm/widgets/emotion_Button.dart';
-import 'package:threekm/widgets/video_widget.dart';
 
 class MyProfilePost extends StatefulWidget {
   final int id;
@@ -142,7 +140,7 @@ class _MyProfilePostState extends State<MyProfilePost>
     );
   }
 
-  Widget buildContent(context, SelfProfileModel selfProfileModel) {
+  Widget buildContent(BuildContext context, SelfProfileModel selfProfileModel) {
     return Expanded(
       child: Container(
         //clipBehavior: Clip.antiAlias,
@@ -454,6 +452,7 @@ class _MyProfilePostState extends State<MyProfilePost>
                     ),
                     InkWell(
                       onTap: () {
+                        context.read<AddPostProvider>().setPostUploaded();
                         Navigator.push(
                             context,
                             MaterialPageRoute(
