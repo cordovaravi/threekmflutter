@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
@@ -115,7 +116,7 @@ class NewsListProvider extends ChangeNotifier {
   Future<Null> postLike(String postId, String? emotion) async {
     String requestJson = json.encode(
         {"module": "news_post", "entity_id": postId, "emotion": "$emotion"});
-    _newsbyCategories!.data!.result!.posts!.forEach((element) {
+    _newsbyCategories?.data?.result?.posts?.forEach((element) {
       if (element.postId.toString() == postId) {
         element.likes = element.likes! + 1;
         element.isLiked = true;
@@ -132,10 +133,12 @@ class NewsListProvider extends ChangeNotifier {
   Future<Null> postUnLike(String postId) async {
     String requestJson =
         json.encode({"module": "news_post", "entity_id": postId});
-    _newsbyCategories!.data!.result!.posts!.forEach((element) {
+    _newsbyCategories?.data?.result?.posts?.forEach((element) {
       if (element.postId.toString() == postId) {
+        log("removing like from post $postId");
         element.isLiked = false;
         element.likes = element.likes! - 1;
+        element.emotion = null;
         notifyListeners();
       }
     });

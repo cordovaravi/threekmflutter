@@ -12,6 +12,7 @@ import 'package:threekm/UI/main/DrawerScreen.dart';
 import 'package:threekm/UI/main/News/uppartabs.dart';
 import 'package:threekm/UI/main/Profile/MyProfilePost.dart';
 import 'package:threekm/UI/shop/checkout/past_order.dart';
+import 'package:threekm/commenwidgets/CustomSnakBar.dart';
 import 'package:threekm/providers/ProfileInfo/ProfileInfo_Provider.dart';
 
 import 'package:threekm/providers/localization_Provider/appLanguage_provider.dart';
@@ -69,6 +70,7 @@ class _TabBarNavigationState extends State<TabBarNavigation>
   @override
   void didChangeDependencies() {
     ThreeKmScreenUtil().init(context);
+
     super.didChangeDependencies();
   }
 
@@ -161,7 +163,7 @@ class _TabBarNavigationState extends State<TabBarNavigation>
       child: Scaffold(
         backgroundColor: Colors.white,
         resizeToAvoidBottomInset: true,
-        body: SafeArea(
+        body: Container(
             child: authStatus
                 ? _pageList[_bottomIndex]
                 : _dayZeroScreens[_bottomIndex]),
@@ -194,7 +196,7 @@ class _TabBarNavigationState extends State<TabBarNavigation>
               ),
             ),
             CustomNavigationBarItem(
-              icon: Icon(Icons.notifications_none_outlined),
+              icon: Icon(Icons.notifications),
               title: Text(
                 "Notifications",
                 style: TextStyle(fontSize: 12, color: Color(0xff7C7C7C)),

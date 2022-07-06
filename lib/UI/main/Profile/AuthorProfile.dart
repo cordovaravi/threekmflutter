@@ -89,7 +89,12 @@ class _AuthorProfileState extends State<AuthorProfile>
               mainAxisSize: MainAxisSize.max,
               children: [
                 buildBackButton(context),
-                buildContent(context, selfProfile.authorProfilePostData!)
+                selfProfile.authorProfilePostData != null
+                    ? buildContent(context, selfProfile.authorProfilePostData!)
+                    : Container(
+                        child:
+                            Text("Oops Something went wrong please try later"),
+                      )
               ],
             ),
     );

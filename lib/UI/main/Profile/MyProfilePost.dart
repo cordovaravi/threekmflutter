@@ -13,10 +13,10 @@ import 'package:provider/provider.dart';
 import 'package:provider/src/provider.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
-
 import 'package:threekm/Models/SelfProfile_Model.dart';
 import 'package:threekm/Models/getUserInfoModel.dart' as UserInfoModel;
 import 'package:threekm/UI/Animation/AnimatedSizeRoute.dart';
+import 'package:threekm/UI/DayZero/DayZeroforTabs.dart';
 import 'package:threekm/UI/Help_Supportpage.dart';
 import 'package:threekm/UI/main/AddPost/AddNewPost.dart';
 
@@ -28,6 +28,7 @@ import 'package:threekm/UI/userkyc/user_kyc_main.dart';
 import 'package:threekm/commenwidgets/CustomSnakBar.dart';
 import 'package:threekm/commenwidgets/commenwidget.dart';
 import 'package:threekm/commenwidgets/fullImage.dart';
+import 'package:threekm/providers/main/AddPost_Provider.dart';
 import 'package:threekm/providers/main/AthorProfile_Provider.dart';
 import 'package:threekm/providers/main/LikeList_Provider.dart';
 import 'package:threekm/providers/main/comment_Provider.dart';

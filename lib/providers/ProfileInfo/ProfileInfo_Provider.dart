@@ -51,7 +51,7 @@ class ProfileInfoProvider extends ChangeNotifier {
     SharedPreferences _pref = await SharedPreferences.getInstance();
     String? dob = await _pref.getString("dob");
     log("dob is from function $dob");
-    return dob;
+    return dob ?? null;
   }
 
   //String get email =>  _getEmail();

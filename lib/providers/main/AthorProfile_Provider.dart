@@ -24,18 +24,21 @@ class AutthorProfileProvider extends ChangeNotifier {
       notifyListeners();
       final response = await _apiProvider.get(Self_Profile);
       if (response != null) {
-        _isGettingSelfProfile = false;
-        notifyListeners();
+        //notifyListeners();
         if (response["status"] == "success") {
           print("self profile \n$response");
           _selfProfile = SelfProfileModel.fromJson(response);
+          _isGettingSelfProfile = false;
+          notifyListeners();
+
           print("this is selfmodel $_selfProfile");
         } else {
+          _isGettingSelfProfile = false;
+          notifyListeners();
           Fluttertoast.showToast(
               msg: "error while getteing profile",
               backgroundColor: Colors.redAccent);
         }
-        //notifyListeners();
       }
     } catch (e) {
       log("${e.toString()}");
@@ -95,8 +98,11 @@ class AutthorProfileProvider extends ChangeNotifier {
         json.encode({"module": "news_post", "entity_id": postId});
     _selfProfile!.data!.result!.posts!.forEach((element) {
       if (element.postId.toString() == postId) {
+        if (element.isLiked == true) {
+          element.likes = element.likes! - 1;
+        }
         element.isLiked = false;
-        element.likes = element.likes! - 1;
+        element.emotion = null;
         notifyListeners();
       }
     });

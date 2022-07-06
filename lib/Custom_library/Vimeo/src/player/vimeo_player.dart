@@ -253,7 +253,7 @@ class _VimeoPlayerState extends State<VimeoPlayer>
             aspectRatio: _aspectRatio,
             child: Stack(
               fit: StackFit.expand,
-              overflow: Overflow.visible,
+              //overflow: Overflow.visible,
               children: <Widget>[
                 RawVimeoPlayer(
                   key: widget.key,
