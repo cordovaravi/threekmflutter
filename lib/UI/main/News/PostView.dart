@@ -173,7 +173,23 @@ class _PostViewState extends State<PostView> {
                                           CrossAxisAlignment.start,
                                       //mainAxisAlignment: MainAxisAlignment.center,
                                       children: [
-                                        Container(
+                                        InkWell(
+                                           onTap: () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    AuthorProfile(
+                                                        authorType:
+                                                            newsData.authorType,
+                                                        id: newsData
+                                                            .author!.id!,
+                                                        avatar: newsData
+                                                            .author!.image!,
+                                                        userName: newsData
+                                                            .author!.name!)));
+                                      },
+                                      child:  Container(
                                           width: MediaQuery.of(context)
                                                   .size
                                                   .width *
@@ -185,6 +201,8 @@ class _PostViewState extends State<PostView> {
                                             overflow: TextOverflow.ellipsis,
                                           ),
                                         ),
+                                        ),
+                                      
                                         Row(
                                           children: [
                                             Text(newsData.displayDate.toString()

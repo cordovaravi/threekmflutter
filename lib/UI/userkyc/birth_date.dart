@@ -16,10 +16,10 @@ class BirthDate extends StatefulWidget {
 }
 
 class _BirthDateState extends State<BirthDate> {
-  var list = List<int>.generate(30, (i) => i + 1);
+  var list = List<int>.generate(31, (i) => i + 1);
 
   var yearlist =
-      List<int>.generate(90, (i) => DateTime.now().year - i - 1).reversed;
+      List<int>.generate(40, (i) => DateTime.now().year - i - 1).reversed;
   List<String> month = [
     "Jan",
     "Feb",
@@ -35,8 +35,8 @@ class _BirthDateState extends State<BirthDate> {
     "Dec"
   ];
   var selectedYear;
-  var selectedMonth;
-  var selectedDate;
+  String selectedMonth = "Jan";
+  int selectedDate = 1;
 
   @override
   Widget build(BuildContext context) {

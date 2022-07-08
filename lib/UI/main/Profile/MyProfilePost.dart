@@ -4,6 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
@@ -15,6 +16,8 @@ import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:threekm/Models/SelfProfile_Model.dart';
 import 'package:threekm/Models/getUserInfoModel.dart' as UserInfoModel;
+import 'package:threekm/Models/newsByCategories_model.dart'
+    as newsListByCategoryModel;
 import 'package:threekm/UI/Animation/AnimatedSizeRoute.dart';
 import 'package:threekm/UI/DayZero/DayZeroforTabs.dart';
 import 'package:threekm/UI/Help_Supportpage.dart';
@@ -153,6 +156,19 @@ class _MyProfilePostState extends State<MyProfilePost>
   }
 
   @override
+  void didChangeDependencies() {
+    context.read<AutthorProfileProvider>().getSelfProfile();
+    final selfProfile = context.read<AutthorProfileProvider>();
+    var selfProfileModel = selfProfile.selfProfile;
+    if (selfProfileModel!.data!.result!.posts!.length >= 6)
+      selfProfileModel.data!.result!.posts!
+          .insert(5, newsListByCategoryModel.Post());
+    if (selfProfileModel.data!.result!.posts!.length < 6)
+      selfProfileModel.data!.result!.posts!.add(newsListByCategoryModel.Post());
+    super.didChangeDependencies();
+  }
+
+  @override
   void didUpdateWidget(MyProfilePost oldWidget) {
     context.read<AutthorProfileProvider>().getSelfProfile();
     context.read<VerifyKYCCredential>().getUserProfileInfo();
@@ -212,6 +228,7 @@ class _MyProfilePostState extends State<MyProfilePost>
     final userInfo = context.watch<VerifyKYCCredential>().userProfileInfo;
     var data = userInfo.data?.result;
     var selfProfileModel = selfProfile.selfProfile;
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -275,7 +292,10 @@ class _MyProfilePostState extends State<MyProfilePost>
                                       SliverAppBar(
                                         title: Text(""),
                                         collapsedHeight: 0,
-                                        expandedHeight: 450,
+                                        expandedHeight: data != null &&
+                                                data.isDocumentVerified
+                                            ? 300
+                                            : 450,
                                         // addingAbout == true &&
                                         //         selfProfileModel!.data!.result!.author!.about == null
                                         //     ? 340
@@ -594,7 +614,8 @@ class _MyProfilePostState extends State<MyProfilePost>
                                                       : null,
                                                 ),
                                               ),
-                                              if (data != null)
+                                              if (data != null &&
+                                                  !data.isDocumentVerified)
                                                 Container(
                                                   margin: EdgeInsets.only(
                                                       left: 16,
@@ -629,7 +650,7 @@ class _MyProfilePostState extends State<MyProfilePost>
                                                                     SizedBox(
                                                                       width: size
                                                                               .width /
-                                                                          1.4,
+                                                                          1.3,
                                                                       child:
                                                                           InkWell(
                                                                         onTap:
@@ -649,8 +670,8 @@ class _MyProfilePostState extends State<MyProfilePost>
                                                                           text:
                                                                               TextSpan(children: [
                                                                             TextSpan(
-                                                                                text: data != null && data.isVerified ? 'Stay connected with the community by sharing posts with them' : 'To share post on your wall you need a basic verification',
-                                                                                style: ThreeKmTextConstants.tk14PXPoppinsBlackMedium),
+                                                                                text: data != null && data.isVerified ? 'To show your post to more people in the community, verify your identity.' : 'To share post on your wall you need a basic verification',
+                                                                                style: ThreeKmTextConstants.tk14PXPoppinsBlackMedium.copyWith(fontWeight: FontWeight.w400)),
                                                                             TextSpan(
                                                                                 text: ' -Know more',
                                                                                 style: ThreeKmTextConstants.tk14PXPoppinsBlueMedium)
@@ -689,15 +710,14 @@ class _MyProfilePostState extends State<MyProfilePost>
                                                                         .size
                                                                         .width,
                                                                     margin: EdgeInsets.only(
-                                                                        left:
-                                                                            16,
+                                                                        left: 8,
                                                                         right:
-                                                                            16),
+                                                                            8),
                                                                     decoration: BoxDecoration(
-                                                                        color: Color(
-                                                                            0xff3E7EFF),
-                                                                        borderRadius:
-                                                                            BorderRadius.circular(28)),
+                                                                        border: Border.all(color: Color(0xff3E7EFF)),
+                                                                        // color: Color(
+                                                                        //     0xff3E7EFF),
+                                                                        borderRadius: BorderRadius.circular(28)),
                                                                     child: Text(
                                                                       data != null &&
                                                                               data.isVerified
@@ -705,7 +725,7 @@ class _MyProfilePostState extends State<MyProfilePost>
                                                                           : "Start verification",
                                                                       style: TextStyle(
                                                                           color:
-                                                                              Colors.white),
+                                                                              Color(0xff3E7EFF)),
                                                                     ),
                                                                   ),
                                                                 ),
@@ -720,7 +740,7 @@ class _MyProfilePostState extends State<MyProfilePost>
                                                                     text: TextSpan(
                                                                         children: [
                                                                           TextSpan(
-                                                                              text: 'We Received your documents our team is reviewing it ',
+                                                                              text: 'We have received your documents. Our team will review it soon.',
                                                                               style: ThreeKmTextConstants.tk16PXPoppinsBlackMedium),
                                                                           WidgetSpan(
                                                                               child: Image.asset(
@@ -768,6 +788,137 @@ class _MyProfilePostState extends State<MyProfilePost>
                                                 delegate:
                                                     SliverChildBuilderDelegate(
                                                   (context, _index) {
+                                                    if (selfProfileModel
+                                                            .data!
+                                                            .result!
+                                                            .posts![_index]
+                                                            .author ==
+                                                        null) {
+                                                      return Container(
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                                top: 10),
+                                                        height: 650,
+                                                        child: ListView.builder(
+                                                          padding:
+                                                              EdgeInsets.only(
+                                                                  left: 16,
+                                                                  right: 16),
+                                                          shrinkWrap: true,
+                                                          scrollDirection:
+                                                              Axis.horizontal,
+                                                          itemCount: 3,
+                                                          itemBuilder: (context,
+                                                              indexQ) {
+                                                            return Container(
+                                                                // height: 600,
+                                                                width: size
+                                                                        .width /
+                                                                    1.14,
+                                                                margin:
+                                                                    EdgeInsets.only(
+                                                                        right:
+                                                                            10),
+                                                                padding:
+                                                                    EdgeInsets.all(
+                                                                        10),
+                                                                decoration: BoxDecoration(
+                                                                    border: Border.all(
+                                                                        color: Colors.grey[
+                                                                            100]!,
+                                                                        width:
+                                                                            1),
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            10),
+                                                                    image: DecorationImage(
+                                                                        alignment:
+                                                                            Alignment.topCenter,
+                                                                        image: AssetImage('assets/postNull.png'),
+                                                                        fit: BoxFit.fitWidth)),
+                                                                child: Column(children: [
+                                                                  Column(
+                                                                    crossAxisAlignment:
+                                                                        CrossAxisAlignment
+                                                                            .start,
+                                                                    children: [
+                                                                      Text(
+                                                                          questions[
+                                                                              indexQ],
+                                                                          style: ThreeKmTextConstants
+                                                                              .tk16PXPoppinsBlackSemiBold
+                                                                              .copyWith(color: Colors.white)),
+                                                                      Text(
+                                                                          subtitle[
+                                                                              indexQ],
+                                                                          style: ThreeKmTextConstants
+                                                                              .tk16PXPoppinsBlackSemiBold
+                                                                              .copyWith(color: Colors.white)),
+                                                                      SizedBox(
+                                                                        height:
+                                                                            30,
+                                                                      ),
+                                                                      ListView.builder(
+                                                                          physics: NeverScrollableScrollPhysics(),
+                                                                          shrinkWrap: true,
+                                                                          itemCount: indexQ == 0
+                                                                              ? As_a_citizen.length
+                                                                              : indexQ == 1
+                                                                                  ? As_a_Business.length
+                                                                                  : not_to_Share.length + 1,
+                                                                          itemBuilder: (context, i) {
+                                                                            if (indexQ == 2 &&
+                                                                                not_to_Share.length == i) {
+                                                                              return Container(
+                                                                                color: Color(0xFFF8F8F8),
+                                                                                padding: EdgeInsets.all(15),
+                                                                                child: Row(
+                                                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                                                  children: [
+                                                                                    Padding(
+                                                                                      padding: const EdgeInsets.all(8.0),
+                                                                                      child: Image(
+                                                                                        image: AssetImage('assets/stop.png'),
+                                                                                        height: 35,
+                                                                                        width: 35,
+                                                                                      ),
+                                                                                    ),
+                                                                                    SizedBox(
+                                                                                      width: MediaQuery.of(context).size.width / 1.7,
+                                                                                      child: Text(
+                                                                                        'Violation of 3km community Rules and Regulations will lead to Account Suspension.',
+                                                                                        style: ThreeKmTextConstants.tk14PXPoppinsBlackMedium,
+                                                                                      ),
+                                                                                    )
+                                                                                  ],
+                                                                                ),
+                                                                              );
+                                                                            }
+                                                                            return ListTile(
+                                                                              minLeadingWidth: 20,
+                                                                              leading: Text("\u2022"),
+                                                                              title: indexQ == 0
+                                                                                  ? Text(As_a_citizen[i]['title'])
+                                                                                  : indexQ == 1
+                                                                                      ? Text(As_a_Business[i]['title'])
+                                                                                      : Text(not_to_Share[i]['title']),
+                                                                              subtitle: indexQ == 0
+                                                                                  ? Text(As_a_citizen[i]['subtitle'])
+                                                                                  : indexQ == 1
+                                                                                      ? Text(As_a_Business[i]['subtitle'])
+                                                                                      : Text(not_to_Share[i]['subtitle']),
+                                                                              contentPadding: EdgeInsets.zero,
+                                                                              enableFeedback: true,
+                                                                              horizontalTitleGap: 0,
+                                                                            );
+                                                                          })
+                                                                    ],
+                                                                  )
+                                                                ]));
+                                                          },
+                                                        ),
+                                                      );
+                                                    }
                                                     return NewsCard(
                                                         selfProfileModel:
                                                             selfProfileModel,

@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/src/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -170,10 +171,19 @@ class _UploadProfilePictureState extends State<UploadProfilePicture> {
                                     MaterialStateProperty.all<OutlinedBorder>(
                                         StadiumBorder())),
                             onPressed: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (_) => BasicInfo()));
+                              if (provider.avtar == null) {
+                                Fluttertoast.showToast(
+                                    msg: 'Please Select your profile image');
+                              } else if (provider.avtar!.contains(provider
+                                  .userProfileInfo.data!.result.firstname)) {
+                                Fluttertoast.showToast(
+                                    msg: 'Please Select your profile image');
+                              } else {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (_) => BasicInfo()));
+                              }
                             },
                             child: Padding(
                               padding: const EdgeInsets.all(15.0),

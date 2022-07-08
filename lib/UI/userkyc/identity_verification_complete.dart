@@ -39,7 +39,7 @@ class _IdentityCompleteState extends State<IdentityComplete> {
             SizedBox(
               width: size(context).width / 1.2,
               child: Text(
-                'We recived your documents we will verify it soon! till then Explore 3km..',
+                'We have received your document. Our team will verify your identity soon. Till then explore 3km.',
                 style: ThreeKmTextConstants.tk16PXPoppinsBlackMedium,
                 textAlign: TextAlign.center,
               ),
