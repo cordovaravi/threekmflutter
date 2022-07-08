@@ -584,6 +584,10 @@ class _MyProfilePostState extends State<MyProfilePost>
                                                   onPressed: data != null &&
                                                           data.isVerified
                                                       ? () {
+                                                          context
+                                                              .read<
+                                                                  AddPostProvider>()
+                                                              .setPostUploaded();
                                                           Navigator.push(
                                                               context,
                                                               MaterialPageRoute(

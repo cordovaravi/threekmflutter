@@ -188,7 +188,7 @@ class SinglePostEmotionButton extends StatelessWidget {
                 postUnlike();
               } else if (isChecked == true && index == -1) {
                 print("Like");
-                postlike(null);
+                postlike("like");
                 // context
                 //     .read<NewsListProvider>()
                 //     .postLike(this.postId.toString(), null);

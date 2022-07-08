@@ -499,16 +499,17 @@ class _CardUIState extends State<CardUI> {
                           foregroundColor:
                               MaterialStateProperty.all(Colors.black)),
                       onPressed: () {
-                        String? imgUrl = data.images != null
-                            ? data.images?.first.toString()
-                            : data.videos?.first.thumbnail.toString();
+                        String? imgUrl =
+                            data.images != null && data.images.isNotEmpty
+                                ? data.images?.first.toString()
+                                : data.videos?.first.thumbnail.toString();
                         if (imgUrl != null) {
                           handleShare(
                               data.author!.name.toString(),
                               data.author!.image.toString(),
                               data.slugHeadline != null ||
                                       data.slugHeadline != ""
-                                  ? data.slugHeadline
+                                  ? data.slugHeadline ?? " "
                                   : data.submittedHeadline,
                               imgUrl,
                               data.createdDate,
