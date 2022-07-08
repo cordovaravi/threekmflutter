@@ -96,15 +96,15 @@ class _UserInfoState extends State<UserInfo> {
   //AuthUserDetailsModel? _authUserDetails;
   int previousPageViewIndex = 0;
 
-  var list = List<int>.generate(30, (i) => i + 1);
+  var list = List<int>.generate(31, (i) => i + 1);
   var yearlist =
-      List<int>.generate(90, (i) => DateTime.now().year - i - 1).reversed;
+      List<int>.generate(40, (i) => DateTime.now().year - i - 1).reversed;
 
   var selectedYear;
-  var selectedMonth;
-  var selectedDate;
+  String selectedMonth = "Jan";
+  int selectedDate = 1;
 
-  @override
+  @override 
   void initState() {
     super.initState();
     log('user info =======================================');

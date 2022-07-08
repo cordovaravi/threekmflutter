@@ -163,9 +163,24 @@ class _CardUIState extends State<CardUI> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      '${data.author?.name}',
-                      style: ThreeKmTextConstants.tk14PXPoppinsBlackMedium,
+                    InkWell(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => AuthorProfile(
+                                    authorType: data.authorType,
+                                    // page: 1,
+                                    // authorType:
+                                    //     "user",
+                                    id: data.author!.id!,
+                                    avatar: data.author!.image!,
+                                    userName: data.author!.name!)));
+                      },
+                      child: Text(
+                        '${data.author?.name}',
+                        style: ThreeKmTextConstants.tk14PXPoppinsBlackMedium,
+                      ),
                     ),
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.center,

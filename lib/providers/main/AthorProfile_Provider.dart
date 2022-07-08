@@ -30,7 +30,6 @@ class AutthorProfileProvider extends ChangeNotifier {
           _selfProfile = SelfProfileModel.fromJson(response);
           _isGettingSelfProfile = false;
           notifyListeners();
-
           print("this is selfmodel $_selfProfile");
         } else {
           _isGettingSelfProfile = false;

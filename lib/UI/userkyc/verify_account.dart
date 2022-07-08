@@ -57,7 +57,7 @@ class _VerifyAccountState extends State<VerifyAccount> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'verification',
+                      'Verification',
                       style: ThreeKmTextConstants.tk18PXPoppinsBlackMedium,
                     ),
                     InkWell(

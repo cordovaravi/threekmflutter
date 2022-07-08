@@ -36,63 +36,59 @@ class _IdentityUploadState extends State<IdentityUpload> {
   List<String> get uploadedImagesUrl => _uploadImageUrls;
   final ApiProvider _apiProvider = ApiProvider();
 
-  uploadDoc() async {
-    if (frontphoto?.name != null && backphoto?.name != null) {
-      // showUploadingSnackbar(context, img.first);
-      List<XFile> img = [frontphoto!, backphoto!];
-      img.forEach((element) async {
-        if (element.path.contains(".png") ||
-            element.path.contains(".jpg") ||
-            element.path.contains(".jpeg")) {
-          try {
-            commonWidget.showLoading();
-            var request = await http.MultipartRequest(
-                'POST', Uri.parse(upload_Imagefile));
-            request.headers['Authorization'] = await _apiProvider.getToken();
-            request.fields['storage_url'] = "kycDoc";
-            request.fields['record_id'] = "0";
-            request.fields['filename'] = "post.png";
-            request.files
-                .add(await http.MultipartFile.fromPath('file', element.path));
-            var httpresponse = await request.send();
-            final res = await http.Response.fromStream(httpresponse);
-            final response = json.decode(res.body);
-            if (httpresponse.statusCode == 200) {
-              print("uploaded");
-              if (response["status"] == "success") {
-                log(response["photo"]["photo"]);
-                _uploadImageUrls.add(response["photo"]["photo"]);
-                //log(_uploadImageUrls.toList().toString());
-                if (img.length == _uploadImageUrls.length) {
-                  log("progress is 100");
-                  // uploadPost(context, headLine, story, address, lat, long);
-                  var requestJson = {
-                    "type": "${widget.documentname}",
-                    "number": _controller.text,
-                    "images": uploadedImagesUrl
-                  };
-                  commonWidget.hideLoading();
+  uploadDoc(List<XFile> imgs) async {
+    // showUploadingSnackbar(context, img.first);
+    List<XFile> img = imgs; //[frontphoto!, backphoto!];
+    img.forEach((element) async {
+      if (element.path.contains(".png") ||
+          element.path.contains(".jpg") ||
+          element.path.contains(".jpeg")) {
+        try {
+          commonWidget.showLoading();
+          var request =
+              await http.MultipartRequest('POST', Uri.parse(upload_Imagefile));
+          request.headers['Authorization'] = await _apiProvider.getToken();
+          request.fields['storage_url'] = "kycDoc";
+          request.fields['record_id'] = "0";
+          request.fields['filename'] = "post.png";
+          request.files
+              .add(await http.MultipartFile.fromPath('file', element.path));
+          var httpresponse = await request.send();
+          final res = await http.Response.fromStream(httpresponse);
+          final response = json.decode(res.body);
+          if (httpresponse.statusCode == 200) {
+            print("uploaded");
+            if (response["status"] == "success") {
+              log(response["photo"]["photo"]);
+              _uploadImageUrls.add(response["photo"]["photo"]);
+              //log(_uploadImageUrls.toList().toString());
+              if (img.length == _uploadImageUrls.length) {
+                log("progress is 100");
+                // uploadPost(context, headLine, story, address, lat, long);
+                var requestJson = {
+                  "type": "${widget.documentname}",
+                  "number": _controller.text,
+                  "images": uploadedImagesUrl
+                };
+                commonWidget.hideLoading();
 
-                  context
-                      .read<VerifyKYCCredential>()
-                      .updateKYCDoc(jsonEncode(requestJson))
-                      .whenComplete(() {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (_) => IdentityComplete()));
-                  });
-                }
+                context
+                    .read<VerifyKYCCredential>()
+                    .updateKYCDoc(jsonEncode(requestJson))
+                    .whenComplete(() {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (_) => IdentityComplete()));
+                });
               }
-            } else {
-              CustomSnackBar(context, Text("Upload Failed.!"));
             }
-          } catch (e) {
+          } else {
             CustomSnackBar(context, Text("Upload Failed.!"));
           }
+        } catch (e) {
+          CustomSnackBar(context, Text("Upload Failed.!"));
         }
-      });
-    } else {
-      CustomSnackBar(context, Text("Please Select a file to upload."));
-    }
+      }
+    });
   }
 
   @override
@@ -234,63 +230,65 @@ class _IdentityUploadState extends State<IdentityUpload> {
                         const SizedBox(
                           height: 24,
                         ),
-                        InkWell(
-                          onTap: () async {
-                            backphoto = await _picker.pickImage(
-                                source: ImageSource.gallery);
-                            setState(() {});
-                          },
-                          child: backphoto != null
-                              ? Image.file(
-                                  File(backphoto!.path),
-                                  width: size(context).width,
-                                  height: 170,
-                                )
-                              : Container(
-                                  width: size(context).width,
-                                  height: 170,
-                                  decoration: BoxDecoration(
-                                      color: const Color(0xFFF4F3F8),
-                                      borderRadius: BorderRadius.circular(8)),
-                                  alignment: Alignment.center,
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      const Icon(
-                                        Icons.camera_alt,
-                                        color: Colors.grey,
-                                      ),
-                                      Column(
-                                        children: [
-                                          Text(
-                                            'Take a clear photo of ',
-                                            style: ThreeKmTextConstants
-                                                .tk16PXPoppinsBlackMedium
-                                                .copyWith(color: Colors.grey),
-                                            textAlign: TextAlign.center,
-                                          ),
-                                          Wrap(
-                                            children: [
-                                              Text(
-                                                'your ID-',
-                                                style: ThreeKmTextConstants
-                                                    .tk16PXPoppinsBlackMedium
-                                                    .copyWith(
-                                                        color: Colors.grey),
-                                              ),
-                                              Text(
-                                                'Back side',
-                                                style: ThreeKmTextConstants
-                                                    .tk16PXPoppinsBlackMedium,
-                                                textAlign: TextAlign.center,
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  )),
-                        ),
+                        if (widget.documentname != "Pancard")
+                          InkWell(
+                            onTap: () async {
+                              backphoto = await _picker.pickImage(
+                                  source: ImageSource.gallery);
+                              setState(() {});
+                            },
+                            child: backphoto != null
+                                ? Image.file(
+                                    File(backphoto!.path),
+                                    width: size(context).width,
+                                    height: 170,
+                                  )
+                                : Container(
+                                    width: size(context).width,
+                                    height: 170,
+                                    decoration: BoxDecoration(
+                                        color: const Color(0xFFF4F3F8),
+                                        borderRadius: BorderRadius.circular(8)),
+                                    alignment: Alignment.center,
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        const Icon(
+                                          Icons.camera_alt,
+                                          color: Colors.grey,
+                                        ),
+                                        Column(
+                                          children: [
+                                            Text(
+                                              'Take a clear photo of ',
+                                              style: ThreeKmTextConstants
+                                                  .tk16PXPoppinsBlackMedium
+                                                  .copyWith(color: Colors.grey),
+                                              textAlign: TextAlign.center,
+                                            ),
+                                            Wrap(
+                                              children: [
+                                                Text(
+                                                  'your ID-',
+                                                  style: ThreeKmTextConstants
+                                                      .tk16PXPoppinsBlackMedium
+                                                      .copyWith(
+                                                          color: Colors.grey),
+                                                ),
+                                                Text(
+                                                  'Back side',
+                                                  style: ThreeKmTextConstants
+                                                      .tk16PXPoppinsBlackMedium,
+                                                  textAlign: TextAlign.center,
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    )),
+                          ),
                         SizedBox(
                           height: 10,
                         ),
@@ -357,18 +355,49 @@ class _IdentityUploadState extends State<IdentityUpload> {
                                               OutlinedBorder>(
                                           const StadiumBorder())),
                                   onPressed: () {
-                                    if (_controller.text != "" &&
-                                        _controller.text.contains(" ") ==
-                                            false) {
-                                      uploadDoc();
-                                    } else if (_controller.text.contains(" ") ==
-                                        true) {
-                                      Fluttertoast.showToast(
-                                          msg: "Space is not allowed");
+                                    if (widget.documentname == "Pancard") {
+                                      if (frontphoto?.name != null) {
+                                        if (_controller.text != "" &&
+                                            _controller.text.contains(" ") ==
+                                                false) {
+                                          uploadDoc([frontphoto!]);
+                                        } else if (_controller.text
+                                                .contains(" ") ==
+                                            true) {
+                                          Fluttertoast.showToast(
+                                              msg: "Space is not allowed");
+                                        } else {
+                                          Fluttertoast.showToast(
+                                              msg: "Please Enter Id number");
+                                        }
+                                      } else {
+                                        Fluttertoast.showToast(
+                                            msg:
+                                                "Please Select a file to upload.");
+                                      }
                                     } else {
-                                      Fluttertoast.showToast(
-                                          msg: "Please Enter Id number");
+                                      if (frontphoto?.name != null &&
+                                          backphoto?.name != null) {
+                                        if (_controller.text != "" &&
+                                            _controller.text.contains(" ") ==
+                                                false) {
+                                          uploadDoc([frontphoto!, backphoto!]);
+                                        } else if (_controller.text
+                                                .contains(" ") ==
+                                            true) {
+                                          Fluttertoast.showToast(
+                                              msg: "Space is not allowed");
+                                        } else {
+                                          Fluttertoast.showToast(
+                                              msg: "Please Enter Id number");
+                                        }
+                                      } else {
+                                        Fluttertoast.showToast(
+                                            msg:
+                                                "Please Select a file to upload.");
+                                      }
                                     }
+
                                     // Navigator.push(
                                     //     context,
                                     //     MaterialPageRoute(

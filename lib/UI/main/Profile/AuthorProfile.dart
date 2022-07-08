@@ -72,6 +72,7 @@ class _AuthorProfileState extends State<AuthorProfile>
   @override
   Widget build(BuildContext context) {
     final selfProfile = context.watch<AutthorProfileProvider>();
+    var authorProfile = selfProfile.authorProfilePostData!;
     return Scaffold(
       body: selfProfile.gettingAuthorprofile == true
           ? Container(
@@ -90,309 +91,238 @@ class _AuthorProfileState extends State<AuthorProfile>
               children: [
                 buildBackButton(context),
                 selfProfile.authorProfilePostData != null
-                    ? buildContent(context, selfProfile.authorProfilePostData!)
+                    ? Expanded(
+                        child: Container(
+                          clipBehavior: Clip.antiAlias,
+                          width: MediaQuery.of(context).size.width,
+                          padding: EdgeInsets.symmetric(horizontal: 8),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(40),
+                              topRight: Radius.circular(40),
+                            ),
+                          ),
+                          child: Stack(
+                            children: [
+                              CustomScrollView(
+                                controller: controller,
+                                slivers: [
+                                  SliverAppBar(
+                                    collapsedHeight: 0,
+                                    expandedHeight: 300,
+                                    // widget.isFromSelfProfileNavigate != true ? 250 : 300,
+                                    toolbarHeight: 0,
+                                    backgroundColor: Colors.white,
+                                    flexibleSpace: FlexibleSpaceBar(
+                                      background: Column(
+                                        children: [
+                                          buildAvatar,
+                                          //space(height: 68),
+                                          Container(
+                                            //width: MediaQuery.of(context).size.width * 0.65,
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 32),
+                                            child: Center(
+                                              child: Text(
+                                                "${widget.userName}",
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: ThreeKmTextConstants
+                                                    .tk14PXPoppinsBlackSemiBold
+                                                    .copyWith(fontSize: 24),
+                                              ),
+                                            ),
+                                          ),
+                                          Container(
+                                              //width: 298,
+                                              child: authorProfile.data.result!
+                                                          .author!.about
+                                                          .toString() !=
+                                                      "null"
+                                                  ? Column(
+                                                      children: [
+                                                        Text(
+                                                          "${authorProfile.data.result!.author!.about}",
+                                                          maxLines: 2,
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                          style: ThreeKmTextConstants
+                                                              .tk14PXPoppinsBlackSemiBold
+                                                              .copyWith(
+                                                            fontSize: 12,
+                                                            fontWeight:
+                                                                FontWeight.w400,
+                                                          ),
+                                                        ),
+                                                        SizedBox(
+                                                          height: 8,
+                                                        ),
+                                                        // about text
+                                                        // Container(),
+                                                        // buildFollowing(context)
+                                                      ],
+                                                    )
+                                                  : SizedBox()),
+                                          // Column(
+                                          //   children: [
+                                          //     //space(height: 32),
+                                          //     buildFollowing(context),
+                                          //     //space(height: 32),
+                                          //     buildFollowingButton,
+                                          //     //buildFollowingButton,
+                                          //   ],
+                                          // ),
+                                          Padding(
+                                            padding: EdgeInsets.symmetric(
+                                                vertical: 18, horizontal: 18),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Column(
+                                                  children: [
+                                                    Text(
+                                                        authorProfile
+                                                            .data
+                                                            .result!
+                                                            .author!
+                                                            .followers
+                                                            .toString(),
+                                                        style:
+                                                            GoogleFonts.poppins(
+                                                                color: Colors
+                                                                    .black,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w500,
+                                                                fontSize: 18)),
+                                                    Text(
+                                                      "Followers",
+                                                      style: ThreeKmTextConstants
+                                                          .tk14PXPoppinsBlackSemiBold
+                                                          .copyWith(
+                                                              color: Color(
+                                                                  0xff979EA4)),
+                                                    )
+                                                  ],
+                                                ),
+                                                Column(
+                                                  children: [
+                                                    Text(
+                                                        authorProfile
+                                                            .data
+                                                            .result!
+                                                            .author!
+                                                            .totalPosts
+                                                            .toString(),
+                                                        style:
+                                                            GoogleFonts.poppins(
+                                                                color: Colors
+                                                                    .black,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w500,
+                                                                fontSize: 18)),
+                                                    Text(
+                                                      "Posts",
+                                                      style: ThreeKmTextConstants
+                                                          .tk14PXPoppinsBlackSemiBold
+                                                          .copyWith(
+                                                              color: Color(
+                                                                  0xff979EA4)),
+                                                    )
+                                                  ],
+                                                ),
+                                                Column(
+                                                  children: [
+                                                    Text(
+                                                        authorProfile
+                                                            .data
+                                                            .result!
+                                                            .author!
+                                                            .following
+                                                            .toString(),
+                                                        style:
+                                                            GoogleFonts.poppins(
+                                                                color: Colors
+                                                                    .black,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w500,
+                                                                fontSize: 18)),
+                                                    Text(
+                                                      "Following",
+                                                      style: ThreeKmTextConstants
+                                                          .tk14PXPoppinsBlackSemiBold
+                                                          .copyWith(
+                                                              color: Color(
+                                                                  0xff979EA4)),
+                                                    )
+                                                  ],
+                                                )
+                                              ],
+                                            ),
+                                          ),
+                                          space(height: 10),
+                                          Consumer<AutthorProfileProvider>(
+                                              builder:
+                                                  (context, controller, _) {
+                                            return buildFollowingButton(
+                                                isLoading:
+                                                    controller.followLoading,
+                                                authorId: authorProfile
+                                                    .data.result!.author!.id!,
+                                                isFollowed: controller
+                                                    .authorProfilePostData!
+                                                    .data
+                                                    .result!
+                                                    .author!
+                                                    .isFollowed!);
+                                          })
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  SliverToBoxAdapter(
+                                    child: Container(
+                                      height: 36,
+                                    ),
+                                  ),
+                                  if (index == 0) ...{
+                                    SliverList(
+                                      delegate: SliverChildBuilderDelegate(
+                                        (context, _index) {
+                                          return NewsCard(
+                                              avtar: widget.avatar,
+                                              authorName: widget.userName,
+                                              authorProfileModel: authorProfile,
+                                              index: _index);
+                                        },
+                                        childCount: authorProfile
+                                            .data.result!.posts!.length,
+                                      ),
+                                    ),
+                                  } else ...{
+                                    Center(
+                                      child: Text("Saved posts"),
+                                    )
+                                  }
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      )
                     : Container(
                         child:
                             Text("Oops Something went wrong please try later"),
                       )
               ],
             ),
-    );
-  }
-
-  Widget buildContent(context, ProfilePostModel authorProfile) {
-    return Expanded(
-      child: Container(
-        clipBehavior: Clip.antiAlias,
-        width: MediaQuery.of(context).size.width,
-        padding: EdgeInsets.symmetric(horizontal: 8),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(40),
-            topRight: Radius.circular(40),
-          ),
-        ),
-        child: Stack(
-          children: [
-            CustomScrollView(
-              controller: controller,
-              slivers: [
-                SliverAppBar(
-                  collapsedHeight: 0,
-                  expandedHeight: 300,
-                  // widget.isFromSelfProfileNavigate != true ? 250 : 300,
-                  toolbarHeight: 0,
-                  backgroundColor: Colors.white,
-                  flexibleSpace: FlexibleSpaceBar(
-                    background: Column(
-                      children: [
-                        buildAvatar,
-                        //space(height: 68),
-                        Container(
-                          //width: MediaQuery.of(context).size.width * 0.65,
-                          padding: EdgeInsets.symmetric(horizontal: 32),
-                          child: Center(
-                            child: Text(
-                              "${widget.userName}",
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: ThreeKmTextConstants
-                                  .tk14PXPoppinsBlackSemiBold
-                                  .copyWith(fontSize: 24),
-                            ),
-                          ),
-                        ),
-                        Container(
-                            //width: 298,
-                            child: authorProfile.data.result!.author!.about
-                                        .toString() !=
-                                    "null"
-                                ? Column(
-                                    children: [
-                                      Text(
-                                        "${authorProfile.data.result!.author!.about}",
-                                        maxLines: 2,
-                                        overflow: TextOverflow.ellipsis,
-                                        textAlign: TextAlign.center,
-                                        style: ThreeKmTextConstants
-                                            .tk14PXPoppinsBlackSemiBold
-                                            .copyWith(
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w400,
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        height: 8,
-                                      ),
-                                      // about text
-                                      // Container(),
-                                      // buildFollowing(context)
-                                    ],
-                                  )
-                                : SizedBox()),
-                        // Column(
-                        //   children: [
-                        //     //space(height: 32),
-                        //     buildFollowing(context),
-                        //     //space(height: 32),
-                        //     buildFollowingButton,
-                        //     //buildFollowingButton,
-                        //   ],
-                        // ),
-                        Padding(
-                          padding: EdgeInsets.symmetric(
-                              vertical: 18, horizontal: 18),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Column(
-                                children: [
-                                  Text(
-                                      authorProfile
-                                          .data.result!.author!.followers
-                                          .toString(),
-                                      style: GoogleFonts.poppins(
-                                          color: Colors.black,
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: 18)),
-                                  Text(
-                                    "Followers",
-                                    style: ThreeKmTextConstants
-                                        .tk14PXPoppinsBlackSemiBold
-                                        .copyWith(color: Color(0xff979EA4)),
-                                  )
-                                ],
-                              ),
-                              Column(
-                                children: [
-                                  Text(
-                                      authorProfile
-                                          .data.result!.author!.totalPosts
-                                          .toString(),
-                                      style: GoogleFonts.poppins(
-                                          color: Colors.black,
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: 18)),
-                                  Text(
-                                    "Posts",
-                                    style: ThreeKmTextConstants
-                                        .tk14PXPoppinsBlackSemiBold
-                                        .copyWith(color: Color(0xff979EA4)),
-                                  )
-                                ],
-                              ),
-                              Column(
-                                children: [
-                                  Text(
-                                      authorProfile
-                                          .data.result!.author!.following
-                                          .toString(),
-                                      style: GoogleFonts.poppins(
-                                          color: Colors.black,
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: 18)),
-                                  Text(
-                                    "Following",
-                                    style: ThreeKmTextConstants
-                                        .tk14PXPoppinsBlackSemiBold
-                                        .copyWith(color: Color(0xff979EA4)),
-                                  )
-                                ],
-                              )
-                            ],
-                          ),
-                        ),
-                        space(height: 10),
-                        Consumer<AutthorProfileProvider>(
-                            builder: (context, controller, _) {
-                          return buildFollowingButton(
-                              isLoading: controller.followLoading,
-                              authorId: authorProfile.data.result!.author!.id!,
-                              isFollowed: controller.authorProfilePostData!.data
-                                  .result!.author!.isFollowed!);
-                        })
-                      ],
-                    ),
-                    // Column(
-                    //   children: [
-                    //     //space(height: 32),
-                    //     buildFollowing(context),
-                    //     //space(height: 32),
-                    //     buildFollowingButton,
-                    //     //buildFollowingButton,
-                    //   ],
-                    // ),
-                  ),
-                ),
-                //////////// tabs widget
-                // SliverPersistentHeader(
-                //   delegate: PersistentHeader(
-                //     widget: buildTabBar,
-                //   ),
-                //   pinned: true,
-                // ),
-                SliverToBoxAdapter(
-                  child: Container(
-                    height: 36,
-                  ),
-                ),
-                if (index == 0) ...{
-                  SliverList(
-                    delegate: SliverChildBuilderDelegate(
-                      (context, _index) {
-                        return NewsCard(
-                            avtar: widget.avatar,
-                            authorName: widget.userName,
-                            authorProfileModel: authorProfile,
-                            index: _index);
-                      },
-                      childCount: authorProfile.data.result!.posts!.length,
-                    ),
-                  ),
-                } else ...{
-                  Center(
-                    child: Text("Saved posts"),
-                  )
-                }
-                // else ...{
-                //   SliverGrid(
-                //     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                //       crossAxisCount: 3,
-                //       mainAxisSpacing: 8,
-                //       crossAxisSpacing: 8,
-                //     ),
-                //     delegate: SliverChildBuilderDelegate((context, index) {
-                //       return Container(
-                //           decoration: BoxDecoration(
-                //             borderRadius: BorderRadius.circular(10),
-                //             color: ThreeKmTextConstants.lightBlue,
-                //             // image: DecorationImage(
-                //             //   fit: BoxFit.fill,
-                //             //   image: CachedNetworkImageProvider(
-                //             //     _controller.posts
-                //             //         .where((e) => e.images!.length > 0)
-                //             //         .toList()[index]
-                //             //         .images!
-                //             //         .first,
-                //             //   ),
-                //             // ),
-                //           ),
-
-                //       );
-                //     },
-                //         childCount: 5,
-                //   )
-                // }
-              ],
-            ),
-
-            // NestedScrollView(
-            //   controller: controller,
-            //   body: index == 0
-            //       ? GetBuilder<AuthorProfileController>(
-            //           builder: (_controller) => ListView.builder(
-            //             itemBuilder: (context, _index) {
-            //               return Container(
-            //                 height: 580,
-            //                 padding: EdgeInsets.symmetric(horizontal: 18),
-            //                 child: NewsCardDetail(
-            //                   _controller.posts[_index],
-            //                   index: _index,
-            //                 ),
-            //               );
-            //             },
-            //             itemCount: _controller.posts.length,
-            //           ),
-            //         )
-            //       : Container(
-            //           width: MediaQuery.of(context).size.width,
-            //           child: GetBuilder<AuthorProfileController>(
-            //             builder: (_controller) => GridView.builder(
-            //               gridDelegate:
-            //                   SliverGridDelegateWithFixedCrossAxisCount(
-            //                 crossAxisCount: 3,
-            //                 mainAxisSpacing: 8,
-            //                 crossAxisSpacing: 8,
-            //               ),
-            //               itemBuilder: (context, index) {
-            //                 return Container(
-            //                   decoration: BoxDecoration(
-            //                       borderRadius: BorderRadius.circular(10),
-            //                       color: ThreeKmTextConstants.lightBlue,
-            //                       image: DecorationImage(
-            //                           fit: BoxFit.fill,
-            //                           image: CachedNetworkImageProvider(
-            //                             _controller.posts
-            //                                 .where((e) => e.images!.length > 0)
-            //                                 .toList()[index]
-            //                                 .images!
-            //                                 .first,
-            //                           ))),
-            //                 );
-            //               },
-            //               itemCount: _controller.posts
-            //                   .where((e) => e.images!.length > 0)
-            //                   .toList()
-            //                   .length,
-            //               padding: EdgeInsets.only(
-            //                   top: 24, bottom: 32, left: 18, right: 18),
-            //               shrinkWrap: true,
-            //             ),
-            //           ),
-            //         ),
-            // ),
-            // Center(
-            //   child: Transform.translate(
-            //     offset: Offset(0, 100),
-            //     child: CupertinoActivityIndicator(),
-            //   ),
-            // )
-            //: Container(),
-            // ),
-          ],
-        ),
-      ),
     );
   }
 

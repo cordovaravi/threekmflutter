@@ -35,6 +35,8 @@ class SignInProvider extends ChangeNotifier {
           prefs.setString("avatar", response['data']['result']['avatar'] ?? "");
           prefs.setString("gender", response['data']['result']['gender'] ?? "");
           prefs.setString("email", response['data']['result']['email'] ?? "");
+          prefs.setString(
+              "userphone", response['data']['result']['phone_no'] ?? "");
           prefs.setString("dob", response['data']['result']['dob'] ?? "");
           Navigator.pushAndRemoveUntil(
               context,
@@ -70,6 +72,8 @@ class SignInProvider extends ChangeNotifier {
         prefs.setString("avatar", response['data']['result']['avatar'] ?? "");
         prefs.setString("gender", response['data']['result']['gender'] ?? "");
         prefs.setString("email", response['data']['result']['email'] ?? "");
+        prefs.setString(
+            "userphone", response['data']['result']['phone_no'] ?? "");
         if (response['data']['result']['dob'] != null) {
           prefs.setString("dob", response['data']['result']['dob'] ?? "");
         }
