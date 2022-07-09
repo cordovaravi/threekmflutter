@@ -261,26 +261,22 @@ class _AddNewPostState extends State<AddNewPost> {
           children: [
             _locationFieldTitle,
             SizedBox(height: 10),
-            Wrap(
-              children: [
-                Text(
-                  provider.selectedAddress ?? "",
-                  style: GoogleFonts.poppins(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                SizedBox(width: 10),
-                InkWell(
-                  onTap: addOrChangeLocation,
-                  child: Text(
-                    provider.selectedAddress == null ? "Add Post location" : "Change Location",
-                    style: GoogleFonts.poppins(
-                        fontWeight: FontWeight.w600, color: const Color(0xFF3E7EFF), fontSize: 16),
-                  ),
-                ),
-              ],
-            )
+            Text(
+              provider.selectedAddress ?? "",
+              style: GoogleFonts.poppins(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            SizedBox(width: 10),
+            InkWell(
+              onTap: addOrChangeLocation,
+              child: Text(
+                provider.selectedAddress == null ? "Add Post location" : "Change Location",
+                style: GoogleFonts.poppins(
+                    fontWeight: FontWeight.w600, color: const Color(0xFF3E7EFF), fontSize: 16),
+              ),
+            ),
           ],
         );
       },

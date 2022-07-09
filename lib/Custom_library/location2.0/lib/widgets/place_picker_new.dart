@@ -32,7 +32,13 @@ class _PlacePickerNewState extends State<PlacePickerNew> {
           TextFormField(
             onTap: () async {
               FocusScope.of(context).unfocus();
-              await getPrediction();
+              PlacesDetailsResponse? response = await showPlaceAutoCompletePage();
+              context.read<AddPostProvider>()
+                ..selectedAddress = (response?.result.name ?? '') +
+                    (response != null ? ', ' : '') +
+                    (response?.result.formattedAddress ?? '')
+                ..geometry = response?.result.geometry;
+              Navigator.pop(context);
             },
             readOnly: true,
             textAlignVertical: TextAlignVertical.center,
@@ -82,11 +88,15 @@ class _PlacePickerNewState extends State<PlacePickerNew> {
                       context,
                       MaterialPageRoute<PlacesDetailsResponse>(
                           builder: (context) => PickFromMap(LatLng(latitude, longitude))));
-                  setState(() {
-                    place = _details;
-                  });
-                  context.read<AddPostProvider>().selectedAddress =
-                      _details?.result.formattedAddress;
+                  // setState(() {
+                  //   place = _details;
+                  // });
+                  context.read<AddPostProvider>()
+                    ..selectedAddress = (_details?.result.name ?? '') +
+                        (_details != null ? ', ' : '') +
+                        (_details?.result.formattedAddress ?? '')
+                    ..geometry = _details?.result.geometry;
+                  Navigator.pop(context);
                 }
               },
               icon: Image.asset("assets/locate.png", height: 16),
@@ -104,7 +114,7 @@ class _PlacePickerNewState extends State<PlacePickerNew> {
     Fluttertoast.showToast(msg: value.errorMessage ?? '');
   }
 
-  Future<void> getPrediction() async {
+  Future<PlacesDetailsResponse?> showPlaceAutoCompletePage() async {
     Prediction? p = await PlacesAutocomplete.show(
       context: context,
       apiKey: GMap_Api_Key,
@@ -132,14 +142,12 @@ class _PlacePickerNewState extends State<PlacePickerNew> {
         apiHeaders: await const GoogleApiHeaders().getHeaders(),
       );
       PlacesDetailsResponse _details = await places.getDetailsByPlaceId(p.placeId!);
-      setState(() {
-        place = _details;
-      });
-      final AddPostProvider provider = context.read<AddPostProvider>()
-        ..selectedAddress = _details.result.formattedAddress
-        ..geometry = _details.result.geometry;
+      // setState(() {
+      //   place = _details;
+      // });
+      return _details;
     } else {
-      return;
+      return null;
     }
     FocusScope.of(context).unfocus();
   }
