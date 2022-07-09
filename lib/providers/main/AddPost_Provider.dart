@@ -34,6 +34,12 @@ class AddPostProvider extends ChangeNotifier {
   final ApiProvider _apiProvider = ApiProvider();
   List<String> _tagsList = [];
   List<String> get tagsList => _tagsList;
+  String _description = '';
+  String get description => _description;
+  set description(String text) {
+    _description = text;
+    notifyListeners();
+  }
 
   Future<Null> addTags(String tagItem) async {
     _tagsList.add(tagItem);

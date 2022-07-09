@@ -65,7 +65,7 @@ class _AddNewPostState extends State<AddNewPost> {
             style: ThreeKmTextConstants.appBarTitleTextStyle,
           ),
           titleSpacing: 0,
-          actions: [_postUploadButton(context, imageList), SizedBox(width: 6)],
+          actions: [_postUploadButton(context), SizedBox(width: 6)],
           backgroundColor: Colors.white,
           elevation: 0.5,
           foregroundColor: Colors.black,
@@ -106,11 +106,12 @@ class _AddNewPostState extends State<AddNewPost> {
     );
   }
 
-  Center _postUploadButton(BuildContext context, AddPostProvider imageList) {
+  Center _postUploadButton(BuildContext context) {
     return Center(
       child: Consumer<AddPostProvider>(builder: (_, provider, __) {
         return ElevatedButton(
-          onPressed: provider.isCompressionOngoing
+          onPressed: provider.isCompressionOngoing ||
+                  (provider.description.trim().isEmpty && provider.getMoreImages.isEmpty)
               ? null
               : () {
                   FocusScope.of(context).unfocus();
@@ -124,17 +125,12 @@ class _AddNewPostState extends State<AddNewPost> {
                       Fluttertoast.showToast(msg: "Add either a description or upload image/video");
                       return;
                     }
-                    // if (provider.tagsList.length < 3) {
-                    //   Fluttertoast.showToast(msg: "Minimum 3 tags required");
-                    //   return;
-                    // }
-
                     Navigator.push(
                         context,
                         MaterialPageRoute(
                             builder: (context) => PostUploadPage(
                                   Title: _headLineController.text,
-                                  Story: _storyController.text,
+                                  Story: provider.description,
                                   address: provider.selectedAddress ?? "",
                                   lat: provider.geometry?.location.lat,
                                   long: provider.geometry?.location.lng,
@@ -159,10 +155,14 @@ class _AddNewPostState extends State<AddNewPost> {
   }
 
   TextFormField buildDescriptionField() {
+    final provider = context.read<AddPostProvider>();
     return TextFormField(
       autovalidateMode: AutovalidateMode.onUserInteraction,
       textAlignVertical: TextAlignVertical.top,
       controller: _storyController,
+      onChanged: (String text) {
+        provider.description = text;
+      },
       maxLines: null,
       // minLines: 2,
       maxLength: 2000,
