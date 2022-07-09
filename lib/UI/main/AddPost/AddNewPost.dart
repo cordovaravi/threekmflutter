@@ -110,38 +110,37 @@ class _AddNewPostState extends State<AddNewPost> {
     return Center(
       child: Consumer<AddPostProvider>(builder: (_, provider, __) {
         return ElevatedButton(
-          onPressed: () {
-            FocusScope.of(context).unfocus();
-            if (_formKey.currentState?.validate() ?? false) {
-              if (provider.selectedAddress == null) {
-                Fluttertoast.showToast(msg: "Location required");
-                return;
-              }
-              if (!(_storyController.text.trim().length > 0 ||
-                      imageList.getMoreImages
-                          .isNotEmpty /*||
-                        _headLineController.text.trim().length > 0*/
-                  )) {
-                Fluttertoast.showToast(msg: "Add either a description or upload image/video");
-                return;
-              }
-              // if (provider.tagsList.length < 3) {
-              //   Fluttertoast.showToast(msg: "Minimum 3 tags required");
-              //   return;
-              // }
+          onPressed: provider.isCompressionOngoing
+              ? null
+              : () {
+                  FocusScope.of(context).unfocus();
+                  if (_formKey.currentState?.validate() ?? false) {
+                    if (provider.selectedAddress == null) {
+                      Fluttertoast.showToast(msg: "Location required");
+                      return;
+                    }
+                    if (!(_storyController.text.trim().length > 0 ||
+                        provider.getMoreImages.isNotEmpty)) {
+                      Fluttertoast.showToast(msg: "Add either a description or upload image/video");
+                      return;
+                    }
+                    // if (provider.tagsList.length < 3) {
+                    //   Fluttertoast.showToast(msg: "Minimum 3 tags required");
+                    //   return;
+                    // }
 
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => PostUploadPage(
-                            Title: _headLineController.text,
-                            Story: _storyController.text,
-                            address: provider.selectedAddress ?? "",
-                            lat: provider.geometry?.location.lat,
-                            long: provider.geometry?.location.lng,
-                          )));
-            }
-          },
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => PostUploadPage(
+                                  Title: _headLineController.text,
+                                  Story: _storyController.text,
+                                  address: provider.selectedAddress ?? "",
+                                  lat: provider.geometry?.location.lat,
+                                  long: provider.geometry?.location.lng,
+                                )));
+                  }
+                },
           child: Text(
             "Post",
             style: GoogleFonts.poppins(fontWeight: FontWeight.w500, fontSize: 16),
@@ -468,22 +467,23 @@ class _AddNewPostState extends State<AddNewPost> {
   // }
 
   Widget _addPhotosVideosButton() {
-    return InkWell(
-      onTap: () {
-        FocusScope.of(context).unfocus();
-        _showImageVideoBottomModalSheet(context);
-      },
-      borderRadius: BorderRadius.circular(8),
-      child: Container(
-        padding: EdgeInsets.all(16),
-        // height: MediaQuery.of(context).size.height * 0.1,
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          color: const Color(0xfff5f5f5),
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Consumer<AddPostProvider>(
-          builder: (context, provider, _) => Container(
+    return Consumer<AddPostProvider>(
+      builder: (context, provider, __) => InkWell(
+        onTap: provider.isCompressionOngoing
+            ? null
+            : () {
+                FocusScope.of(context).unfocus();
+                _showImageVideoBottomModalSheet(context);
+              },
+        borderRadius: BorderRadius.circular(8),
+        child: Container(
+          padding: EdgeInsets.all(16),
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: const Color(0xfff5f5f5),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Container(
             width:
                 MediaQuery.of(context).size.width * (provider.getMoreImages.length > 0 ? 0.6 : 0.4),
             child: Wrap(
@@ -494,12 +494,18 @@ class _AddNewPostState extends State<AddNewPost> {
                 Icon(
                   Icons.add_photo_alternate,
                   size: 24,
-                  color: const Color(0xff3E7EFF),
+                  color: provider.isCompressionOngoing
+                      ? ThreeKmTextConstants.grey3.withOpacity(0.5)
+                      : const Color(0xff3E7EFF),
                 ),
                 Text(
                   "Add Photos/Videos",
                   style: GoogleFonts.poppins(
-                      fontWeight: FontWeight.w600, fontSize: 14, color: const Color(0xff3E7EFF)),
+                      fontWeight: FontWeight.w600,
+                      fontSize: 14,
+                      color: provider.isCompressionOngoing
+                          ? ThreeKmTextConstants.grey3.withOpacity(0.5)
+                          : const Color(0xff3E7EFF)),
                 ),
               ],
             ),
