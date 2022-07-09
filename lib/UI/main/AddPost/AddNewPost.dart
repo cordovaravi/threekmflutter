@@ -65,60 +65,7 @@ class _AddNewPostState extends State<AddNewPost> {
             style: ThreeKmTextConstants.appBarTitleTextStyle,
           ),
           titleSpacing: 0,
-          actions: [
-            Center(
-              child: Consumer<AddPostProvider>(builder: (_, provider, __) {
-                return ElevatedButton(
-                  onPressed: () {
-                    FocusScope.of(context).unfocus();
-                    if (_formKey.currentState?.validate() ?? false) {
-                      if (provider.selectedAddress == null) {
-                        Fluttertoast.showToast(msg: "Location required");
-                        return;
-                      }
-                      if (!(_storyController.text.trim().length > 0 ||
-                              imageList.getMoreImages
-                                  .isNotEmpty /*||
-                          _headLineController.text.trim().length > 0*/
-                          )) {
-                        Fluttertoast.showToast(
-                            msg: "Add either a description or upload image/video");
-                        return;
-                      }
-                      // if (provider.tagsList.length < 3) {
-                      //   Fluttertoast.showToast(msg: "Minimum 3 tags required");
-                      //   return;
-                      // }
-
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => PostUploadPage(
-                                    Title: _headLineController.text,
-                                    Story: _storyController.text,
-                                    address: provider.selectedAddress ?? "",
-                                    lat: provider.geometry?.location.lat,
-                                    long: provider.geometry?.location.lng,
-                                  )));
-                    }
-                  },
-                  child: Text(
-                    "Post",
-                    style: GoogleFonts.poppins(fontWeight: FontWeight.w500, fontSize: 16),
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    primary: provider.selectedAddress != null
-                        ? const Color(0xff3E7EFF)
-                        : const Color(0xffF1F2F6),
-                    elevation: 0,
-                    shape: const StadiumBorder(),
-                    padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
-                  ),
-                );
-              }),
-            ),
-            SizedBox(width: 6)
-          ],
+          actions: [_postUploadButton(context, imageList), SizedBox(width: 6)],
           backgroundColor: Colors.white,
           elevation: 0.5,
           foregroundColor: Colors.black,
@@ -132,15 +79,12 @@ class _AddNewPostState extends State<AddNewPost> {
             keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
             children: [
               SizedBox(height: 20),
-              // Location
               locationSection(context),
               Divider(color: Color(0xFFa7abad).withOpacity(0.5), thickness: 1),
               SizedBox(height: 20),
               buildMediaHeading,
               SizedBox(height: 2),
-              imageList.getMoreImages.length > 0
-                  ? buildImageGrid(imageList)
-                  : const SizedBox.shrink(),
+              buildImageGrid(imageList),
               SizedBox(height: 4),
               _addPhotosVideosButton(),
               SizedBox(height: 30),
@@ -159,6 +103,59 @@ class _AddNewPostState extends State<AddNewPost> {
           ),
         ),
       ),
+    );
+  }
+
+  Center _postUploadButton(BuildContext context, AddPostProvider imageList) {
+    return Center(
+      child: Consumer<AddPostProvider>(builder: (_, provider, __) {
+        return ElevatedButton(
+          onPressed: () {
+            FocusScope.of(context).unfocus();
+            if (_formKey.currentState?.validate() ?? false) {
+              if (provider.selectedAddress == null) {
+                Fluttertoast.showToast(msg: "Location required");
+                return;
+              }
+              if (!(_storyController.text.trim().length > 0 ||
+                      imageList.getMoreImages
+                          .isNotEmpty /*||
+                        _headLineController.text.trim().length > 0*/
+                  )) {
+                Fluttertoast.showToast(msg: "Add either a description or upload image/video");
+                return;
+              }
+              // if (provider.tagsList.length < 3) {
+              //   Fluttertoast.showToast(msg: "Minimum 3 tags required");
+              //   return;
+              // }
+
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => PostUploadPage(
+                            Title: _headLineController.text,
+                            Story: _storyController.text,
+                            address: provider.selectedAddress ?? "",
+                            lat: provider.geometry?.location.lat,
+                            long: provider.geometry?.location.lng,
+                          )));
+            }
+          },
+          child: Text(
+            "Post",
+            style: GoogleFonts.poppins(fontWeight: FontWeight.w500, fontSize: 16),
+          ),
+          style: ElevatedButton.styleFrom(
+            primary: provider.selectedAddress != null
+                ? const Color(0xff3E7EFF)
+                : const Color(0xffF1F2F6),
+            elevation: 0,
+            shape: const StadiumBorder(),
+            padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+          ),
+        );
+      }),
     );
   }
 
@@ -265,100 +262,104 @@ class _AddNewPostState extends State<AddNewPost> {
 
   Consumer<AddPostProvider> buildImageGrid(AddPostProvider imageList) {
     return Consumer<AddPostProvider>(builder: (context, provider, _) {
-      return GridView.builder(
-          physics: NeverScrollableScrollPhysics(),
-          shrinkWrap: true,
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3, mainAxisSpacing: 4, crossAxisSpacing: 4),
-          itemCount: imageList.getMoreImages.length + (provider.isCompressionOngoing ? 1 : 0),
-          itemBuilder: (BuildContext context, int index) {
-            return index == imageList.getMoreImages.length
-                ?
-                // Placeholder item during video processing event
-                provider.isCompressionOngoing
-                    ? StreamBuilder<double>(
-                        stream: provider.lightCompressor?.onProgressUpdated,
-                        builder: (context, AsyncSnapshot<dynamic> snapshot) {
-                          return Stack(children: [
-                            Visibility(
-                              visible: provider.isCompressionOngoing,
-                              child: Positioned.fill(
-                                child: Container(
-                                  height: 82,
-                                  width: 82,
-                                  padding: EdgeInsets.only(left: 5, top: 5),
-                                  clipBehavior: Clip.hardEdge,
-                                  decoration: BoxDecoration(
-                                      color: ThreeKmTextConstants.black,
-                                      borderRadius: BorderRadius.circular(8)),
-                                  alignment: Alignment.topLeft,
-                                  child: Icon(
-                                    Icons.videocam,
-                                    size: 20,
-                                    color: ThreeKmTextConstants.white,
+      return Visibility(
+        visible: provider.getMoreImages.isNotEmpty ||
+            (provider.getMoreImages.isEmpty && provider.isCompressionOngoing),
+        child: GridView.builder(
+            physics: NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3, mainAxisSpacing: 4, crossAxisSpacing: 4),
+            itemCount: imageList.getMoreImages.length + (provider.isCompressionOngoing ? 1 : 0),
+            itemBuilder: (BuildContext context, int index) {
+              return index == imageList.getMoreImages.length
+                  ?
+                  // Placeholder item during video processing event
+                  provider.isCompressionOngoing
+                      ? StreamBuilder<double>(
+                          stream: provider.lightCompressor?.onProgressUpdated,
+                          builder: (context, AsyncSnapshot<dynamic> snapshot) {
+                            return Stack(children: [
+                              Visibility(
+                                visible: provider.isCompressionOngoing,
+                                child: Positioned.fill(
+                                  child: Container(
+                                    height: 82,
+                                    width: 82,
+                                    padding: EdgeInsets.only(left: 5, top: 5),
+                                    clipBehavior: Clip.hardEdge,
+                                    decoration: BoxDecoration(
+                                        color: ThreeKmTextConstants.black,
+                                        borderRadius: BorderRadius.circular(8)),
+                                    alignment: Alignment.topLeft,
+                                    child: Icon(
+                                      Icons.videocam,
+                                      size: 20,
+                                      color: ThreeKmTextConstants.white,
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                            Center(
-                                child: Container(
-                                    height: 55,
-                                    width: 55,
-                                    child: CircularProgressIndicator(
-                                        strokeWidth: 6,
-                                        backgroundColor: ThreeKmTextConstants.white,
-                                        color: ThreeKmTextConstants.blue2,
-                                        value: snapshot.data / 100))),
-                            Center(
-                                child: Text('${snapshot.data.toStringAsFixed(0)}%',
-                                    style: TextStyle(
-                                        color: ThreeKmTextConstants.white,
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.w600)))
-                          ]);
-                        })
-                    : SizedBox.shrink()
-                : Stack(
-                    children: [
-                      Positioned.fill(
-                        child: Container(
-                          height: 82,
-                          width: 82,
-                          clipBehavior: Clip.hardEdge,
-                          decoration: BoxDecoration(
-                              color: const Color(0xffD9D9D9),
-                              borderRadius: BorderRadius.circular(8)),
-                          child: imageList.getMoreImages[index].path.contains("mp4")
-                              ? Image.asset(
-                                  "assets/ring_icon.png",
-                                  fit: BoxFit.cover,
-                                )
-                              : Image.file(imageList.getMoreImages[index], fit: BoxFit.cover),
-                        ),
-                      ),
-                      Positioned(
-                        right: 0,
-                        top: 0,
-                        child: Container(
-                            height: 20,
-                            width: 20,
-                            // margin: EdgeInsets.all(20),
+                              Center(
+                                  child: Container(
+                                      height: 55,
+                                      width: 55,
+                                      child: CircularProgressIndicator(
+                                          strokeWidth: 6,
+                                          backgroundColor: ThreeKmTextConstants.white,
+                                          color: ThreeKmTextConstants.blue2,
+                                          value: snapshot.data / 100))),
+                              Center(
+                                  child: Text('${snapshot.data.toStringAsFixed(0)}%',
+                                      style: TextStyle(
+                                          color: ThreeKmTextConstants.white,
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.w600)))
+                            ]);
+                          })
+                      : SizedBox.shrink()
+                  : Stack(
+                      children: [
+                        Positioned.fill(
+                          child: Container(
+                            height: 82,
+                            width: 82,
+                            clipBehavior: Clip.hardEdge,
                             decoration: BoxDecoration(
-                                color: Color(0xffFF5858), borderRadius: BorderRadius.circular(8)),
-                            child: InkWell(
-                              onTap: () {
-                                context.read<AddPostProvider>().removeImages(index);
-                              },
-                              child: Icon(
-                                FeatherIcons.x,
-                                size: 12,
-                                color: Colors.white,
-                              ),
-                            )),
-                      ),
-                    ],
-                  );
-          });
+                                color: const Color(0xffD9D9D9),
+                                borderRadius: BorderRadius.circular(8)),
+                            child: imageList.getMoreImages[index].path.contains("mp4")
+                                ? Image.asset(
+                                    "assets/ring_icon.png",
+                                    fit: BoxFit.cover,
+                                  )
+                                : Image.file(imageList.getMoreImages[index], fit: BoxFit.cover),
+                          ),
+                        ),
+                        Positioned(
+                          right: 0,
+                          top: 0,
+                          child: Container(
+                              height: 20,
+                              width: 20,
+                              // margin: EdgeInsets.all(20),
+                              decoration: BoxDecoration(
+                                  color: Color(0xffFF5858), borderRadius: BorderRadius.circular(8)),
+                              child: InkWell(
+                                onTap: () {
+                                  context.read<AddPostProvider>().removeImages(index);
+                                },
+                                child: Icon(
+                                  FeatherIcons.x,
+                                  size: 12,
+                                  color: Colors.white,
+                                ),
+                              )),
+                        ),
+                      ],
+                    );
+            }),
+      );
     });
   }
 

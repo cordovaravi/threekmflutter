@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_maps_webservice/directions.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
@@ -263,6 +264,7 @@ class AddPostProvider extends ChangeNotifier {
   // compression process
   LightCompressor? lightCompressor;
   bool isCompressionOngoing = false;
+
   void compressVideoFile(File pickedFile) async {
     String? _filePath;
     String _desFile;
@@ -292,8 +294,10 @@ class AddPostProvider extends ChangeNotifier {
       _desFile = response.destinationPath;
       addImages(File(response.destinationPath));
     } else if (response is OnFailure) {
+      Fluttertoast.showToast(msg: "Unable to process video.\nPlease try again later.");
       print("compression failed");
     } else if (response is OnCancelled) {
+      Fluttertoast.showToast(msg: "Cancelled");
       print("compression cancelled");
     }
   }
