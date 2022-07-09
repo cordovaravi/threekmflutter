@@ -77,10 +77,12 @@ class _AddNewPostState extends State<AddNewPost> {
                         return;
                       }
                       if (!(_storyController.text.trim().length > 0 ||
-                          imageList.getMoreImages.isNotEmpty ||
-                          _headLineController.text.trim().length > 0)) {
+                              imageList.getMoreImages
+                                  .isNotEmpty /*||
+                          _headLineController.text.trim().length > 0*/
+                          )) {
                         Fluttertoast.showToast(
-                            msg: "Add either a headline, description or upload image/video");
+                            msg: "Add either a description or upload image/video");
                         return;
                       }
                       // if (provider.tagsList.length < 3) {
@@ -99,30 +101,6 @@ class _AddNewPostState extends State<AddNewPost> {
                                     long: provider.geometry?.location.lng,
                                   )));
                     }
-                    // if (_formKey.currentState!.validate()) {
-                    //   if (_geometry?.location.lat != null) {
-                    //     context
-                    //         .read<AddPostProvider>()
-                    //         .uploadPng(
-                    //             context,
-                    //             _headLineController.text,
-                    //             _storyController.text,
-                    //             _selecetdAddress ?? "",
-                    //             _geometry!.location.lat,
-                    //             _geometry!.location.lng)
-                    //         .whenComplete(() {
-                    //       Navigator.pushAndRemoveUntil(
-                    //           context,
-                    //           MaterialPageRoute(
-                    //               builder: (context) => TabBarNavigation(
-                    //                     redirectedFromPost: true,
-                    //                   )),
-                    //           (route) => false);
-                    //     });
-                    //   } else {
-                    //     CustomSnackBar(context, Text("Please Select Location"));
-                    //   }
-                    // }
                   },
                   child: Text(
                     "Post",
