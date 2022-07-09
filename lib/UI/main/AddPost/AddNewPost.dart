@@ -159,19 +159,19 @@ class _AddNewPostState extends State<AddNewPost> {
               Divider(color: Color(0xFFa7abad).withOpacity(0.5), thickness: 1),
               SizedBox(height: 20),
               buildMediaHeading,
-              SizedBox(height: 5),
+              SizedBox(height: 2),
               imageList.getMoreImages.length > 0
                   ? buildImageGrid(imageList)
                   : const SizedBox.shrink(),
-              SizedBox(height: 10),
+              SizedBox(height: 4),
               _addPhotosVideosButton(),
               SizedBox(height: 30),
+              builddescriptionHeading,
+              buildDescriptionField(),
+              SizedBox(height: 20),
               buildPostTitleHeader,
               buildPostTitleField(),
               SizedBox(height: 20),
-              builddescriptionHeading,
-              buildDescriptionField(),
-              SizedBox(height: 30),
               buildTagsHeader,
               SizedBox(height: 6),
               buildTags,
@@ -194,7 +194,7 @@ class _AddNewPostState extends State<AddNewPost> {
       maxLength: 2000,
       style: ThreeKmTextConstants.tk16PXLatoBlackRegular.copyWith(
         color: Color(0xFF0F0F2D),
-        fontWeight: FontWeight.w500,
+        fontWeight: FontWeight.w400,
       ),
       decoration: buildInputDecoration.copyWith(hintText: "Enter your text here"),
     );
@@ -212,8 +212,10 @@ class _AddNewPostState extends State<AddNewPost> {
       // maxLengthEnforcement: MaxLengthEnforcement.enforced,
       style: ThreeKmTextConstants.tk16PXLatoBlackRegular.copyWith(
         color: Color(0xFF0F0F2D),
-        fontWeight: FontWeight.w500,
+        fontWeight: FontWeight.w400,
       ),
+      minLines: 1,
+      maxLines: null,
       decoration: buildInputDecoration.copyWith(hintText: "Enter your Headline/Title"),
     );
   }
@@ -289,7 +291,7 @@ class _AddNewPostState extends State<AddNewPost> {
           physics: NeverScrollableScrollPhysics(),
           shrinkWrap: true,
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3, mainAxisSpacing: 3, crossAxisSpacing: 3),
+              crossAxisCount: 3, mainAxisSpacing: 4, crossAxisSpacing: 4),
           itemCount: imageList.getMoreImages.length + (provider.isCompressionOngoing ? 1 : 0),
           itemBuilder: (BuildContext context, int index) {
             return index == imageList.getMoreImages.length
