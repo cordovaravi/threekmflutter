@@ -1,18 +1,10 @@
-import 'dart:convert';
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:google_api_headers/google_api_headers.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_webservice/places.dart';
-import 'package:provider/provider.dart';
-import 'package:threekm/Custom_library/location2.0/lib/entities/address_component.dart';
 import 'package:threekm/Custom_library/location2.0/lib/entities/location_result.dart';
-import 'package:threekm/providers/Location/locattion_Provider.dart';
-import 'package:threekm/providers/main/AddPost_Provider.dart';
 import 'package:threekm/utils/api_paths.dart';
-import 'package:http/http.dart' as http;
 import 'package:threekm/utils/threekm_textstyles.dart';
 
 class PickFromMap extends StatefulWidget {

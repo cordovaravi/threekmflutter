@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -61,7 +60,7 @@ class _AddNewPostState extends State<AddNewPost> {
       child: Scaffold(
         appBar: AppBar(
           title: Text(
-            "New Post",
+            "Add Post",
             style: ThreeKmTextConstants.appBarTitleTextStyle,
           ),
           titleSpacing: 0,
@@ -91,10 +90,10 @@ class _AddNewPostState extends State<AddNewPost> {
               builddescriptionHeading,
               buildDescriptionField(),
               SizedBox(height: 20),
-              buildPostTitleHeader,
+              buildPostTitleHeading,
               buildPostTitleField(),
               SizedBox(height: 20),
-              buildTagsHeader,
+              buildTagsHeading,
               SizedBox(height: 6),
               buildTags,
               // SizedBox(height: 16),
@@ -194,13 +193,20 @@ class _AddNewPostState extends State<AddNewPost> {
     );
   }
 
-  Row get buildPostTitleHeader {
-    return Row(
+  Column get buildPostTitleHeading {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text("Headline/Title", style: _titleStyle),
-        SizedBox(width: 5),
-        Text("(optional)", style: _titleStyle.copyWith(fontSize: 12)),
+        Row(mainAxisSize: MainAxisSize.min, children: [
+          Text("Headline/Title ", style: _titleStyle),
+          Text("(optional)", style: _titleStyle.copyWith(fontSize: 12)),
+        ]),
+        SizedBox(height: 2),
+        Text(
+          "Adding a Headline will help your post to stand out",
+          style: _titleStyle.copyWith(fontSize: 11, color: ThreeKmTextConstants.grey2),
+        ),
       ],
     );
   }
@@ -212,24 +218,7 @@ class _AddNewPostState extends State<AddNewPost> {
           FocusScope.of(context).unfocus();
           if (context.read<LocationProvider>().ispermitionGranted) {
             Navigator.push(context, MaterialPageRoute(builder: (context) => AddPostLocation()));
-          } // Future.delayed(Duration.zero, () {
-          //   context.read<LocationProvider>().getLocation().whenComplete(() async {
-          //     final _locationProvider = context.read<LocationProvider>().getlocationData;
-          //     final kInitialPosition =
-          //         LatLng(_locationProvider!.latitude!, _locationProvider.longitude!);
-          //     if (_locationProvider != null) {
-          //       LocationResult? result = await Navigator.push(
-          //           context,
-          //           MaterialPageRoute(
-          //             builder: (context) => PlacePicker(
-          //               GMap_Api_Key,
-          //               displayLocation: kInitialPosition,
-          //             ),
-          //           ));
-          //       provider.selectedAddress = result?.formattedAddress;
-          //     }
-          //   });
-          // });
+          }
         }
 
         return Column(
@@ -395,7 +384,7 @@ class _AddNewPostState extends State<AddNewPost> {
   UnderlineInputBorder get _underlineInputBorder =>
       UnderlineInputBorder(borderSide: BorderSide(color: const Color(0xff7c7c7c)));
 
-  Widget get buildTagsHeader => Container(
+  Widget get buildTagsHeading => Container(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
@@ -406,8 +395,8 @@ class _AddNewPostState extends State<AddNewPost> {
             ]),
             SizedBox(height: 2),
             Text(
-              "Adding tags will help your post reach more more people",
-              style: _titleStyle.copyWith(fontSize: 10),
+              "Adding tags will help your post reach more people",
+              style: _titleStyle.copyWith(fontSize: 11, color: ThreeKmTextConstants.grey2),
             ),
           ],
         ),
