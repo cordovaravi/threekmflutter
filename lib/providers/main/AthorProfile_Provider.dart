@@ -135,9 +135,14 @@ class AutthorProfileProvider extends ChangeNotifier {
   bool _gettingAuthorprofile = false;
   bool get gettingAuthorprofile => _gettingAuthorprofile;
 
+  _clearData() async {
+    _authorProfilePostModel?.data.result?.posts?.clear();
+  }
+
   // get Author profile data and post
   Future<Null> getAuthorProfile(
       {required int authorId, String? authorType, String? language}) async {
+    await _clearData();
     _gettingAuthorprofile = true;
     notifyListeners();
     String? _token = await _apiProvider.getToken();

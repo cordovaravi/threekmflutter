@@ -17,10 +17,11 @@ import 'package:threekm/Custom_library/BoldText/Text_chunking.dart';
 import 'package:threekm/Custom_library/src/reaction.dart';
 import 'package:threekm/UI/main/News/PostView.dart';
 import 'package:threekm/UI/main/Profile/AuthorProfile.dart';
+import 'package:threekm/UI/main/Profile/MyProfilePost.dart';
 import 'package:threekm/commenwidgets/CustomSnakBar.dart';
 import 'package:threekm/commenwidgets/commenwidget.dart';
-import 'package:threekm/commenwidgets/fullImage.dart';
 import 'package:threekm/providers/Global/logged_in_or_not.dart';
+import 'package:threekm/providers/ProfileInfo/ProfileInfo_Provider.dart';
 import 'package:threekm/providers/main/AthorProfile_Provider.dart';
 import 'package:threekm/providers/main/NewsFeed_Provider.dart';
 import 'package:threekm/providers/main/newsList_provider.dart';
@@ -124,17 +125,31 @@ class _CardUIState extends State<CardUI> {
                 data.author?.image != null
                     ? InkWell(
                         onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => AuthorProfile(
-                                      authorType: data.authorType,
-                                      // page: 1,
-                                      // authorType:
-                                      //     "user",
-                                      id: data.author!.id!,
-                                      avatar: data.author!.image!,
-                                      userName: data.author!.name!)));
+                          if (context.read<ProfileInfoProvider>().UserName !=
+                              data.author!.name!) {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => AuthorProfile(
+                                        authorType: data.authorType,
+                                        // page: 1,
+                                        // authorType:
+                                        //     "user",
+                                        id: data.author!.id!,
+                                        avatar: data.author!.image!,
+                                        userName: data.author!.name!)));
+                          } else {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => MyProfilePost(
+                                        isFromSelfProfileNavigate: true,
+                                        page: 1,
+                                        authorType: "",
+                                        id: data.author!.id!,
+                                        avatar: "",
+                                        userName: data.author!.name!)));
+                          }
                         },
                         child: ClipRRect(
                             borderRadius: BorderRadius.circular(80),

@@ -24,6 +24,7 @@ import 'package:threekm/providers/main/AthorProfile_Provider.dart';
 import 'package:threekm/providers/main/NewsFeed_Provider.dart';
 import 'package:threekm/providers/main/newsList_provider.dart';
 import 'package:threekm/providers/main/singlePost_provider.dart';
+import 'package:threekm/utils/Extension/capital.dart';
 import 'package:threekm/utils/slugUrl.dart';
 import 'package:threekm/utils/threekm_textstyles.dart';
 import 'package:threekm/widgets/emotion_Button.dart';
@@ -174,35 +175,37 @@ class _PostViewState extends State<PostView> {
                                       //mainAxisAlignment: MainAxisAlignment.center,
                                       children: [
                                         InkWell(
-                                           onTap: () {
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    AuthorProfile(
-                                                        authorType:
-                                                            newsData.authorType,
-                                                        id: newsData
-                                                            .author!.id!,
-                                                        avatar: newsData
-                                                            .author!.image!,
-                                                        userName: newsData
-                                                            .author!.name!)));
-                                      },
-                                      child:  Container(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.4,
-                                          child: Text(
-                                            newsData.author!.name.toString(),
-                                            style: ThreeKmTextConstants
-                                                .tk14PXPoppinsBlackBold,
-                                            overflow: TextOverflow.ellipsis,
+                                          onTap: () {
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        AuthorProfile(
+                                                            authorType: newsData
+                                                                .authorType,
+                                                            id:
+                                                                newsData.author!
+                                                                    .id!,
+                                                            avatar: newsData
+                                                                .author!.image!,
+                                                            userName: newsData
+                                                                .author!
+                                                                .name!)));
+                                          },
+                                          child: Container(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.4,
+                                            child: Text(
+                                              newsData.author!.name.toString(),
+                                              style: ThreeKmTextConstants
+                                                  .tk14PXPoppinsBlackBold,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
                                           ),
                                         ),
-                                        ),
-                                      
+
                                         Row(
                                           children: [
                                             Text(newsData.displayDate.toString()
@@ -544,7 +547,12 @@ class _PostViewState extends State<PostView> {
                                   children: [
                                     TextButton.icon(
                                       label: Text(
-                                        'Like',
+                                        newsData.emotion != null &&
+                                                newsData.emotion != ""
+                                            ? newsData.emotion
+                                                .toString()
+                                                .capitalize()
+                                            : 'Like',
                                         style: ThreeKmTextConstants
                                             .tk12PXPoppinsBlackSemiBold,
                                       ),

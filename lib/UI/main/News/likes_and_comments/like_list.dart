@@ -216,11 +216,17 @@ class _LikeListState extends State<LikeList> {
           itemCount: userList.length,
           itemBuilder: (context, index) => ListTile(
                 // TODO: for future build
-                onTap: () => goToProfile(
-                  users: userList,
-                  index: index,
-                ),
-
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => AuthorProfile(
+                                authorType: userList[index].userType,
+                                id: userList[index].id!,
+                                avatar: userList[index].avatar ?? '',
+                                userName: userList[index].name ?? '',
+                              )));
+                },
                 leading: Stack(
                   children: [
                     Container(

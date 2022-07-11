@@ -49,16 +49,18 @@ class _AuthorProfileState extends State<AuthorProfile>
   @override
   void initState() {
     _tabController = TabController(length: 1, vsync: this);
-    Future.delayed(Duration.zero, () {
-      context.read<AutthorProfileProvider>().getAuthorProfile(
-          authorId: widget.id,
-          authorType: widget.authorType,
-          language: context.read<AppLanguage>().appLocal == Locale("en")
-              ? "en"
-              : context.read<AppLanguage>().appLocal == Locale("mr")
-                  ? "mr"
-                  : "hi");
-    });
+    if (mounted) {
+      Future.microtask(() {
+        context.read<AutthorProfileProvider>().getAuthorProfile(
+            authorId: widget.id,
+            authorType: widget.authorType,
+            language: context.read<AppLanguage>().appLocal == Locale("en")
+                ? "en"
+                : context.read<AppLanguage>().appLocal == Locale("mr")
+                    ? "mr"
+                    : "hi");
+      });
+    }
     super.initState();
   }
 
@@ -72,9 +74,10 @@ class _AuthorProfileState extends State<AuthorProfile>
   @override
   Widget build(BuildContext context) {
     final selfProfile = context.watch<AutthorProfileProvider>();
-    var authorProfile = selfProfile.authorProfilePostData!;
+    var authorProfile = selfProfile.authorProfilePostData;
     return Scaffold(
-      body: selfProfile.gettingAuthorprofile == true
+      body: selfProfile.gettingAuthorprofile == true &&
+              selfProfile.authorProfilePostData != null
           ? Container(
               height: MediaQuery.of(context).size.height,
               width: MediaQuery.of(context).size.width,
@@ -136,14 +139,14 @@ class _AuthorProfileState extends State<AuthorProfile>
                                           ),
                                           Container(
                                               //width: 298,
-                                              child: authorProfile.data.result!
+                                              child: authorProfile?.data.result!
                                                           .author!.about
                                                           .toString() !=
                                                       "null"
                                                   ? Column(
                                                       children: [
                                                         Text(
-                                                          "${authorProfile.data.result!.author!.about}",
+                                                          "${authorProfile?.data.result!.author!.about}",
                                                           maxLines: 2,
                                                           overflow: TextOverflow
                                                               .ellipsis,
@@ -187,11 +190,12 @@ class _AuthorProfileState extends State<AuthorProfile>
                                                   children: [
                                                     Text(
                                                         authorProfile
-                                                            .data
-                                                            .result!
-                                                            .author!
-                                                            .followers
-                                                            .toString(),
+                                                                ?.data
+                                                                .result
+                                                                ?.author
+                                                                ?.followers
+                                                                .toString() ??
+                                                            "",
                                                         style:
                                                             GoogleFonts.poppins(
                                                                 color: Colors
@@ -214,11 +218,12 @@ class _AuthorProfileState extends State<AuthorProfile>
                                                   children: [
                                                     Text(
                                                         authorProfile
-                                                            .data
-                                                            .result!
-                                                            .author!
-                                                            .totalPosts
-                                                            .toString(),
+                                                                ?.data
+                                                                .result
+                                                                ?.author
+                                                                ?.totalPosts
+                                                                .toString() ??
+                                                            "",
                                                         style:
                                                             GoogleFonts.poppins(
                                                                 color: Colors
@@ -241,11 +246,12 @@ class _AuthorProfileState extends State<AuthorProfile>
                                                   children: [
                                                     Text(
                                                         authorProfile
-                                                            .data
-                                                            .result!
-                                                            .author!
-                                                            .following
-                                                            .toString(),
+                                                                ?.data
+                                                                .result
+                                                                ?.author
+                                                                ?.following
+                                                                .toString() ??
+                                                            "",
                                                         style:
                                                             GoogleFonts.poppins(
                                                                 color: Colors
@@ -268,21 +274,35 @@ class _AuthorProfileState extends State<AuthorProfile>
                                             ),
                                           ),
                                           space(height: 10),
-                                          Consumer<AutthorProfileProvider>(
-                                              builder:
-                                                  (context, controller, _) {
-                                            return buildFollowingButton(
-                                                isLoading:
-                                                    controller.followLoading,
-                                                authorId: authorProfile
-                                                    .data.result!.author!.id!,
-                                                isFollowed: controller
-                                                    .authorProfilePostData!
-                                                    .data
-                                                    .result!
-                                                    .author!
-                                                    .isFollowed!);
-                                          })
+                                          buildFollowingButton(
+                                              isLoading:
+                                                  selfProfile.followLoading,
+                                              authorId: authorProfile?.data
+                                                      .result?.author?.id ??
+                                                  0,
+                                              isFollowed: authorProfile
+                                                      ?.data
+                                                      .result
+                                                      ?.author
+                                                      ?.isFollowed ??
+                                                  false)
+                                          // Consumer<AutthorProfileProvider>(
+                                          //     builder:
+                                          //         (context, controller, _) {
+                                          //   return buildFollowingButton(
+                                          //       isLoading:
+                                          //           controller.followLoading,
+                                          //       authorId: authorProfile?.data
+                                          //               .result?.author?.id ??
+                                          //           0,
+                                          //       isFollowed: controller
+                                          //               .authorProfilePostData
+                                          //               ?.data
+                                          //               .result
+                                          //               ?.author
+                                          //               ?.isFollowed ??
+                                          //           false);
+                                          // })
                                         ],
                                       ),
                                     ),
@@ -292,15 +312,16 @@ class _AuthorProfileState extends State<AuthorProfile>
                                       height: 36,
                                     ),
                                   ),
-                                  if (index == 0) ...{
+                                  if (index == 0 && authorProfile != null) ...{
                                     SliverList(
                                       delegate: SliverChildBuilderDelegate(
                                         (context, _index) {
-                                          return NewsCard(
-                                              avtar: widget.avatar,
-                                              authorName: widget.userName,
-                                              authorProfileModel: authorProfile,
-                                              index: _index);
+                                          return CardUI(
+                                            data: authorProfile
+                                                .data.result!.posts![_index],
+                                            providerType:
+                                                'AutthorProfileProvider',
+                                          );
                                         },
                                         childCount: authorProfile
                                             .data.result!.posts!.length,
@@ -318,8 +339,15 @@ class _AuthorProfileState extends State<AuthorProfile>
                         ),
                       )
                     : Container(
-                        child:
-                            Text("Oops Something went wrong please try later"),
+                        height: MediaQuery.of(context).size.height / 2,
+                        width: MediaQuery.of(context).size.width,
+                        color: Colors.white,
+                        child: Center(
+                          child: Transform.translate(
+                            offset: Offset(0, 0),
+                            child: CupertinoActivityIndicator(),
+                          ),
+                        ),
                       )
               ],
             ),

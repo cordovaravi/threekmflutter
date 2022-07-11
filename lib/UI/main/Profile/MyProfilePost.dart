@@ -149,22 +149,27 @@ class _MyProfilePostState extends State<MyProfilePost>
   @override
   void initState() {
     super.initState();
-    Future.delayed(Duration.zero, () {
-      context.read<AutthorProfileProvider>().getSelfProfile();
-      context.read<VerifyKYCCredential>().getUserProfileInfo();
-    });
+    if (mounted) {
+      Future.delayed(Duration.zero, () {
+        context.read<AutthorProfileProvider>().getSelfProfile();
+        context.read<VerifyKYCCredential>().getUserProfileInfo();
+      });
+    }
   }
 
   @override
   void didChangeDependencies() {
-    context.read<AutthorProfileProvider>().getSelfProfile();
-    final selfProfile = context.read<AutthorProfileProvider>();
-    var selfProfileModel = selfProfile.selfProfile;
-    if (selfProfileModel!.data!.result!.posts!.length >= 6)
-      selfProfileModel.data!.result!.posts!
-          .insert(5, newsListByCategoryModel.Post());
-    if (selfProfileModel.data!.result!.posts!.length < 6)
-      selfProfileModel.data!.result!.posts!.add(newsListByCategoryModel.Post());
+    if (mounted) {
+      context.read<AutthorProfileProvider>().getSelfProfile();
+      final selfProfile = context.read<AutthorProfileProvider>();
+      var selfProfileModel = selfProfile.selfProfile;
+      if (selfProfileModel!.data!.result!.posts!.length >= 6)
+        selfProfileModel.data!.result!.posts!
+            .insert(5, newsListByCategoryModel.Post());
+      if (selfProfileModel.data!.result!.posts!.length < 6)
+        selfProfileModel.data!.result!.posts!
+            .add(newsListByCategoryModel.Post());
+    }
     super.didChangeDependencies();
   }
 
@@ -323,95 +328,6 @@ class _MyProfilePostState extends State<MyProfilePost>
                                                       .copyWith(fontSize: 18),
                                                 ),
                                               ),
-                                              // if (addingAbout &&
-                                              //     selfProfileModel.data!.result!.author!.about ==
-                                              //         null) ...{
-                                              //   Container(
-                                              //     margin: EdgeInsets.only(),
-                                              //     child: TextFormField(
-                                              //       controller: _aboutTextController,
-                                              //       maxLines: 1,
-                                              //       minLines: null,
-                                              //       expands: false,
-                                              //       maxLength: 35,
-                                              //       textAlignVertical: TextAlignVertical.top,
-                                              //       maxLengthEnforcement:
-                                              //           MaxLengthEnforcement.enforced,
-                                              //       decoration: InputDecoration(
-                                              //         border: InputBorder.none,
-                                              //       ),
-                                              //       validator: (String? about) {
-                                              //         if (about == null) {
-                                              //           return "Please add About!";
-                                              //         }
-                                              //       },
-                                              //       buildCounter: (context,
-                                              //           {required currentLength,
-                                              //           required isFocused,
-                                              //           maxLength}) {
-                                              //         WidgetsBinding.instance!
-                                              //             .addPostFrameCallback((timeStamp) {
-                                              //           setState(() {
-                                              //             aboutCount = currentLength;
-                                              //           });
-                                              //         });
-                                              //         return Text(
-                                              //           "($aboutCount/35)",
-                                              //           style: ThreeKmTextConstants
-                                              //               .tk12PXPoppinsWhiteRegular
-                                              //               .copyWith(
-                                              //             fontSize: 10.5,
-                                              //             fontWeight: FontWeight.w700,
-                                              //             color: Color(0xFF979EA4),
-                                              //           ),
-                                              //         );
-                                              //       },
-                                              //       style: ThreeKmTextConstants.tk16PXLatoBlackRegular
-                                              //           .copyWith(
-                                              //         color: Color(0xFF0F0F2D),
-                                              //         fontWeight: FontWeight.w500,
-                                              //       ),
-                                              //     ),
-                                              //     width: 335,
-                                              //     height: 68,
-                                              //     decoration: BoxDecoration(
-                                              //         color: Color(0xffF4F3F8),
-                                              //         border: Border.all(color: Color(0xffD5D5D5)),
-                                              //         borderRadius: BorderRadius.circular(15)),
-                                              //   ),
-                                              //   SizedBox(
-                                              //     height: 8,
-                                              //   ),
-                                              //   Consumer<AutthorProfileProvider>(
-                                              //     builder: (context, controller, _) {
-                                              //       return GestureDetector(
-                                              //         onTap: () {
-                                              //           controller.updateAbout(
-                                              //               context: context,
-                                              //               about: _aboutTextController.text);
-                                              //         },
-                                              //         child: Container(
-                                              //             height: 37,
-                                              //             width: 67,
-                                              //             decoration: BoxDecoration(
-                                              //                 borderRadius: BorderRadius.circular(18),
-                                              //                 color:
-                                              //                     Color(0xff3E7EFF).withOpacity(0.1)),
-                                              //             child: Center(
-                                              //               child: controller.updateLoading != true
-                                              //                   ? Text(
-                                              //                       "Save",
-                                              //                       style: ThreeKmTextConstants
-                                              //                           .tk14PXPoppinsBlackSemiBold
-                                              //                           .copyWith(
-                                              //                               color: Color(0xff3E7EFF)),
-                                              //                     )
-                                              //                   : CupertinoActivityIndicator(),
-                                              //             )),
-                                              //       );
-                                              //     },
-                                              //   )
-                                              // },
                                               widget.isFromSelfProfileNavigate ==
                                                       false
                                                   ? Column(
@@ -518,35 +434,6 @@ class _MyProfilePostState extends State<MyProfilePost>
                                                   ],
                                                 ),
                                               ),
-                                              // InkWell(
-                                              //   onTap: null,
-                                              //   //  () {
-                                              //   //   // Navigator.push(
-                                              //   //   //     context,
-                                              //   //   //     MaterialPageRoute(
-                                              //   //   //         builder: (_) => UserKycMain()));
-                                              //   //   // showKycMessage(context);
-                                              //   //   // Navigator.push(
-                                              //   //   //     context,
-                                              //   //   //     MaterialPageRoute(
-                                              //   //   //         builder: (context) =>
-                                              //   //   //             //VideoCompress()
-                                              //   //   //             AddNewPost()));
-                                              //   // },
-                                              //   child: Container(
-                                              //     height: 47,
-                                              //     alignment: Alignment.center,
-                                              //     width: MediaQuery.of(context).size.width,
-                                              //     margin: EdgeInsets.only(left: 16, right: 16),
-                                              //     decoration: BoxDecoration(
-                                              //         color: Color(0xff3E7EFF),
-                                              //         borderRadius: BorderRadius.circular(28)),
-                                              //     child: Text(
-                                              //       "Add Post",
-                                              //       style: TextStyle(color: Colors.white),
-                                              //     ),
-                                              //   ),
-                                              // ),
                                               Container(
                                                 margin: EdgeInsets.only(
                                                     left: 16, right: 16),
