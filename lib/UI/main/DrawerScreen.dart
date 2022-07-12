@@ -11,10 +11,13 @@ import 'package:threekm/UI/shop/address/saved_address.dart';
 import 'package:threekm/UI/shop/cart/cart_item_list_modal.dart';
 import 'package:threekm/UI/shop/cart/wishlist.dart';
 import 'package:threekm/UI/shop/checkout/past_order.dart';
+
+import 'package:threekm/UI/userkyc/user_kyc_main.dart';
 import 'package:threekm/UI/walkthrough/splash_screen.dart';
 import 'package:threekm/localization/localize.dart';
 import 'package:threekm/providers/ProfileInfo/ProfileInfo_Provider.dart';
 import 'package:threekm/providers/main/AthorProfile_Provider.dart';
+import 'package:threekm/providers/userKyc/verify_credential.dart';
 import 'package:threekm/utils/screen_util.dart';
 import 'package:threekm/utils/threekm_textstyles.dart';
 import 'package:threekm/utils/util_methods.dart';
@@ -157,6 +160,9 @@ class _CustomDrawerState extends State<CustomDrawer> {
 
   @override
   Widget build(BuildContext context) {
+    final userInfo = context.watch<VerifyKYCCredential>().userProfileInfo;
+    var data = userInfo.data?.result;
+
     return SingleChildScrollView(
         physics: BouncingScrollPhysics(),
         child: Column(
@@ -192,15 +198,20 @@ class _CustomDrawerState extends State<CustomDrawer> {
               height: 24,
             ),
             InkWell(
-              onTap: () {
-                //context.read<AddPostProvider>().deletImages();
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            //VideoCompress()
-                            AddNewPost()));
-              },
+              onTap: data != null && data.isVerified
+                  ? () {
+                      //context.read<AddPostProvider>().deletImages();
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  //VideoCompress()
+                                  AddNewPost()));
+                    }
+                  : () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (_) => UserKycMain()));
+                    },
               child: CustomDrawerItem(
                 icon: Icons.add,
                 label: AppLocalizations.of(context)
@@ -337,7 +348,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
             SizedBox(
               height: 24,
             ),
-            Text("version: 5.1.3"),
+            Text("version: 5.1.6"),
             SizedBox(
               height: 15,
             ),

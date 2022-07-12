@@ -35,7 +35,7 @@ class _VideoCompressState extends State<VideoCompress> {
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(
           backgroundColor: Color(0xff0F0F2D),
-          title: const Text('Crompressing your video'),
+          title: const Text('Processing your video'),
           actions: <Widget>[
             TextButton(
               child: const Text(

@@ -37,6 +37,7 @@ import 'package:threekm/providers/main/singlePost_provider.dart';
 import 'package:threekm/providers/shop/checkout/order_realtime_detail_provider.dart';
 import 'package:threekm/providers/shop/checkout/past_order_provider.dart';
 import 'package:threekm/providers/shop/shop_home_provider.dart';
+import 'package:threekm/providers/userKyc/verify_credential.dart';
 import 'package:threekm/theme/setup.dart';
 import 'Models/businessesModel/businesses_wishlist_model.dart';
 import 'Models/shopModel/cart_hive_model.dart';
@@ -275,7 +276,11 @@ class MyApp extends StatelessWidget {
 
           //Login or not check
           ChangeNotifierProvider<CheckLoginProvider>(
-              create: (context) => CheckLoginProvider())
+              create: (context) => CheckLoginProvider()),
+
+          ChangeNotifierProvider<VerifyKYCCredential>(
+              create: (context) => VerifyKYCCredential())
+
         ],
         child: Consumer<AppLanguage>(
           builder: (context, controller, child) {

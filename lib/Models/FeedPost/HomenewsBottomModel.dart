@@ -647,7 +647,8 @@ class NewsFeedBottomModel {
   dynamic error;
   Data? data;
 
-  factory NewsFeedBottomModel.fromJson(Map<String, dynamic> json) => NewsFeedBottomModel(
+  factory NewsFeedBottomModel.fromJson(Map<String, dynamic> json) =>
+      NewsFeedBottomModel(
         status: json["status"] == null ? null : json["status"],
         message: json["message"],
         error: json["error"],
@@ -682,53 +683,58 @@ class Result {
         posts: json["posts"] == null
             ? null
             : List<Post>.from(json["posts"].map((x) => Post.fromJson(x))),
-        tags: json["tags"] == null ? null : List<dynamic>.from(json["tags"].map((x) => x)),
-        areas: json["areas"] == null ? null : List<dynamic>.from(json["areas"].map((x) => x)),
+        tags: json["tags"] == null
+            ? null
+            : List<dynamic>.from(json["tags"].map((x) => x)),
+        areas: json["areas"] == null
+            ? null
+            : List<dynamic>.from(json["areas"].map((x) => x)),
       );
 }
 
 class Post {
-  Post({
-    this.postId,
-    this.submittedHeadline,
-    this.submittedStory,
-    this.headline,
-    this.story,
-    this.images,
-    this.videos,
-    this.type,
-    this.tags,
-    this.publishFrom,
-    this.author,
-    this.authorType,
-    this.authorClassification,
-    this.status,
-    this.originalLanguage,
-    this.impressions,
-    this.views,
-    this.postCreatedDate,
-    this.createdDate,
-    this.context,
-    this.isUgc,
-    this.likes,
-    this.comments,
-    this.locations,
-    this.userDetails,
-    this.creatorDetails,
-    this.id,
-    this.isVerified,
-    this.isLiked,
-    this.areas,
-    this.slugHeadline,
-    this.shares,
-    this.origHeadline,
-    this.origStory,
-    this.itemType,
-    this.preheaderLike,
-    this.preheaderComment,
-    this.latestComment,
-    this.emotion,
-  });
+  Post(
+      {this.postId,
+      this.submittedHeadline,
+      this.submittedStory,
+      this.headline,
+      this.story,
+      this.images,
+      this.videos,
+      this.type,
+      this.tags,
+      this.publishFrom,
+      this.author,
+      this.authorType,
+      this.authorClassification,
+      this.status,
+      this.originalLanguage,
+      this.impressions,
+      this.views,
+      this.postCreatedDate,
+      this.createdDate,
+      this.context,
+      this.isUgc,
+      this.likes,
+      this.comments,
+      this.locations,
+      this.userDetails,
+      this.creatorDetails,
+      this.id,
+      this.isVerified,
+      this.isLiked,
+      this.areas,
+      this.slugHeadline,
+      this.shares,
+      this.origHeadline,
+      this.origStory,
+      this.itemType,
+      this.preheaderLike,
+      this.preheaderComment,
+      this.latestComment,
+      this.emotion,
+      this.preaheaderLikeUser,
+      this.preheaderCommentUSer});
 
   int? postId;
   String? submittedHeadline;
@@ -769,6 +775,8 @@ class Post {
   String? preheaderComment;
   LatestComment? latestComment;
   String? emotion;
+  String? preaheaderLikeUser;
+  String? preheaderCommentUSer;
 
   factory Post.fromJson(Map<String, dynamic> json) => Post(
         postId: json["post_id"] == null ? null : json["post_id"],
@@ -837,6 +845,12 @@ class Post {
         preheaderComment: json["preheader_comment"],
         latestComment: LatestComment.fromJson(json['latest_comment']),
         emotion: json["emotion"] ?? "",
+        preaheaderLikeUser: json["preheader_like_user"] == null
+            ? null
+            : json["preheader_like_user"],
+        preheaderCommentUSer: json["preheader_comment_user"] == null
+            ? null
+            : json["preheader_comment_user"],
       );
 }
 

@@ -713,6 +713,7 @@ class _AddNewPostState extends State<AddNewPost> {
                         final pickedVideo =
                             await _imagePicker.pickVideo(source: ImageSource.gallery);
                         //final file = XFile(pickedVideo!.path);
+
                         Navigator.pop(context);
                         if (pickedVideo != null) {
                           // Navigator.push(

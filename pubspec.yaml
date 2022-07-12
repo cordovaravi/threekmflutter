@@ -6,7 +6,7 @@ description: A NewsApp With Ecommerce.
 publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 5.1.4+30019
+version: 5.1.9+30027
 
 environment:
   sdk: ">=2.12.0 <3.0.0"
@@ -51,8 +51,10 @@ dependencies:
   image_editor: ^1.0.2
   hive: ^2.0.5
   timeago: ^3.1.0
+  mime: 
+  dio: ^4.0.6
   #flutter_zoom_drawer: ^2.1.2
- # hidden_drawer_menu: ^3.0.1
+  # hidden_drawer_menu: ^3.0.1
   light_compressor: ^1.2.2
   sliding_up_panel: ^2.0.0+1
   #firebase
@@ -92,12 +94,13 @@ dependencies:
   flutter_rating_bar:
   timelines:
   positioned_tap_detector_2: ^1.0.4
-  webview_flutter: 
+  webview_flutter:
   flutter_html:
-
+  lazy_load_scrollview: ^1.3.0
+  rive: ^0.9.0
   html: ^0.15.0
 
-  lazy_load_scrollview: 
+  # lazy_load_scrollview: 
 
 
 dev_dependencies:
@@ -126,7 +129,9 @@ flutter:
     - assets/shopImg/
     - assets/BusinessesImg/
     - assets/dayzero/
+    - assets/json/
     - assets/reactions/
+    - assets/images/
     - assets/emojies/
     - assets/lottie/
 

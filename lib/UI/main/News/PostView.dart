@@ -21,7 +21,11 @@ import 'package:threekm/commenwidgets/CustomSnakBar.dart';
 import 'package:threekm/commenwidgets/commenwidget.dart';
 import 'package:threekm/providers/Global/logged_in_or_not.dart';
 import 'package:threekm/providers/localization_Provider/appLanguage_provider.dart';
+import 'package:threekm/providers/main/AthorProfile_Provider.dart';
+import 'package:threekm/providers/main/NewsFeed_Provider.dart';
+import 'package:threekm/providers/main/newsList_provider.dart';
 import 'package:threekm/providers/main/singlePost_provider.dart';
+import 'package:threekm/utils/Extension/capital.dart';
 import 'package:threekm/utils/slugUrl.dart';
 import 'package:threekm/utils/threekm_textstyles.dart';
 import 'package:threekm/widgets/emotion_Button.dart';
@@ -71,6 +75,19 @@ class _PostViewState extends State<PostView> {
   }
 
   final _imageKey = GlobalKey();
+
+  postlike(label, postId) {
+    context.read<SinglePostProvider>().postLike(postId.toString(), label);
+    context.read<NewsListProvider>().postLike(postId.toString(), label);
+    context.read<NewsFeedProvider>().postLike(postId.toString(), label);
+    context.read<AutthorProfileProvider>().postLike(postId.toString(), label);
+  }
+
+  void postUnlike(postId) {
+    context.read<NewsListProvider>().postUnLike(postId.toString());
+    context.read<NewsFeedProvider>().postUnLike(postId.toString());
+    context.read<AutthorProfileProvider>().postUnLike(postId.toString());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -144,18 +161,43 @@ class _PostViewState extends State<PostView> {
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       //mainAxisAlignment: MainAxisAlignment.center,
                                       children: [
-                                        Container(
-                                          width: MediaQuery.of(context).size.width * 0.4,
-                                          child: Text(
-                                            newsData.author!.name.toString(),
-                                            style: ThreeKmTextConstants.tk14PXPoppinsBlackBold,
-                                            overflow: TextOverflow.ellipsis,
+                                        InkWell(
+                                          onTap: () {
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        AuthorProfile(
+                                                            authorType: newsData
+                                                                .authorType,
+                                                            id:
+                                                                newsData.author!
+                                                                    .id!,
+                                                            avatar: newsData
+                                                                .author!.image!,
+                                                            userName: newsData
+                                                                .author!
+                                                                .name!)));
+                                          },
+                                          child: Container(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.4,
+                                            child: Text(
+                                              newsData.author!.name.toString(),
+                                              style: ThreeKmTextConstants
+                                                  .tk14PXPoppinsBlackBold,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
                                           ),
                                         ),
+
                                         Row(
                                           children: [
-                                            Text(
-                                                '${DateFormat('dd MMM yyyy HH:mm a').format(newsData.postCreatedDate!)}'),
+                                            Text(newsData.displayDate.toString()
+                                                // '${DateFormat('dd MMM yyyy HH:mm a').format(newsData.postCreatedDate!)}'
+                                                ),
                                           ],
                                         )
                                         // Text(newsData.author!.type.toString())
@@ -440,43 +482,71 @@ class _PostViewState extends State<PostView> {
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                   children: [
-                                    EmotionButton(
-                                        providerType: "postProvider",
-                                        isLiked: newsData.isLiked ?? false,
-                                        initalReaction: newsData.isLiked!
-                                            ? newsData.emotion != null && newsData.emotion != ""
-                                                ? Reaction(
-                                                    icon: Lottie.asset(
-                                                        "assets/lottie/${newsData.emotion}.json",
-                                                        width: 45,
-                                                        height: 45,
-                                                        fit: BoxFit.cover),
-                                                  )
-                                                : Reaction(
-                                                    icon: Lottie.asset("assets/lottie/like.json",
-                                                        width: 30, height: 30, repeat: false),
-                                                  )
-                                            : Reaction(
-                                                icon: Image.asset(
-                                                "assets/un_like_icon.png",
-                                                width: 22,
-                                                height: 19,
-                                              )),
-                                        selectedReaction: newsData.isLiked!
-                                            ? Reaction(
-                                                icon: Image.asset(
-                                                "assets/like_icon.png",
-                                                width: 22,
-                                                height: 19,
-                                              ))
-                                            : Reaction(
-                                                icon: Image.asset(
-                                                "assets/un_like_icon.png",
-                                                width: 22,
-                                                height: 19,
-                                              )),
-                                        postId: newsData.postId!.toInt(),
-                                        reactions: reactions),
+                                    TextButton.icon(
+                                      label: Text(
+                                        newsData.emotion != null &&
+                                                newsData.emotion != ""
+                                            ? newsData.emotion
+                                                .toString()
+                                                .capitalize()
+                                            : 'Like',
+                                        style: ThreeKmTextConstants
+                                            .tk12PXPoppinsBlackSemiBold,
+                                      ),
+                                      onPressed: () async {
+                                        if (await getAuthStatus()) {
+                                          if (newsData.isLiked == true) {
+                                            postUnlike(newsData.postId);
+                                          } else {
+                                            postlike("like", newsData.postId);
+                                          }
+                                        } else {
+                                          NaviagateToLogin(context);
+                                        }
+                                      },
+                                      icon: SinglePostEmotionButton(
+                                          isLiked: newsData.isLiked ?? false,
+                                          initalReaction: newsData.isLiked ??
+                                                  false
+                                              ? newsData.emotion != null &&
+                                                      newsData.emotion != ""
+                                                  ? Reaction(
+                                                      icon: Lottie.asset(
+                                                          "assets/lottie/${newsData.emotion}.json",
+                                                          width: 30,
+                                                          height: 30,
+                                                          repeat: false,
+                                                          fit: BoxFit.cover),
+                                                    )
+                                                  : Reaction(
+                                                      icon: Lottie.asset(
+                                                          "assets/lottie/like.json",
+                                                          width: 30,
+                                                          height: 30,
+                                                          repeat: false),
+                                                    )
+                                              : Reaction(
+                                                  icon: Image.asset(
+                                                  "assets/un_like_icon.png",
+                                                  width: 22,
+                                                  height: 19,
+                                                )),
+                                          selectedReaction: newsData.isLiked!
+                                              ? Reaction(
+                                                  icon: Image.asset(
+                                                  "assets/like_icon.png",
+                                                  width: 22,
+                                                  height: 19,
+                                                ))
+                                              : Reaction(
+                                                  icon: Image.asset(
+                                                  "assets/un_like_icon.png",
+                                                  width: 22,
+                                                  height: 19,
+                                                )),
+                                          postId: newsData.postId!.toInt(),
+                                          reactions: reactions),
+                                    ),
                                     // TextButton.icon(
                                     //     style: ButtonStyle(
                                     //         foregroundColor:
@@ -511,6 +581,11 @@ class _PostViewState extends State<PostView> {
                                     //       'Like',
                                     //       style: ThreeKmTextConstants.tk12PXPoppinsBlackSemiBold,
                                     //     )),
+                                    Container(
+                                      height: 15,
+                                      width: 2,
+                                      color: Colors.grey,
+                                    ),
                                     TextButton.icon(
                                         style: ButtonStyle(
                                             foregroundColor:
@@ -534,6 +609,11 @@ class _PostViewState extends State<PostView> {
                                           'Comment',
                                           style: ThreeKmTextConstants.tk12PXPoppinsBlackSemiBold,
                                         )),
+                                    Container(
+                                      height: 15,
+                                      width: 2,
+                                      color: Colors.grey,
+                                    ),
                                     TextButton.icon(
                                         style: ButtonStyle(
                                             foregroundColor:

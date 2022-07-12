@@ -82,7 +82,7 @@ class NewsFeedProvider extends ChangeNotifier {
   Future<Null> postLike(String postId, String? emotion) async {
     String requestJson = json.encode(
         {"module": "news_post", "entity_id": postId, "emotion": "$emotion"});
-    _newsFeedBottomModel!.data!.result!.posts!.forEach((element) {
+    _newsFeedBottomModel?.data?.result?.posts?.forEach((element) {
       if (element.postId.toString() == postId && element.isLiked == false) {
         element.likes = element.likes! + 1;
         element.isLiked = true;
@@ -101,13 +101,15 @@ class NewsFeedProvider extends ChangeNotifier {
   Future<Null> postUnLike(String postId) async {
     String requestJson =
         json.encode({"module": "news_post", "entity_id": postId});
-    _newsFeedBottomModel!.data!.result!.posts!.forEach((element) {
+    _newsFeedBottomModel?.data?.result?.posts?.forEach((element) {
       if (element.postId.toString() == postId && element.isLiked == true) {
         element.isLiked = false;
         element.likes = element.likes! - 1;
+        element.emotion = null;
       }
+      notifyListeners();
     });
-    notifyListeners();
+
     final response = await _apiProvider.post(unlike, requestJson);
     print(response);
     if (response != null && response["status"] == "success") {}

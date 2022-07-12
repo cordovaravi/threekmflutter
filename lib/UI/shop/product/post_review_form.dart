@@ -4,7 +4,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:provider/src/provider.dart';
-import 'package:threekm/UI/main/AddPost/BottomSnack.dart';
+
 import 'package:threekm/commenwidgets/CustomSnakBar.dart';
 import 'package:threekm/commenwidgets/commenwidget.dart';
 import 'package:threekm/networkservice/Api_Provider.dart';

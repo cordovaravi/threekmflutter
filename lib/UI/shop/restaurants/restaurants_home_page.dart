@@ -336,7 +336,7 @@ class _RestaurantsHomeState extends State<RestaurantsHome> with AutomaticKeepAli
                           cuisinesData.data != null &&
                           cuisinesData.data!.result.data.isNotEmpty
                       ? Container(
-                          padding: const EdgeInsets.all(20),
+                          padding: const EdgeInsets.only(left: 20, right: 20),
                           color: Colors.white,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,

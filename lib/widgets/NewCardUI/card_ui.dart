@@ -13,13 +13,19 @@ import 'package:provider/provider.dart';
 import 'package:provider/src/provider.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:threekm/Custom_library/BoldText/Text_chunking.dart';
 import 'package:threekm/Custom_library/src/reaction.dart';
 import 'package:threekm/UI/main/News/PostView.dart';
 import 'package:threekm/UI/main/Profile/AuthorProfile.dart';
+import 'package:threekm/UI/main/Profile/MyProfilePost.dart';
 import 'package:threekm/commenwidgets/CustomSnakBar.dart';
 import 'package:threekm/commenwidgets/commenwidget.dart';
 import 'package:threekm/providers/Global/logged_in_or_not.dart';
+import 'package:threekm/providers/ProfileInfo/ProfileInfo_Provider.dart';
+import 'package:threekm/providers/main/AthorProfile_Provider.dart';
 import 'package:threekm/providers/main/NewsFeed_Provider.dart';
+import 'package:threekm/providers/main/newsList_provider.dart';
+import 'package:threekm/utils/Extension/capital.dart';
 import 'package:threekm/utils/slugUrl.dart';
 import 'package:threekm/utils/threekm_textstyles.dart';
 import 'package:threekm/widgets/NewCardUI/image_layout.dart';
@@ -48,41 +54,68 @@ class _CardUIState extends State<CardUI> {
   // TextEditingController _commentController = TextEditingController();
   ScreenshotController screenshotController = ScreenshotController();
 
+  postlike(label, postId) {
+    context.read<NewsListProvider>().postLike(postId.toString(), label);
+    context.read<NewsFeedProvider>().postLike(postId.toString(), label);
+    context.read<AutthorProfileProvider>().postLike(postId.toString(), label);
+  }
+
+  void postUnlike(postId) {
+    context.read<NewsListProvider>().postUnLike(postId.toString());
+    context.read<NewsFeedProvider>().postUnLike(postId.toString());
+    context.read<AutthorProfileProvider>().postUnLike(postId.toString());
+  }
+
   @override
   Widget build(BuildContext context) {
     final newsFeedProvider = context.watch<NewsFeedProvider>();
     var data = widget.data;
-    return InkWell(
-      onTap: () {
-        Navigator.push(context,
-            MaterialPageRoute(builder: (BuildContext context) {
-          return PostView(
-            postId: data.postId.toString(),
-          );
-        }));
-      },
-      child: Container(
-        decoration: BoxDecoration(
-            color: Colors.white,
-            boxShadow: const [
-              BoxShadow(
-                  blurRadius: 40,
-                  offset: Offset(0, 8),
-                  color: Color(0x29092C4C))
-            ],
-            borderRadius: BorderRadius.circular(8)),
-        padding: const EdgeInsets.only(top: 20, left: 10, right: 10),
-        margin: const EdgeInsets.only(top: 20, left: 20, right: 20),
+    return Container(
+      decoration: BoxDecoration(
+          color: Colors.white,
+          boxShadow: const [
+            BoxShadow(
+                blurRadius: 40, offset: Offset(0, 8), color: Color(0x29092C4C))
+          ],
+          borderRadius: BorderRadius.circular(8)),
+      padding: const EdgeInsets.only(top: 20, left: 10, right: 10),
+      margin: const EdgeInsets.only(top: 20, left: 20, right: 20),
+      child: InkWell(
+        onTap: () {
+          Navigator.push(context,
+              MaterialPageRoute(builder: (BuildContext context) {
+            return PostView(
+              postId: data.postId.toString(),
+            );
+          }));
+        },
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             if (data.preheaderLike != "" && data.preheaderComment == "")
-              Text('${data.preheaderLike}'),
+              // Text(
+              //   '${data.preheaderLike}',
+              // ),
+              TextChunkStyling(
+                text: '${data.preheaderLike}',
+                highlightText: ['${data.preaheaderLikeUser}'],
+                multiTextStyles: const [
+                  TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+                ],
+              ),
             if (data.preheaderLike != "" && data.preheaderComment == "")
               Divider(
                 thickness: 2,
               ),
-            if (data.preheaderComment != "") Text('${data.preheaderComment}'),
+            if (data.preheaderComment != "")
+              TextChunkStyling(
+                text: '${data.preheaderComment}',
+                highlightText: ['${data.preheaderCommentUSer}'],
+                multiTextStyles: const [
+                  TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+                ],
+              ),
+            //Text('${data.preheaderComment}'),
             if (data.preheaderComment != "")
               Divider(
                 thickness: 2,
@@ -92,17 +125,31 @@ class _CardUIState extends State<CardUI> {
                 data.author?.image != null
                     ? InkWell(
                         onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => AuthorProfile(
-                                      authorType: data.authorType,
-                                      // page: 1,
-                                      // authorType:
-                                      //     "user",
-                                      id: data.author!.id!,
-                                      avatar: data.author!.image!,
-                                      userName: data.author!.name!)));
+                          if (context.read<ProfileInfoProvider>().UserName !=
+                              data.author!.name!) {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => AuthorProfile(
+                                        authorType: data.authorType,
+                                        // page: 1,
+                                        // authorType:
+                                        //     "user",
+                                        id: data.author!.id!,
+                                        avatar: data.author!.image!,
+                                        userName: data.author!.name!)));
+                          } else {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => MyProfilePost(
+                                        isFromSelfProfileNavigate: true,
+                                        page: 1,
+                                        authorType: "",
+                                        id: data.author!.id!,
+                                        avatar: "",
+                                        userName: data.author!.name!)));
+                          }
                         },
                         child: ClipRRect(
                             borderRadius: BorderRadius.circular(80),
@@ -131,9 +178,24 @@ class _CardUIState extends State<CardUI> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      '${data.author?.name}',
-                      style: ThreeKmTextConstants.tk14PXPoppinsBlackMedium,
+                    InkWell(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => AuthorProfile(
+                                    authorType: data.authorType,
+                                    // page: 1,
+                                    // authorType:
+                                    //     "user",
+                                    id: data.author!.id!,
+                                    avatar: data.author!.image!,
+                                    userName: data.author!.name!)));
+                      },
+                      child: Text(
+                        '${data.author?.name}',
+                        style: ThreeKmTextConstants.tk14PXPoppinsBlackMedium,
+                      ),
                     ),
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -283,51 +345,77 @@ class _CardUIState extends State<CardUI> {
             ),
             if (data.status != "rejected")
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  SizedBox(
-                    width: 10,
+                  TextButton.icon(
+                    onPressed: () async {
+                      if (await getAuthStatus()) {
+                        if (data.isLiked == true) {
+                          //newsFeedProvider.postUnLike(data.postId.toString());
+                          postUnlike(data.postId.toString());
+                        } else {
+                          // newsFeedProvider
+                          //     .postLike(data.postId.toString(), "like")
+                          //     .whenComplete(() => setState(() {
+                          //           data.isLiked = true;
+                          //         }));
+                          postlike('like', data.postId.toString());
+                        }
+                      } else {
+                        NaviagateToLogin(context);
+                      }
+                    },
+                    label: Text(
+                      data.emotion != null && data.emotion != ""
+                          ? '${data.emotion.toString().capitalize()}'
+                          : 'Like',
+                      style: ThreeKmTextConstants.tk12PXPoppinsBlackSemiBold,
+                    ),
+                    icon: EmotionButton(
+                        providerType: widget.providerType,
+                        isLiked: data.isLiked ?? false,
+                        initalReaction: data.isLiked!
+                            ? data.emotion != null &&
+                                    data.emotion != "" &&
+                                    data.emotion != null &&
+                                    data.emotion != "null"
+                                ? Reaction(
+                                    icon: Lottie.asset(
+                                        "assets/lottie/${data.emotion}.json",
+                                        width: 35,
+                                        height: 35,
+                                        fit: BoxFit.cover,
+                                        repeat: false),
+                                  )
+                                : Reaction(
+                                    icon: Lottie.asset(
+                                        "assets/lottie/like.json",
+                                        width: 35,
+                                        height: 35,
+                                        repeat: false),
+                                  )
+                            : Reaction(
+                                icon: Image.asset(
+                                "assets/un_like_icon.png",
+                                width: 22,
+                                height: 19,
+                              )),
+                        selectedReaction: data.isLiked!
+                            ? Reaction(
+                                icon: Image.asset(
+                                "assets/like_icon.png",
+                                width: 22,
+                                height: 19,
+                              ))
+                            : Reaction(
+                                icon: Image.asset(
+                                "assets/un_like_icon.png",
+                                width: 22,
+                                height: 19,
+                              )),
+                        postId: data.postId!.toInt(),
+                        reactions: reactionAssets.reactions),
                   ),
-                  EmotionButton(
-                      providerType: widget.providerType,
-                      isLiked: data.isLiked ?? false,
-                      initalReaction: data.isLiked!
-                          ? data.emotion != null &&
-                                  data.emotion != "" &&
-                                  data.emotion != null &&
-                                  data.emotion != "null"
-                              ? Reaction(
-                                  icon: Lottie.asset(
-                                      "assets/lottie/${data.emotion}.json",
-                                      width: 45,
-                                      height: 45,
-                                      fit: BoxFit.cover),
-                                )
-                              : Reaction(
-                                  icon: Lottie.asset("assets/lottie/like.json",
-                                      width: 30, height: 30, repeat: false),
-                                )
-                          : Reaction(
-                              icon: Image.asset(
-                              "assets/un_like_icon.png",
-                              width: 22,
-                              height: 19,
-                            )),
-                      selectedReaction: data.isLiked!
-                          ? Reaction(
-                              icon: Image.asset(
-                              "assets/like_icon.png",
-                              width: 22,
-                              height: 19,
-                            ))
-                          : Reaction(
-                              icon: Image.asset(
-                              "assets/un_like_icon.png",
-                              width: 22,
-                              height: 19,
-                            )),
-                      postId: data.postId!.toInt(),
-                      reactions: reactionAssets.reactions),
                   // TextButton.icon(
                   //     style: ButtonStyle(
                   //         foregroundColor:
@@ -404,6 +492,11 @@ class _CardUIState extends State<CardUI> {
                   //           : 'Like',
                   //       style: ThreeKmTextConstants.tk12PXPoppinsBlackSemiBold,
                   //     )),
+                  Container(
+                    height: 15,
+                    width: 2,
+                    color: Colors.grey,
+                  ),
                   TextButton.icon(
                       style: ButtonStyle(
                           foregroundColor:
@@ -426,24 +519,35 @@ class _CardUIState extends State<CardUI> {
                         'Comment',
                         style: ThreeKmTextConstants.tk12PXPoppinsBlackSemiBold,
                       )),
+                  Container(
+                    height: 15,
+                    width: 2,
+                    color: Colors.grey,
+                  ),
                   TextButton.icon(
                       style: ButtonStyle(
                           foregroundColor:
                               MaterialStateProperty.all(Colors.black)),
                       onPressed: () {
-                        String imgUrl =
-                            data.images != null && data.images!.length > 0
-                                ? data.images!.first.toString()
-                                : data.videos!.first.thumbnail.toString();
-                        handleShare(
-                            data.author!.name.toString(),
-                            data.author!.image.toString(),
-                            data.slugHeadline != null || data.slugHeadline != ""
-                                ? data.slugHeadline
-                                : data.submittedHeadline,
-                            imgUrl,
-                            data.createdDate,
-                            data.postId.toString());
+                        String? imgUrl =
+                            data.images != null && data.images.isNotEmpty
+                                ? data.images?.first.toString()
+                                : data.videos?.first.thumbnail.toString();
+                        if (imgUrl != null) {
+                          handleShare(
+                              data.author!.name.toString(),
+                              data.author!.image.toString(),
+                              data.slugHeadline != null ||
+                                      data.slugHeadline != ""
+                                  ? data.slugHeadline ?? " "
+                                  : data.submittedHeadline,
+                              imgUrl,
+                              data.createdDate,
+                              data.postId.toString());
+                        } else {
+                          CustomSnackBar(
+                              context, Text("Can't share post with no images"));
+                        }
                       },
                       icon: Icon(Icons.share_outlined),
                       label: Text(

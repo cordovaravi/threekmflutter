@@ -20,7 +20,8 @@ class NewsbyCategoryModel {
   dynamic error;
   Data? data;
 
-  factory NewsbyCategoryModel.fromJson(Map<String, dynamic> json) => NewsbyCategoryModel(
+  factory NewsbyCategoryModel.fromJson(Map<String, dynamic> json) =>
+      NewsbyCategoryModel(
         status: json["status"],
         message: json["message"],
         error: json["error"],
@@ -53,47 +54,48 @@ class Result {
 }
 
 class Post {
-  Post({
-    this.postId,
-    this.submittedHeadline,
-    this.submittedStory,
-    this.headline,
-    this.story,
-    this.images,
-    this.videos,
-    this.type,
-    this.tags,
-    this.publishFrom,
-    this.author,
-    this.authorType,
-    this.authorClassification,
-    this.status,
-    this.originalLanguage,
-    this.impressions,
-    this.views,
-    this.postCreatedDate,
-    this.createdDate,
-    this.context,
-    this.isUgc,
-    this.likes,
-    this.comments,
-    this.locations,
-    this.userDetails,
-    this.creatorDetails,
-    this.id,
-    this.isVerified,
-    this.isLiked,
-    this.areas,
-    this.shares,
-    this.origHeadline,
-    this.origStory,
-    this.itemType,
-    this.slugHeadline,
-    this.preheaderLike,
-    this.preheaderComment,
-    this.latestComment,
-    this.emotion,
-  });
+  Post(
+      {this.postId,
+      this.submittedHeadline,
+      this.submittedStory,
+      this.headline,
+      this.story,
+      this.images,
+      this.videos,
+      this.type,
+      this.tags,
+      this.publishFrom,
+      this.author,
+      this.authorType,
+      this.authorClassification,
+      this.status,
+      this.originalLanguage,
+      this.impressions,
+      this.views,
+      this.postCreatedDate,
+      this.createdDate,
+      this.context,
+      this.isUgc,
+      this.likes,
+      this.comments,
+      this.locations,
+      this.userDetails,
+      this.creatorDetails,
+      this.id,
+      this.isVerified,
+      this.isLiked,
+      this.areas,
+      this.shares,
+      this.origHeadline,
+      this.origStory,
+      this.itemType,
+      this.slugHeadline,
+      this.preheaderLike,
+      this.preheaderComment,
+      this.latestComment,
+      this.emotion,
+      this.preaheaderLikeUser,
+      this.preheaderCommentUSer});
 
   int? postId;
   String? submittedHeadline;
@@ -134,6 +136,8 @@ class Post {
   String? preheaderComment;
   LatestComment? latestComment;
   String? emotion;
+  String? preaheaderLikeUser;
+  String? preheaderCommentUSer;
 
   factory Post.fromJson(Map<String, dynamic> json) => Post(
       postId: json["post_id"] == null ? null : json["post_id"],
@@ -198,6 +202,12 @@ class Post {
       slugHeadline: json["slug_headline"],
       preheaderLike: json["preheader_like"],
       preheaderComment: json["preheader_comment"],
+      preaheaderLikeUser: json["preheader_like_user"] == null
+          ? null
+          : json["preheader_like_user"],
+      preheaderCommentUSer: json["preheader_comment_user"] == null
+          ? null
+          : json["preheader_comment_user"],
       latestComment: json['latest_comment'] == null
           ? null
           : LatestComment.fromJson(json['latest_comment']),
@@ -286,9 +296,15 @@ class UserDetail {
 }
 
 class Video {
-  Video({this.src, this.thumbnail, this.player, this.vimeoUrl, this.height, this.width});
+  Video(
+      {this.src,
+      this.thumbnail,
+      this.player,
+      this.vimeoUrl,
+      this.height,
+      this.width});
 
-  String? src;
+  dynamic src;
   String? thumbnail;
   String? player;
   String? vimeoUrl;
@@ -296,7 +312,7 @@ class Video {
   int? height;
 
   factory Video.fromJson(Map<String, dynamic> json) => Video(
-        src: json["src"] == null ? null : json["src"],
+        src: json["src"] == null && json["src"] is Object ? null : json["src"],
         thumbnail: json["thumbnail"] == null ? null : json["thumbnail"],
         player: json["player"] == null ? null : json["player"],
         vimeoUrl: json["vimeo_url"] == null ? null : json["vimeo_url"],

@@ -32,6 +32,8 @@ const String login_with_password = "user/login";
 const String social_login = "user/sociallogin";
 
 // register
+const String send_otp_email = "user/emailkyc";
+const String verify_email_otp = "user/emailkycverify";
 const String send_otp = "user/sendotp?";
 const String register_send_otp = "creator/sendotp";
 const String register_verify_otp = "user/verifyotp";
@@ -62,6 +64,8 @@ const String Author_Profile = "newspost/authorprofilenew";
 const String Self_Profile = "newspost/selfprofile";
 const String add_About = "user/about";
 const String Update_User_Info = "user/update";
+const String Get_User_info = "user/user_details";
+const String Update_kyc_doc = "user/updatekycdoc";
 
 // Follow
 const String follow_User = "follow";
@@ -112,6 +116,7 @@ const String Get_Notification = "notification/list";
 
 // Send fcm
 const String attchToekn = "user/attachtokenwithoutuser";
+
 const String attachTokenWithUser = "user/attachtoken";
 
 //single page navigation
@@ -119,3 +124,6 @@ const String activePollApi = "quiz/getactivepoll";
 
 ///feed url
 const String feedApi = "newspost/allposts";
+
+///get singed url of file
+const String getSignedUrl = "media/getsigneduploadurl";
