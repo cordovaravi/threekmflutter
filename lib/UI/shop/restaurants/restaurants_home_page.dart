@@ -43,8 +43,7 @@ class RestaurantsHome extends StatefulWidget {
   State<RestaurantsHome> createState() => _RestaurantsHomeState();
 }
 
-class _RestaurantsHomeState extends State<RestaurantsHome>
-    with AutomaticKeepAliveClientMixin {
+class _RestaurantsHomeState extends State<RestaurantsHome> with AutomaticKeepAliveClientMixin {
   //  data:  shopHomeProvider.restaurantData?.result,
   Offset position = Offset(20.0, 20.0);
   String? _selecetedAddress;
@@ -54,8 +53,7 @@ class _RestaurantsHomeState extends State<RestaurantsHome>
 
     if (_locationProvider != null) {
       List<Placemark> placemarks = await placemarkFromCoordinates(
-          _locationProvider.getLatitude ?? 18.5204,
-          _locationProvider.getLangitude ?? 73.8567);
+          _locationProvider.getLatitude ?? 18.5204, _locationProvider.getLongitude ?? 73.8567);
       setState(() {
         _selecetedAddress = placemarks.first.subLocality;
       });
@@ -358,64 +356,49 @@ class _RestaurantsHomeState extends State<RestaurantsHome>
                                 height: 250,
                                 child: GridView.builder(
                                     //physics: const NeverScrollableScrollPhysics(),
-                                    gridDelegate:
-                                        const SliverGridDelegateWithFixedCrossAxisCount(
+                                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                                       crossAxisCount: 2,
                                       crossAxisSpacing: 10,
                                       mainAxisSpacing: 10,
                                     ),
                                     scrollDirection: Axis.horizontal,
-                                    itemCount:
-                                        cuisinesData.data!.result.data.length,
+                                    itemCount: cuisinesData.data!.result.data.length,
                                     shrinkWrap: true,
                                     itemBuilder: (_, i) {
-                                      var cuisinesdata =
-                                          cuisinesData.data!.result.data[i];
+                                      var cuisinesdata = cuisinesData.data!.result.data[i];
                                       return InkWell(
                                         onTap: () {
                                           Navigator.push(
                                               context,
                                               MaterialPageRoute(
-                                                  builder: (_) =>
-                                                      CuisinesViewAll(
-                                                        query:
-                                                            '${cuisinesdata.name}',
+                                                  builder: (_) => CuisinesViewAll(
+                                                        query: '${cuisinesdata.name}',
                                                       )));
                                         },
                                         child: Container(
                                           // width: 150,
                                           // height: 150,
                                           padding: EdgeInsets.only(
-                                              top: 5,
-                                              bottom: 10,
-                                              left: 5,
-                                              right: 5),
+                                              top: 5, bottom: 10, left: 5, right: 5),
                                           decoration: BoxDecoration(
-                                              border: Border.all(
-                                                  color: Color(0xFFE2E4E6)),
-                                              borderRadius:
-                                                  BorderRadius.circular(15)),
+                                              border: Border.all(color: Color(0xFFE2E4E6)),
+                                              borderRadius: BorderRadius.circular(15)),
                                           child: Column(
                                             children: [
                                               SizedBox(
                                                 height: 75,
                                                 width: double.infinity,
                                                 child: ClipRRect(
-                                                  borderRadius:
-                                                      BorderRadius.circular(15),
+                                                  borderRadius: BorderRadius.circular(15),
                                                   child: CachedNetworkImage(
                                                     alignment: Alignment.center,
-                                                    placeholder:
-                                                        (context, url) =>
-                                                            Transform.scale(
+                                                    placeholder: (context, url) => Transform.scale(
                                                       scale: 0.3,
-                                                      child:
-                                                          CircularProgressIndicator(
+                                                      child: CircularProgressIndicator(
                                                         color: Colors.grey[400],
                                                       ),
                                                     ),
-                                                    imageUrl:
-                                                        '${cuisinesdata.photo}',
+                                                    imageUrl: '${cuisinesdata.photo}',
                                                     // height:
                                                     //     MediaQuery.of(context).size.height /
                                                     //         13,
@@ -444,13 +427,10 @@ class _RestaurantsHomeState extends State<RestaurantsHome>
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          AppLocalizations.of(context)!
-                                  .translate('nearby_restaurants') ??
+                          AppLocalizations.of(context)!.translate('nearby_restaurants') ??
                               'Nearby Restaurants',
                           style: TextStyle(
-                              color: Color(0xFF0F0F2D),
-                              fontSize: 19,
-                              fontWeight: FontWeight.bold),
+                              color: Color(0xFF0F0F2D), fontSize: 19, fontWeight: FontWeight.bold),
                         ),
                         // Spacer(),
                         InkWell(
@@ -465,8 +445,7 @@ class _RestaurantsHomeState extends State<RestaurantsHome>
                           child: Row(
                             children: [
                               Text(
-                                AppLocalizations.of(context)!
-                                        .translate('view_all_text') ??
+                                AppLocalizations.of(context)!.translate('view_all_text') ??
                                     'View all',
                                 style: TextStyle(color: Color(0xFF43B978)),
                               ),
@@ -481,16 +460,14 @@ class _RestaurantsHomeState extends State<RestaurantsHome>
                     ),
                   ),
                   state == 'loaded'
-                      ? CreatorCard(
-                          data: data, SearchController: SearchController)
+                      ? CreatorCard(data: data, SearchController: SearchController)
                       : ShowRestroLoading()
                 ],
               ),
             ),
           ),
         ),
-        floatingActionButtonLocation:
-            FloatingActionButtonLocation.miniCenterDocked,
+        floatingActionButtonLocation: FloatingActionButtonLocation.miniCenterDocked,
         floatingActionButton: Column(
           mainAxisAlignment: MainAxisAlignment.end,
           mainAxisSize: MainAxisSize.min,
@@ -504,8 +481,8 @@ class _RestaurantsHomeState extends State<RestaurantsHome>
                           height: 90,
                           color: Color(0xFF0F0F2D),
                           child: Padding(
-                            padding: const EdgeInsets.only(
-                                left: 20, top: 20, right: 20, bottom: 20),
+                            padding:
+                                const EdgeInsets.only(left: 20, top: 20, right: 20, bottom: 20),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
@@ -514,21 +491,18 @@ class _RestaurantsHomeState extends State<RestaurantsHome>
                                   children: [
                                     Text(
                                       '${Hive.box('restroCartBox').values.length} ITEM',
-                                      style: ThreeKmTextConstants
-                                          .tk12PXPoppinsWhiteRegular,
+                                      style: ThreeKmTextConstants.tk12PXPoppinsWhiteRegular,
                                     ),
                                     Wrap(children: [
                                       Text(
                                         '₹${context.read<CartProvider>().getBoxTotal(Hive.box('restroCartBox'))}',
-                                        style: ThreeKmTextConstants
-                                            .tk16PXPoppinsBlackMedium
+                                        style: ThreeKmTextConstants.tk16PXPoppinsBlackMedium
                                             .copyWith(color: Colors.white),
                                       ),
                                       Text('  '),
                                       Text(
                                         '+ TAXES',
-                                        style: ThreeKmTextConstants
-                                            .tk12PXPoppinsBlackSemiBold
+                                        style: ThreeKmTextConstants.tk12PXPoppinsBlackSemiBold
                                             .copyWith(
                                           color: Color(0xFF979EA4),
                                         ),
@@ -545,21 +519,17 @@ class _RestaurantsHomeState extends State<RestaurantsHome>
                                     padding: EdgeInsets.all(10),
                                     decoration: BoxDecoration(
                                         color: Color(0xFF3E7EFF),
-                                        borderRadius:
-                                            BorderRadius.circular(30)),
+                                        borderRadius: BorderRadius.circular(30)),
                                     child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: [
                                         Text(
                                           'View Cart',
-                                          style: ThreeKmTextConstants
-                                              .tk16PXPoppinsBlackMedium
+                                          style: ThreeKmTextConstants.tk16PXPoppinsBlackMedium
                                               .copyWith(color: Colors.white),
                                         ),
                                         const Image(
-                                          image: AssetImage(
-                                              'assets/shopImg/leftArrow.png'),
+                                          image: AssetImage('assets/shopImg/leftArrow.png'),
                                           width: 30,
                                           height: 30,
                                         )
