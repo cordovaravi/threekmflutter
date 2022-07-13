@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -26,11 +28,15 @@ class VerifyKYCCredential extends ChangeNotifier {
   GetUserInfoModel _UserProfileInfo = GetUserInfoModel();
   GetUserInfoModel get userProfileInfo => _UserProfileInfo;
 
-  disposeAllData() {
-    _isLoading = false;
-    _trueOTP = false;
-    _wrongOTP = false;
-    notifyListeners();
+  disposeAllData(mounted) {
+    WidgetsBinding.instance?.addPostFrameCallback((_) {
+      if (mounted) {
+        _isLoading = false;
+        _trueOTP = false;
+        _wrongOTP = false;
+        notifyListeners();
+      }
+    });
   }
 
   getAvatar() async {
@@ -55,6 +61,10 @@ class VerifyKYCCredential extends ChangeNotifier {
         context
             .read<ProfileInfoProvider>()
             .updateProfileInfo(phone: phoneNumber);
+        Timer(Duration(seconds: 1), () {
+          Navigator.push(
+              context, MaterialPageRoute(builder: (_) => EmailVerification()));
+        });
       } else {
         //  hideLoading();
         _wrongOTP = true;
@@ -79,8 +89,10 @@ class VerifyKYCCredential extends ChangeNotifier {
         _trueOTP = true;
         notifyListeners();
         context.read<ProfileInfoProvider>().updateProfileInfo(email: email);
-
-     
+        Timer(Duration(seconds: 1), () {
+          Navigator.push(context,
+              MaterialPageRoute(builder: (_) => UploadProfilePicture()));
+        });
       } else {
         //  hideLoading();
         _wrongOTP = true;

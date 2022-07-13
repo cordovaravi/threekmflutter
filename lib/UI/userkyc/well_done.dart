@@ -21,7 +21,7 @@ class _WellDoneState extends State<WellDone> {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-       onWillPop: () {
+      onWillPop: () {
         return Future.value(false);
       },
       child: Scaffold(
@@ -33,7 +33,7 @@ class _WellDoneState extends State<WellDone> {
               'assets/json/14337-well-done.json',
               fit: BoxFit.cover,
               alignment: Alignment.center,
-              repeat: true,
+              repeat: false,
             ),
             Spacer(),
             SizedBox(
@@ -51,7 +51,8 @@ class _WellDoneState extends State<WellDone> {
               textAlign: TextAlign.center,
             ),
             Container(
-                margin: EdgeInsets.only(top: 20, left: 10, right: 10, bottom: 20),
+                margin:
+                    EdgeInsets.only(top: 20, left: 10, right: 10, bottom: 20),
                 width: double.infinity,
                 child: ElevatedButton(
                     style: ButtonStyle(
@@ -77,7 +78,9 @@ class _WellDoneState extends State<WellDone> {
                           context
                               .read<ProfileInfoProvider>()
                               .updateProfileInfo(is_verified: true);
-                          context.read<AutthorProfileProvider>().getSelfProfile();
+                          context
+                              .read<AutthorProfileProvider>()
+                              .getSelfProfile();
                           setState(() {});
                           Navigator.pop(context);
                           Navigator.pop(context);

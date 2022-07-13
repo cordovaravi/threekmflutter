@@ -7,7 +7,7 @@ import 'package:provider/src/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:threekm/UI/main/navigation.dart';
 import 'package:threekm/UI/userkyc/profile_picture.dart';
-import 'package:threekm/UI/userkyc/user_kyc_main.dart';
+
 import 'package:threekm/providers/userKyc/verify_credential.dart';
 import 'package:threekm/utils/constants.dart';
 import 'package:threekm/utils/threekm_textstyles.dart';
@@ -83,11 +83,12 @@ class _EmailVerificationState extends State<EmailVerification> {
             validEmail();
             return "Please enter valid Email";
           } else {
-            WidgetsBinding.instance?.addPostFrameCallback((_) {
-              setState(() {
-                isValidEmail = true;
+            if (!isValidEmail)
+              WidgetsBinding.instance?.addPostFrameCallback((_) {
+                setState(() {
+                  isValidEmail = true;
+                });
               });
-            });
           }
         },
       ),
@@ -97,7 +98,7 @@ class _EmailVerificationState extends State<EmailVerification> {
 
   @override
   void initState() {
-    context.read<VerifyKYCCredential>().disposeAllData();
+    context.read<VerifyKYCCredential>().disposeAllData(mounted);
     WidgetsBinding.instance?.addPostFrameCallback((_) async {
       _pref = await SharedPreferences.getInstance();
       _emailController.text = _pref?.getString("email") != null &&
@@ -113,7 +114,7 @@ class _EmailVerificationState extends State<EmailVerification> {
   void dispose() {
     _controllers.forEach((e) => e.dispose());
     _emailController.dispose();
-    context.read<VerifyKYCCredential>().disposeAllData();
+    // context.read<VerifyKYCCredential>().disposeAllData(mounted);
     // TODO: implement dispose
     super.dispose();
   }
@@ -208,14 +209,15 @@ class _EmailVerificationState extends State<EmailVerification> {
               const SizedBox(
                 height: 38,
               ),
-              Padding(
-                padding: const EdgeInsets.only(bottom: 16),
-                child: Text(
-                  'Please Enter OTP ',
-                  style: ThreeKmTextConstants.tk16PXPoppinsBlackMedium
-                      .copyWith(fontWeight: FontWeight.w400),
+              if (isSendOtp)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 16),
+                  child: Text(
+                    'Please Enter OTP ',
+                    style: ThreeKmTextConstants.tk16PXPoppinsBlackMedium
+                        .copyWith(fontWeight: FontWeight.w400),
+                  ),
                 ),
-              ),
               // Row(
               //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
               //   children: [
@@ -229,22 +231,23 @@ class _EmailVerificationState extends State<EmailVerification> {
               //     OtpBox(i: 3, focusNode: _focusNodes, controller: _controllers),
               //   ],
               // ),
-              TextFormField(
-                controller: _otpController,
-                textAlign: TextAlign.start,
-                textAlignVertical: TextAlignVertical.top,
-                maxLines: 1,
-                onChanged: (i) {
-                  verifyEmail();
-                },
-                decoration: const InputDecoration(
-                  filled: true,
-                  border: OutlineInputBorder(
-                    borderSide: BorderSide.none,
-                    borderRadius: BorderRadius.all(Radius.circular(8.0)),
+              if (isSendOtp)
+                TextFormField(
+                  controller: _otpController,
+                  textAlign: TextAlign.start,
+                  textAlignVertical: TextAlignVertical.top,
+                  maxLines: 1,
+                  onChanged: (i) {
+                    verifyEmail();
+                  },
+                  decoration: const InputDecoration(
+                    filled: true,
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide.none,
+                      borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                    ),
                   ),
                 ),
-              ),
               if (Kycprovider.iswrongOTP)
                 Padding(
                   padding: const EdgeInsets.only(top: 16),
@@ -323,51 +326,54 @@ class _EmailVerificationState extends State<EmailVerification> {
                         );
                       },
                       child: state == false
-                          ? Container(
-                              key: ValueKey(1),
-                              margin: const EdgeInsets.only(top: 20),
-                              width: double.infinity,
-                              child: ElevatedButton(
-                                  style: ButtonStyle(
-                                      shape: MaterialStateProperty.all<
-                                              OutlinedBorder>(
-                                          const StadiumBorder())),
-                                  onPressed: isValidEmail
-                                      ? () async {
-                                          if (!isSendOtp) {
-                                            if (_emailController
-                                                .text.isNotEmpty) {
-                                              Kycprovider.sendOtpEmail(json
-                                                  .encode({
-                                                "email": _emailController.text
-                                              })).whenComplete(
-                                                  () => setState(() {
-                                                        isSendOtp = true;
-                                                        isVisibleResendOtp =
-                                                            false;
-                                                      }));
-                                            } else {
-                                              Fluttertoast.showToast(
-                                                  msg:
-                                                      "Please enter your Email");
+                          ? !Kycprovider.isTrueOTP && !isSendOtp
+                              ? Container(
+                                  key: ValueKey(1),
+                                  margin: const EdgeInsets.only(top: 20),
+                                  width: double.infinity,
+                                  child: ElevatedButton(
+                                      style: ButtonStyle(
+                                          shape: MaterialStateProperty.all<
+                                                  OutlinedBorder>(
+                                              const StadiumBorder())),
+                                      onPressed: isValidEmail
+                                          ? () async {
+                                              if (!isSendOtp) {
+                                                if (_emailController
+                                                    .text.isNotEmpty) {
+                                                  Kycprovider.sendOtpEmail(json
+                                                      .encode({
+                                                    "email":
+                                                        _emailController.text
+                                                  })).whenComplete(
+                                                      () => setState(() {
+                                                            isSendOtp = true;
+                                                            isVisibleResendOtp =
+                                                                false;
+                                                          }));
+                                                } else {
+                                                  Fluttertoast.showToast(
+                                                      msg:
+                                                          "Please enter your Email");
+                                                }
+                                              }
+                                              if (Kycprovider.isTrueOTP)
+                                                Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (_) =>
+                                                            const UploadProfilePicture()));
                                             }
-                                          }
-                                          if (Kycprovider.isTrueOTP)
-                                            Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (_) =>
-                                                        const UploadProfilePicture()));
-                                        }
-                                      : null,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(15.0),
-                                    child: Text(
-                                      isSendOtp ? "Next" : 'Send OTP',
-                                      style: ThreeKmTextConstants
-                                          .tk16PXPoppinsWhiteBold,
-                                    ),
-                                  )))
+                                          : null,
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(15.0),
+                                        child: Text(
+                                          isSendOtp ? "Next" : 'Send OTP',
+                                          style: ThreeKmTextConstants
+                                              .tk16PXPoppinsWhiteBold,
+                                        ),
+                                      )))
+                              : SizedBox()
                           : Container(
                               key: ValueKey(2),
                               child: const CircularProgressIndicator(),

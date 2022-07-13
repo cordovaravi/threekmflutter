@@ -36,9 +36,13 @@ class EmotionButton extends StatelessWidget {
               ? context
                   .read<NewsFeedProvider>()
                   .postLike(this.postId.toString(), label)
-              : context
-                  .read<AutthorProfileProvider>()
-                  .postLike(this.postId.toString(), label);
+              : providerType == "AutthorProfileProvider2"
+                  ? context
+                      .read<AutthorProfileProvider>()
+                      .authorPostLike(this.postId.toString(), label)
+                  : context
+                      .read<AutthorProfileProvider>()
+                      .postLike(this.postId.toString(), label);
     }
 
     void postUnlike() {
@@ -48,9 +52,13 @@ class EmotionButton extends StatelessWidget {
               ? context
                   .read<NewsFeedProvider>()
                   .postUnLike(this.postId.toString())
-              : context
-                  .read<AutthorProfileProvider>()
-                  .postUnLike(this.postId.toString());
+              : providerType == "AutthorProfileProvider2"
+                  ? context
+                      .read<AutthorProfileProvider>()
+                      .authorPostUnLike(this.postId.toString())
+                  : context
+                      .read<AutthorProfileProvider>()
+                      .postUnLike(this.postId.toString());
     }
 
     return FittedBox(

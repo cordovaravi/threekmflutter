@@ -33,7 +33,7 @@ class _IdentityCompleteState extends State<IdentityComplete> {
               'assets/json/check.json',
               fit: BoxFit.cover,
               alignment: Alignment.center,
-              repeat: true,
+              repeat: false,
             ),
             Spacer(),
             SizedBox(
