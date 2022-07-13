@@ -157,29 +157,7 @@ class _MyProfilePostState extends State<MyProfilePost>
     }
   }
 
-  @override
-  void didChangeDependencies() {
-    if (mounted) {
-      context.read<AutthorProfileProvider>().getSelfProfile();
-      final selfProfile = context.read<AutthorProfileProvider>();
-      var selfProfileModel = selfProfile.selfProfile;
-      if (selfProfileModel!.data!.result!.posts!.length >= 6)
-        selfProfileModel.data!.result!.posts!
-            .insert(5, newsListByCategoryModel.Post());
-      if (selfProfileModel.data!.result!.posts!.length < 6)
-        selfProfileModel.data!.result!.posts!
-            .add(newsListByCategoryModel.Post());
-    }
-    super.didChangeDependencies();
-  }
 
-  @override
-  void didUpdateWidget(MyProfilePost oldWidget) {
-    context.read<AutthorProfileProvider>().getSelfProfile();
-    context.read<VerifyKYCCredential>().getUserProfileInfo();
-    setState(() {});
-    super.didUpdateWidget(oldWidget);
-  }
 
   showKycMessage(context) {
     return showDialog(

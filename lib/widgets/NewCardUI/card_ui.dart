@@ -58,16 +58,22 @@ class _CardUIState extends State<CardUI> {
     context.read<NewsListProvider>().postLike(postId.toString(), label);
     context.read<NewsFeedProvider>().postLike(postId.toString(), label);
     context.read<AutthorProfileProvider>().postLike(postId.toString(), label);
+    context
+        .read<AutthorProfileProvider>()
+        .authorPostLike(postId.toString(), label);
   }
 
   void postUnlike(postId) {
     context.read<NewsListProvider>().postUnLike(postId.toString());
     context.read<NewsFeedProvider>().postUnLike(postId.toString());
     context.read<AutthorProfileProvider>().postUnLike(postId.toString());
+    context.read<AutthorProfileProvider>().authorPostUnLike(postId.toString());
   }
 
   @override
   Widget build(BuildContext context) {
+    context.watch<NewsListProvider>();
+    context.watch<AutthorProfileProvider>();
     final newsFeedProvider = context.watch<NewsFeedProvider>();
     var data = widget.data;
     return Container(

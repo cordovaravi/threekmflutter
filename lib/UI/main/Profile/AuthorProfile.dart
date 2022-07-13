@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
+import 'package:flutter/rendering.dart';
 
 import 'package:flutter/widgets.dart';
 
@@ -11,11 +12,13 @@ import 'package:provider/provider.dart';
 import 'package:provider/src/provider.dart';
 
 import 'package:threekm/Models/ProfilePostModel.dart';
+import 'package:threekm/UI/main/Profile/reportProfile.dart';
 import 'package:threekm/commenwidgets/fullImage.dart';
 
 import 'package:threekm/providers/Global/logged_in_or_not.dart';
 import 'package:threekm/providers/localization_Provider/appLanguage_provider.dart';
 import 'package:threekm/providers/main/AthorProfile_Provider.dart';
+import 'package:threekm/utils/constants.dart';
 
 import 'package:threekm/widgets/NewCardUI/card_ui.dart';
 
@@ -68,6 +71,7 @@ class _AuthorProfileState extends State<AuthorProfile>
   void dispose() {
     //Get.delete<AuthorProfileController>();
     controller.dispose();
+    context.read<AutthorProfileProvider>().clearAuthorProfileData();
     super.dispose();
   }
 
@@ -76,8 +80,77 @@ class _AuthorProfileState extends State<AuthorProfile>
     final selfProfile = context.watch<AutthorProfileProvider>();
     var authorProfile = selfProfile.authorProfilePostData;
     return Scaffold(
-      body: selfProfile.gettingAuthorprofile == true &&
-              selfProfile.authorProfilePostData != null
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black,
+        elevation: 0,
+        actions: [
+          IconButton(
+              onPressed: () {
+                showModalBottomSheet(
+                    backgroundColor: Colors.transparent,
+                    context: context,
+                    builder: (_) {
+                      return ClipRRect(
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(40),
+                          topRight: Radius.circular(40),
+                        ),
+                        child: Container(
+                          padding: EdgeInsets.all(20),
+                          color: Colors.white,
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              TextButton(
+                                  onPressed: () {},
+                                  child: Text(
+                                    'Share Profile',
+                                    style: ThreeKmTextConstants
+                                        .tk14PXPoppinsBlackMedium
+                                        .copyWith(fontWeight: FontWeight.w400),
+                                  )),
+                              TextButton(
+                                  onPressed: () {},
+                                  child: Text(
+                                    'Copy Profile Link',
+                                    style: ThreeKmTextConstants
+                                        .tk14PXPoppinsBlackMedium
+                                        .copyWith(fontWeight: FontWeight.w400),
+                                  )),
+                              TextButton(
+                                  onPressed: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (_) => ReportProfile()));
+                                  },
+                                  child: Text(
+                                    'Report Profile',
+                                    style: ThreeKmTextConstants
+                                        .tk14PXPoppinsBlackMedium
+                                        .copyWith(
+                                            color: Colors.red,
+                                            fontWeight: FontWeight.w400),
+                                  )),
+                              TextButton(
+                                  onPressed: () {},
+                                  child: Text(
+                                    'Cancel',
+                                    style: ThreeKmTextConstants
+                                        .tk14PXPoppinsBlackMedium
+                                        .copyWith(fontWeight: FontWeight.w400),
+                                  )),
+                            ],
+                          ),
+                        ),
+                      );
+                    });
+              },
+              icon: Icon(Icons.more_vert))
+        ],
+      ),
+      body: selfProfile.gettingAuthorprofile == true && authorProfile == null
           ? Container(
               height: MediaQuery.of(context).size.height,
               width: MediaQuery.of(context).size.width,
@@ -92,7 +165,15 @@ class _AuthorProfileState extends State<AuthorProfile>
           : Column(
               mainAxisSize: MainAxisSize.max,
               children: [
-                buildBackButton(context),
+                // SizedBox(
+                //   width: size(context).width / 1.2,
+                //   child: Row(
+                //     children: [
+                //       buildBackButton(context),
+                //       IconButton(onPressed: () {}, icon: Icon(Icons.more_vert))
+                //     ],
+                //   ),
+                // ),
                 selfProfile.authorProfilePostData != null
                     ? Expanded(
                         child: Container(
@@ -113,7 +194,7 @@ class _AuthorProfileState extends State<AuthorProfile>
                                 slivers: [
                                   SliverAppBar(
                                     collapsedHeight: 0,
-                                    expandedHeight: 300,
+                                    expandedHeight: 320,
                                     // widget.isFromSelfProfileNavigate != true ? 250 : 300,
                                     toolbarHeight: 0,
                                     backgroundColor: Colors.white,
@@ -309,19 +390,19 @@ class _AuthorProfileState extends State<AuthorProfile>
                                   ),
                                   SliverToBoxAdapter(
                                     child: Container(
-                                      height: 36,
+                                      height: 20,
                                     ),
                                   ),
                                   if (index == 0 && authorProfile != null) ...{
                                     SliverList(
                                       delegate: SliverChildBuilderDelegate(
                                         (context, _index) {
-                                          return CardUI(
-                                            data: authorProfile
-                                                .data.result!.posts![_index],
-                                            providerType:
-                                                'AutthorProfileProvider',
-                                          );
+                                          return NewsCard(
+                                              avtar: widget.avatar,
+                                              authorName: widget.userName,
+                                              authorProfileModel:
+                                                  authorProfile,
+                                              index: _index);
                                         },
                                         childCount: authorProfile
                                             .data.result!.posts!.length,
@@ -504,32 +585,33 @@ class _AuthorProfileState extends State<AuthorProfile>
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Material(
-          child: InkWell(
-            onTap: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (_) => ProfileFullImage(
-                            src: widget.avatar,
-                            Imagetag: "AuthorPhoto",
-                          )));
-            },
-            child: Container(
-              height: 120,
-              width: 120,
-              //margin: EdgeInsets.only(top: 44),
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(color: Colors.white, width: 3),
-                image: DecorationImage(
-                  image: CachedNetworkImageProvider(widget.avatar),
-                  fit: BoxFit.fill,
+        if (widget.avatar != null || widget.avatar != "")
+          Material(
+            child: InkWell(
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (_) => ProfileFullImage(
+                              src: widget.avatar,
+                              Imagetag: "AuthorPhoto",
+                            )));
+              },
+              child: Container(
+                height: 120,
+                width: 120,
+                //margin: EdgeInsets.only(top: 44),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(color: Colors.white, width: 3),
+                  image: DecorationImage(
+                    image: CachedNetworkImageProvider(widget.avatar),
+                    fit: BoxFit.fill,
+                  ),
                 ),
               ),
             ),
           ),
-        ),
       ],
     );
   }
@@ -560,7 +642,7 @@ class _NewsCardState extends State<NewsCard> {
     final newsData = widget.authorProfileModel.data.result;
     return CardUI(
       data: newsData?.posts?[widget.index],
-      providerType: 'AutthorProfileProvider',
+      providerType: 'AutthorProfileProvider2',
     );
     // return Stack(alignment: AlignmentDirectional.center, children: [
     //   Padding(

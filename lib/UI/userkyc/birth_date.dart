@@ -19,7 +19,7 @@ class _BirthDateState extends State<BirthDate> {
   var list = List<int>.generate(31, (i) => i + 1);
 
   var yearlist =
-      List<int>.generate(40, (i) => DateTime.now().year - i - 1).reversed;
+      List<int>.generate(80, (i) => DateTime.now().year - i - 1).reversed;
   List<String> month = [
     "Jan",
     "Feb",
@@ -34,9 +34,22 @@ class _BirthDateState extends State<BirthDate> {
     "Nov",
     "Dec"
   ];
+
+  FixedExtentScrollController? yearController = FixedExtentScrollController();
   var selectedYear;
   String selectedMonth = "Jan";
   int selectedDate = 1;
+  initListData(_) async {
+    log('dfdfhshgdjdhtyt');
+    yearController?.animateToItem(40,
+        duration: Duration(milliseconds: 1000), curve: Curves.easeInCirc);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance?.addPostFrameCallback(initListData);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -204,6 +217,7 @@ class _BirthDateState extends State<BirthDate> {
                       child: ListWheelScrollView(
                           // clipBehavior: Clip.none,
                           // renderChildrenOutsideViewport: true,
+                          controller: yearController,
                           physics: const FixedExtentScrollPhysics(),
                           itemExtent: 90,
                           perspective: 0.01,

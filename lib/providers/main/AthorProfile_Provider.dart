@@ -139,6 +139,10 @@ class AutthorProfileProvider extends ChangeNotifier {
     _authorProfilePostModel?.data.result?.posts?.clear();
   }
 
+  clearAuthorProfileData() {
+    _authorProfilePostModel = null;
+  }
+
   // get Author profile data and post
   Future<Null> getAuthorProfile(
       {required int authorId, String? authorType, String? language}) async {
@@ -156,7 +160,7 @@ class AutthorProfileProvider extends ChangeNotifier {
     if (response != null) {
       //print(response);
       if (response["status"] == "success") {
-        log("athor profile response is ${response}");
+        // log("athor profile response is ${response}");
         _authorProfilePostModel = ProfilePostModel.fromJson(response);
         _gettingAuthorprofile = false;
         notifyListeners();
