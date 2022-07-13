@@ -71,7 +71,10 @@ class _AuthorProfileState extends State<AuthorProfile>
   void dispose() {
     //Get.delete<AuthorProfileController>();
     controller.dispose();
-    context.read<AutthorProfileProvider>().clearAuthorProfileData();
+    if (!mounted) {
+      Future.microtask(() =>
+          context.read<AutthorProfileProvider>().clearAuthorProfileData());
+    }
     super.dispose();
   }
 
@@ -150,17 +153,11 @@ class _AuthorProfileState extends State<AuthorProfile>
               icon: Icon(Icons.more_vert))
         ],
       ),
-      body: selfProfile.gettingAuthorprofile == true && authorProfile == null
+      body: selfProfile.gettingAuthorprofile == true
           ? Container(
-              height: MediaQuery.of(context).size.height,
+              height: MediaQuery.of(context).size.height / 2,
               width: MediaQuery.of(context).size.width,
-              color: Colors.white,
-              child: Center(
-                child: Transform.translate(
-                  offset: Offset(0, 0),
-                  child: CupertinoActivityIndicator(),
-                ),
-              ),
+              child: Center(child: CircularProgressIndicator()),
             )
           : Column(
               mainAxisSize: MainAxisSize.max,
@@ -194,7 +191,7 @@ class _AuthorProfileState extends State<AuthorProfile>
                                 slivers: [
                                   SliverAppBar(
                                     collapsedHeight: 0,
-                                    expandedHeight: 320,
+                                    expandedHeight: 310,
                                     // widget.isFromSelfProfileNavigate != true ? 250 : 300,
                                     toolbarHeight: 0,
                                     backgroundColor: Colors.white,
@@ -261,7 +258,7 @@ class _AuthorProfileState extends State<AuthorProfile>
                                           // ),
                                           Padding(
                                             padding: EdgeInsets.symmetric(
-                                                vertical: 18, horizontal: 18),
+                                                vertical: 8, horizontal: 8),
                                             child: Row(
                                               mainAxisAlignment:
                                                   MainAxisAlignment
@@ -388,11 +385,6 @@ class _AuthorProfileState extends State<AuthorProfile>
                                       ),
                                     ),
                                   ),
-                                  SliverToBoxAdapter(
-                                    child: Container(
-                                      height: 20,
-                                    ),
-                                  ),
                                   if (index == 0 && authorProfile != null) ...{
                                     SliverList(
                                       delegate: SliverChildBuilderDelegate(
@@ -400,8 +392,7 @@ class _AuthorProfileState extends State<AuthorProfile>
                                           return NewsCard(
                                               avtar: widget.avatar,
                                               authorName: widget.userName,
-                                              authorProfileModel:
-                                                  authorProfile,
+                                              authorProfileModel: authorProfile,
                                               index: _index);
                                         },
                                         childCount: authorProfile

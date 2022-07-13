@@ -157,8 +157,6 @@ class _MyProfilePostState extends State<MyProfilePost>
     }
   }
 
-
-
   showKycMessage(context) {
     return showDialog(
         context: context,
@@ -221,20 +219,6 @@ class _MyProfilePostState extends State<MyProfilePost>
           "My posts",
           style: ThreeKmTextConstants.tk18PXLatoBlackMedium,
         ),
-
-        // actions: [
-        //   IconButton(
-        //       onPressed: () {
-        //         Navigator.push(
-        //             context,
-        //             MaterialPageRoute(
-        //                 builder: (context) => SearchPage(tabNuber: 0)));
-        //       },
-        //       icon: Icon(
-        //         Icons.search,
-        //         color: Colors.black,
-        //       ))
-        // ],
       ),
       body:
           selfProfile.isGettingSelfProfile == true &&
