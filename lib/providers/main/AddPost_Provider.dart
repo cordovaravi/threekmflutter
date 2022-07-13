@@ -42,15 +42,12 @@ class AddPostProvider extends ChangeNotifier {
   List<String> get tagsList => _tagsList;
   String _description = '';
   String get description => _description;
+
   set description(String text) {
     _description = text;
+  }
 
   String? tempURl = null;
-
-  Future<Null> addTags(String tagItem) async {
-    _tagsList.add(tagItem);
-    notifyListeners();
-  }
 
   Future<Null> addTags(String tagItem) async {
     _tagsList.add(tagItem);
@@ -343,7 +340,8 @@ class AddPostProvider extends ChangeNotifier {
       _desFile = response.destinationPath;
       addImages(File(response.destinationPath));
     } else if (response is OnFailure) {
-      Fluttertoast.showToast(msg: "Unable to process video.\nPlease try again later.");
+      Fluttertoast.showToast(
+          msg: "Unable to process video.\nPlease try again later.");
       print("compression failed");
     } else if (response is OnCancelled) {
       Fluttertoast.showToast(msg: "Cancelled");
@@ -356,8 +354,8 @@ class AddPostProvider extends ChangeNotifier {
     final String videoName = '${DateTime.now().millisecondsSinceEpoch}.mp4';
     if (Platform.isAndroid) {
       // Handle this part the way you want to save it in any directory you wish.
-      final List<Directory>? dir =
-          await path.getExternalStorageDirectories(type: path.StorageDirectory.movies);
+      final List<Directory>? dir = await path.getExternalStorageDirectories(
+          type: path.StorageDirectory.movies);
       directory = dir!.first.path;
       return File('$directory/$videoName').path;
     } else {
