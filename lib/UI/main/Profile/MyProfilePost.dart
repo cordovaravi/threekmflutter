@@ -15,18 +15,16 @@ import 'package:provider/src/provider.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:threekm/Models/SelfProfile_Model.dart';
-import 'package:threekm/Models/getUserInfoModel.dart' as UserInfoModel;
-import 'package:threekm/Models/newsByCategories_model.dart'
-    as newsListByCategoryModel;
+
 import 'package:threekm/UI/Animation/AnimatedSizeRoute.dart';
-import 'package:threekm/UI/DayZero/DayZeroforTabs.dart';
+
 import 'package:threekm/UI/Help_Supportpage.dart';
 import 'package:threekm/UI/main/AddPost/AddNewPost.dart';
 
 import 'package:threekm/UI/main/News/NewsList.dart';
 import 'package:threekm/UI/main/News/Widgets/comment_Loading.dart';
 import 'package:threekm/UI/main/News/Widgets/likes_Loading.dart';
-import 'package:threekm/UI/shop/product/full_image.dart';
+
 import 'package:threekm/UI/userkyc/user_kyc_main.dart';
 import 'package:threekm/commenwidgets/CustomSnakBar.dart';
 import 'package:threekm/commenwidgets/commenwidget.dart';
