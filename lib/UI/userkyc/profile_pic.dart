@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:extended_image/extended_image.dart';
@@ -70,8 +71,7 @@ class _ProfileImagePopUpState extends State<ProfileImagePopUp> {
 
   XFile? image;
 
-  final GlobalKey<ExtendedImageEditorState> editorKey =
-      GlobalKey<ExtendedImageEditorState>();
+  final GlobalKey<ExtendedImageEditorState> editorKey = GlobalKey<ExtendedImageEditorState>();
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -161,8 +161,7 @@ class _ProfileImagePopUpState extends State<ProfileImagePopUp> {
     );
   }
 
-  Widget buildProfileButton(
-      {required String title, double? width, required VoidCallback onTap}) {
+  Widget buildProfileButton({required String title, double? width, required VoidCallback onTap}) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -208,15 +207,12 @@ class _ProfileImagePopUpState extends State<ProfileImagePopUp> {
         // }
         Uint8List? fileData;
         if (editorKey.currentState?.rawImageData != null) {
-          fileData = await cropImageDataWithNativeLibrary(
-              state: editorKey.currentState!);
+          fileData = await cropImageDataWithNativeLibrary(state: editorKey.currentState!);
           final tempDir = await getTemporaryDirectory();
           File file = await File('${tempDir.path}/image.png').create();
           file.writeAsBytesSync(fileData!);
           print(file.path);
-          context
-              .read<ProfileInfoProvider>()
-              .uploadPhoto(context: context, filePath: file.path);
+          context.read<ProfileInfoProvider>().uploadPhoto(context: context, filePath: file.path);
         }
       },
       borderRadius: BorderRadius.circular(26),
@@ -234,8 +230,8 @@ class _ProfileImagePopUpState extends State<ProfileImagePopUp> {
                     ),
                     Text(
                       "Save Image",
-                      style: ThreeKmTextConstants.tk14PXPoppinsBlackBold
-                          .copyWith(color: Colors.white),
+                      style:
+                          ThreeKmTextConstants.tk14PXPoppinsBlackBold.copyWith(color: Colors.white),
                     )
                   ],
                 )

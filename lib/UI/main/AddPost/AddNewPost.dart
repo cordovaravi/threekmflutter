@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:google_maps_webservice/directions.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:threekm/UI/main/AddPost/ImageEdit/editImage.dart';
@@ -37,6 +38,8 @@ class _AddNewPostState extends State<AddNewPost> {
       final addPost = Provider.of<AddPostProvider>(context, listen: false);
       final location = Provider.of<LocationProvider>(context, listen: false);
       addPost.selectedAddress = location.AddressFromCordinate;
+      addPost.geometry =
+          Geometry(location: Location(lat: location.getLatitude!, lng: location.getLongitude!));
     });
   }
 
