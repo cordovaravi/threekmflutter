@@ -98,7 +98,7 @@ class _UserInfoState extends State<UserInfo> {
 
   var list = List<int>.generate(31, (i) => i + 1);
   var yearlist =
-      List<int>.generate(40, (i) => DateTime.now().year - i - 1).reversed;
+      List<int>.generate(80, (i) => DateTime.now().year - i - 1).reversed;
 
   var selectedYear;
   String selectedMonth = "Jan";
