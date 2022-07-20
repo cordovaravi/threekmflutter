@@ -334,7 +334,7 @@ class _CardUIState extends State<CardUI> {
                                   builder: (context) =>
                                       LikeList(postId: data.postId!)));
                         },
-                        icon: data.listEmotions != null
+                        icon: data.listEmotions != null && false
                             ? SizedBox(
                                 width: data.listEmotions.length == 5
                                     ? 60
@@ -349,9 +349,11 @@ class _CardUIState extends State<CardUI> {
                                 child: Stack(
                                   clipBehavior: Clip.none,
                                   children: List.generate(
-                                      data.listEmotions.length,
+                                      data.listEmotions.length > 3
+                                          ? 3
+                                          : data.listEmotions.length,
                                       (index) => Positioned(
-                                          left: index.toDouble() * 14,
+                                          left: index.toDouble() * 17,
                                           bottom: 0,
                                           child: Lottie.asset(
                                               'assets/lottie/${data.listEmotions[index]}.json',
@@ -371,9 +373,9 @@ class _CardUIState extends State<CardUI> {
                         ),
                       )
                     : SizedBox(),
-                Text('${data.views ?? 0} views',
-                    style: ThreeKmTextConstants.tk12PXPoppinsBlackSemiBold
-                        .copyWith(fontWeight: FontWeight.normal))
+                // Text('${data.views ?? 0} views',
+                //     style: ThreeKmTextConstants.tk12PXPoppinsBlackSemiBold
+                //         .copyWith(fontWeight: FontWeight.normal))
               ],
             ),
             const Divider(

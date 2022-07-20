@@ -581,8 +581,8 @@ class _PostViewState extends State<PostView> {
                                         SizedBox(
                                           width: 10,
                                         ),
-                                        Text(newsData.views.toString() +
-                                            ' Views'),
+                                        // Text(newsData.views.toString() +
+                                        //     ' Views'),
                                       ],
                                     )),
                               ]),

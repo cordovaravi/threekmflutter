@@ -87,6 +87,10 @@ class NewsFeedProvider extends ChangeNotifier {
         element.likes = element.likes! + 1;
         element.isLiked = true;
         element.emotion = emotion;
+        if (emotion != null &&
+            emotion != "" &&
+            !element.listEmotions!.contains(emotion))
+          element.listEmotions?.add(emotion);
       }
       //notifyListeners();
     });
@@ -106,6 +110,11 @@ class NewsFeedProvider extends ChangeNotifier {
         element.isLiked = false;
         element.likes = element.likes! - 1;
         element.emotion = null;
+        if (element.likes == 1) {
+          element.listEmotions = [];
+          element.listEmotions?.clear();
+        }
+        ;
       }
       notifyListeners();
     });
