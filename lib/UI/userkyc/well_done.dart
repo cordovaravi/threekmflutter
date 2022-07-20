@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/src/provider.dart';
@@ -17,7 +19,23 @@ class WellDone extends StatefulWidget {
   State<WellDone> createState() => _WellDoneState();
 }
 
-class _WellDoneState extends State<WellDone> {
+class _WellDoneState extends State<WellDone> with TickerProviderStateMixin {
+  AnimationController? _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(vsync: this);
+    _controller?.addListener(() {
+      log(_controller!.value.toString());
+      //  if the full duration of the animation is 8 secs then 0.5 is 4 secs
+      if (_controller != null && _controller!.value == 1) {
+// When it gets there hold it there.
+        _controller!.value = 0.8;
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -29,12 +47,15 @@ class _WellDoneState extends State<WellDone> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Spacer(),
-            Lottie.asset(
-              'assets/json/14337-well-done.json',
-              fit: BoxFit.cover,
-              alignment: Alignment.center,
-              repeat: false,
-            ),
+            Lottie.asset('assets/json/14337-well-done.json',
+                controller: _controller,
+                fit: BoxFit.cover,
+                alignment: Alignment.center,
+                repeat: false, onLoaded: (comp) {
+              _controller!
+                ..duration = comp.duration
+                ..forward();
+            }),
             Spacer(),
             SizedBox(
               width: size(context).width / 1.2,

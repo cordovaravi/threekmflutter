@@ -455,6 +455,59 @@ class _PostViewState extends State<PostView> {
                                   textStyle: TextStyle(),
                                 ),
                               ),
+                              // Padding(
+                              //   padding: EdgeInsets.only(
+                              //       left: 10, right: 10, top: 5, bottom: 5),
+                              //   child: RichText(
+                              //     text: TextSpan(
+                              //       style: const TextStyle(
+                              //         fontSize: 14.0,
+                              //         color: Colors.black,
+                              //       ),
+                              //       children: <TextSpan>[
+                              //         TextSpan(
+                              //             text: 'Post Location: ',
+                              //             style: ThreeKmTextConstants
+                              //                 .tk12PXPoppinsBlackSemiBold
+                              //                 .copyWith(
+                              //                     color: Color(0xFF5C5C5C))),
+                              //         TextSpan(
+                              //             text:
+                              //                 '${newsData.location ?? '${newsData.locations?[0].area}, ${newsData.locations?[0].city}'}',
+                              //             style: ThreeKmTextConstants
+                              //                 .tk12PXPoppinsWhiteRegular
+                              //                 .copyWith(
+                              //                     color: Color(0xFF5C5C5C))),
+                              //       ],
+                              //     ),
+                              //   ),
+                              // ),
+                              // Padding(
+                              //   padding: EdgeInsets.only(
+                              //       left: 10, right: 10, bottom: 10),
+                              //   child: RichText(
+                              //     text: TextSpan(
+                              //       style: const TextStyle(
+                              //         fontSize: 14.0,
+                              //         color: Colors.black,
+                              //       ),
+                              //       children: <TextSpan>[
+                              //         TextSpan(
+                              //             text: 'Tags: ',
+                              //             style: ThreeKmTextConstants
+                              //                 .tk12PXPoppinsBlackSemiBold
+                              //                 .copyWith(
+                              //                     color: Color(0xFF5C5C5C))),
+                              //         TextSpan(
+                              //             text: '${newsData.tags?.join(', ')}',
+                              //             style: ThreeKmTextConstants
+                              //                 .tk12PXPoppinsWhiteRegular
+                              //                 .copyWith(
+                              //                     color: Color(0xFF5C5C5C))),
+                              //       ],
+                              //     ),
+                              //   ),
+                              // ),
                               Row(children: [
                                 if (newsData.likes != 0)
                                   Padding(

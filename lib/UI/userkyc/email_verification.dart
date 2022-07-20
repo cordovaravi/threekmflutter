@@ -7,6 +7,7 @@ import 'package:provider/src/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:threekm/UI/main/navigation.dart';
 import 'package:threekm/UI/userkyc/profile_picture.dart';
+import 'package:threekm/UI/userkyc/user_kyc_main.dart';
 
 import 'package:threekm/providers/userKyc/verify_credential.dart';
 import 'package:threekm/utils/constants.dart';
@@ -121,29 +122,50 @@ class _EmailVerificationState extends State<EmailVerification> {
 
   @override
   Widget build(BuildContext context) {
-    var Kycprovider = context.read<VerifyKYCCredential>();
+    var Kycprovider = context.watch<VerifyKYCCredential>();
     var state = Kycprovider.isLoding;
-    var verifyEmail = () async {
-      var otp = _otpController.text;
-      if (otp.length == 10) {
+    var verifyotpfn = () async {
+      log('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
+      var otp = [
+        _controllers[0].text,
+        _controllers[1].text,
+        _controllers[2].text,
+        _controllers[3].text
+      ].join();
+      if (otp.length == 4) {
         SharedPreferences _prefs = await SharedPreferences.getInstance();
         if (isSendOtp) {
-          // var otp = [
-          //   _controllers[0].text,
-          //   _controllers[1].text,
-          //   _controllers[2].text,
-          //   _controllers[3].text
-          // ].join();
-
           var res = json.encode({
             "email": _emailController.text,
             "otp": otp,
             "device": _prefs.getString('deviceID')
           });
+          log(otp);
+          log(res.toString());
 
           Kycprovider.verifyEmailOTPKYC(res, _emailController.text, context);
         }
       }
+      // var otp = _otpController.text;
+      // if (otp.length == 10) {
+      //   SharedPreferences _prefs = await SharedPreferences.getInstance();
+      //   if (isSendOtp) {
+      //     // var otp = [
+      //     //   _controllers[0].text,
+      //     //   _controllers[1].text,
+      //     //   _controllers[2].text,
+      //     //   _controllers[3].text
+      //     // ].join();
+
+      //     var res = json.encode({
+      //       "email": _emailController.text,
+      //       "otp": otp,
+      //       "device": _prefs.getString('deviceID')
+      //     });
+
+      //     Kycprovider.verifyEmailOTPKYC(res, _emailController.text, context);
+      //   }
+      // }
     };
     return WillPopScope(
       onWillPop: () {
@@ -218,36 +240,49 @@ class _EmailVerificationState extends State<EmailVerification> {
                         .copyWith(fontWeight: FontWeight.w400),
                   ),
                 ),
-              // Row(
-              //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              //   children: [
-              //     OtpBox(
-              //       i: 0,
-              //       focusNode: _focusNodes,
-              //       controller: _controllers,
-              //     ),
-              //     OtpBox(i: 1, focusNode: _focusNodes, controller: _controllers),
-              //     OtpBox(i: 2, focusNode: _focusNodes, controller: _controllers),
-              //     OtpBox(i: 3, focusNode: _focusNodes, controller: _controllers),
-              //   ],
-              // ),
               if (isSendOtp)
-                TextFormField(
-                  controller: _otpController,
-                  textAlign: TextAlign.start,
-                  textAlignVertical: TextAlignVertical.top,
-                  maxLines: 1,
-                  onChanged: (i) {
-                    verifyEmail();
-                  },
-                  decoration: const InputDecoration(
-                    filled: true,
-                    border: OutlineInputBorder(
-                      borderSide: BorderSide.none,
-                      borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    OtpBox(
+                      i: 0,
+                      focusNode: _focusNodes,
+                      controller: _controllers,
                     ),
-                  ),
+                    OtpBox(
+                        i: 1,
+                        focusNode: _focusNodes,
+                        controller: _controllers,
+                        onChange: verifyotpfn),
+                    OtpBox(
+                        i: 2,
+                        focusNode: _focusNodes,
+                        controller: _controllers,
+                        onChange: verifyotpfn),
+                    OtpBox(
+                        i: 3,
+                        focusNode: _focusNodes,
+                        controller: _controllers,
+                        onChange: verifyotpfn),
+                  ],
                 ),
+              // if (isSendOtp)
+              //   TextFormField(
+              //     controller: _otpController,
+              //     textAlign: TextAlign.start,
+              //     textAlignVertical: TextAlignVertical.top,
+              //     maxLines: 1,
+              //     onChanged: (i) {
+              //       verifyEmail();
+              //     },
+              //     decoration: const InputDecoration(
+              //       filled: true,
+              //       border: OutlineInputBorder(
+              //         borderSide: BorderSide.none,
+              //         borderRadius: BorderRadius.all(Radius.circular(8.0)),
+              //       ),
+              //     ),
+              //   ),
               if (Kycprovider.iswrongOTP)
                 Padding(
                   padding: const EdgeInsets.only(top: 16),

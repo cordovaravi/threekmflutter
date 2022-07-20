@@ -8,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:threekm/UI/main/navigation.dart';
 import 'package:threekm/UI/userkyc/profile_pic.dart';
 import 'package:threekm/providers/userKyc/verify_credential.dart';
+import 'package:threekm/utils/constants.dart';
 import 'package:threekm/utils/threekm_textstyles.dart';
 
 import 'basic_info.dart';
@@ -38,7 +39,7 @@ class _UploadProfilePictureState extends State<UploadProfilePicture> {
       child: Scaffold(
         body: Container(
           color: Colors.white,
-          margin: const EdgeInsets.only(top: 20),
+          margin: const EdgeInsets.only(top: 18),
           padding: const EdgeInsets.all(15),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -71,8 +72,8 @@ class _UploadProfilePictureState extends State<UploadProfilePicture> {
                   ),
                 ],
               ),
-              const SizedBox(
-                height: 24,
+              SizedBox(
+                height: size(context).height / 33,
               ),
               LinearProgressIndicator(
                 valueColor: const AlwaysStoppedAnimation(Color(0xFF3E7EFF)),
@@ -82,8 +83,8 @@ class _UploadProfilePictureState extends State<UploadProfilePicture> {
                 value: 0.3,
                 semanticsLabel: 'Linear progress indicator',
               ),
-              const SizedBox(
-                height: 46,
+              SizedBox(
+                height: size(context).height / 25,
               ),
               InkWell(
                 onTap: () async {
@@ -130,8 +131,8 @@ class _UploadProfilePictureState extends State<UploadProfilePicture> {
                           : const Image(
                               image: AssetImage('assets/user_profile.png'),
                             ),
-                      const SizedBox(
-                        height: 20,
+                      SizedBox(
+                        height: size(context).height / 29,
                       ),
                       Text(
                         'Add Profile photo',

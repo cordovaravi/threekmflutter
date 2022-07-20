@@ -76,8 +76,8 @@ class _ProfileImagePopUpState extends State<ProfileImagePopUp> {
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.only(left: 25, top: 48, right: 25, bottom: 30),
-      height: 643,
       width: double.infinity,
+      height: MediaQuery.of(context).size.height / 1.3,
       margin: EdgeInsets.only(
         top: 24,
         bottom: 24,
@@ -88,75 +88,78 @@ class _ProfileImagePopUpState extends State<ProfileImagePopUp> {
         color: Colors.white,
         borderRadius: BorderRadius.circular(50),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Text(
-            "Crop and adjust".toUpperCase(),
-            style: ThreeKmTextConstants.tk16PXPoppinsBlackSemiBold.copyWith(
-              fontWeight: FontWeight.w900,
-              color: Color(0xFF0F0F2D),
-            ),
-          ),
-          space(
-            height: 24,
-          ),
-          buildProfileButton(
-            title: "Select other Photo",
-            onTap: () async {
-              image = await _imagePicker.pickImage(source: ImageSource.gallery);
-              if (image != null) {
-                //Navigator.pop(context);
-                setState(() {});
-              }
-            },
-            width: 177,
-          ),
-          space(
-            height: 62,
-          ),
-          Container(
-              height: 289,
-              width: 289,
-              decoration: BoxDecoration(
-                color: Colors.grey.withOpacity(0.2),
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(
+              "Crop and adjust".toUpperCase(),
+              style: ThreeKmTextConstants.tk16PXPoppinsBlackSemiBold.copyWith(
+                fontWeight: FontWeight.w900,
+                color: Color(0xFF0F0F2D),
               ),
-              child: image == null
-                  ? Icon(
-                      Icons.collections,
-                      size: 100,
-                      color: Colors.grey,
-                    )
-                  // : Image.file(
-                  //     File(image!.path),
-                  //     fit: BoxFit.contain,
-                  //   ),
-                  : ExtendedImage.file(
-                      File(image!.path),
-                      cacheRawData: true,
-                      fit: BoxFit.contain,
-                      clearMemoryCacheWhenDispose: true,
-                      // enableLoadState: true,
-                      mode: ExtendedImageMode.editor,
-                      extendedImageEditorKey: editorKey,
-                      initEditorConfigHandler: (state) {
-                        return EditorConfig(
-                            maxScale: 8.0,
-                            cropRectPadding: EdgeInsets.all(20.0),
-                            hitTestSize: 20.0,
-                            cropAspectRatio: CropAspectRatios.custom);
-                      },
-                    )),
-          space(
-            height: 72,
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              buildSaveButton(context),
-            ],
-          )
-        ],
+            ),
+            space(
+              height: 24,
+            ),
+            buildProfileButton(
+              title: "Select other Photo",
+              onTap: () async {
+                image =
+                    await _imagePicker.pickImage(source: ImageSource.gallery);
+                if (image != null) {
+                  //Navigator.pop(context);
+                  setState(() {});
+                }
+              },
+              width: 177,
+            ),
+            space(
+              height: 62,
+            ),
+            Container(
+                height: 289,
+                width: 289,
+                decoration: BoxDecoration(
+                  color: Colors.grey.withOpacity(0.2),
+                ),
+                child: image == null
+                    ? Icon(
+                        Icons.collections,
+                        size: 100,
+                        color: Colors.grey,
+                      )
+                    // : Image.file(
+                    //     File(image!.path),
+                    //     fit: BoxFit.contain,
+                    //   ),
+                    : ExtendedImage.file(
+                        File(image!.path),
+                        cacheRawData: true,
+                        fit: BoxFit.contain,
+                        clearMemoryCacheWhenDispose: true,
+                        // enableLoadState: true,
+                        mode: ExtendedImageMode.editor,
+                        extendedImageEditorKey: editorKey,
+                        initEditorConfigHandler: (state) {
+                          return EditorConfig(
+                              maxScale: 8.0,
+                              cropRectPadding: EdgeInsets.all(20.0),
+                              hitTestSize: 20.0,
+                              cropAspectRatio: CropAspectRatios.custom);
+                        },
+                      )),
+            space(
+              height: 72,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                buildSaveButton(context),
+              ],
+            )
+          ],
+        ),
       ),
     );
   }

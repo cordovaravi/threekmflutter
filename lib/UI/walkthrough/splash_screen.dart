@@ -121,7 +121,9 @@ class _SplashScreenState extends State<SplashScreen> {
                 playSound: true,
               ),
             ),
-            payload: message.data["post_id"]);
+            payload: message.data["poll_id"] != null
+                ? 'poll_id=${message.data["poll_id"]}'
+                : message.data["post_id"]);
       }
     });
 

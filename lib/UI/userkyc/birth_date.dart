@@ -6,6 +6,7 @@ import 'package:provider/src/provider.dart';
 import 'package:threekm/UI/main/navigation.dart';
 import 'package:threekm/UI/userkyc/confirm_info.dart';
 import 'package:threekm/providers/ProfileInfo/ProfileInfo_Provider.dart';
+import 'package:threekm/utils/constants.dart';
 import 'package:threekm/utils/threekm_textstyles.dart';
 
 class BirthDate extends StatefulWidget {
@@ -26,10 +27,10 @@ class _BirthDateState extends State<BirthDate> {
     "Mar",
     "Apr",
     "May",
-    "June",
-    "July",
+    "Jun",
+    "Jul",
     "Aug",
-    "Sept",
+    "Sep",
     "Oct",
     "Nov",
     "Dec"
@@ -98,8 +99,8 @@ class _BirthDateState extends State<BirthDate> {
                   ),
                 ],
               ),
-              const SizedBox(
-                height: 24,
+              SizedBox(
+                height: size(context).height / 33,
               ),
               LinearProgressIndicator(
                 valueColor: const AlwaysStoppedAnimation(Color(0xFF3E7EFF)),
@@ -109,13 +110,14 @@ class _BirthDateState extends State<BirthDate> {
                 value: 0.6,
                 semanticsLabel: 'Linear progress indicator',
               ),
-              const SizedBox(
-                height: 46,
+              SizedBox(
+                height: size(context).height / 25,
               ),
               Text(
                 'Please enter your Birthdate',
                 style: ThreeKmTextConstants.tk20PXPoppinsRedBold
-                    .copyWith(color: Colors.black, fontSize: 24),
+                    .copyWith(color: Colors.black, fontSize: 24, height: 1),
+                textAlign: TextAlign.center,
               ),
               Text(
                 'This should be the date of birth of the person using the account.',
@@ -123,11 +125,11 @@ class _BirthDateState extends State<BirthDate> {
                     .copyWith(color: const Color(0xFFA7ABAD)),
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(
-                height: 20,
+              SizedBox(
+                height: size(context).height / 39,
               ),
               Container(
-                height: 231,
+                height: size(context).height / 3.4,
                 width: 358,
                 decoration: BoxDecoration(
                   color: Colors.white,
@@ -144,7 +146,7 @@ class _BirthDateState extends State<BirthDate> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     SizedBox(
-                      height: 240,
+                      height: size(context).height / 3.6,
                       width: 80,
                       child: ListWheelScrollView(
                           // clipBehavior: Clip.none,
@@ -178,7 +180,7 @@ class _BirthDateState extends State<BirthDate> {
                               .toList()),
                     ),
                     SizedBox(
-                      height: 240,
+                      height: size(context).height / 3.6,
                       width: 80,
                       child: ListWheelScrollView(
                           // clipBehavior: Clip.none,
@@ -212,7 +214,7 @@ class _BirthDateState extends State<BirthDate> {
                               .toList()),
                     ),
                     SizedBox(
-                      height: 240,
+                      height: size(context).height / 3.6,
                       width: 80,
                       child: ListWheelScrollView(
                           // clipBehavior: Clip.none,

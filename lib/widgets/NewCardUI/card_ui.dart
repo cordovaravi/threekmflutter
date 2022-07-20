@@ -322,9 +322,11 @@ class _CardUIState extends State<CardUI> {
                 data.likes != 0
                     ? TextButton.icon(
                         style: TextButton.styleFrom(
-                            alignment: Alignment.centerLeft,
-                            padding: EdgeInsets.zero,
-                            visualDensity: VisualDensity.compact),
+                          alignment: Alignment.centerLeft,
+                          padding: EdgeInsets.zero,
+                          visualDensity: VisualDensity.standard,
+                          enableFeedback: true,
+                        ),
                         onPressed: () {
                           Navigator.push(
                               context,
@@ -332,10 +334,38 @@ class _CardUIState extends State<CardUI> {
                                   builder: (context) =>
                                       LikeList(postId: data.postId!)));
                         },
-                        icon: const Image(
-                            image: AssetImage('assets/like_heart.png')),
+                        icon: data.listEmotions != null
+                            ? SizedBox(
+                                width: data.listEmotions.length == 5
+                                    ? 60
+                                    : data.listEmotions.length == 4
+                                        ? 56
+                                        : data.listEmotions.length == 3
+                                            ? 50
+                                            : data.listEmotions.length == 2
+                                                ? 40
+                                                : 25,
+                                height: 30,
+                                child: Stack(
+                                  clipBehavior: Clip.none,
+                                  children: List.generate(
+                                      data.listEmotions.length,
+                                      (index) => Positioned(
+                                          left: index.toDouble() * 14,
+                                          bottom: 0,
+                                          child: Lottie.asset(
+                                              'assets/lottie/${data.listEmotions[index]}.json',
+                                              animate: false,
+                                              height: 28))),
+                                ),
+                              )
+                            : const Image(
+                                image: AssetImage('assets/like_heart.png')),
+
+                        //const Image(
+                        //     image: AssetImage('assets/like_heart.png')),
                         label: Text(
-                          '  ${data.likes}',
+                          '${data.likes}',
                           style: ThreeKmTextConstants.tk12PXPoppinsBlackSemiBold
                               .copyWith(fontWeight: FontWeight.normal),
                         ),

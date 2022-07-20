@@ -23,9 +23,11 @@ import 'package:threekm/Models/home1_model.dart';
 import 'package:threekm/UI/main/News/NewsList.dart';
 import 'package:threekm/UI/main/News/PostView.dart';
 import 'package:threekm/UI/main/News/Widgets/HeighLightPost.dart';
+import 'package:threekm/UI/main/News/poll_page.dart';
 
 import 'package:threekm/UI/main/News/uppartabs.dart';
 import 'package:threekm/UI/main/News/userInfo.dart';
+import 'package:threekm/UI/main/navigation.dart';
 
 import 'package:threekm/UI/shop/restaurants/biryani_restro.dart';
 import 'package:threekm/UI/shop/showOrderStatus.dart';
@@ -128,12 +130,24 @@ class _NewsTabState extends State<NewsTab> with AutomaticKeepAliveClientMixin {
       log('A new onMessageOpenedApp event ${message.notification?.body}');
     }).onData((data) {
       log(data.notification?.title.toString() ?? "");
-      Future.delayed(Duration(seconds: 1), () {
-        Navigator.push(
+      if (data.data["type"] == "polls") {
+        Navigator.push(context, MaterialPageRoute(builder: (_) {
+          return PollPage(
+            PollId: "${int.parse(data.data["poll_id"])}",
+          );
+        })).then((value) => Navigator.pushAndRemoveUntil(
             context,
-            MaterialPageRoute(
-                builder: (context) => PostView(postId: data.data["post_id"])));
-      });
+            MaterialPageRoute(builder: (_) => TabBarNavigation()),
+            (route) => false));
+      } else {
+        Future.delayed(Duration(seconds: 1), () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) =>
+                      PostView(postId: data.data["post_id"])));
+        });
+      }
     });
   }
 
@@ -167,11 +181,12 @@ class _NewsTabState extends State<NewsTab> with AutomaticKeepAliveClientMixin {
         .then((RemoteMessage? message) {
       if (message != null) {
         log("message from firebase is $message");
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) =>
-                    PostView(postId: message.data["post_id"])));
+        if (message.data["post_id"] != null)
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) =>
+                      PostView(postId: message.data["post_id"])));
       }
     });
   }

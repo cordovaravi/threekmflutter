@@ -12,6 +12,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:threekm/UI/main/News/PostView.dart';
+import 'package:threekm/UI/main/News/poll_page.dart';
 import 'package:threekm/providers/FCM/fcm_sendToken_Provider.dart';
 import 'package:threekm/providers/Global/logged_in_or_not.dart';
 import 'package:threekm/providers/Location/locattion_Provider.dart';
@@ -280,7 +281,6 @@ class MyApp extends StatelessWidget {
 
           ChangeNotifierProvider<VerifyKYCCredential>(
               create: (context) => VerifyKYCCredential())
-
         ],
         child: Consumer<AppLanguage>(
           builder: (context, controller, child) {
@@ -318,8 +318,17 @@ class MyApp extends StatelessWidget {
 }
 
 onSelectNotification(String? payload) {
-  Navigator.of(navigatorKey.currentContext!)
-      .push(MaterialPageRoute(builder: (_) {
-    return PostView(postId: payload!);
-  }));
+  if (payload?.contains('poll_id') ?? false) {
+    Navigator.of(navigatorKey.currentContext!)
+        .push(MaterialPageRoute(builder: (_) {
+      return PollPage(
+        PollId: "${payload?.split("=")[1]}",
+      );
+    }));
+  } else {
+    Navigator.of(navigatorKey.currentContext!)
+        .push(MaterialPageRoute(builder: (_) {
+      return PostView(postId: payload!);
+    }));
+  }
 }

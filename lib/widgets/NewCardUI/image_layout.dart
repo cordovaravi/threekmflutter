@@ -412,6 +412,11 @@ class ImageWidget extends StatelessWidget {
             width: width,
             height: height,
             fit: fit,
+            errorWidget: (context, url, error) => Container(
+              width: width,
+              height: height,
+              color: Colors.grey,
+            ),
           ),
           imagesList is String == false
               ? Center(
