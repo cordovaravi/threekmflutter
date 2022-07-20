@@ -10,6 +10,7 @@ import 'package:provider/provider.dart';
 import 'package:threekm/UI/main/AddPost/ImageEdit/editImage.dart';
 import 'package:threekm/UI/main/AddPost/utils/FileUtils.dart';
 import 'package:threekm/UI/main/AddPost/utils/uploadPost.dart';
+import 'package:threekm/UI/main/CommonWidgets/app_bar_util.dart';
 import 'package:threekm/providers/Location/locattion_Provider.dart';
 import 'package:threekm/providers/main/AddPost_Provider.dart';
 import 'package:threekm/utils/utils.dart';
@@ -17,9 +18,11 @@ import 'package:threekm/utils/utils.dart';
 import 'add_post_location.dart';
 
 class AddNewPost extends StatefulWidget {
-  //final File imageFile;
-  // AddNewPost({required this.imageFile, Key? key}) : super(key: key);
-
+  AddNewPost({Key? key, this.isEditing = false, this.postId})
+      : assert(isEditing == true ? postId != null : true),
+        super(key: key);
+  final bool isEditing;
+  final String? postId;
   @override
   _AddNewPostState createState() => _AddNewPostState();
 }
@@ -61,17 +64,8 @@ class _AddNewPostState extends State<AddNewPost> {
         FocusScope.of(context).unfocus();
       },
       child: Scaffold(
-        appBar: AppBar(
-          title: Text(
-            "Add Post",
-            style: ThreeKmTextConstants.appBarTitleTextStyle,
-          ),
-          titleSpacing: 0,
-          actions: [_postUploadButton(context), SizedBox(width: 6)],
-          backgroundColor: Colors.white,
-          elevation: 0.5,
-          foregroundColor: Colors.black,
-        ),
+        appBar: AppBarUtil.addEditPostAppBar(
+            isEditing: widget.isEditing, actions: [_postUploadButton(context), SizedBox(width: 6)]),
         body: Form(
           key: _formKey,
           child: ListView(
@@ -140,7 +134,7 @@ class _AddNewPostState extends State<AddNewPost> {
                   }
                 },
           child: Text(
-            "Post",
+            widget.isEditing ? "Save" : "Post",
             style: GoogleFonts.poppins(fontWeight: FontWeight.w500, fontSize: 16),
           ),
           style: ElevatedButton.styleFrom(

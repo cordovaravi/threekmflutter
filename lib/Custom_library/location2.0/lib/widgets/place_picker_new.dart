@@ -52,6 +52,7 @@ class _PlacePickerNewState extends State<PlacePickerNew> {
   TextFormField _searchField(Size md) {
     return TextFormField(
       controller: _textController,
+      autofocus: true,
       onChanged: (text) async {
         if (text.isNotEmpty && text.length > 1) {
           setState(() {
