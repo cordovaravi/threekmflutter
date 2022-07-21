@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -5,20 +6,23 @@ import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_webservice/directions.dart';
+import 'package:html/dom.dart' as html;
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:threekm/UI/main/AddPost/ImageEdit/editImage.dart';
 import 'package:threekm/UI/main/AddPost/utils/FileUtils.dart';
 import 'package:threekm/UI/main/AddPost/utils/uploadPost.dart';
 import 'package:threekm/UI/main/CommonWidgets/app_bar_util.dart';
+import 'package:threekm/providers/Location/getAddress.dart';
 import 'package:threekm/providers/Location/locattion_Provider.dart';
 import 'package:threekm/providers/main/AddPost_Provider.dart';
+import 'package:threekm/providers/main/singlePost_provider.dart';
 import 'package:threekm/utils/utils.dart';
 
 import 'add_post_location.dart';
 
 class AddNewPost extends StatefulWidget {
-  AddNewPost({Key? key, this.isEditing = false, this.postId})
+  const AddNewPost({Key? key, this.isEditing = false, this.postId})
       : assert(isEditing == true ? postId != null : true),
         super(key: key);
   final bool isEditing;
@@ -37,12 +41,40 @@ class _AddNewPostState extends State<AddNewPost> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
-      final addPost = Provider.of<AddPostProvider>(context, listen: false);
-      final location = Provider.of<LocationProvider>(context, listen: false);
-      addPost.selectedAddress = location.AddressFromCordinate;
-      addPost.geometry =
-          Geometry(location: Location(lat: location.getLatitude!, lng: location.getLongitude!));
+    Future.microtask(() async {
+      final addPost = context.read<AddPostProvider>();
+      final location = context.read<LocationProvider>();
+      final post = context.read<SinglePostProvider>().postDetails!.data!.result!.post!;
+
+      addPost.isEditing = widget.isEditing;
+
+      if (addPost.isEditing) {
+        if (post.latitude != null && post.longitude != null) {
+          addPost
+            // pre-populate post location
+            ..geometry = Geometry(location: Location(lat: post.latitude!, lng: post.longitude!))
+            ..selectedAddress = await getAddressFromKlatlong(post.latitude!, post.longitude!)
+            // pre-populate headline
+            ..headline = (post.submittedHeadline ?? '').trim();
+          _headLineController.text = (post.submittedHeadline ?? '').trim();
+        }
+
+        // pre-populate description
+        final text = htmlToText(post.submittedStory ?? '');
+        addPost.description = text ?? '';
+        _storyController.text = text ?? '';
+
+        // pre-populate tags
+        addPost.tagsList.clear();
+        post.tags?.forEach((element) {
+          addPost.addTags(element);
+        });
+      } else {
+        addPost
+          ..selectedAddress = location.AddressFromCordinate
+          ..geometry =
+              Geometry(location: Location(lat: location.getLatitude!, lng: location.getLongitude!));
+      }
     });
   }
 
@@ -53,8 +85,6 @@ class _AddNewPostState extends State<AddNewPost> {
     _headLineController.dispose();
     super.dispose();
   }
-
-  TextStyle get _titleStyle => GoogleFonts.poppins(fontSize: 14, color: const Color(0xFF7c7c7c));
 
   @override
   Widget build(BuildContext context) {
@@ -69,12 +99,14 @@ class _AddNewPostState extends State<AddNewPost> {
         body: Form(
           key: _formKey,
           child: ListView(
-            physics: BouncingScrollPhysics(),
+            physics: AlwaysScrollableScrollPhysics(),
             padding: const EdgeInsets.symmetric(horizontal: 16),
             shrinkWrap: true,
             keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
             children: [
               SizedBox(height: 20),
+              _locationFieldTitle,
+              SizedBox(height: 5),
               locationSection(context),
               Divider(color: Color(0xFFa7abad).withOpacity(0.5), thickness: 1),
               SizedBox(height: 20),
@@ -108,6 +140,9 @@ class _AddNewPostState extends State<AddNewPost> {
         return ElevatedButton(
           onPressed: provider.isCompressionOngoing ||
                   (provider.description.trim().isEmpty && provider.getMoreImages.isEmpty)
+                  // TODO: temporary condition
+                  ||
+                  provider.isEditing
               ? null
               : () {
                   FocusScope.of(context).unfocus();
@@ -125,7 +160,7 @@ class _AddNewPostState extends State<AddNewPost> {
                         context,
                         MaterialPageRoute(
                             builder: (context) => PostUploadPage(
-                                  Title: _headLineController.text,
+                                  Title: provider.headline,
                                   Story: provider.description,
                                   address: provider.selectedAddress ?? "",
                                   lat: provider.geometry?.location.lat,
@@ -175,11 +210,14 @@ class _AddNewPostState extends State<AddNewPost> {
   Text get buildMediaHeading => Text("Media", style: _titleStyle);
 
   TextFormField buildPostTitleField() {
+    final provider = context.read<AddPostProvider>();
     return TextFormField(
       controller: _headLineController,
+      onChanged: (String text) {
+        provider.headline = text;
+      },
       maxLength: 100,
       textAlignVertical: TextAlignVertical.top,
-      // maxLengthEnforcement: MaxLengthEnforcement.enforced,
       style: ThreeKmTextConstants.tk16PXLatoBlackRegular.copyWith(
         color: Color(0xFF0F0F2D),
         fontWeight: FontWeight.w400,
@@ -218,19 +256,17 @@ class _AddNewPostState extends State<AddNewPost> {
           }
         }
 
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        return Wrap(
+          crossAxisAlignment: WrapCrossAlignment.start,
           children: [
-            _locationFieldTitle,
-            SizedBox(height: 10),
             Text(
-              provider.selectedAddress ?? "",
+              "${provider.selectedAddress ?? ''} ",
               style: GoogleFonts.poppins(
-                fontSize: 16,
+                fontSize: 15,
                 fontWeight: FontWeight.w600,
               ),
             ),
-            SizedBox(width: 10),
+            // SizedBox(width: 10),
             InkWell(
               onTap: addOrChangeLocation,
               child: Text(
@@ -351,13 +387,14 @@ class _AddNewPostState extends State<AddNewPost> {
   Row get _locationFieldTitle {
     return Row(
       mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.end,
       children: [
         Icon(
           Icons.location_on_rounded,
-          size: 28,
+          size: 24,
           color: const Color(0xFF7c7c7c).withOpacity(0.5),
         ),
-        SizedBox(width: 5),
+        // SizedBox(width: 1),
         Text(
           "Post Location ",
           style: _titleStyle,
@@ -399,58 +436,7 @@ class _AddNewPostState extends State<AddNewPost> {
         ),
       );
 
-  // Widget get buildFooter {
-  //   return Positioned(
-  //     bottom: 0,
-  //     child: Container(
-
-  //       height: 68,
-  //       width: MediaQuery.of(context).size.width,
-  //       child: Row(
-  //         mainAxisSize: MainAxisSize.min,
-  //         children: [
-  //           Padding(
-  //             padding: EdgeInsets.only(
-  //               top: 12,
-  //               right: 12,
-  //               left: 18,
-  //             ),
-  //             child: Container(
-  //                 height: 48,
-  //                 width: 48,
-  //                 child: Image.file(
-  //                   widget.imageFile,
-  //                   fit: BoxFit.cover,
-  //                 )),
-  //           ),
-  //           Column(
-  //             mainAxisSize: MainAxisSize.min,
-  //             mainAxisAlignment: MainAxisAlignment.start,
-  //             crossAxisAlignment: CrossAxisAlignment.start,
-  //             children: [
-  //               Text(
-  //                 "Uploading Post",
-  //                 style: ThreeKmTextConstants.tk14PXPoppinsWhiteMedium,
-  //               ),
-  //               SizedBox(
-  //                 height: 8,
-  //               ),
-  //               Container(
-  //                   height: 5,
-  //                   width: MediaQuery.of(context).size.width * 0.65,
-  //                   alignment: Alignment.topCenter,
-  //                   child: LinearProgressIndicator(
-  //                     minHeight: 1,
-  //                     value: 0.7,
-  //                     color: Color(0xffFF5858),
-  //                   ))
-  //             ],
-  //           )
-  //         ],
-  //       ),
-  //     ),
-  //   );
-  // }
+  TextStyle get _titleStyle => GoogleFonts.poppins(fontSize: 14, color: const Color(0xFF7c7c7c));
 
   Widget _addPhotosVideosButton() {
     return Consumer<AddPostProvider>(
@@ -598,56 +584,10 @@ class _AddNewPostState extends State<AddNewPost> {
       },
     );
     if (tag != null && _tagsController.text.isNotEmpty) {
-      context
-          .read<AddPostProvider>()
-          .addTags(_tagsController.text)
-          .whenComplete(() => _tagsController.clear());
+      context.read<AddPostProvider>().addTags(_tagsController.text);
+      _tagsController.clear();
     }
   }
-
-  // Widget get buildFooter {
-  //   return Positioned(
-  //     bottom: 0,
-  //     right: 0,
-  //     left: 0,
-  //     child: Container(
-  //       height: 84,
-  //       width: MediaQuery.of(context).size.width,
-  //       padding: EdgeInsets.symmetric(vertical: 16, horizontal: 18),
-  //       color: Color(0xFFF4F3F8),
-  //       child: Row(
-  //         crossAxisAlignment: CrossAxisAlignment.start,
-  //         children: [
-  //           Icon(
-  //             Icons.grid_view,
-  //             size: 24,
-  //           ),
-  //           SizedBox(
-  //             width: 8,
-  //           ),
-  //           Expanded(
-  //             child: Container(
-  //               margin: EdgeInsets.only(top: 2),
-  //               child: Text(
-  //                 "Advance".toUpperCase(),
-  //                 style: ThreeKmTextConstants.tk14PXPoppinsWhiteMedium.copyWith(
-  //                   color: Color(0xFF0F0F2D),
-  //                 ),
-  //               ),
-  //             ),
-  //           ),
-  //           SizedBox(
-  //             width: 8,
-  //           ),
-  //           Icon(
-  //             Icons.arrow_forward,
-  //             size: 24,
-  //           ),
-  //         ],
-  //       ),
-  //     ),
-  //   );
-  // }
 
   _showImageVideoBottomModalSheet(BuildContext context) {
     showModalBottomSheet<void>(
@@ -763,3 +703,17 @@ class _AddNewPostState extends State<AddNewPost> {
 }
 
 String getVideoSize({required File file}) => formatBytes(file.lengthSync(), 2);
+
+String? htmlToText(String htmlText) {
+  String elementToText(html.Element? e) {
+    if (e?.localName == "ul") {
+      return "\n" + (e?.children.map((e1) => e1.text + "\n").join("\n") ?? '') + "\n";
+    } else if (e?.localName == "span" || e?.children.length == 0) {
+      return (e?.text ?? '') + ((e?.localName == "b" || e?.localName == "br") ? "\n" : "");
+    } else {
+      return (e?.children.map((e2) => elementToText(e2)).join("\n") ?? '');
+    }
+  }
+
+  return (elementToText(html.Document.html(htmlText).body)).trim();
+}

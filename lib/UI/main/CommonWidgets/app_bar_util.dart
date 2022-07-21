@@ -3,9 +3,9 @@ import 'package:threekm/utils/threekm_textstyles.dart';
 
 class AppBarUtil {
   AppBarUtil._();
-  static addEditPostAppBar({List<Widget>? actions}) => AppBar(
+  static addEditPostAppBar({List<Widget>? actions, bool isEditing = false}) => AppBar(
         title: Text(
-          "Edit Post",
+          "${isEditing ? "Edit" : "Add"} Post",
           style: ThreeKmTextConstants.appBarTitleTextStyle,
         ),
         titleSpacing: 0,
