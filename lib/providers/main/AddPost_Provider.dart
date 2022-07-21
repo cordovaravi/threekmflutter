@@ -250,8 +250,8 @@ class AddPostProvider extends ChangeNotifier {
       "type": "Strory",
       "tags": _tagsList.toList(),
       // "areas": ["kothrud", "karve nagar"],
-      "latitude": lat,
-      "longitude": long,
+      "latitude": lat ?? 18.5204,
+      "longitude": long ?? 73.8567,
       "location": address,
       // "business": [],
       // "products": []

@@ -168,8 +168,13 @@ class _NewsTabState extends State<NewsTab> with AutomaticKeepAliveClientMixin {
                     }),
               ),
             );
-            // await InAppUpdate.performImmediateUpdate()
-            //     .catchError((e) => log(e.toString()));
+            Future.delayed(Duration(seconds: 5), () async {
+              await InAppUpdate.performImmediateUpdate()
+                  .catchError((e) => SnackBarAction(
+                        label: "${e.toString()}",
+                        onPressed: () {},
+                      ));
+            });
           }
         }).catchError((e) {
           log(e.toString());
