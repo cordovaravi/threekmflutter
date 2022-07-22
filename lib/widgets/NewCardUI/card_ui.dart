@@ -335,6 +335,7 @@ class _CardUIState extends State<CardUI> {
                                       LikeList(postId: data.postId!)));
                         },
                         icon: data.listEmotions != null && false
+                            // ignore: dead_code
                             ? SizedBox(
                                 width: data.listEmotions.length == 5
                                     ? 60
