@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -6,27 +5,20 @@ import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_webservice/directions.dart';
-import 'package:html/dom.dart' as html;
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:threekm/UI/main/AddPost/ImageEdit/editImage.dart';
-import 'package:threekm/UI/main/AddPost/utils/FileUtils.dart';
 import 'package:threekm/UI/main/AddPost/utils/uploadPost.dart';
 import 'package:threekm/UI/main/CommonWidgets/app_bar_util.dart';
-import 'package:threekm/providers/Location/getAddress.dart';
 import 'package:threekm/providers/Location/locattion_Provider.dart';
 import 'package:threekm/providers/main/AddPost_Provider.dart';
-import 'package:threekm/providers/main/singlePost_provider.dart';
 import 'package:threekm/utils/utils.dart';
 
-import 'add_post_location.dart';
+import '../CommonWidgets/insert_post_location.dart';
 
 class AddNewPost extends StatefulWidget {
-  const AddNewPost({Key? key, this.isEditing = false, this.postId})
-      : assert(isEditing == true ? postId != null : true),
-        super(key: key);
-  final bool isEditing;
-  final String? postId;
+  const AddNewPost({Key? key}) : super(key: key);
+
   @override
   _AddNewPostState createState() => _AddNewPostState();
 }
@@ -44,37 +36,11 @@ class _AddNewPostState extends State<AddNewPost> {
     Future.microtask(() async {
       final addPost = context.read<AddPostProvider>();
       final location = context.read<LocationProvider>();
-      final post = context.read<SinglePostProvider>().postDetails!.data!.result!.post!;
 
-      addPost.isEditing = widget.isEditing;
-
-      if (addPost.isEditing) {
-        if (post.latitude != null && post.longitude != null) {
-          addPost
-            // pre-populate post location
-            ..geometry = Geometry(location: Location(lat: post.latitude!, lng: post.longitude!))
-            ..selectedAddress = await getAddressFromKlatlong(post.latitude!, post.longitude!)
-            // pre-populate headline
-            ..headline = (post.submittedHeadline ?? '').trim();
-          _headLineController.text = (post.submittedHeadline ?? '').trim();
-        }
-
-        // pre-populate description
-        final text = htmlToText(post.submittedStory ?? '');
-        addPost.description = text ?? '';
-        _storyController.text = text ?? '';
-
-        // pre-populate tags
-        addPost.tagsList.clear();
-        post.tags?.forEach((element) {
-          addPost.addTags(element);
-        });
-      } else {
-        addPost
-          ..selectedAddress = location.AddressFromCordinate
-          ..geometry =
-              Geometry(location: Location(lat: location.getLatitude!, lng: location.getLongitude!));
-      }
+      addPost
+        ..selectedAddress = location.AddressFromCordinate
+        ..geometry =
+            Geometry(location: Location(lat: location.getLatitude!, lng: location.getLongitude!));
     });
   }
 
@@ -94,8 +60,10 @@ class _AddNewPostState extends State<AddNewPost> {
         FocusScope.of(context).unfocus();
       },
       child: Scaffold(
-        appBar: AppBarUtil.addEditPostAppBar(
-            isEditing: widget.isEditing, actions: [_postUploadButton(context), SizedBox(width: 6)]),
+        appBar: AppBarUtil.appBar(
+          title: "Add Post",
+          primaryActionWidget: _postUploadButton(context),
+        ),
         body: Form(
           key: _formKey,
           child: ListView(
@@ -140,9 +108,6 @@ class _AddNewPostState extends State<AddNewPost> {
         return ElevatedButton(
           onPressed: provider.isCompressionOngoing ||
                   (provider.description.trim().isEmpty && provider.getMoreImages.isEmpty)
-                  // TODO: temporary condition
-                  ||
-                  provider.isEditing
               ? null
               : () {
                   FocusScope.of(context).unfocus();
@@ -169,7 +134,7 @@ class _AddNewPostState extends State<AddNewPost> {
                   }
                 },
           child: Text(
-            widget.isEditing ? "Save" : "Post",
+            "Post",
             style: GoogleFonts.poppins(fontWeight: FontWeight.w500, fontSize: 16),
           ),
           style: ElevatedButton.styleFrom(
@@ -252,7 +217,7 @@ class _AddNewPostState extends State<AddNewPost> {
         addOrChangeLocation() async {
           FocusScope.of(context).unfocus();
           if (context.read<LocationProvider>().ispermitionGranted) {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => AddPostLocation()));
+            Navigator.push(context, MaterialPageRoute(builder: (context) => InsertPostLocation()));
           }
         }
 
@@ -700,20 +665,4 @@ class _AddNewPostState extends State<AddNewPost> {
       },
     );
   }
-}
-
-String getVideoSize({required File file}) => formatBytes(file.lengthSync(), 2);
-
-String? htmlToText(String htmlText) {
-  String elementToText(html.Element? e) {
-    if (e?.localName == "ul") {
-      return "\n" + (e?.children.map((e1) => e1.text + "\n").join("\n") ?? '') + "\n";
-    } else if (e?.localName == "span" || e?.children.length == 0) {
-      return (e?.text ?? '') + ((e?.localName == "b" || e?.localName == "br") ? "\n" : "");
-    } else {
-      return (e?.children.map((e2) => elementToText(e2)).join("\n") ?? '');
-    }
-  }
-
-  return (elementToText(html.Document.html(htmlText).body)).trim();
 }

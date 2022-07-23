@@ -3,13 +3,13 @@ import 'package:threekm/utils/threekm_textstyles.dart';
 
 class AppBarUtil {
   AppBarUtil._();
-  static addEditPostAppBar({List<Widget>? actions, bool isEditing = false}) => AppBar(
+  static appBar({required String title, Widget? primaryActionWidget}) => AppBar(
         title: Text(
-          "${isEditing ? "Edit" : "Add"} Post",
+          title,
           style: ThreeKmTextConstants.appBarTitleTextStyle,
         ),
         titleSpacing: 0,
-        actions: actions,
+        actions: [primaryActionWidget ?? SizedBox.shrink(), SizedBox(width: 6)],
         backgroundColor: Colors.white,
         elevation: 0.5,
         foregroundColor: Colors.black,

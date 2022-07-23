@@ -15,6 +15,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:threekm/Custom_library/flutter_reaction_button.dart';
 import 'package:threekm/Models/deepLinkPost.dart';
 import 'package:threekm/UI/main/AddPost/AddPost.dart';
+import 'package:threekm/UI/main/EditPost/edit_post.dart';
 import 'package:threekm/UI/main/News/Widgets/singlePost_Loading.dart';
 import 'package:threekm/UI/main/News/likes_and_comments/like_list.dart';
 import 'package:threekm/UI/main/Profile/AuthorProfile.dart';
@@ -23,6 +24,7 @@ import 'package:threekm/commenwidgets/commenwidget.dart';
 import 'package:threekm/providers/Global/logged_in_or_not.dart';
 import 'package:threekm/providers/localization_Provider/appLanguage_provider.dart';
 import 'package:threekm/providers/main/AthorProfile_Provider.dart';
+import 'package:threekm/providers/main/EditPost_Provider.dart';
 import 'package:threekm/providers/main/NewsFeed_Provider.dart';
 import 'package:threekm/providers/main/newsList_provider.dart';
 import 'package:threekm/providers/main/singlePost_provider.dart';
@@ -780,9 +782,9 @@ class _PostViewState extends State<PostView> {
       Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) => AddNewPost(
-                    isEditing: true,
-                    postId: postID,
+              builder: (context) => ChangeNotifierProvider<EditPostProvider>(
+                    create: (context) => EditPostProvider(),
+                    child: EditPost(),
                   )));
     }
 

@@ -6,12 +6,12 @@ import 'package:threekm/Custom_library/location2.0/lib/widgets/place_picker_new.
 import 'package:threekm/providers/Location/locattion_Provider.dart';
 import 'package:threekm/utils/threekm_textstyles.dart';
 
-class AddPostLocation extends StatefulWidget {
+class InsertPostLocation extends StatefulWidget {
   @override
-  State<AddPostLocation> createState() => _AddPostLocationState();
+  State<InsertPostLocation> createState() => _InsertPostLocationState();
 }
 
-class _AddPostLocationState extends State<AddPostLocation> {
+class _InsertPostLocationState extends State<InsertPostLocation> {
   bool? isLocationTurnedON;
   @override
   void initState() {

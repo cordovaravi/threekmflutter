@@ -35,13 +35,6 @@ import 'package:threekm/utils/api_paths.dart';
 // }
 
 class AddPostProvider extends ChangeNotifier {
-  bool _editMode = false;
-  bool get isEditing => _editMode;
-  set isEditing(bool value) {
-    _editMode = value;
-    notifyListeners();
-  }
-
   final ApiProvider _apiProvider = ApiProvider();
   final client = Dio();
 
@@ -61,6 +54,7 @@ class AddPostProvider extends ChangeNotifier {
 
   List<String> _tagsList = [];
   List<String> get tagsList => _tagsList;
+
   void addTags(String tag) {
     _tagsList.add(tag);
     notifyListeners();
