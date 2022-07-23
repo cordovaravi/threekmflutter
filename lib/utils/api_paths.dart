@@ -50,8 +50,8 @@ const String verifyForgetPassword = "user/forgot_password_verify";
 // post
 const String upload_post = "newspost/save";
 const String upload_Imagefile = "https://bulbandkey.com/gateway/sakal/addphoto";
-const String upload_VideoFile =
-    "https://bulbandkey.com/gateway/addfile?ext=mp4";
+const String upload_VideoFile = "https://bulbandkey.com/gateway/addfile?ext=mp4";
+const String update_post = "newspost/update";
 
 // address
 const String address_list = "address/list";

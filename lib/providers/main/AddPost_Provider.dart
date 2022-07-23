@@ -42,12 +42,14 @@ class AddPostProvider extends ChangeNotifier {
   String get description => _description;
   set description(String text) {
     _description = text;
+    notifyListeners();
   }
 
   String _headline = '';
   String get headline => _headline;
   set headline(String text) {
     _headline = text;
+    notifyListeners();
   }
 
   String? tempURl = null;

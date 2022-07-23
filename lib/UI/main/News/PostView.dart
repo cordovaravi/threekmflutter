@@ -826,9 +826,9 @@ class _PostViewState extends State<PostView> {
       },
       itemBuilder: (BuildContext context) {
         return [
-          //   // TODO: uncomment the line below when applying author check
-          //   // if (newsData.author.id == _authorId)
-          PopupMenuItem<String>(value: 'edit', child: Text('Edit Post')),
+          // TODO: uncomment the line below when applying author check
+          if (newsData.author?.id == _authorId)
+            PopupMenuItem<String>(value: 'edit', child: Text('Edit Post')),
           PopupMenuItem<String>(value: 'copyLink', child: Text('Copy link')),
           PopupMenuItem<String>(
               value: 'share',

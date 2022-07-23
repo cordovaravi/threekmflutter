@@ -112,7 +112,9 @@ class _AddNewPostState extends State<AddNewPost> {
               : () {
                   FocusScope.of(context).unfocus();
                   if (_formKey.currentState?.validate() ?? false) {
-                    if (provider.selectedAddress == null) {
+                    if (provider.geometry == null ||
+                        (provider.selectedAddress?.isEmpty ?? false) ||
+                        provider.selectedAddress == null) {
                       Fluttertoast.showToast(msg: "Location required");
                       return;
                     }

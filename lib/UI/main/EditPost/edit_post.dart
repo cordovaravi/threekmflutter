@@ -71,11 +71,6 @@ class _EditPostState extends State<EditPost> {
         ..imageList.addAll(post.images ?? <String>[])
         ..videoList.clear()
         ..videoList.addAll(post.videos ?? <Video>[]);
-
-      // editPost
-      //   ..selectedAddress = location.AddressFromCordinate
-      //   ..geometry =
-      //       Geometry(location: Location(lat: location.getLatitude!, lng: location.getLongitude!));
     });
   }
 
@@ -97,7 +92,7 @@ class _EditPostState extends State<EditPost> {
       child: Scaffold(
         appBar: AppBarUtil.appBar(
           title: "Edit Post",
-          primaryActionWidget: _postUploadButton(context),
+          primaryActionWidget: _savePostButton(context),
         ),
         body: Form(
           key: _formKey,
@@ -135,40 +130,36 @@ class _EditPostState extends State<EditPost> {
     );
   }
 
-  Center _postUploadButton(BuildContext context) {
+  Center _savePostButton(BuildContext context) {
     return Center(
       child: Consumer<EditPostProvider>(builder: (_, provider, __) {
         return ElevatedButton(
-          onPressed: (provider.description.trim().isEmpty /*&& provider.getMoreImages.isEmpty*/)
+          onPressed: (provider.description.trim().isEmpty &&
+                  (provider.imageList.isEmpty && provider.videoList.isEmpty))
               ? null
-              : () {
-                  FocusScope.of(context).unfocus();
-                  if (_formKey.currentState?.validate() ?? false) {
-                    if (provider.selectedAddress == null) {
-                      Fluttertoast.showToast(msg: "Location required");
-                      return;
+              : () async {
+                  if (!provider.isLoading) {
+                    FocusScope.of(context).unfocus();
+                    if (_formKey.currentState?.validate() ?? false) {
+                      if (provider.geometry == null ||
+                          (provider.selectedAddress?.isEmpty ?? false) ||
+                          provider.selectedAddress == null) {
+                        Fluttertoast.showToast(msg: "Location required");
+                        return;
+                      }
+
+                      await provider.savePost();
+                      Navigator.pop(context);
+                      // provider.dispose();
                     }
-                    // if (!(_storyController.text.trim().length > 0 ||
-                    //     provider.getMoreImages.isNotEmpty)) {
-                    //   Fluttertoast.showToast(msg: "Add either a description or upload image/video");
-                    //   return;
-                    // }
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => PostUploadPage(
-                                  Title: provider.headline,
-                                  Story: provider.description,
-                                  address: provider.selectedAddress ?? "",
-                                  lat: provider.geometry?.location.lat,
-                                  long: provider.geometry?.location.lng,
-                                )));
                   }
                 },
-          child: Text(
-            "Save",
-            style: GoogleFonts.poppins(fontWeight: FontWeight.w500, fontSize: 16),
-          ),
+          child: provider.isLoading
+              ? CircularProgressIndicator(color: ThreeKmTextConstants.white)
+              : Text(
+                  "Save",
+                  style: GoogleFonts.poppins(fontWeight: FontWeight.w500, fontSize: 16),
+                ),
           style: ElevatedButton.styleFrom(
             primary: provider.selectedAddress != null
                 ? const Color(0xff3E7EFF)
