@@ -7,7 +7,6 @@ import 'package:html/dom.dart' as html;
 import 'package:provider/provider.dart';
 import 'package:threekm/Models/deepLinkPost.dart';
 import 'package:threekm/UI/main/CommonWidgets/insert_post_location.dart';
-import 'package:threekm/UI/main/AddPost/utils/uploadPost.dart';
 import 'package:threekm/UI/main/CommonWidgets/app_bar_util.dart';
 import 'package:threekm/providers/Location/getAddress.dart';
 import 'package:threekm/providers/Location/locattion_Provider.dart';
@@ -16,7 +15,8 @@ import 'package:threekm/providers/main/singlePost_provider.dart';
 import 'package:threekm/utils/utils.dart';
 
 class EditPost extends StatefulWidget {
-  const EditPost({Key? key}) : super(key: key);
+  const EditPost({Key? key, this.postId}) : super(key: key);
+  final int? postId;
   @override
   _EditPostState createState() => _EditPostState();
 }
@@ -30,8 +30,11 @@ class _EditPostState extends State<EditPost> {
   @override
   void initState() {
     super.initState();
+    print("POST ID = ${widget.postId}");
     Future.microtask(() async {
       final editPost = context.read<EditPostProvider>();
+      if (widget.postId != null)
+        await context.read<SinglePostProvider>().getPostDetails(widget.postId, true, 'en');
       final location = context.read<LocationProvider>();
       final post = context.read<SinglePostProvider>().postDetails!.data!.result!.post!;
 

@@ -14,11 +14,11 @@ import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:threekm/Custom_library/flutter_reaction_button.dart';
 import 'package:threekm/Models/deepLinkPost.dart';
-import 'package:threekm/UI/main/AddPost/AddPost.dart';
 import 'package:threekm/UI/main/EditPost/edit_post.dart';
 import 'package:threekm/UI/main/News/Widgets/singlePost_Loading.dart';
 import 'package:threekm/UI/main/News/likes_and_comments/like_list.dart';
 import 'package:threekm/UI/main/Profile/AuthorProfile.dart';
+import 'package:threekm/UI/main/Profile/MyProfilePost.dart';
 import 'package:threekm/commenwidgets/CustomSnakBar.dart';
 import 'package:threekm/commenwidgets/commenwidget.dart';
 import 'package:threekm/providers/Global/logged_in_or_not.dart';
@@ -31,6 +31,7 @@ import 'package:threekm/providers/main/singlePost_provider.dart';
 import 'package:threekm/utils/Extension/capital.dart';
 import 'package:threekm/utils/slugUrl.dart';
 import 'package:threekm/utils/threekm_textstyles.dart';
+import 'package:threekm/widgets/NewCardUI/card_ui.dart';
 import 'package:threekm/widgets/emotion_Button.dart';
 import 'package:threekm/widgets/reactions_assets.dart';
 import 'package:threekm/widgets/video_widget.dart';
@@ -41,7 +42,10 @@ import 'likes_and_comments/comment_section.dart';
 class PostView extends StatefulWidget {
   final String postId;
   final String? image;
-  PostView({required this.postId, this.image, Key? key}) : super(key: key);
+
+  /// To avoid edit-permission check everywhere, the feature of editing a post has been limited to [PostView] and [CardUI] in [MyProfilePost] only
+  final bool isEditable;
+  PostView({required this.postId, this.image, Key? key, this.isEditable = false}) : super(key: key);
 
   @override
   _PostViewState createState() => _PostViewState();
@@ -49,7 +53,6 @@ class PostView extends StatefulWidget {
 
 class _PostViewState extends State<PostView> {
   ScreenshotController screenshotController = ScreenshotController();
-  late final String? _authorId;
 
   // TextEditingController _commentController = TextEditingController();
   // final _formKey = GlobalKey<FormState>();
@@ -58,7 +61,6 @@ class _PostViewState extends State<PostView> {
   void initState() {
     Future.delayed(Duration.zero, () async {
       SharedPreferences _prefs = await SharedPreferences.getInstance();
-      _authorId = _prefs.getString('id');
       context.read<SinglePostProvider>().getPostDetails(
           widget.postId,
           mounted,
@@ -826,9 +828,7 @@ class _PostViewState extends State<PostView> {
       },
       itemBuilder: (BuildContext context) {
         return [
-          // TODO: uncomment the line below when applying author check
-          if (newsData.author?.id == _authorId)
-            PopupMenuItem<String>(value: 'edit', child: Text('Edit Post')),
+          if (widget.isEditable) PopupMenuItem<String>(value: 'edit', child: Text('Edit Post')),
           PopupMenuItem<String>(value: 'copyLink', child: Text('Copy link')),
           PopupMenuItem<String>(
               value: 'share',
