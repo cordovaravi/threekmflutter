@@ -37,6 +37,8 @@ const String verify_email_otp = "user/emailkycverify";
 const String send_otp = "user/sendotp?";
 const String register_send_otp = "creator/sendotp";
 const String register_verify_otp = "user/verifyotp";
+
+const String register_verify_otp_kyc = "user/sendotp_kyc?";
 const String user_check = "user/check";
 const String register = "user/registerorlogin";
 //new register
