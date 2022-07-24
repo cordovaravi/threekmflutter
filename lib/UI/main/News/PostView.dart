@@ -59,19 +59,7 @@ class _PostViewState extends State<PostView> {
 
   @override
   void initState() {
-    Future.delayed(Duration.zero, () async {
-      SharedPreferences _prefs = await SharedPreferences.getInstance();
-      context.read<SinglePostProvider>().getPostDetails(
-          widget.postId,
-          mounted,
-          context.read<AppLanguage>().appLocal == Locale("en")
-              ? "en"
-              : context.read<AppLanguage>().appLocal == Locale("mr")
-                  ? "mr"
-                  : context.read<AppLanguage>().appLocal == Locale("hi")
-                      ? "hi"
-                      : _prefs.getString("language_code") ?? "en");
-    });
+    getPostDetails();
     super.initState();
   }
 
@@ -933,5 +921,19 @@ class _PostViewState extends State<PostView> {
         hideLoading();
       }
     });
+  }
+
+  Future<void> getPostDetails() async {
+    SharedPreferences _prefs = await SharedPreferences.getInstance();
+    context.read<SinglePostProvider>().getPostDetails(
+        widget.postId,
+        mounted,
+        context.read<AppLanguage>().appLocal == Locale("en")
+            ? "en"
+            : context.read<AppLanguage>().appLocal == Locale("mr")
+                ? "mr"
+                : context.read<AppLanguage>().appLocal == Locale("hi")
+                    ? "hi"
+                    : _prefs.getString("language_code") ?? "en");
   }
 }

@@ -93,7 +93,12 @@ class _CardUIState extends State<CardUI> {
               isEditable: widget.isEditable,
               postId: data.postId.toString(),
             );
-          }));
+          })).then((_) {
+            // refresh MyProfilePost after editing
+            if (widget.isEditable) {
+              context.read<AutthorProfileProvider>().getSelfProfile();
+            }
+          });
         },
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

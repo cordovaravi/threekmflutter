@@ -247,7 +247,8 @@ class _EditPostState extends State<EditPost> {
         addOrChangeLocation() async {
           FocusScope.of(context).unfocus();
           if (context.read<LocationProvider>().ispermitionGranted) {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => InsertPostLocation()));
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => InsertPostLocation(isEditing: true)));
           }
         }
 
