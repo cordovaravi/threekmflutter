@@ -621,48 +621,49 @@ class _PostViewState extends State<PostView> {
                                           NaviagateToLogin(context);
                                         }
                                       },
-                                      icon: SinglePostEmotionButton(
-                                          isLiked: newsData.isLiked ?? false,
-                                          initalReaction: newsData.isLiked ??
-                                                  false
-                                              ? newsData.emotion != null &&
-                                                      newsData.emotion != ""
-                                                  ? Reaction(
-                                                      icon: Lottie.asset(
-                                                          "assets/lottie/${newsData.emotion}.json",
-                                                          width: 30,
-                                                          height: 30,
-                                                          repeat: false,
-                                                          fit: BoxFit.cover),
-                                                    )
-                                                  : Reaction(
-                                                      icon: Lottie.asset(
-                                                          "assets/lottie/like.json",
-                                                          width: 30,
-                                                          height: 30,
-                                                          repeat: false),
-                                                    )
-                                              : Reaction(
-                                                  icon: Image.asset(
-                                                  "assets/un_like_icon.png",
-                                                  width: 22,
-                                                  height: 19,
-                                                )),
-                                          selectedReaction: newsData.isLiked!
-                                              ? Reaction(
-                                                  icon: Image.asset(
-                                                  "assets/like_icon.png",
-                                                  width: 22,
-                                                  height: 19,
-                                                ))
-                                              : Reaction(
-                                                  icon: Image.asset(
-                                                  "assets/un_like_icon.png",
-                                                  width: 22,
-                                                  height: 19,
-                                                )),
-                                          postId: newsData.postId!.toInt(),
-                                          reactions: reactions),
+                                      icon: Icon(Icons.linked_camera),
+                                      // icon: SinglePostEmotionButton(
+                                      //     isLiked: newsData.isLiked ?? false,
+                                      //     initalReaction: newsData.isLiked ??
+                                      //             false
+                                      //         ? newsData.emotion != null &&
+                                      //                 newsData.emotion != ""
+                                      //             ? Reaction(
+                                      //                 icon: Lottie.asset(
+                                      //                     "assets/lottie/${newsData.emotion}.json",
+                                      //                     width: 30,
+                                      //                     height: 30,
+                                      //                     repeat: false,
+                                      //                     fit: BoxFit.cover),
+                                      //               )
+                                      //             : Reaction(
+                                      //                 icon: Lottie.asset(
+                                      //                     "assets/lottie/like.json",
+                                      //                     width: 30,
+                                      //                     height: 30,
+                                      //                     repeat: false),
+                                      //               )
+                                      //         : Reaction(
+                                      //             icon: Image.asset(
+                                      //             "assets/un_like_icon.png",
+                                      //             width: 22,
+                                      //             height: 19,
+                                      //           )),
+                                      //     selectedReaction: newsData.isLiked!
+                                      //         ? Reaction(
+                                      //             icon: Image.asset(
+                                      //             "assets/like_icon.png",
+                                      //             width: 22,
+                                      //             height: 19,
+                                      //           ))
+                                      //         : Reaction(
+                                      //             icon: Image.asset(
+                                      //             "assets/un_like_icon.png",
+                                      //             width: 22,
+                                      //             height: 19,
+                                      //           )),
+                                      //     postId: newsData.postId!.toInt(),
+                                      //     reactions: reactions),
                                     ),
                                     // TextButton.icon(
                                     //     style: ButtonStyle(

@@ -14,7 +14,7 @@ import 'package:provider/src/provider.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:threekm/Custom_library/BoldText/Text_chunking.dart';
-import 'package:threekm/Custom_library/src/reaction.dart';
+import 'package:threekm/Custom_library/Reaction2.0/src/flutter_reaction_button.dart';
 import 'package:threekm/UI/main/News/PostView.dart';
 import 'package:threekm/UI/main/Profile/AuthorProfile.dart';
 import 'package:threekm/UI/main/Profile/MyProfilePost.dart';
@@ -386,75 +386,60 @@ class _CardUIState extends State<CardUI> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  TextButton.icon(
-                    onPressed: () async {
-                      if (await getAuthStatus()) {
-                        if (data.isLiked == true) {
-                          //newsFeedProvider.postUnLike(data.postId.toString());
-                          postUnlike(data.postId.toString());
-                        } else {
-                          // newsFeedProvider
-                          //     .postLike(data.postId.toString(), "like")
-                          //     .whenComplete(() => setState(() {
-                          //           data.isLiked = true;
-                          //         }));
-                          postlike('like', data.postId.toString());
-                        }
-                      } else {
-                        NaviagateToLogin(context);
-                      }
-                    },
-                    label: Text(
-                      data.emotion != null && data.emotion != ""
-                          ? '${data.emotion.toString().capitalize()}'
-                          : 'Like',
-                      style: ThreeKmTextConstants.tk12PXPoppinsBlackSemiBold,
-                    ),
-                    icon: EmotionButton(
-                        providerType: widget.providerType,
-                        isLiked: data.isLiked ?? false,
-                        initalReaction: data.isLiked!
-                            ? data.emotion != null &&
-                                    data.emotion != "" &&
-                                    data.emotion != null &&
-                                    data.emotion != "null"
-                                ? Reaction(
-                                    icon: Lottie.asset(
-                                        "assets/lottie/${data.emotion}.json",
-                                        width: 35,
-                                        height: 35,
-                                        fit: BoxFit.cover,
-                                        repeat: false),
-                                  )
-                                : Reaction(
-                                    icon: Lottie.asset(
-                                        "assets/lottie/like.json",
-                                        width: 35,
-                                        height: 35,
-                                        repeat: false),
-                                  )
-                            : Reaction(
-                                icon: Image.asset(
-                                "assets/un_like_icon.png",
-                                width: 22,
-                                height: 19,
-                              )),
-                        selectedReaction: data.isLiked!
-                            ? Reaction(
-                                icon: Image.asset(
+                  EmotionButton(
+                      providerType: widget.providerType,
+                      isLiked: data.isLiked ?? false,
+                      initalReaction: Reaction<String>(
+                          icon: Image.asset(
+                            "assets/un_like_icon.png",
+                            width: 22,
+                            height: 19,
+                          ),
+                          title: Text("Like"),
+                          value: "Unlike"),
+                      selectedReaction: data.isLiked!
+                          ? Reaction<String>(
+                              icon: Image.asset(
                                 "assets/like_icon.png",
                                 width: 22,
                                 height: 19,
-                              ))
-                            : Reaction(
-                                icon: Image.asset(
+                              ),
+                              value: "Like")
+                          : Reaction<String>(
+                              icon: Image.asset(
                                 "assets/un_like_icon.png",
                                 width: 22,
                                 height: 19,
-                              )),
-                        postId: data.postId!.toInt(),
-                        reactions: reactionAssets.reactions),
-                  ),
+                              ),
+                              value: ""),
+                      postId: data.postId!.toInt(),
+                      reactions: reactionAssets.reactions),
+                  // TextButton.icon(
+                  //   onPressed: () async {
+                  //     if (await getAuthStatus()) {
+                  //       if (data.isLiked == true) {
+                  //         //newsFeedProvider.postUnLike(data.postId.toString());
+                  //         postUnlike(data.postId.toString());
+                  //       } else {
+                  //         // newsFeedProvider
+                  //         //     .postLike(data.postId.toString(), "like")
+                  //         //     .whenComplete(() => setState(() {
+                  //         //           data.isLiked = true;
+                  //         //         }));
+                  //         postlike('like', data.postId.toString());
+                  //       }
+                  //     } else {
+                  //       NaviagateToLogin(context);
+                  //     }
+                  //   },
+                  //   label: Text(
+                  //     data.emotion != null && data.emotion != ""
+                  //         ? '${data.emotion.toString().capitalize()}'
+                  //         : 'Like',
+                  //     style: ThreeKmTextConstants.tk12PXPoppinsBlackSemiBold,
+                  //   ),
+                  //   icon:
+                  // ),
                   // TextButton.icon(
                   //     style: ButtonStyle(
                   //         foregroundColor:
