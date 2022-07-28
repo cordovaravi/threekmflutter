@@ -380,45 +380,18 @@ class _CardUIState extends State<CardUI> {
                     icon: EmotionButton(
                         providerType: widget.providerType,
                         isLiked: data.isLiked ?? false,
-                        initalReaction: data.isLiked!
-                            ? data.emotion != null &&
-                                    data.emotion != "" &&
-                                    data.emotion != null &&
-                                    data.emotion != "null"
-                                ? Reaction(
-                                    icon: Lottie.asset(
-                                        "assets/lottie/${data.emotion}.json",
-                                        width: 35,
-                                        height: 35,
-                                        fit: BoxFit.cover,
-                                        repeat: false),
-                                  )
-                                : Reaction(
-                                    icon: Lottie.asset(
-                                        "assets/lottie/like.json",
-                                        width: 35,
-                                        height: 35,
-                                        repeat: false),
-                                  )
-                            : Reaction(
-                                icon: Image.asset(
-                                "assets/un_like_icon.png",
-                                width: 22,
-                                height: 19,
-                              )),
-                        selectedReaction: data.isLiked!
-                            ? Reaction(
-                                icon: Image.asset(
-                                "assets/like_icon.png",
-                                width: 22,
-                                height: 19,
-                              ))
-                            : Reaction(
-                                icon: Image.asset(
-                                "assets/un_like_icon.png",
-                                width: 22,
-                                height: 19,
-                              )),
+                        initalReaction: Reaction(
+                            icon: Image.asset(
+                          "assets/un_like_icon.png",
+                          width: 22,
+                          height: 19,
+                        )),
+                        selectedReaction: Reaction(
+                            icon: Image.asset(
+                          "assets/like_icon.png",
+                          width: 22,
+                          height: 19,
+                        )),
                         postId: data.postId!.toInt(),
                         reactions: reactionAssets.reactions),
                   ),

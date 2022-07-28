@@ -6,7 +6,6 @@ import 'package:threekm/providers/main/AthorProfile_Provider.dart';
 import 'package:threekm/providers/main/NewsFeed_Provider.dart';
 import 'package:threekm/providers/main/newsList_provider.dart';
 import 'package:threekm/providers/main/singlePost_provider.dart';
-import 'package:threekm/widgets/reactions_assets.dart' as reactionAsset;
 
 class EmotionButton extends StatelessWidget {
   final int postId;
