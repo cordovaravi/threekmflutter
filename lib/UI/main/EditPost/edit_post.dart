@@ -1,3 +1,6 @@
+import 'dart:developer';
+
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -49,9 +52,10 @@ class _EditPostState extends State<EditPost> {
             : directions.Geometry(
                 location: directions.Location(
                     lat: location.getLatitude ?? 0.0, lng: location.getLongitude ?? 0.0))
-        ..selectedAddress = (post.latitude != null && post.longitude != null)
-            ? await getAddressFromKlatlong(post.latitude!, post.longitude!)
-            : location.AddressFromCordinate
+        ..selectedAddress = post.location
+        // (post.latitude != null && post.longitude != null)
+        //   ? await getAddressFromKlatlong(post.latitude!, post.longitude!)
+        //   : location.AddressFromCordinate
 
         // pre-populate tags
         ..tagsList.clear();
@@ -152,6 +156,7 @@ class _EditPostState extends State<EditPost> {
                       }
 
                       await provider.savePost();
+                      provider.clear();
                       Navigator.pop(context);
                       // provider.dispose();
                     }
@@ -297,7 +302,7 @@ class _EditPostState extends State<EditPost> {
                         clipBehavior: Clip.hardEdge,
                         decoration: BoxDecoration(
                             color: const Color(0xffD9D9D9), borderRadius: BorderRadius.circular(8)),
-                        child: Image.network(e.value, fit: BoxFit.cover),
+                        child: CachedNetworkImage(imageUrl: e.value, fit: BoxFit.cover),
                       ),
                     ),
                     Positioned(
@@ -432,9 +437,9 @@ class _EditPostState extends State<EditPost> {
             runSpacing: -5,
             spacing: 5,
             children: [
-              ...provider.tagsList.map((value) {
+              ...provider.tagsList.asMap().entries.map((entry) {
                 return Chip(
-                  label: Text(value.toString()),
+                  label: Text(entry.value.toString()),
                   backgroundColor: Colors.white,
                   shape: StadiumBorder(),
                   side: BorderSide(color: const Color(0xFF8E8A8A)),
@@ -446,7 +451,7 @@ class _EditPostState extends State<EditPost> {
                   deleteButtonTooltipMessage: 'Remove tag',
                   useDeleteButtonTooltip: true,
                   onDeleted: () {
-                    context.read<EditPostProvider>().removeTag(value);
+                    context.read<EditPostProvider>().removeTag(entry.key);
                   },
                   deleteIconColor: const Color(0xFF8E8A8A),
                   deleteIcon: Icon(Icons.cancel_rounded),

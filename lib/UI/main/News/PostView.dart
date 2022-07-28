@@ -770,12 +770,7 @@ class _PostViewState extends State<PostView> {
   PopupMenuButton showPopMenu(String postID, Post newsData) {
     void _editPost() async {
       Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => ChangeNotifierProvider<EditPostProvider>(
-                    create: (context) => EditPostProvider(),
-                    child: EditPost(),
-                  )));
+          context, MaterialPageRoute(builder: (context) => EditPost(postId: newsData.postId)));
     }
 
     void _copyLink() {

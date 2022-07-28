@@ -36,8 +36,8 @@ class EditPostProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void removeTag(String tag) {
-    tagsList.remove(tag);
+  void removeTag(int index) {
+    tagsList.removeAt(index);
     notifyListeners();
   }
 
@@ -79,10 +79,10 @@ class EditPostProvider extends ChangeNotifier {
       "post_id": postId,
       "headline": "$_headline",
       "story": "$_description",
-      "images": imageList.toList(),
+      "images": imageList,
       "videos": videoList.map((e) => e.src).toList(),
       "type": "Story",
-      "tags": tagsList.toList(),
+      "tags": tagsList,
       // "areas":["kothrud", "karve nagar"],
       "latitude": _geometry?.location.lat,
       "longitude": _geometry?.location.lng,
@@ -103,8 +103,7 @@ class EditPostProvider extends ChangeNotifier {
     isLoading = false;
   }
 
-  @override
-  void dispose() {
+  void clear() {
     videoList.clear();
     imageList.clear();
     geometry = null;
@@ -112,6 +111,11 @@ class EditPostProvider extends ChangeNotifier {
     tagsList.clear();
     postId = null;
     _headline = _description = '';
+  }
+
+  @override
+  void dispose() {
+    clear();
     super.dispose();
   }
 }

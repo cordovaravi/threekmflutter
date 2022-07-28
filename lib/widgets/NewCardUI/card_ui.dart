@@ -609,12 +609,7 @@ class _CardUIState extends State<CardUI> {
   PopupMenuButton showPopMenu(String postID, newsData) {
     void _editPost() async {
       Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => ChangeNotifierProvider<EditPostProvider>(
-                    create: (context) => EditPostProvider(),
-                    child: EditPost(postId: newsData.postId),
-                  )));
+          context, MaterialPageRoute(builder: (context) => EditPost(postId: newsData.postId)));
     }
 
     void _copyLink() {
