@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +9,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lazy_load_scrollview/lazy_load_scrollview.dart';
 
 import 'package:provider/provider.dart';
 import 'package:provider/src/provider.dart';
@@ -18,7 +21,6 @@ import 'package:threekm/commenwidgets/fullImage.dart';
 import 'package:threekm/providers/Global/logged_in_or_not.dart';
 import 'package:threekm/providers/localization_Provider/appLanguage_provider.dart';
 import 'package:threekm/providers/main/AthorProfile_Provider.dart';
-import 'package:threekm/utils/constants.dart';
 
 import 'package:threekm/widgets/NewCardUI/card_ui.dart';
 
@@ -46,36 +48,27 @@ class AuthorProfile extends StatefulWidget {
 class _AuthorProfileState extends State<AuthorProfile>
     with TickerProviderStateMixin {
   late TabController _tabController;
-  ScrollController controller = ScrollController();
 
   int index = 0;
+  int pageCount = 1;
   @override
   void initState() {
+    super.initState();
     _tabController = TabController(length: 1, vsync: this);
     if (mounted) {
       Future.microtask(() {
-        context.read<AutthorProfileProvider>().getAuthorProfile(
-            authorId: widget.id,
-            authorType: widget.authorType,
-            language: context.read<AppLanguage>().appLocal == Locale("en")
-                ? "en"
-                : context.read<AppLanguage>().appLocal == Locale("mr")
-                    ? "mr"
-                    : "hi");
+        context
+            .read<AutthorProfileProvider>()
+            .getAuthorProfile(pageCount, false,
+                authorId: widget.id,
+                authorType: widget.authorType,
+                language: context.read<AppLanguage>().appLocal == Locale("en")
+                    ? "en"
+                    : context.read<AppLanguage>().appLocal == Locale("mr")
+                        ? "mr"
+                        : "hi");
       });
     }
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    //Get.delete<AuthorProfileController>();
-    controller.dispose();
-    if (!mounted) {
-      Future.microtask(() =>
-          context.read<AutthorProfileProvider>().clearAuthorProfileData());
-    }
-    super.dispose();
   }
 
   @override
@@ -162,15 +155,6 @@ class _AuthorProfileState extends State<AuthorProfile>
           : Column(
               mainAxisSize: MainAxisSize.max,
               children: [
-                // SizedBox(
-                //   width: size(context).width / 1.2,
-                //   child: Row(
-                //     children: [
-                //       buildBackButton(context),
-                //       IconButton(onPressed: () {}, icon: Icon(Icons.more_vert))
-                //     ],
-                //   ),
-                // ),
                 selfProfile.authorProfilePostData != null
                     ? Expanded(
                         child: Container(
@@ -186,225 +170,277 @@ class _AuthorProfileState extends State<AuthorProfile>
                           ),
                           child: Stack(
                             children: [
-                              CustomScrollView(
-                                controller: controller,
-                                slivers: [
-                                  SliverAppBar(
-                                    collapsedHeight: 0,
-                                    expandedHeight: 310,
-                                    // widget.isFromSelfProfileNavigate != true ? 250 : 300,
-                                    toolbarHeight: 0,
-                                    backgroundColor: Colors.white,
-                                    flexibleSpace: FlexibleSpaceBar(
-                                      background: Column(
-                                        children: [
-                                          buildAvatar,
-                                          //space(height: 68),
-                                          Container(
-                                            //width: MediaQuery.of(context).size.width * 0.65,
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: 32),
-                                            child: Center(
-                                              child: Text(
-                                                "${widget.userName}",
-                                                maxLines: 1,
-                                                overflow: TextOverflow.ellipsis,
-                                                style: ThreeKmTextConstants
-                                                    .tk14PXPoppinsBlackSemiBold
-                                                    .copyWith(fontSize: 24),
+                              LazyLoadScrollView(
+                                onEndOfPage: () {
+                                  pageCount++;
+                                  context
+                                      .read<AutthorProfileProvider>()
+                                      .getAuthorProfile(pageCount, true,
+                                          authorId: widget.id,
+                                          authorType: widget.authorType,
+                                          language: context
+                                                      .read<AppLanguage>()
+                                                      .appLocal ==
+                                                  Locale("en")
+                                              ? "en"
+                                              : context
+                                                          .read<AppLanguage>()
+                                                          .appLocal ==
+                                                      Locale("mr")
+                                                  ? "mr"
+                                                  : "hi");
+                                },
+                                child: CustomScrollView(
+                                  //    controller: _controller,
+                                  slivers: [
+                                    SliverAppBar(
+                                      collapsedHeight: 0,
+                                      expandedHeight: 310,
+                                      // widget.isFromSelfProfileNavigate != true ? 250 : 300,
+                                      toolbarHeight: 0,
+                                      backgroundColor: Colors.white,
+                                      flexibleSpace: FlexibleSpaceBar(
+                                        background: Column(
+                                          children: [
+                                            buildAvatar,
+                                            //space(height: 68),
+                                            Container(
+                                              //width: MediaQuery.of(context).size.width * 0.65,
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: 32),
+                                              child: Center(
+                                                child: Text(
+                                                  "${widget.userName}",
+                                                  maxLines: 1,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  style: ThreeKmTextConstants
+                                                      .tk14PXPoppinsBlackSemiBold
+                                                      .copyWith(fontSize: 24),
+                                                ),
                                               ),
                                             ),
-                                          ),
-                                          Container(
-                                              //width: 298,
-                                              child: authorProfile?.data.result!
-                                                          .author!.about
-                                                          .toString() !=
-                                                      "null"
-                                                  ? Column(
-                                                      children: [
-                                                        Text(
-                                                          "${authorProfile?.data.result!.author!.about}",
-                                                          maxLines: 2,
-                                                          overflow: TextOverflow
-                                                              .ellipsis,
-                                                          textAlign:
-                                                              TextAlign.center,
-                                                          style: ThreeKmTextConstants
-                                                              .tk14PXPoppinsBlackSemiBold
-                                                              .copyWith(
-                                                            fontSize: 12,
-                                                            fontWeight:
-                                                                FontWeight.w400,
+                                            Container(
+                                                //width: 298,
+                                                child: authorProfile
+                                                            ?.data
+                                                            .result!
+                                                            .author!
+                                                            .about
+                                                            .toString() !=
+                                                        "null"
+                                                    ? Column(
+                                                        children: [
+                                                          Text(
+                                                            "${authorProfile?.data.result!.author!.about}",
+                                                            maxLines: 2,
+                                                            overflow:
+                                                                TextOverflow
+                                                                    .ellipsis,
+                                                            textAlign: TextAlign
+                                                                .center,
+                                                            style: ThreeKmTextConstants
+                                                                .tk14PXPoppinsBlackSemiBold
+                                                                .copyWith(
+                                                              fontSize: 12,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w400,
+                                                            ),
+                                                          ),
+                                                          SizedBox(
+                                                            height: 8,
+                                                          ),
+                                                          // about text
+                                                          // Container(),
+                                                          // buildFollowing(context)
+                                                        ],
+                                                      )
+                                                    : SizedBox()),
+                                            // Column(
+                                            //   children: [
+                                            //     //space(height: 32),
+                                            //     buildFollowing(context),
+                                            //     //space(height: 32),
+                                            //     buildFollowingButton,
+                                            //     //buildFollowingButton,
+                                            //   ],
+                                            // ),
+                                            Padding(
+                                              padding: EdgeInsets.symmetric(
+                                                  vertical: 8, horizontal: 8),
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  Column(
+                                                    children: [
+                                                      Text(
+                                                          authorProfile
+                                                                  ?.data
+                                                                  .result
+                                                                  ?.author
+                                                                  ?.followers
+                                                                  .toString() ??
+                                                              "",
+                                                          style:
+                                                              GoogleFonts.poppins(
+                                                                  color: Colors
+                                                                      .black,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w500,
+                                                                  fontSize:
+                                                                      18)),
+                                                      Text(
+                                                        "Followers",
+                                                        style: ThreeKmTextConstants
+                                                            .tk14PXPoppinsBlackSemiBold
+                                                            .copyWith(
+                                                                color: Color(
+                                                                    0xff979EA4)),
+                                                      )
+                                                    ],
+                                                  ),
+                                                  Column(
+                                                    children: [
+                                                      Text(
+                                                          authorProfile
+                                                                  ?.data
+                                                                  .result
+                                                                  ?.author
+                                                                  ?.totalPosts
+                                                                  .toString() ??
+                                                              "",
+                                                          style:
+                                                              GoogleFonts.poppins(
+                                                                  color: Colors
+                                                                      .black,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w500,
+                                                                  fontSize:
+                                                                      18)),
+                                                      Text(
+                                                        "Posts",
+                                                        style: ThreeKmTextConstants
+                                                            .tk14PXPoppinsBlackSemiBold
+                                                            .copyWith(
+                                                                color: Color(
+                                                                    0xff979EA4)),
+                                                      )
+                                                    ],
+                                                  ),
+                                                  Column(
+                                                    children: [
+                                                      Text(
+                                                          authorProfile
+                                                                  ?.data
+                                                                  .result
+                                                                  ?.author
+                                                                  ?.following
+                                                                  .toString() ??
+                                                              "",
+                                                          style:
+                                                              GoogleFonts.poppins(
+                                                                  color: Colors
+                                                                      .black,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w500,
+                                                                  fontSize:
+                                                                      18)),
+                                                      Text(
+                                                        "Following",
+                                                        style: ThreeKmTextConstants
+                                                            .tk14PXPoppinsBlackSemiBold
+                                                            .copyWith(
+                                                                color: Color(
+                                                                    0xff979EA4)),
+                                                      )
+                                                    ],
+                                                  )
+                                                ],
+                                              ),
+                                            ),
+                                            space(height: 10),
+                                            buildFollowingButton(
+                                                isLoading:
+                                                    selfProfile.followLoading,
+                                                authorId: authorProfile?.data
+                                                        .result?.author?.id ??
+                                                    0,
+                                                isFollowed: authorProfile
+                                                        ?.data
+                                                        .result
+                                                        ?.author
+                                                        ?.isFollowed ??
+                                                    false)
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    if (index == 0 &&
+                                        authorProfile != null) ...{
+                                      SliverList(
+                                        delegate: SliverChildBuilderDelegate(
+                                          (context, _index) {
+                                            return ListView.builder(
+                                              physics: BouncingScrollPhysics(),
+                                              shrinkWrap: true,
+                                              itemCount: authorProfile.data
+                                                      .result!.posts!.length +
+                                                  1,
+                                              itemBuilder: (context, _) {
+                                                return _ <
+                                                        authorProfile
+                                                            .data
+                                                            .result!
+                                                            .posts!
+                                                            .length
+                                                    ? NewsCard(
+                                                        key: Key(
+                                                            _index.toString()),
+                                                        avtar: widget.avatar,
+                                                        authorName:
+                                                            widget.userName,
+                                                        authorProfileModel:
+                                                            authorProfile,
+                                                        index: _)
+                                                    : Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(8.0),
+                                                        child: Center(
+                                                          child: SizedBox(
+                                                            height: 30,
+                                                            width: 30,
+                                                            child:
+                                                                CircularProgressIndicator(),
                                                           ),
                                                         ),
-                                                        SizedBox(
-                                                          height: 8,
-                                                        ),
-                                                        // about text
-                                                        // Container(),
-                                                        // buildFollowing(context)
-                                                      ],
-                                                    )
-                                                  : SizedBox()),
-                                          // Column(
-                                          //   children: [
-                                          //     //space(height: 32),
-                                          //     buildFollowing(context),
-                                          //     //space(height: 32),
-                                          //     buildFollowingButton,
-                                          //     //buildFollowingButton,
-                                          //   ],
-                                          // ),
-                                          Padding(
-                                            padding: EdgeInsets.symmetric(
-                                                vertical: 8, horizontal: 8),
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                Column(
-                                                  children: [
-                                                    Text(
-                                                        authorProfile
-                                                                ?.data
-                                                                .result
-                                                                ?.author
-                                                                ?.followers
-                                                                .toString() ??
-                                                            "",
-                                                        style:
-                                                            GoogleFonts.poppins(
-                                                                color: Colors
-                                                                    .black,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w500,
-                                                                fontSize: 18)),
-                                                    Text(
-                                                      "Followers",
-                                                      style: ThreeKmTextConstants
-                                                          .tk14PXPoppinsBlackSemiBold
-                                                          .copyWith(
-                                                              color: Color(
-                                                                  0xff979EA4)),
-                                                    )
-                                                  ],
-                                                ),
-                                                Column(
-                                                  children: [
-                                                    Text(
-                                                        authorProfile
-                                                                ?.data
-                                                                .result
-                                                                ?.author
-                                                                ?.totalPosts
-                                                                .toString() ??
-                                                            "",
-                                                        style:
-                                                            GoogleFonts.poppins(
-                                                                color: Colors
-                                                                    .black,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w500,
-                                                                fontSize: 18)),
-                                                    Text(
-                                                      "Posts",
-                                                      style: ThreeKmTextConstants
-                                                          .tk14PXPoppinsBlackSemiBold
-                                                          .copyWith(
-                                                              color: Color(
-                                                                  0xff979EA4)),
-                                                    )
-                                                  ],
-                                                ),
-                                                Column(
-                                                  children: [
-                                                    Text(
-                                                        authorProfile
-                                                                ?.data
-                                                                .result
-                                                                ?.author
-                                                                ?.following
-                                                                .toString() ??
-                                                            "",
-                                                        style:
-                                                            GoogleFonts.poppins(
-                                                                color: Colors
-                                                                    .black,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w500,
-                                                                fontSize: 18)),
-                                                    Text(
-                                                      "Following",
-                                                      style: ThreeKmTextConstants
-                                                          .tk14PXPoppinsBlackSemiBold
-                                                          .copyWith(
-                                                              color: Color(
-                                                                  0xff979EA4)),
-                                                    )
-                                                  ],
-                                                )
-                                              ],
-                                            ),
-                                          ),
-                                          space(height: 10),
-                                          buildFollowingButton(
-                                              isLoading:
-                                                  selfProfile.followLoading,
-                                              authorId: authorProfile?.data
-                                                      .result?.author?.id ??
-                                                  0,
-                                              isFollowed: authorProfile
-                                                      ?.data
-                                                      .result
-                                                      ?.author
-                                                      ?.isFollowed ??
-                                                  false)
-                                          // Consumer<AutthorProfileProvider>(
-                                          //     builder:
-                                          //         (context, controller, _) {
-                                          //   return buildFollowingButton(
-                                          //       isLoading:
-                                          //           controller.followLoading,
-                                          //       authorId: authorProfile?.data
-                                          //               .result?.author?.id ??
-                                          //           0,
-                                          //       isFollowed: controller
-                                          //               .authorProfilePostData
-                                          //               ?.data
-                                          //               .result
-                                          //               ?.author
-                                          //               ?.isFollowed ??
-                                          //           false);
-                                          // })
-                                        ],
+                                                      );
+                                              },
+                                            );
+                                          },
+                                          findChildIndexCallback: (key) {
+                                            log(key.toString());
+                                          },
+                                          childCount: 1,
+                                        ),
                                       ),
-                                    ),
-                                  ),
-                                  if (index == 0 && authorProfile != null) ...{
-                                    SliverList(
-                                      delegate: SliverChildBuilderDelegate(
-                                        (context, _index) {
-                                          return NewsCard(
-                                              avtar: widget.avatar,
-                                              authorName: widget.userName,
-                                              authorProfileModel: authorProfile,
-                                              index: _index);
-                                        },
-                                        childCount: authorProfile
-                                            .data.result!.posts!.length,
-                                      ),
-                                    ),
-                                  } else ...{
-                                    Center(
-                                      child: Text("Saved posts"),
-                                    )
-                                  }
-                                ],
+                                    } else ...{
+                                      Center(
+                                        child: Text("Saved posts"),
+                                      )
+                                    },
+                                    SliverToBoxAdapter(
+                                        child: SizedBox(
+                                      height: 10,
+                                    ))
+                                  ],
+                                ),
                               ),
                             ],
                           ),
@@ -626,8 +662,6 @@ class NewsCard extends StatefulWidget {
 }
 
 class _NewsCardState extends State<NewsCard> {
-  // TextEditingController _commentController = TextEditingController();
-  // ScreenshotController screenshotController = ScreenshotController();
   @override
   Widget build(BuildContext context) {
     final newsData = widget.authorProfileModel.data.result;
@@ -635,726 +669,5 @@ class _NewsCardState extends State<NewsCard> {
       data: newsData?.posts?[widget.index],
       providerType: 'AutthorProfileProvider2',
     );
-    // return Stack(alignment: AlignmentDirectional.center, children: [
-    //   Padding(
-    //     padding: EdgeInsets.only(left: 10, right: 10, top: 8, bottom: 8),
-    //     child: Column(mainAxisSize: MainAxisSize.min, children: [
-    //       Container(
-    //         margin: EdgeInsets.only(bottom: 10),
-    //         decoration: BoxDecoration(
-    //             color: Colors.white,
-    //             boxShadow: [
-    //               BoxShadow(color: Color(0xff32335E26), blurRadius: 8),
-    //             ],
-    //             borderRadius: BorderRadius.circular(10)),
-    //         child: Container(
-    //             child: Column(
-    //           mainAxisAlignment: MainAxisAlignment.start,
-    //           children: [
-    //             Padding(
-    //               padding: const EdgeInsets.all(10.0),
-    //               child: Row(
-    //                 crossAxisAlignment: CrossAxisAlignment.start,
-    //                 children: [
-    //                   Container(
-    //                       margin: EdgeInsets.only(right: 10),
-    //                       height: 50,
-    //                       width: 50,
-    //                       child: Container(
-    //                         height: 50,
-    //                         width: 50,
-    //                         decoration: BoxDecoration(
-    //                             shape: BoxShape.circle,
-    //                             image: DecorationImage(
-    //                                 fit: BoxFit.cover,
-    //                                 image:
-    //                                     CachedNetworkImageProvider(widget.avtar)
-    //                                 //newsData.author!.image.toString())
-    //                                 )),
-    //                         // child: newsData.author!.isVerified == true
-    //                         //     //newsData.isVerified == true
-    //                         //     ? Stack(
-    //                         //         children: [
-    //                         //           Positioned(
-    //                         //               left: 0,
-    //                         //               child: Image.asset(
-    //                         //                 'assets/verified.png',
-    //                         //                 height: 15,
-    //                         //                 width: 15,
-    //                         //                 fit: BoxFit.cover,
-    //                         //               ))
-    //                         //         ],
-    //                         //       )
-    //                         //     : Container(),
-    //                       )),
-    //                   Column(
-    //                     crossAxisAlignment: CrossAxisAlignment.start,
-    //                     //mainAxisAlignment: MainAxisAlignment.center,
-    //                     children: [
-    //                       Container(
-    //                         width: MediaQuery.of(context).size.width * 0.35,
-    //                         child: Text(
-    //                           widget.authorName,
-    //                           style:
-    //                               ThreeKmTextConstants.tk14PXPoppinsBlackBold,
-    //                           overflow: TextOverflow.ellipsis,
-    //                         ),
-    //                       ),
-    //                       Text(newsData!.posts![widget.index].createdDate
-    //                               .toString()
-    //                           //newsData.createdDate.toString()
-    //                           )
-    //                     ],
-    //                   ),
-    //                   SizedBox(
-    //                     width: 10,
-    //                   ),
-    //                   Spacer(),
-    //                   showPopMenu(
-    //                       newsData.posts![widget.index].postId.toString(),
-    //                       newsData)
-    //                 ],
-    //               ),
-    //             ),
-    //             //pic
-    //             if (newsData.posts![widget.index].images != null &&
-    //                 newsData.posts![widget.index].images!.length > 0)
-    //               CachedNetworkImage(
-    //                 height: 254,
-    //                 width: 338,
-    //                 fit: BoxFit.fill,
-    //                 imageUrl: '${newsData.posts![widget.index].images!.first}',
-    //               )
-    //             else if (newsData.posts![widget.index].videos != null &&
-    //                 newsData.posts![widget.index].videos!.length > 0)
-    //               Stack(children: [
-    //                 Container(
-    //                   height: 254,
-    //                   width: MediaQuery.of(context).size.width,
-    //                   child: VideoWidget(
-    //                       isVimeo: newsData.posts![widget.index].videos!.first
-    //                                   .player ==
-    //                               "vimeo"
-    //                           ? true
-    //                           : false,
-    //                       vimeoID: newsData.posts![widget.index].videos!.first
-    //                                   .player ==
-    //                               "vimeo"
-    //                           ? newsData
-    //                               .posts![widget.index].videos!.first.vimeoUrl!
-    //                               .split("/")
-    //                               .last
-    //                           : "",
-    //                       thubnail: newsData.posts![widget.index].videos!.first
-    //                               .thumbnail!.isNotEmpty
-    //                           ? newsData
-    //                               .posts![widget.index].videos!.first.thumbnail
-    //                               .toString()
-    //                           : '',
-    //                       url: newsData.posts![widget.index].videos!.first.src.toString(),
-    //                       play: false),
-    //                 ),
-    //               ]),
-    //             Row(children: [
-    //               if (newsData.posts![widget.index].likes != null &&
-    //                   newsData.posts![widget.index].likes != 0)
-    //                 Padding(
-    //                     padding: EdgeInsets.only(top: 5, left: 5, bottom: 2),
-    //                     child: InkWell(
-    //                       onTap: () {
-    //                         _showLikedBottomModalSheet(
-    //                             newsData.posts![widget.index].postId!.toInt(),
-    //                             newsData.posts![widget.index].likes);
-    //                       },
-    //                       child: Row(
-    //                         children: [
-    //                           Text('👍 ❤️ '),
-    //                           Container(
-    //                             // height: 30,
-    //                             // width: 30,
-    //                             // decoration: BoxDecoration(
-    //                             //     shape: BoxShape.circle,
-    //                             //     color: Color(0xffFC5E6A)),
-    //                             child: Center(
-    //                                 child: newsData
-    //                                             .posts![widget.index].likes !=
-    //                                         null
-    //                                     ? Text('+' +
-    //                                         newsData.posts![widget.index].likes
-    //                                             .toString())
-    //                                     : Text("+0")),
-    //                           )
-    //                         ],
-    //                       ),
-    //                     )),
-    //               Spacer(),
-    //               Padding(
-    //                   padding: EdgeInsets.only(top: 5, right: 5, bottom: 2),
-    //                   child: Text(
-    //                       newsData.posts![widget.index].views.toString() +
-    //                           ' Views'))
-    //             ]),
-    //             Text(
-    //               newsData.posts![widget.index].headline.toString(),
-    //               style: ThreeKmTextConstants.tk14PXLatoBlackMedium,
-    //               textAlign: TextAlign.center,
-    //             ),
-    //             SizedBox(
-    //               height: 8,
-    //             ),
-    //             Padding(
-    //               padding: const EdgeInsets.all(16.0),
-    //               child: HtmlWidget(
-    //                   newsData.posts![widget.index].story.toString()),
-    //             ),
-
-    //             SizedBox(
-    //               height: 35,
-    //             ),
-    //           ],
-    //         )),
-    //       )
-    //     ]),
-    //   ),
-    //   Positioned(
-    //       bottom: 0,
-    //       child: Container(
-    //         height: 60,
-    //         width: 230,
-    //         child: ButtonBar(children: [
-    //           Container(
-    //             height: 60,
-    //             width: 60,
-    //             child: PostAuthorEmotionButton(
-    //                 isLiked: newsData.posts![widget.index].isLiked!,
-    //                 initalReaction: newsData.posts![widget.index].isLiked!
-    //                     ? Reaction(
-    //                         icon: Image.asset("assets/thumbs_up_red.png"))
-    //                     : Reaction(icon: Image.asset("assets/thumbs-up.png")),
-    //                 selectedReaction: newsData.posts![widget.index].isLiked!
-    //                     ? Reaction(
-    //                         icon: Image.asset("assets/thumbs_up_red.png"))
-    //                     : Reaction(icon: Image.asset("assets/thumbs-up.png")),
-    //                 postId: newsData.posts![widget.index].postId!.toInt(),
-    //                 reactions: reactionAssets.reactions),
-    //             decoration: BoxDecoration(
-    //                 color: Colors.white,
-    //                 shape: BoxShape.circle,
-    //                 boxShadow: [
-    //                   BoxShadow(
-    //                     color: Colors.black26,
-    //                     blurRadius: 8,
-    //                   )
-    //                 ]),
-    //           ),
-    //           Container(
-    //             height: 60,
-    //             width: 60,
-    //             child: IconButton(
-    //                 onPressed: () {
-    //                   _showCommentsBottomModalSheet(context,
-    //                       newsData.posts![widget.index].postId!.toInt());
-    //                 },
-    //                 icon: Image.asset('assets/icons-topic.png',
-    //                     fit: BoxFit.cover)),
-    //             decoration: BoxDecoration(
-    //                 color: Colors.white,
-    //                 shape: BoxShape.circle,
-    //                 boxShadow: [
-    //                   BoxShadow(
-    //                     color: Colors.black26,
-    //                     blurRadius: 8,
-    //                   )
-    //                 ]),
-    //           ),
-    //           Container(
-    //             height: 60,
-    //             width: 60,
-    //             child: IconButton(
-    //                 onPressed: () async {
-    //                   // showLoading();
-    //                   String imgUrl = newsData
-    //                               .posts![widget.index].images!.isNotEmpty &&
-    //                           newsData.posts![widget.index].images!.length > 0
-    //                       ? newsData.posts![widget.index].images!.first
-    //                           .toString()
-    //                       : newsData
-    //                           .posts![widget.index].videos!.first.thumbnail
-    //                           .toString();
-    //                   handleShare(
-    //                       newsData.author!.name.toString(),
-    //                       newsData.author!.image.toString(),
-    //                       newsData.posts![widget.index].submittedHeadline
-    //                           .toString(),
-    //                       imgUrl,
-    //                       newsData.posts![widget.index].createdDate.toString(),
-    //                       newsData.posts![widget.index].postId.toString());
-    //                 },
-    //                 icon: Center(
-    //                   child: Image.asset('assets/icons-share.png',
-    //                       fit: BoxFit.contain),
-    //                 )),
-    //             decoration: BoxDecoration(
-    //                 color: Colors.white,
-    //                 shape: BoxShape.circle,
-    //                 boxShadow: [
-    //                   BoxShadow(
-    //                     color: Colors.black26,
-    //                     blurRadius: 8,
-    //                   )
-    //                 ]),
-    //           ),
-    //         ]),
-    //       )),
-    // ]);
   }
-
-  // _showLikedBottomModalSheet(int postId, totalLikes) {
-  //   context.read<LikeListProvider>().showLikes(context, postId);
-  //   showModalBottomSheet<void>(
-  //     backgroundColor: Colors.white,
-  //     context: context,
-  //     builder: (BuildContext context) {
-  //       final _likeProvider = context.watch<LikeListProvider>();
-  //       return Padding(
-  //           padding: EdgeInsets.zero,
-  //           child: StatefulBuilder(
-  //             builder: (context, _) {
-  //               return Container(
-  //                 color: Colors.white,
-  //                 height: 192,
-  //                 width: MediaQuery.of(context).size.width,
-  //                 child: _likeProvider.isLoading
-  //                     ? LikesLoding()
-  //                     : Column(
-  //                         mainAxisSize: MainAxisSize.max,
-  //                         children: [
-  //                           Row(
-  //                             children: [
-  //                               Padding(
-  //                                 padding: EdgeInsets.only(
-  //                                     top: 24, left: 18, bottom: 34),
-  //                                 child: Text(
-  //                                     "$totalLikes People reacted to this"),
-  //                               ),
-  //                             ],
-  //                           ),
-  //                           Container(
-  //                             height: 90,
-  //                             width: double.infinity,
-  //                             child: ListView.builder(
-  //                               scrollDirection: Axis.horizontal,
-  //                               itemCount: _likeProvider
-  //                                   .likeList!.data!.result!.users!.length,
-  //                               shrinkWrap: true,
-  //                               itemBuilder: (context, index) {
-  //                                 return Container(
-  //                                     margin: EdgeInsets.only(
-  //                                       left: 21,
-  //                                     ),
-  //                                     height: 85,
-  //                                     width: 85,
-  //                                     decoration: BoxDecoration(
-  //                                         shape: BoxShape.circle,
-  //                                         image: DecorationImage(
-  //                                             fit: BoxFit.cover,
-  //                                             image: NetworkImage(_likeProvider
-  //                                                 .likeList!
-  //                                                 .data!
-  //                                                 .result!
-  //                                                 .users![index]
-  //                                                 .avatar
-  //                                                 .toString()))),
-  //                                     child: Stack(
-  //                                       children: [
-  //                                         Positioned(
-  //                                             right: 0,
-  //                                             child: Image.asset(
-  //                                               'assets/fblike2x.png',
-  //                                               height: 15,
-  //                                               width: 15,
-  //                                               fit: BoxFit.cover,
-  //                                             )),
-  //                                         _likeProvider
-  //                                                     .likeList!
-  //                                                     .data!
-  //                                                     .result!
-  //                                                     .users![index]
-  //                                                     .isUnknown !=
-  //                                                 null
-  //                                             ? Center(
-  //                                                 child: Text(
-  //                                                     "+${_likeProvider.likeList!.data!.result!.anonymousCount}",
-  //                                                     style: TextStyle(
-  //                                                         fontSize: 17,
-  //                                                         color: Colors.white),
-  //                                                     textAlign:
-  //                                                         TextAlign.center),
-  //                                               )
-  //                                             : SizedBox.shrink()
-  //                                       ],
-  //                                     ));
-  //                               },
-  //                             ),
-  //                           ),
-  //                         ],
-  //                       ),
-  //               );
-  //             },
-  //           ));
-  //     },
-  //   );
-  // }
-
-  // _showCommentsBottomModalSheet(BuildContext context, int postId) {
-  //   //print("this is new :$postId");
-  //   context.read<CommentProvider>().getAllCommentsApi(postId);
-  //   showModalBottomSheet<void>(
-  //     backgroundColor: Colors.transparent,
-  //     context: context,
-  //     isScrollControlled: true,
-  //     builder: (BuildContext context) {
-  //       return Padding(
-  //         padding: MediaQuery.of(context).viewInsets,
-  //         child: StatefulBuilder(
-  //           builder: (BuildContext context, StateSetter setModalState) {
-  //             return ClipPath(
-  //               clipper: OvalTopBorderClipper(),
-  //               child: Container(
-  //                 color: Colors.white,
-  //                 height: MediaQuery.of(context).size.height / 2,
-  //                 padding: const EdgeInsets.all(15.0),
-  //                 child: Column(
-  //                   crossAxisAlignment: CrossAxisAlignment.center,
-  //                   children: <Widget>[
-  //                     Container(
-  //                       height: 5,
-  //                       width: 30,
-  //                       color: Colors.grey.shade300,
-  //                     ),
-  //                     SizedBox(
-  //                       height: 10,
-  //                     ),
-  //                     Row(
-  //                       children: [
-  //                         Container(
-  //                             height: 20,
-  //                             width: 20,
-  //                             child: Image.asset('assets/icons-topic.png')),
-  //                         Padding(padding: EdgeInsets.only(left: 10)),
-  //                         Consumer<CommentProvider>(
-  //                             builder: (context, commentProvider, _) {
-  //                           return commentProvider.commentList?.length != null
-  //                               ? Text(
-  //                                   "${commentProvider.commentList!.length}\tComments",
-  //                                   style: ThreeKmTextConstants
-  //                                       .tk14PXPoppinsBlackSemiBold,
-  //                                 )
-  //                               : Text(
-  //                                   "Comments",
-  //                                   style: ThreeKmTextConstants
-  //                                       .tk14PXPoppinsBlackSemiBold,
-  //                                 );
-  //                         })
-  //                       ],
-  //                     ),
-  //                     SizedBox(
-  //                       height: 10,
-  //                     ),
-  //                     Consumer<CommentProvider>(
-  //                         builder: (context, commentProvider, _) {
-  //                       return context.read<CommentProvider>().commentList !=
-  //                               null
-  //                           ? Expanded(
-  //                               child: commentProvider.isGettingComments == true
-  //                                   ? CommentsLoadingEffects()
-  //                                   : ListView.builder(
-  //                                       physics: BouncingScrollPhysics(),
-  //                                       shrinkWrap: true,
-  //                                       primary: true,
-  //                                       itemCount:
-  //                                           commentProvider.commentList!.length,
-  //                                       itemBuilder: (context, commentIndex) {
-  //                                         return Container(
-  //                                           margin: EdgeInsets.all(1),
-  //                                           decoration: BoxDecoration(
-  //                                             color: Colors.white,
-  //                                           ),
-  //                                           child: ListTile(
-  //                                             trailing: commentProvider
-  //                                                         .commentList![
-  //                                                             commentIndex]
-  //                                                         .isself ==
-  //                                                     true
-  //                                                 ? IconButton(
-  //                                                     onPressed: () {
-  //                                                       context
-  //                                                           .read<
-  //                                                               CommentProvider>()
-  //                                                           .removeComment(
-  //                                                               commentProvider
-  //                                                                   .commentList![
-  //                                                                       commentIndex]
-  //                                                                   .commentId!,
-  //                                                               postId);
-  //                                                     },
-  //                                                     icon: Icon(Icons.delete))
-  //                                                 : SizedBox(),
-  //                                             leading: Container(
-  //                                               height: 40,
-  //                                               width: 40,
-  //                                               decoration: BoxDecoration(
-  //                                                   image: DecorationImage(
-  //                                                       image: CachedNetworkImageProvider(
-  //                                                           commentProvider
-  //                                                               .commentList![
-  //                                                                   commentIndex]
-  //                                                               .avatar
-  //                                                               .toString()))),
-  //                                             ),
-  //                                             title: Text(
-  //                                               commentProvider
-  //                                                   .commentList![commentIndex]
-  //                                                   .username
-  //                                                   .toString(),
-  //                                               style: ThreeKmTextConstants
-  //                                                   .tk14PXPoppinsBlackSemiBold,
-  //                                             ),
-  //                                             subtitle: Column(
-  //                                                 crossAxisAlignment:
-  //                                                     CrossAxisAlignment.start,
-  //                                                 children: [
-  //                                                   SizedBox(
-  //                                                     height: 4,
-  //                                                   ),
-  //                                                   Text(
-  //                                                     commentProvider
-  //                                                         .commentList![
-  //                                                             commentIndex]
-  //                                                         .comment
-  //                                                         .toString(),
-  //                                                     style: ThreeKmTextConstants
-  //                                                         .tk14PXLatoBlackMedium,
-  //                                                   ),
-  //                                                   SizedBox(
-  //                                                     height: 2,
-  //                                                   ),
-  //                                                   Text(
-  //                                                       commentProvider
-  //                                                           .commentList![
-  //                                                               commentIndex]
-  //                                                           .timeLapsed
-  //                                                           .toString(),
-  //                                                       style: TextStyle(
-  //                                                           fontStyle: FontStyle
-  //                                                               .italic))
-  //                                                 ]),
-  //                                           ),
-  //                                         );
-  //                                       },
-  //                                     ),
-  //                             )
-  //                           : SizedBox();
-  //                     }),
-  //                     Container(
-  //                       height: 116,
-  //                       width: 338,
-  //                       decoration: BoxDecoration(
-  //                           color: Colors.grey.shade200,
-  //                           borderRadius: BorderRadius.circular(20)),
-  //                       child: TextFormField(
-  //                         controller: _commentController,
-  //                         maxLines: null,
-  //                         keyboardType: TextInputType.multiline,
-  //                         decoration: InputDecoration(border: InputBorder.none),
-  //                       ),
-  //                     ),
-  //                     SizedBox(
-  //                       height: 10,
-  //                     ),
-  //                     Align(
-  //                       alignment: Alignment.centerLeft,
-  //                       child: InkWell(
-  //                         onTap: () {
-  //                           context
-  //                               .read<CommentProvider>()
-  //                               .postCommentApi(postId, _commentController.text)
-  //                               .then((value) => _commentController.clear());
-  //                         },
-  //                         child: Container(
-  //                           height: 36,
-  //                           width: 112,
-  //                           decoration: BoxDecoration(
-  //                               borderRadius: BorderRadius.circular(18),
-  //                               color: ThreeKmTextConstants.blue2),
-  //                           child: Center(
-  //                             child: Text(
-  //                               "Submit",
-  //                               style: ThreeKmTextConstants
-  //                                   .tk14PXPoppinsWhiteMedium,
-  //                             ),
-  //                           ),
-  //                         ),
-  //                       ),
-  //                     )
-  //                   ],
-  //                 ),
-  //               ),
-  //             );
-  //           },
-  //         ),
-  //       );
-  //     },
-  //   );
-  // }
-
-  // PopupMenuButton showPopMenu(String postID, newsData) {
-  //   return PopupMenuButton(
-  //     icon: Icon(Icons.more_vert),
-  //     itemBuilder: (BuildContext context) => <PopupMenuEntry>[
-  //       PopupMenuItem(
-  //         child: ListTile(
-  //           title: Text('Copy link'),
-  //           onTap: () {
-  //             Clipboard.setData(ClipboardData(
-  //                     text: "https://3km.in/post-detail?id=$postID&lang=en"))
-  //                 .then((value) => CustomSnackBar(
-  //                     context, Text("Link has been coppied to clipboard")))
-  //                 .whenComplete(() => Navigator.pop(context));
-  //           },
-  //         ),
-  //       ),
-  //       // PopupMenuItem(
-  //       //   child: ListTile(
-  //       //     onTap: () {
-  //       //       String imgUrl =
-  //       //           newsData.images != null && newsData.images!.length > 0
-  //       //               ? newsData.images!.first.toString()
-  //       //               : newsData.videos!.first.thumbnail.toString();
-  //       //       handleShare(
-  //       //           newsData.author!.name.toString(),
-  //       //           newsData.author!.image.toString(),
-  //       //           newsData.submittedHeadline.toString(),
-  //       //           imgUrl,
-  //       //           newsData.createdDate,
-  //       //           newsData.postId.toString());
-  //       //     },
-  //       //     title: Text('Share to..',
-  //       //         style: ThreeKmTextConstants.tk16PXLatoBlackRegular),
-  //       //   ),
-  //       // ),
-  //       PopupMenuItem(
-  //         child: ListTile(
-  //           onTap: () {
-  //             Navigator.pop(context);
-  //           },
-  //           title: Text(
-  //             'Cancel',
-  //             style: ThreeKmTextConstants.tk16PXPoppinsRedSemiBold,
-  //           ),
-  //         ),
-  //       ),
-  //     ],
-  //   );
-  // }
-
-  // // previous param String imgUrl, String name, String newsHeadLine, int index
-  // handleShare(String authorName, String authorProfile, String headLine,
-  //     String thumbnail, date, String postId) async {
-  //   showLoading();
-  //   screenshotController
-  //       .captureFromWidget(Container(
-  //     padding: EdgeInsets.only(top: 15, bottom: 15),
-  //     color: Colors.white,
-  //     child: Column(
-  //       mainAxisSize: MainAxisSize.min,
-  //       children: [
-  //         Row(
-  //           //mainAxisAlignment: MainAxisAlignment.center,
-  //           crossAxisAlignment: CrossAxisAlignment.start,
-  //           children: [
-  //             Container(
-  //                 margin: EdgeInsets.only(right: 10),
-  //                 height: 50,
-  //                 width: 50,
-  //                 child: Container(
-  //                   height: 50,
-  //                   width: 50,
-  //                   decoration: BoxDecoration(
-  //                       shape: BoxShape.circle,
-  //                       image: DecorationImage(
-  //                           fit: BoxFit.cover,
-  //                           image: CachedNetworkImageProvider(authorProfile))),
-  //                 )),
-  //             Column(
-  //               crossAxisAlignment: CrossAxisAlignment.start,
-  //               children: [
-  //                 Container(
-  //                   child: Text(
-  //                     authorName,
-  //                     style: ThreeKmTextConstants.tk14PXPoppinsBlackBold,
-  //                     overflow: TextOverflow.ellipsis,
-  //                   ),
-  //                 ),
-  //                 Text(
-  //                   date,
-  //                   style: ThreeKmTextConstants.tk12PXLatoBlackBold,
-  //                 )
-  //               ],
-  //             ),
-  //             // SizedBox(
-  //             //   width: 10,
-  //             // ),
-  //           ],
-  //         ),
-  //         Container(
-  //             height: 254,
-  //             width: MediaQuery.of(context).size.width,
-  //             child: CachedNetworkImage(imageUrl: thumbnail)),
-  //         Text(
-  //           headLine,
-  //           style: ThreeKmTextConstants.tk14PXPoppinsBlackBold,
-  //           textAlign: TextAlign.center,
-  //         ),
-  //         Padding(
-  //           padding: EdgeInsets.only(top: 5),
-  //           child: Row(
-  //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //             children: [
-  //               Container(
-  //                 height: 30,
-  //                 width: 250,
-  //                 child: Image.asset(
-  //                   'assets/playstore.jpg',
-  //                   fit: BoxFit.fitHeight,
-  //                 ),
-  //               ),
-  //               Padding(
-  //                 padding: EdgeInsets.only(right: 15),
-  //                 child: Container(
-  //                     height: 30,
-  //                     width: 30,
-  //                     child: Image.asset('assets/icon_light.png')),
-  //               )
-  //             ],
-  //           ),
-  //         )
-  //       ],
-  //     ),
-  //   ))
-  //       .then((capturedImage) async {
-  //     try {
-  //       var documentDirectory = Platform.isAndroid
-  //           ? await getExternalStorageDirectory()
-  //           : await getApplicationDocumentsDirectory();
-  //       File file = await File('${documentDirectory!.path}/image.png').create();
-  //       file.writeAsBytesSync(capturedImage);
-  //       Share.shareFiles([file.path],
-  //               text: 'https://3km.in/post-detail?id=$postId&lang=en')
-  //           .then((value) => hideLoading());
-  //     } on Exception catch (e) {
-  //       hideLoading();
-  //     }
-  //   });
-  // }
 }

@@ -51,7 +51,7 @@ class VerifyKYCCredential extends ChangeNotifier {
     try {
       // showLoading();
       final response =
-          await _apiProvider.post(register_verify_otp_kyc, requestJson);
+          await _apiProvider.auth(register_verify_otp, requestJson);
       print(response);
       if (response['status'] == 'success') {
         // hideLoading();

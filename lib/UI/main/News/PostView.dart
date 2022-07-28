@@ -150,7 +150,11 @@ class _PostViewState extends State<PostView> {
                                                         avatar: newsData
                                                             .author!.image!,
                                                         userName: newsData
-                                                            .author!.name!)));
+                                                            .author!
+                                                            .name!))).then(
+                                            (value) => context
+                                                .read<AutthorProfileProvider>()
+                                                .clearAuthorProfileData());
                                       },
                                       child: Container(
                                           margin: EdgeInsets.only(right: 10),
@@ -191,7 +195,11 @@ class _PostViewState extends State<PostView> {
                                                                 .author!.image!,
                                                             userName: newsData
                                                                 .author!
-                                                                .name!)));
+                                                                .name!))).then(
+                                                (value) => context
+                                                    .read<
+                                                        AutthorProfileProvider>()
+                                                    .clearAuthorProfileData());
                                           },
                                           child: Container(
                                             width: MediaQuery.of(context)

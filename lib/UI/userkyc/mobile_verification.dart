@@ -276,7 +276,7 @@ class _MobileVerificationState extends State<MobileVerification> {
                             ? InkWell(
                                 onTap: () {
                                   provider
-                                      .sendOTP(json.encode(
+                                      .sendOTPKyc(json.encode(
                                           {"phone_no": phonenumber.text}))
                                       .whenComplete(() => setState(() {
                                             isSendOtp = true;
@@ -339,7 +339,7 @@ class _MobileVerificationState extends State<MobileVerification> {
                                                 if (phonenumber.text.length ==
                                                     10) {
                                                   provider
-                                                      .sendOTP(json.encode({
+                                                      .sendOTPKyc(json.encode({
                                                         "phone_no":
                                                             phonenumber.text
                                                       }))

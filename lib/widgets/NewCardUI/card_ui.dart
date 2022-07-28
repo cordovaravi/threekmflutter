@@ -143,7 +143,10 @@ class _CardUIState extends State<CardUI> {
                                         //     "user",
                                         id: data.author!.id!,
                                         avatar: data.author!.image!,
-                                        userName: data.author!.name!)));
+                                        userName: data.author!.name!))).then(
+                                (value) => context
+                                    .read<AutthorProfileProvider>()
+                                    .clearAuthorProfileData());
                           } else {
                             Navigator.push(
                                 context,
@@ -196,7 +199,10 @@ class _CardUIState extends State<CardUI> {
                                     //     "user",
                                     id: data.author!.id!,
                                     avatar: data.author!.image!,
-                                    userName: data.author!.name!)));
+                                    userName: data.author!.name!))).then(
+                            (value) => context
+                                .read<AutthorProfileProvider>()
+                                .clearAuthorProfileData());
                       },
                       child: Text(
                         '${data.author?.name}',

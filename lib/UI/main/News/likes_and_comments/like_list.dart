@@ -275,16 +275,16 @@ class _LikeListState extends State<LikeList> {
                     : '...and ${anonymousCount} more'),
               ));
 
-  goToProfile({required List<User> users, required int index}) {
-    if (users[index].isUnknown == null)
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => AuthorProfile(
-                    authorType: users[index].userType,
-                    id: users[index].id!,
-                    avatar: users[index].avatar ?? '',
-                    userName: users[index].name ?? '',
-                  )));
-  }
+  // goToProfile({required List<User> users, required int index}) {
+  //   if (users[index].isUnknown == null)
+  //     Navigator.push(
+  //         context,
+  //         MaterialPageRoute(
+  //             builder: (context) => AuthorProfile(
+  //                   authorType: users[index].userType,
+  //                   id: users[index].id!,
+  //                   avatar: users[index].avatar ?? '',
+  //                   userName: users[index].name ?? '',
+  //                 )));
+  // }
 }

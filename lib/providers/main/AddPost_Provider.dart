@@ -43,6 +43,8 @@ class AddPostProvider extends ChangeNotifier {
   String _description = '';
   String get description => _description;
 
+  int fileUploded = 0;
+
   set description(String text) {
     _description = text;
   }
@@ -130,7 +132,7 @@ class AddPostProvider extends ChangeNotifier {
           try {
             String requestJson =
                 json.encode({"fileextention": "png", "modulename": "news"});
-            initalizeUpload(context, headLine, story, address, lat, long,
+            await initalizeUpload(context, headLine, story, address, lat, long,
                 uploadFile: element, requestJson: requestJson);
             log("more img ${_moreImages.length}");
             log("upload imgs ${_uploadImageUrls.length}");
@@ -145,7 +147,7 @@ class AddPostProvider extends ChangeNotifier {
           try {
             String requestJson =
                 json.encode({"fileextention": "mp4", "modulename": "news"});
-            initalizeUpload(context, headLine, story, address, lat, long,
+            await initalizeUpload(context, headLine, story, address, lat, long,
                 uploadFile: element, requestJson: requestJson);
           } on Exception catch (e) {
             print(e);
@@ -207,10 +209,13 @@ class AddPostProvider extends ChangeNotifier {
           notifyListeners();
         });
         if (fileUploadResponse.statusCode == 200) {
+          fileUploded++;
           log("file uploaded ");
+          log(fileUploded.toString());
           log(_moreImages.length.toString());
           if (_moreImages.length == _uploadImageUrls.length &&
-              _uploadPercent.contains("100.")) {
+              _uploadPercent.contains("100.") &&
+              _moreImages.length == fileUploded) {
             uploadPost(context, headLine, story, address, lat, long);
           }
           //notifyListeners();
@@ -257,40 +262,37 @@ class AddPostProvider extends ChangeNotifier {
       // "products": []
     });
 
-    if (postUploaded == 0) {
-      postUploaded++;
-      final response = await _apiProvider.post(upload_post, requestJson);
-      log(response.toString());
-      //hideCurrentSnackBar(navigatorKey.currentContext);
-      if (response != null) {
-        hideCurrentSnackBar(navigatorKey.currentContext);
-        if (response["status"] == "success") {
-          log("post uploaded once $postUploaded");
-          Future.delayed(Duration(seconds: 1), () {
-            //CustomSnackBar(context, Text("Post Submitted"));
-            Fluttertoast.showToast(
-                msg: "Post has been Submitted",
-                backgroundColor: Color(0xFF0044CE));
-            _isUploaded = true;
-            notifyListeners();
-            Future.delayed(Duration.zero, () {
-              Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => TabBarNavigation(
-                            redirectedFromPost: false,
-                            isPostUploaded: true,
-                          )),
-                  (route) => false);
-            });
-          });
-          resetUpload();
-        } else {
-          _isUploadeerror = true;
+    final response = await _apiProvider.post(upload_post, requestJson);
+    log(response.toString());
+    //hideCurrentSnackBar(navigatorKey.currentContext);
+    if (response != null) {
+      hideCurrentSnackBar(navigatorKey.currentContext);
+      if (response["status"] == "success") {
+        log("post uploaded once $postUploaded");
+        Future.delayed(Duration(seconds: 1), () {
+          //CustomSnackBar(context, Text("Post Submitted"));
+          Fluttertoast.showToast(
+              msg: "Post has been Submitted",
+              backgroundColor: Color(0xFF0044CE));
+          _isUploaded = true;
           notifyListeners();
-        }
+          Future.delayed(Duration.zero, () {
+            Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => TabBarNavigation(
+                          redirectedFromPost: false,
+                          isPostUploaded: true,
+                        )),
+                (route) => false);
+          });
+        });
+        resetUpload();
+      } else {
+        _isUploadeerror = true;
+        notifyListeners();
       }
-    } else {}
+    }
   }
 
   void removeSnack() {
@@ -305,6 +307,9 @@ class AddPostProvider extends ChangeNotifier {
 
   void setPostUploaded() {
     postUploaded = 0;
+    resetUpload();
+    fileUploded = 0;
+    notifyListeners();
   }
 
   // compression process

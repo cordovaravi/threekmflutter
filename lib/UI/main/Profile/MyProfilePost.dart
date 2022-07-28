@@ -508,10 +508,7 @@ class _MyProfilePostState extends State<MyProfilePost>
                                                                           image:
                                                                               AssetImage('assets/verified3.png'),
                                                                         ),
-                                                                        SizedBox(
-                                                                          width:
-                                                                              11,
-                                                                        ),
+                                                                        Spacer(),
                                                                         SizedBox(
                                                                           width:
                                                                               size.width / 1.3,
@@ -524,11 +521,14 @@ class _MyProfilePostState extends State<MyProfilePost>
                                                                             child:
                                                                                 RichText(
                                                                               maxLines: 2,
-                                                                              softWrap: true,
+                                                                              // softWrap: true,
                                                                               textAlign: TextAlign.left,
                                                                               text: TextSpan(children: [
-                                                                                TextSpan(text: data != null && data.isVerified ? 'To show your post to more people in the community, verify your identity.' : 'To share post on your wall you need a basic verification', style: ThreeKmTextConstants.tk14PXPoppinsBlackMedium.copyWith(fontWeight: FontWeight.w400)),
-                                                                                TextSpan(text: ' -Know more', style: ThreeKmTextConstants.tk14PXPoppinsBlueMedium)
+                                                                                TextSpan(text: data != null && data.isVerified ? 'To show your post to more people in the community,verify your identity.' : 'To share post on your wall you need a basic verification', style: ThreeKmTextConstants.tk14PXPoppinsBlackMedium.copyWith(fontWeight: FontWeight.w400)),
+                                                                                TextSpan(
+                                                                                  text: ' -Know more',
+                                                                                  style: ThreeKmTextConstants.tk14PXPoppinsBlueMedium.copyWith(fontSize: 12),
+                                                                                )
                                                                               ]),
                                                                             ),
                                                                           ),
