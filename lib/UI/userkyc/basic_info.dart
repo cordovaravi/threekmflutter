@@ -171,12 +171,6 @@ class _BasicInfoState extends State<BasicInfo> {
                 },
                 onFieldSubmitted: (val) {
                   FocusScope.of(context).unfocus();
-                  if (val.isNotEmpty &&
-                      val.contains(".") &&
-                      val.contains("@")) {
-                    print("save");
-                    //   controller.updateProfileInfo(email: emailController.text);
-                  }
                 },
 
                 validator: (val) {
@@ -220,12 +214,6 @@ class _BasicInfoState extends State<BasicInfo> {
                 },
                 onFieldSubmitted: (val) {
                   FocusScope.of(context).unfocus();
-                  if (val.isNotEmpty &&
-                      val.contains(".") &&
-                      val.contains("@")) {
-                    print("save");
-                    //   controller.updateProfileInfo(email: emailController.text);
-                  }
                 },
                 validator: (val) {
                   // if (val!.isEmpty || val == null) {

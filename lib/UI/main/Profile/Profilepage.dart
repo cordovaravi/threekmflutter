@@ -224,10 +224,11 @@ class _ProfilePageState extends State<ProfilePage> {
                         label: "Gender",
                         readOnly: true,
                         onTap: () {
+                          _genderController.text = "Male";
                           listWheelAlert(
                             Controller: _genderController,
                             context: context,
-                            label: "Please select your gender",
+                            label: "Select your gender",
                             field: "Gender",
                             options: ["Male", "Female", "Other"],
                           );
@@ -237,9 +238,10 @@ class _ProfilePageState extends State<ProfilePage> {
                         label: "Blood group",
                         readOnly: true,
                         onTap: () {
+                          _bloodGroupController.text = "A+";
                           listWheelAlert(
                             Controller: _bloodGroupController,
-                            label: "Please select your Blood group",
+                            label: "Select your blood group",
                             context: context,
                             field: "bloodGroup",
                             options: [
@@ -491,9 +493,9 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
             ),
             actions: [
-              TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: Text("Cancel")),
+              // TextButton(
+              //     onPressed: () => Navigator.pop(context),
+              //     child: Text("Cancel")),
               TextButton(
                   onPressed: () {
                     if (selectedDate != null &&
