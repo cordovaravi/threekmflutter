@@ -671,7 +671,7 @@ class _MyProfilePostState extends State<MyProfilePost>
                                                               .data!
                                                               .result!
                                                               .posts!
-                                                              .length <
+                                                              .length <=
                                                           5 &&
                                                       selfProfileModel
                                                                   .data!
