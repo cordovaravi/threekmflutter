@@ -216,7 +216,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         label: "Date of Birth",
                         readOnly: true,
                         onTap: () {
-                          showDateOfBirth(context);
+                        if (!profileInfoData.isVerified)  showDateOfBirth(context);
                         },
                         suffixIcon: Container(
                           padding: EdgeInsets.all(8),
