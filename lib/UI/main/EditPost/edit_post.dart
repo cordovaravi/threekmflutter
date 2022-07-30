@@ -1,7 +1,7 @@
-import 'dart:developer';
-
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -9,9 +9,8 @@ import 'package:google_maps_webservice/directions.dart' as directions;
 import 'package:html/dom.dart' as html;
 import 'package:provider/provider.dart';
 import 'package:threekm/Models/deepLinkPost.dart';
-import 'package:threekm/UI/main/CommonWidgets/insert_post_location.dart';
 import 'package:threekm/UI/main/CommonWidgets/app_bar_util.dart';
-import 'package:threekm/providers/Location/getAddress.dart';
+import 'package:threekm/UI/main/CommonWidgets/insert_post_location.dart';
 import 'package:threekm/providers/Location/locattion_Provider.dart';
 import 'package:threekm/providers/main/EditPost_Provider.dart';
 import 'package:threekm/providers/main/singlePost_provider.dart';
@@ -96,45 +95,119 @@ class _EditPostState extends State<EditPost> {
       onTap: () {
         FocusScope.of(context).unfocus();
       },
-      child: Scaffold(
-        appBar: AppBarUtil.appBar(
-          title: "Edit Post",
-          primaryActionWidget: _savePostButton(context),
-        ),
-        body: Form(
-          key: _formKey,
-          child: ListView(
-            physics: AlwaysScrollableScrollPhysics(),
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            shrinkWrap: true,
-            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-            children: [
-              SizedBox(height: 20),
-              _locationFieldTitle,
-              SizedBox(height: 5),
-              locationSection(context),
-              Divider(color: Color(0xFFa7abad).withOpacity(0.5), thickness: 1),
-              SizedBox(height: 20),
-              buildMediaHeading,
-              SizedBox(height: 2),
-              buildImageGrid(),
-              SizedBox(height: 30),
-              builddescriptionHeading,
-              buildDescriptionField(),
-              SizedBox(height: 20),
-              buildPostTitleHeading,
-              buildPostTitleField(),
-              SizedBox(height: 20),
-              buildTagsHeading,
-              SizedBox(height: 6),
-              buildTags,
-              // SizedBox(height: 16),
-              Divider(color: Color(0xff7c7c7c).withOpacity(0.5), thickness: 1),
-            ],
+      child: WillPopScope(
+        onWillPop: () async {
+          bool? x = await showWarningDialog(context);
+          return x ?? false;
+        },
+        child: Scaffold(
+          appBar: AppBarUtil.appBar(
+            title: "Edit Post",
+            primaryActionWidget: _savePostButton(context),
+          ),
+          body: Form(
+            key: _formKey,
+            child: ListView(
+              physics: AlwaysScrollableScrollPhysics(),
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              shrinkWrap: true,
+              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+              children: [
+                SizedBox(height: 20),
+                _locationFieldTitle,
+                SizedBox(height: 5),
+                locationSection(context),
+                Divider(color: Color(0xFFa7abad).withOpacity(0.5), thickness: 1),
+                SizedBox(height: 20),
+                buildMediaHeading,
+                SizedBox(height: 2),
+                buildImageGrid(),
+                SizedBox(height: 30),
+                builddescriptionHeading,
+                buildDescriptionField(),
+                SizedBox(height: 20),
+                buildPostTitleHeading,
+                buildPostTitleField(),
+                SizedBox(height: 20),
+                buildTagsHeading,
+                SizedBox(height: 6),
+                buildTags,
+                // SizedBox(height: 16),
+                Divider(color: Color(0xff7c7c7c).withOpacity(0.5), thickness: 1),
+              ],
+            ),
           ),
         ),
       ),
     );
+  }
+
+  Future<bool?> showWarningDialog(BuildContext context) {
+    return showDialog<bool>(
+        context: context,
+        builder: (context) => AlertDialog(
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              titleTextStyle: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.w600,
+                color: ThreeKmTextConstants.black,
+              ),
+              titlePadding: EdgeInsets.symmetric(horizontal: 16, vertical: 18),
+              title: Text("Discard changes?"),
+              contentTextStyle: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w400,
+                color: ThreeKmTextConstants.grey,
+              ),
+              contentPadding: EdgeInsets.symmetric(horizontal: 16),
+              content: Text("Are you sure you want to leave without saving your changes?"),
+              actionsAlignment: MainAxisAlignment.spaceBetween,
+              actionsPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+              actions: [
+                LayoutBuilder(builder: (context, constraints) {
+                  return Row(
+                    children: [
+                      Container(
+                        width: constraints.maxWidth * 0.57,
+                        height: 46,
+                        child: ElevatedButton(
+                            onPressed: () {
+                              Navigator.pop(context, false);
+                            },
+                            style: ElevatedButton.styleFrom(
+                                shape: StadiumBorder(), primary: const Color(0xFF3E7EFF)),
+                            child: FittedBox(
+                              fit: BoxFit.fitWidth,
+                              child: Text(
+                                "Continue Editing",
+                                style: TextStyle(fontWeight: FontWeight.w500),
+                              ),
+                            )),
+                      ),
+                      SizedBox(width: 8),
+                      Container(
+                        width: constraints.maxWidth * 0.35,
+                        height: 46,
+                        child: OutlinedButton(
+                            onPressed: () {
+                              context.read<EditPostProvider>().clear();
+                              Navigator.pop(context, true);
+                            },
+                            style: OutlinedButton.styleFrom(
+                              shape: StadiumBorder(),
+                              primary: const Color(0xFF3E7EFF),
+                              side: BorderSide(color: const Color(0xFF3E7EFF), width: 1),
+                            ),
+                            child: FittedBox(
+                                fit: BoxFit.fitWidth,
+                                child: Text("Discard",
+                                    style: TextStyle(fontWeight: FontWeight.w400)))),
+                      )
+                    ],
+                  );
+                }),
+              ],
+            ));
   }
 
   Center _savePostButton(BuildContext context) {
@@ -157,7 +230,7 @@ class _EditPostState extends State<EditPost> {
 
                       await provider.savePost();
                       provider.clear();
-                      Navigator.pop(context);
+                      Navigator.pop(context, true);
                       // provider.dispose();
                     }
                   }
@@ -170,7 +243,7 @@ class _EditPostState extends State<EditPost> {
                 ),
           style: ElevatedButton.styleFrom(
             primary: provider.selectedAddress != null
-                ? const Color(0xff3E7EFF)
+                ? const Color(0xFF3E7EFF)
                 : const Color(0xffF1F2F6),
             elevation: 0,
             shape: const StadiumBorder(),
@@ -190,6 +263,10 @@ class _EditPostState extends State<EditPost> {
       onChanged: (String text) {
         provider.description = text;
       },
+      // validator: (v) {
+      //   if ((v?.length ?? 0) > 2000) return "Character count exceeded";
+      //   return null;
+      // },
       maxLines: null,
       // minLines: 2,
       maxLength: 2000,
@@ -216,6 +293,10 @@ class _EditPostState extends State<EditPost> {
       onChanged: (String text) {
         provider.headline = text;
       },
+      // validator: (v) {
+      //   if ((v?.length ?? 0) > 100) return "Character count exceeded";
+      //   return null;
+      // },
       maxLength: 100,
       textAlignVertical: TextAlignVertical.top,
       style: ThreeKmTextConstants.tk16PXLatoBlackRegular.copyWith(
@@ -337,7 +418,7 @@ class _EditPostState extends State<EditPost> {
                         decoration: BoxDecoration(
                             color: const Color(0xffD9D9D9), borderRadius: BorderRadius.circular(8)),
                         child: e.value.thumbnail != null && (e.value.thumbnail?.isNotEmpty ?? false)
-                            ? Image.network(e.value.thumbnail!, fit: BoxFit.cover)
+                            ? CachedNetworkImage(imageUrl: e.value.thumbnail!, fit: BoxFit.cover)
                             : Image.asset(
                                 "assets/ring_icon.png",
                                 fit: BoxFit.cover,
@@ -542,43 +623,3 @@ String? htmlToText(String htmlText) {
 
   return (elementToText(html.Document.html(htmlText).body)).trim();
 }
-
-// Widget x() =>Stack(
-//   children: [
-//     Positioned.fill(
-//       child: Container(
-//         height: 82,
-//         width: 82,
-//         clipBehavior: Clip.hardEdge,
-//         decoration: BoxDecoration(
-//             color: const Color(0xffD9D9D9), borderRadius: BorderRadius.circular(8)),
-//         child: imageList.getMoreImages[index].path.contains("mp4")
-//             ? Image.asset(
-//           "assets/ring_icon.png",
-//           fit: BoxFit.cover,
-//         )
-//             : Image.file(imageList.getMoreImages[index], fit: BoxFit.cover),
-//       ),
-//     ),
-//     Positioned(
-//       right: 0,
-//       top: 0,
-//       child: Container(
-//           height: 20,
-//           width: 20,
-//           // margin: EdgeInsets.all(20),
-//           decoration: BoxDecoration(
-//               color: Color(0xffFF5858), borderRadius: BorderRadius.circular(8)),
-//           child: InkWell(
-//             onTap: () {
-//               context.read<EditPostProvider>().removeImages(index);
-//             },
-//             child: Icon(
-//               FeatherIcons.x,
-//               size: 12,
-//               color: Colors.white,
-//             ),
-//           )),
-//     ),
-//   ],
-// );

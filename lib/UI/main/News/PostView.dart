@@ -769,8 +769,11 @@ class _PostViewState extends State<PostView> {
 
   PopupMenuButton showPopMenu(String postID, Post newsData) {
     void _editPost() async {
-      Navigator.push(
+      bool? isPostChanged = await Navigator.push<bool>(
           context, MaterialPageRoute(builder: (context) => EditPost(postId: newsData.postId)));
+      if (isPostChanged ?? false) {
+        getPostDetails();
+      }
     }
 
     void _copyLink() {

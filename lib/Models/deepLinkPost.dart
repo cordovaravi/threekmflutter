@@ -195,6 +195,14 @@ class Video {
         width: json["width"] == null ? null : json["width"],
         height: json["height"] == null ? null : json["height"],
       );
+  Map<String, dynamic> toJson() => {
+        "src": src,
+        "thumbnail": thumbnail,
+        "player": player,
+        "vimeo_url": vimeoUrl,
+        "width": width,
+        "height": height,
+      };
 }
 
 class Approver {

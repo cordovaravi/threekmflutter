@@ -80,7 +80,7 @@ class EditPostProvider extends ChangeNotifier {
       "headline": "$_headline",
       "story": "$_description",
       "images": imageList,
-      "videos": videoList.map((e) => e.src).toList(),
+      "videos": videoList.map((e) => e.toJson()).toList(),
       "type": "Story",
       "tags": tagsList,
       // "areas":["kothrud", "karve nagar"],

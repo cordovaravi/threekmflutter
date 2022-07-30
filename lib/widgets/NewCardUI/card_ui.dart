@@ -24,7 +24,6 @@ import 'package:threekm/commenwidgets/commenwidget.dart';
 import 'package:threekm/providers/Global/logged_in_or_not.dart';
 import 'package:threekm/providers/ProfileInfo/ProfileInfo_Provider.dart';
 import 'package:threekm/providers/main/AthorProfile_Provider.dart';
-import 'package:threekm/providers/main/EditPost_Provider.dart';
 import 'package:threekm/providers/main/NewsFeed_Provider.dart';
 import 'package:threekm/providers/main/newsList_provider.dart';
 import 'package:threekm/utils/Extension/capital.dart';
@@ -36,7 +35,6 @@ import 'package:threekm/widgets/reactions_assets.dart' as reactionAssets;
 import '../../UI/main/News/likes_and_comments/comment_section.dart';
 import '../../UI/main/News/likes_and_comments/like_list.dart';
 import '../emotion_Button.dart';
-// import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 
 class CardUI extends StatefulWidget {
   final providerType;
@@ -88,15 +86,17 @@ class _CardUIState extends State<CardUI> {
       margin: const EdgeInsets.only(top: 20, left: 20, right: 20),
       child: InkWell(
         onTap: () {
-          Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
+          Navigator.push<bool>(context, MaterialPageRoute(builder: (BuildContext context) {
             return PostView(
               isEditable: widget.isEditable,
               postId: data.postId.toString(),
             );
-          })).then((_) {
+          })).then((isPostChanged) {
             // refresh MyProfilePost after editing
-            if (widget.isEditable) {
-              context.read<AutthorProfileProvider>().getSelfProfile();
+            if (widget.isEditable && (isPostChanged ?? false)) {
+              if (widget.providerType == "AutthorProfileProvider") {
+                context.read<AutthorProfileProvider>().getSelfProfile();
+              }
             }
           });
         },
@@ -164,7 +164,7 @@ class _CardUIState extends State<CardUI> {
                         child: ClipRRect(
                             borderRadius: BorderRadius.circular(80),
                             child: Image(
-                              image: NetworkImage('${data.author?.image}'),
+                              image: CachedNetworkImageProvider('${data.author?.image}'),
                               errorBuilder: (context, error, stackTrace) {
                                 return Container(
                                   width: 48,
@@ -272,13 +272,19 @@ class _CardUIState extends State<CardUI> {
             ),
 
             InkWell(
-              onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
+              onTap: () async {
+                bool? isPostChanged = await Navigator.push<bool>(context,
+                    MaterialPageRoute(builder: (BuildContext context) {
                   return PostView(
                     isEditable: widget.isEditable,
                     postId: data.postId.toString(),
                   );
                 }));
+                if (widget.isEditable && (isPostChanged ?? false)) {
+                  if (widget.providerType == "AutthorProfileProvider") {
+                    context.read<AutthorProfileProvider>().getSelfProfile();
+                  }
+                }
               },
               child: ImageLayout(
                 images: data.images ?? [],
@@ -299,13 +305,20 @@ class _CardUIState extends State<CardUI> {
             data.submittedStory!.length > 170
                 ? HtmlWidget(
                     '${data.submittedStory!.substring(0, 170)}<a id="seemore" href="#"> ....See More</a>',
-                    onTapUrl: (string) {
-                      Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
+                    onTapUrl: (string) async {
+                      bool? isPostChanged = await Navigator.push<bool>(context,
+                          MaterialPageRoute(builder: (BuildContext context) {
                         return PostView(
                           isEditable: widget.isEditable,
                           postId: data.postId.toString(),
                         );
                       }));
+                      if (widget.isEditable && (isPostChanged ?? false)) {
+                        if (widget.providerType == "AutthorProfileProvider") {
+                          context.read<AutthorProfileProvider>().getSelfProfile();
+                        }
+                      }
+
                       return true;
                     },
                   )
@@ -412,82 +425,6 @@ class _CardUIState extends State<CardUI> {
                         postId: data.postId!.toInt(),
                         reactions: reactionAssets.reactions),
                   ),
-                  // TextButton.icon(
-                  //     style: ButtonStyle(
-                  //         foregroundColor:
-                  //             MaterialStateProperty.all(Colors.black)),
-                  //     onPressed: () async {
-                  //       if (await getAuthStatus()) {
-                  //         if (data.isLiked == true) {
-                  //           newsFeedProvider.postUnLike(data.postId.toString());
-                  //         } else {
-                  //           newsFeedProvider
-                  //               .postLike(data.postId.toString(), null)
-                  //               .whenComplete(() => setState(() {
-                  //                     data.isLiked = true;
-                  //                   }));
-                  //         }
-                  //       } else {
-                  //         NaviagateToLogin(context);
-                  //       }
-                  //     },
-                  //     icon: EmotionButton(
-                  //         providerType: widget.providerType,
-                  //         isLiked: data.isLiked!,
-                  //         initalReaction: data.isLiked!
-                  //             ? data.emotion != null && data.emotion != ""
-                  //                 ? Reaction(
-                  //                     icon: Image.asset(
-                  //                       "assets/${data.emotion}.png",
-                  //                       width: 22,
-                  //                       height: 19,
-                  //                     ),
-                  //                   )
-                  //                 : Reaction(
-                  //                     icon: Image.asset(
-                  //                       "assets/like_icon.png",
-                  //                       width: 22,
-                  //                       height: 19,
-                  //                     ),
-                  //                   )
-                  //             : Reaction(
-                  //                 icon: Image.asset(
-                  //                 "assets/un_like_icon.png",
-                  //                 width: 22,
-                  //                 height: 19,
-                  //               )),
-                  //         selectedReaction: data.isLiked!
-                  //             ? Reaction(
-                  //                 icon: Image.asset(
-                  //                 "assets/like_icon.png",
-                  //                 width: 22,
-                  //                 height: 19,
-                  //               ))
-                  //             : Reaction(
-                  //                 icon: Image.asset(
-                  //                 "assets/un_like_icon.png",
-                  //                 width: 22,
-                  //                 height: 19,
-                  //               )),
-                  //         postId: data.postId!.toInt(),
-                  //         reactions: reactionAssets.reactions),
-                  //     // data.isLiked!
-                  //     //     ? Image.asset(
-                  //     //         "assets/like_icon.png",
-                  //     //         width: 22,
-                  //     //         height: 19,
-                  //     //       )
-                  //     //     : Image.asset(
-                  //     //         "assets/un_like_icon.png",
-                  //     //         width: 22,
-                  //     //         height: 19,
-                  //     //       ),
-                  //     label: Text(
-                  //       data.emotion != null && data.emotion != ""
-                  //           ? '${data.emotion}'
-                  //           : 'Like',
-                  //       style: ThreeKmTextConstants.tk12PXPoppinsBlackSemiBold,
-                  //     )),
                   Container(
                     height: 15,
                     width: 2,
@@ -564,7 +501,7 @@ class _CardUIState extends State<CardUI> {
                       ClipRRect(
                         borderRadius: BorderRadius.circular(50),
                         child: Image(
-                          image: NetworkImage('${data.latestComment.user.avatar}'),
+                          image: CachedNetworkImageProvider('${data.latestComment.user.avatar}'),
                           width: 48,
                           height: 48,
                         ),
