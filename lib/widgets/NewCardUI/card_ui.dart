@@ -315,6 +315,9 @@ class _CardUIState extends State<CardUI> {
                       }));
                       return true;
                     },
+                    onErrorBuilder: (context, element, error) => HtmlWidget(
+                      '${data.submittedStory}',
+                    ),
                   )
                 : HtmlWidget(
                     '${data.submittedStory}',
