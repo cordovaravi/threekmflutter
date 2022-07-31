@@ -7,7 +7,6 @@ import 'package:flutter/painting.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
-import 'package:lottie/lottie.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/src/provider.dart';
@@ -290,37 +289,24 @@ class _CardUIState extends State<CardUI> {
             },
             child: Column(
               children: [
-                data.author?.image != null
-                    ? InkWell(
-                        onTap: () {
-                          if (context.read<ProfileInfoProvider>().UserName !=
-                              data.author!.name!) {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => AuthorProfile(
-                                        authorType: data.authorType,
-                                        // page: 1,
-                                        // authorType:
-                                        //     "user",
-                                        id: data.author!.id!,
-                                        avatar: data.author!.image!,
-                                        userName: data.author!.name!))).then(
-                                (value) => context
-                                    .read<AutthorProfileProvider>()
-                                    .clearAuthorProfileData());
-                          } else {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => MyProfilePost(
-                                        isFromSelfProfileNavigate: true,
-                                        page: 1,
-                                        authorType: "",
-                                        id: data.author!.id!,
-                                        avatar: "",
-                                        userName: data.author!.name!)));
-                          }
+                Text(
+                  data.submittedHeadline!.length > 80
+                      ? '${data.submittedHeadline?.substring(0, 80)}. . . . .'
+                      : '${data.submittedHeadline}',
+                  style: ThreeKmTextConstants.tk14PXPoppinsBlackSemiBold,
+                  textAlign: TextAlign.left,
+                ),
+                data.submittedStory!.length > 170
+                    ? HtmlWidget(
+                        '${data.submittedStory!.substring(0, 170)}<a id="seemore" href="#"> ....See More</a>',
+                        onTapUrl: (string) {
+                          Navigator.push(context, MaterialPageRoute(
+                              builder: (BuildContext context) {
+                            return PostView(
+                              postId: data.postId.toString(),
+                            );
+                          }));
+                          return true;
                         },
                       )
                     : HtmlWidget(
@@ -347,17 +333,8 @@ class _CardUIState extends State<CardUI> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => AuthorProfile(
-                                    authorType: data.authorType,
-                                    // page: 1,
-                                    // authorType:
-                                    //     "user",
-                                    id: data.author!.id!,
-                                    avatar: data.author!.image!,
-                                    userName: data.author!.name!))).then(
-                            (value) => context
-                                .read<AutthorProfileProvider>()
-                                .clearAuthorProfileData());
+                                builder: (context) =>
+                                    LikeList(postId: data.postId!)));
                       },
                       icon: data.listEmotions != []
                           ? Container(
