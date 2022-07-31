@@ -6,14 +6,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:intl/intl.dart';
-import 'package:lottie/lottie.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:threekm/Custom_library/flutter_reaction_button.dart';
-import 'package:threekm/UI/main/EditPost/edit_post.dart';
+
 import 'package:threekm/UI/main/News/Widgets/singlePost_Loading.dart';
 import 'package:threekm/UI/main/News/likes_and_comments/like_list.dart';
 import 'package:threekm/UI/main/Profile/AuthorProfile.dart';
@@ -25,13 +23,12 @@ import 'package:threekm/providers/main/AthorProfile_Provider.dart';
 import 'package:threekm/providers/main/NewsFeed_Provider.dart';
 import 'package:threekm/providers/main/newsList_provider.dart';
 import 'package:threekm/providers/main/singlePost_provider.dart';
-import 'package:threekm/utils/Extension/capital.dart';
 import 'package:threekm/utils/slugUrl.dart';
 import 'package:threekm/utils/threekm_textstyles.dart';
 import 'package:threekm/widgets/emotion_Button.dart';
-import 'package:threekm/widgets/reactions_assets.dart';
 import 'package:threekm/widgets/video_widget.dart';
 import 'package:timelines/timelines.dart';
+import 'package:threekm/widgets/reactions_assets.dart' as reactionAssets;
 
 import 'likes_and_comments/comment_section.dart';
 
@@ -607,71 +604,21 @@ class _PostViewState extends State<PostView> {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceEvenly,
                                   children: [
-                                    TextButton.icon(
-                                      label: Text(
-                                        newsData.emotion != null &&
-                                                newsData.emotion != ""
-                                            ? newsData.emotion
-                                                .toString()
-                                                .capitalize()
-                                            : 'Like',
-                                        style: ThreeKmTextConstants
-                                            .tk12PXPoppinsBlackSemiBold,
-                                      ),
-                                      onPressed: () async {
-                                        if (await getAuthStatus()) {
-                                          if (newsData.isLiked == true) {
-                                            postUnlike(newsData.postId);
-                                          } else {
-                                            postlike("like", newsData.postId);
-                                          }
-                                        } else {
-                                          NaviagateToLogin(context);
-                                        }
-                                      },
-                                      icon: SinglePostEmotionButton(
-                                          isLiked: newsData.isLiked ?? false,
-                                          initalReaction: newsData.isLiked ??
-                                                  false
-                                              ? newsData.emotion != null &&
-                                                      newsData.emotion != ""
-                                                  ? Reaction(
-                                                      icon: Lottie.asset(
-                                                          "assets/lottie/${newsData.emotion}.json",
-                                                          width: 30,
-                                                          height: 30,
-                                                          repeat: false,
-                                                          fit: BoxFit.cover),
-                                                    )
-                                                  : Reaction(
-                                                      icon: Lottie.asset(
-                                                          "assets/lottie/like.json",
-                                                          width: 30,
-                                                          height: 30,
-                                                          repeat: false),
-                                                    )
-                                              : Reaction(
-                                                  icon: Image.asset(
-                                                  "assets/un_like_icon.png",
-                                                  width: 22,
-                                                  height: 19,
-                                                )),
-                                          selectedReaction: newsData.isLiked!
-                                              ? Reaction(
-                                                  icon: Image.asset(
-                                                  "assets/like_icon.png",
-                                                  width: 22,
-                                                  height: 19,
-                                                ))
-                                              : Reaction(
-                                                  icon: Image.asset(
-                                                  "assets/un_like_icon.png",
-                                                  width: 22,
-                                                  height: 19,
-                                                )),
-                                          postId: newsData.postId!.toInt(),
-                                          reactions: reactions),
-                                    ),
+                                    EmotionButton(
+                                        providerType: "",
+                                        fromSinglePost: true,
+                                        isLiked: newsData.isLiked ?? false,
+                                        initalReaction: reactionAssets
+                                            .defaultInitialReaction,
+                                        selectedReaction: newsData.isLiked ==
+                                                true
+                                            ? reactionAssets.getReaction(
+                                                newsData.emotion
+                                                    .toString()
+                                                    .toLowerCase())
+                                            : reactionAssets.defaulLikeReaction,
+                                        postId: newsData.postId!.toInt(),
+                                        reactions: reactionAssets.reactions),
                                     // TextButton.icon(
                                     //     style: ButtonStyle(
                                     //         foregroundColor:

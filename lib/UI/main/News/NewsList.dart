@@ -11,7 +11,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:threekm/Custom_library/flutter_reaction_button.dart';
+import 'package:threekm/Custom_library/Reaction2.0/src/flutter_reaction_button.dart';
 import 'package:threekm/Models/newsByCategories_model.dart';
 import 'package:threekm/UI/main/News/likes_and_comments/comment_section.dart';
 import 'package:threekm/UI/main/News/likes_and_comments/like_list.dart';
@@ -956,16 +956,24 @@ class _NewsPostCardState extends State<NewsPostCard>
                               isLiked: newsData.isLiked!,
                               initalReaction: newsData.isLiked!
                                   ? Reaction(
-                                      icon: Image.asset("assets/like_icon.png"))
+                                      icon: Image.asset("assets/like_icon.png"),
+                                      value: "Like",
+                                    )
                                   : Reaction(
                                       icon: Image.asset(
-                                          "assets/un_like_icon.png")),
+                                          "assets/un_like_icon.png"),
+                                      value: "",
+                                    ),
                               selectedReaction: newsData.isLiked!
                                   ? Reaction(
-                                      icon: Image.asset("assets/like_icon.png"))
+                                      icon: Image.asset("assets/like_icon.png"),
+                                      value: "Like",
+                                    )
                                   : Reaction(
                                       icon: Image.asset(
-                                          "assets/un_like_icon.png")),
+                                          "assets/un_like_icon.png"),
+                                      value: "",
+                                    ),
                               postId: newsData.postId!.toInt(),
                               reactions: reactionAssets.reactions);
                         },
