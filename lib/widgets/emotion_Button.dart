@@ -6,6 +6,7 @@ import 'package:threekm/Custom_library/Reaction2.0/src/flutter_reaction_button.d
 import 'package:threekm/providers/main/AthorProfile_Provider.dart';
 import 'package:threekm/providers/main/NewsFeed_Provider.dart';
 import 'package:threekm/providers/main/newsList_provider.dart';
+import 'package:threekm/providers/main/singlePost_provider.dart';
 
 class EmotionButton extends StatelessWidget {
   final int postId;
@@ -15,11 +16,13 @@ class EmotionButton extends StatelessWidget {
   final List<Reaction<String>> reactions;
 
   final String providerType;
+  final bool? fromSinglePost;
 
   EmotionButton(
       {required this.postId,
       required this.reactions,
       required this.isLiked,
+      this.fromSinglePost,
       this.initalReaction,
       this.selectedReaction,
       required this.providerType});
@@ -60,11 +63,50 @@ class EmotionButton extends StatelessWidget {
                       .postUnLike(this.postId.toString());
     }
 
+    postlikeSinglePost(label) {
+      context
+          .read<SinglePostProvider>()
+          .postLike(this.postId.toString(), label)
+          .whenComplete(() => context
+              .read<NewsListProvider>()
+              .postLike(this.postId.toString(), label))
+          .whenComplete(() => context
+              .read<NewsFeedProvider>()
+              .postLike(this.postId.toString(), label));
+    }
+
+    void postUnlikeSinglePost() {
+      context
+          .read<SinglePostProvider>()
+          .postUnLike(this.postId.toString())
+          .whenComplete(() => context
+              .read<NewsListProvider>()
+              .postUnLike(this.postId.toString()))
+          .whenComplete(() => context.read<NewsFeedProvider>().postUnLike(
+                this.postId.toString(),
+              ));
+    }
+
     return FittedBox(
         child: ReactionButtonToggle<String>(
+            itemScale: 0.1,
             onReactionChanged: (String? value, bool isChecked) {
               log('Selected value: $value, isChecked: $isChecked');
+              if (isChecked == true) {
+                postlike(value);
+                if (this.fromSinglePost ?? false) {
+                  postlikeSinglePost(value);
+                }
+              } else if (isChecked == false) {
+                postUnlike();
+                if (this.fromSinglePost ?? false) {
+                  postUnlikeSinglePost();
+                }
+              }
             },
+            boxHorizontalPosition: HorizontalPosition.START,
+            boxOffset: Offset(1, 1),
+            isChecked: this.isLiked,
             reactions: this.reactions,
             initialReaction: this.initalReaction,
             selectedReaction: this.selectedReaction));
