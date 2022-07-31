@@ -27,6 +27,7 @@ import 'package:threekm/providers/auth/social_auth/facebook_provider.dart';
 import 'package:threekm/providers/auth/social_auth/google_provider.dart';
 import 'package:threekm/providers/businesses/businesses_home_provider.dart';
 import 'package:threekm/providers/main/AthorProfile_Provider.dart';
+import 'package:threekm/providers/main/EditPost_Provider.dart';
 import 'package:threekm/providers/main/LikeList_Provider.dart';
 import 'package:threekm/providers/main/NewsFeed_Provider.dart';
 import 'package:threekm/providers/main/Quiz_Provider.dart';
@@ -219,6 +220,8 @@ class MyApp extends StatelessWidget {
               create: (context) => LocationProvider()),
           ChangeNotifierProvider<AddPostProvider>(
               create: (context) => AddPostProvider()),
+          ChangeNotifierProvider<EditPostProvider>(
+              create: (context) => EditPostProvider()),
           ChangeNotifierProvider<AutthorProfileProvider>(
               create: (context) => AutthorProfileProvider()),
           ChangeNotifierProvider<LocalPlayerProvider>(

@@ -6,12 +6,14 @@ import 'package:threekm/Custom_library/location2.0/lib/widgets/place_picker_new.
 import 'package:threekm/providers/Location/locattion_Provider.dart';
 import 'package:threekm/utils/threekm_textstyles.dart';
 
-class AddPostLocation extends StatefulWidget {
+class InsertPostLocation extends StatefulWidget {
+  const InsertPostLocation({Key? key, this.isEditing = false});
+  final bool isEditing;
   @override
-  State<AddPostLocation> createState() => _AddPostLocationState();
+  State<InsertPostLocation> createState() => _InsertPostLocationState();
 }
 
-class _AddPostLocationState extends State<AddPostLocation> {
+class _InsertPostLocationState extends State<InsertPostLocation> {
   bool? isLocationTurnedON;
   @override
   void initState() {
@@ -44,7 +46,9 @@ class _AddPostLocationState extends State<AddPostLocation> {
                     isLocationTurnedON ?? false ? ServiceStatus.enabled : ServiceStatus.disabled,
                 stream: stream,
                 builder: (_, AsyncSnapshot<ServiceStatus> snapshot) =>
-                    snapshot.data == ServiceStatus.disabled ? noLocation : PlacePickerNew())
+                    snapshot.data == ServiceStatus.disabled
+                        ? noLocation
+                        : PlacePickerNew(isEditing: widget.isEditing))
             : Center(
                 child: CircularProgressIndicator(),
               ),

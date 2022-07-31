@@ -8,17 +8,16 @@ import 'package:google_maps_webservice/directions.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:threekm/UI/main/AddPost/ImageEdit/editImage.dart';
-import 'package:threekm/UI/main/AddPost/utils/FileUtils.dart';
 import 'package:threekm/UI/main/AddPost/utils/uploadPost.dart';
+import 'package:threekm/UI/main/CommonWidgets/app_bar_util.dart';
 import 'package:threekm/providers/Location/locattion_Provider.dart';
 import 'package:threekm/providers/main/AddPost_Provider.dart';
 import 'package:threekm/utils/utils.dart';
 
-import 'add_post_location.dart';
+import '../CommonWidgets/insert_post_location.dart';
 
 class AddNewPost extends StatefulWidget {
-  //final File imageFile;
-  // AddNewPost({required this.imageFile, Key? key}) : super(key: key);
+  const AddNewPost({Key? key}) : super(key: key);
 
   @override
   _AddNewPostState createState() => _AddNewPostState();
@@ -41,6 +40,16 @@ class _AddNewPostState extends State<AddNewPost> {
       addPost.geometry = Geometry(
           location: Location(
               lat: location.getLatitude!, lng: location.getLongitude!));
+      Future.microtask(() async {
+        final addPost = context.read<AddPostProvider>();
+        final location = context.read<LocationProvider>();
+
+        addPost
+          ..selectedAddress = location.AddressFromCordinate
+          ..geometry = Geometry(
+              location: Location(
+                  lat: location.getLatitude!, lng: location.getLongitude!));
+      });
     });
   }
 
@@ -63,26 +72,21 @@ class _AddNewPostState extends State<AddNewPost> {
         FocusScope.of(context).unfocus();
       },
       child: Scaffold(
-        appBar: AppBar(
-          title: Text(
-            "Add Post",
-            style: ThreeKmTextConstants.appBarTitleTextStyle,
-          ),
-          titleSpacing: 0,
-          actions: [_postUploadButton(context), SizedBox(width: 6)],
-          backgroundColor: Colors.white,
-          elevation: 0.5,
-          foregroundColor: Colors.black,
+        appBar: AppBarUtil.appBar(
+          title: "Add Post",
+          primaryActionWidget: _postUploadButton(context),
         ),
         body: Form(
           key: _formKey,
           child: ListView(
-            physics: BouncingScrollPhysics(),
+            physics: AlwaysScrollableScrollPhysics(),
             padding: const EdgeInsets.symmetric(horizontal: 16),
             shrinkWrap: true,
             keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
             children: [
               SizedBox(height: 20),
+              _locationFieldTitle,
+              SizedBox(height: 5),
               locationSection(context),
               Divider(color: Color(0xFFa7abad).withOpacity(0.5), thickness: 1),
               SizedBox(height: 20),
@@ -121,7 +125,9 @@ class _AddNewPostState extends State<AddNewPost> {
               : () {
                   FocusScope.of(context).unfocus();
                   if (_formKey.currentState?.validate() ?? false) {
-                    if (provider.selectedAddress == null) {
+                    if (provider.geometry == null ||
+                        (provider.selectedAddress?.isEmpty ?? false) ||
+                        provider.selectedAddress == null) {
                       Fluttertoast.showToast(msg: "Location required");
                       return;
                     }
@@ -136,7 +142,7 @@ class _AddNewPostState extends State<AddNewPost> {
                         context,
                         MaterialPageRoute(
                             builder: (context) => PostUploadPage(
-                                  Title: _headLineController.text,
+                                  Title: provider.headline,
                                   Story: provider.description,
                                   address: provider.selectedAddress ?? "",
                                   lat: provider.geometry?.location.lat,
@@ -188,11 +194,14 @@ class _AddNewPostState extends State<AddNewPost> {
   Text get buildMediaHeading => Text("Media", style: _titleStyle);
 
   TextFormField buildPostTitleField() {
+    final provider = context.read<AddPostProvider>();
     return TextFormField(
       controller: _headLineController,
+      onChanged: (String text) {
+        provider.headline = text;
+      },
       maxLength: 100,
       textAlignVertical: TextAlignVertical.top,
-      // maxLengthEnforcement: MaxLengthEnforcement.enforced,
       style: ThreeKmTextConstants.tk16PXLatoBlackRegular.copyWith(
         color: Color(0xFF0F0F2D),
         fontWeight: FontWeight.w400,
@@ -230,23 +239,21 @@ class _AddNewPostState extends State<AddNewPost> {
           FocusScope.of(context).unfocus();
           if (context.read<LocationProvider>().ispermitionGranted) {
             Navigator.push(context,
-                MaterialPageRoute(builder: (context) => AddPostLocation()));
+                MaterialPageRoute(builder: (context) => InsertPostLocation()));
           }
         }
 
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        return Wrap(
+          crossAxisAlignment: WrapCrossAlignment.start,
           children: [
-            _locationFieldTitle,
-            SizedBox(height: 10),
             Text(
-              provider.selectedAddress ?? "",
+              "${provider.selectedAddress ?? ''} ",
               style: GoogleFonts.poppins(
-                fontSize: 16,
+                fontSize: 15,
                 fontWeight: FontWeight.w600,
               ),
             ),
-            SizedBox(width: 10),
+            // SizedBox(width: 10),
             InkWell(
               onTap: addOrChangeLocation,
               child: Text(
@@ -379,13 +386,14 @@ class _AddNewPostState extends State<AddNewPost> {
   Row get _locationFieldTitle {
     return Row(
       mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.end,
       children: [
         Icon(
           Icons.location_on_rounded,
-          size: 28,
+          size: 24,
           color: const Color(0xFF7c7c7c).withOpacity(0.5),
         ),
-        SizedBox(width: 5),
+        // SizedBox(width: 1),
         Text(
           "Post Location ",
           style: _titleStyle,
@@ -428,58 +436,7 @@ class _AddNewPostState extends State<AddNewPost> {
         ),
       );
 
-  // Widget get buildFooter {
-  //   return Positioned(
-  //     bottom: 0,
-  //     child: Container(
-
-  //       height: 68,
-  //       width: MediaQuery.of(context).size.width,
-  //       child: Row(
-  //         mainAxisSize: MainAxisSize.min,
-  //         children: [
-  //           Padding(
-  //             padding: EdgeInsets.only(
-  //               top: 12,
-  //               right: 12,
-  //               left: 18,
-  //             ),
-  //             child: Container(
-  //                 height: 48,
-  //                 width: 48,
-  //                 child: Image.file(
-  //                   widget.imageFile,
-  //                   fit: BoxFit.cover,
-  //                 )),
-  //           ),
-  //           Column(
-  //             mainAxisSize: MainAxisSize.min,
-  //             mainAxisAlignment: MainAxisAlignment.start,
-  //             crossAxisAlignment: CrossAxisAlignment.start,
-  //             children: [
-  //               Text(
-  //                 "Uploading Post",
-  //                 style: ThreeKmTextConstants.tk14PXPoppinsWhiteMedium,
-  //               ),
-  //               SizedBox(
-  //                 height: 8,
-  //               ),
-  //               Container(
-  //                   height: 5,
-  //                   width: MediaQuery.of(context).size.width * 0.65,
-  //                   alignment: Alignment.topCenter,
-  //                   child: LinearProgressIndicator(
-  //                     minHeight: 1,
-  //                     value: 0.7,
-  //                     color: Color(0xffFF5858),
-  //                   ))
-  //             ],
-  //           )
-  //         ],
-  //       ),
-  //     ),
-  //   );
-  // }
+  //TextStyle get _titleStyle => GoogleFonts.poppins(fontSize: 14, color: const Color(0xFF7c7c7c));
 
   Widget _addPhotosVideosButton() {
     return Consumer<AddPostProvider>(
@@ -633,56 +590,10 @@ class _AddNewPostState extends State<AddNewPost> {
       },
     );
     if (tag != null && _tagsController.text.isNotEmpty) {
-      context
-          .read<AddPostProvider>()
-          .addTags(_tagsController.text)
-          .whenComplete(() => _tagsController.clear());
+      context.read<AddPostProvider>().addTags(_tagsController.text);
+      _tagsController.clear();
     }
   }
-
-  // Widget get buildFooter {
-  //   return Positioned(
-  //     bottom: 0,
-  //     right: 0,
-  //     left: 0,
-  //     child: Container(
-  //       height: 84,
-  //       width: MediaQuery.of(context).size.width,
-  //       padding: EdgeInsets.symmetric(vertical: 16, horizontal: 18),
-  //       color: Color(0xFFF4F3F8),
-  //       child: Row(
-  //         crossAxisAlignment: CrossAxisAlignment.start,
-  //         children: [
-  //           Icon(
-  //             Icons.grid_view,
-  //             size: 24,
-  //           ),
-  //           SizedBox(
-  //             width: 8,
-  //           ),
-  //           Expanded(
-  //             child: Container(
-  //               margin: EdgeInsets.only(top: 2),
-  //               child: Text(
-  //                 "Advance".toUpperCase(),
-  //                 style: ThreeKmTextConstants.tk14PXPoppinsWhiteMedium.copyWith(
-  //                   color: Color(0xFF0F0F2D),
-  //                 ),
-  //               ),
-  //             ),
-  //           ),
-  //           SizedBox(
-  //             width: 8,
-  //           ),
-  //           Icon(
-  //             Icons.arrow_forward,
-  //             size: 24,
-  //           ),
-  //         ],
-  //       ),
-  //     ),
-  //   );
-  // }
 
   _showImageVideoBottomModalSheet(BuildContext context) {
     showModalBottomSheet<void>(
@@ -800,5 +711,3 @@ class _AddNewPostState extends State<AddNewPost> {
     );
   }
 }
-
-String getVideoSize({required File file}) => formatBytes(file.lengthSync(), 2);

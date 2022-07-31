@@ -13,9 +13,12 @@ import 'package:provider/src/provider.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:threekm/Custom_library/BoldText/Text_chunking.dart';
+import 'package:threekm/UI/main/EditPost/edit_post.dart';
 import 'package:threekm/UI/main/News/PostView.dart';
+import 'package:threekm/UI/main/News/likes_and_comments/like_list.dart';
 import 'package:threekm/UI/main/Profile/AuthorProfile.dart';
 import 'package:threekm/UI/main/Profile/MyProfilePost.dart';
+
 import 'package:threekm/commenwidgets/CustomSnakBar.dart';
 import 'package:threekm/commenwidgets/commenwidget.dart';
 import 'package:threekm/providers/Global/logged_in_or_not.dart';
@@ -29,18 +32,21 @@ import 'package:threekm/widgets/NewCardUI/image_layout.dart';
 import 'package:threekm/widgets/reactions_assets.dart' as reactionAssets;
 
 import '../../UI/main/News/likes_and_comments/comment_section.dart';
-import '../../UI/main/News/likes_and_comments/like_list.dart';
 import '../emotion_Button.dart';
-// import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 
 class CardUI extends StatefulWidget {
   final providerType;
 
   const CardUI(
-      {Key? key, required this.data, this.isfollow, required this.providerType})
+      {Key? key,
+      required this.data,
+      this.isfollow,
+      required this.providerType,
+      this.isEditable = false})
       : super(key: key);
   final data;
   final isfollow;
+  final bool isEditable;
 
   @override
   State<CardUI> createState() => _CardUIState();
@@ -514,55 +520,62 @@ class _CardUIState extends State<CardUI> {
   }
 
   PopupMenuButton showPopMenu(String postID, newsData) {
-    return PopupMenuButton(
+    void _editPost() async {
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => EditPost(postId: newsData.postId)));
+    }
+
+    void _copyLink() {
+      Clipboard.setData(ClipboardData(
+              text:
+                  "${slugUrl(headLine: newsData.slugHeadline ?? newsData.submittedHeadline, postId: postID)}"))
+          .then((value) => CustomSnackBar(
+              context, Text("Link has been coppied to clipboard")));
+    }
+
+    void _share() {
+      String imgUrl = newsData.images != null && newsData.images!.length > 0
+          ? newsData.images!.first.toString()
+          : newsData.videos!.first.thumbnail.toString();
+      handleShare(
+          newsData.author!.name.toString(),
+          newsData.author!.image.toString(),
+          newsData.slugHeadline != null || newsData.slugHeadline != ""
+              ? newsData.slugHeadline
+              : newsData.submittedHeadline,
+          imgUrl,
+          newsData.createdDate,
+          newsData.postId.toString());
+    }
+
+    return PopupMenuButton<String>(
       icon: Icon(Icons.more_vert),
-      itemBuilder: (BuildContext context) => <PopupMenuEntry>[
-        PopupMenuItem(
-          child: ListTile(
-            title: Text('Copy link'),
-            onTap: () {
-              Clipboard.setData(ClipboardData(
-                      text:
-                          "${slugUrl(headLine: newsData.slugHeadline.toString(), postId: postID)}"))
-                  .then((value) => CustomSnackBar(
-                      context, Text("Link has been coppied to clipboard")))
-                  .whenComplete(() => Navigator.pop(context));
-            },
-          ),
-        ),
-        PopupMenuItem(
-          child: ListTile(
-            onTap: () {
-              String imgUrl =
-                  newsData.images != null && newsData.images!.length > 0
-                      ? newsData.images!.first.toString()
-                      : newsData.videos!.first.thumbnail.toString();
-              handleShare(
-                  newsData.author!.name.toString(),
-                  newsData.author!.image.toString(),
-                  newsData.slugHeadline != null || newsData.slugHeadline != ""
-                      ? newsData.slugHeadline
-                      : newsData.submittedHeadline,
-                  imgUrl,
-                  newsData.createdDate,
-                  newsData.postId.toString());
-            },
-            title: Text('Share to..',
-                style: ThreeKmTextConstants.tk16PXLatoBlackRegular),
-          ),
-        ),
-        PopupMenuItem(
-          child: ListTile(
-            onTap: () {
-              Navigator.pop(context);
-            },
-            title: Text(
-              'Cancel',
-              style: ThreeKmTextConstants.tk16PXPoppinsRedSemiBold,
-            ),
-          ),
-        ),
-      ],
+      onSelected: (string) {
+        switch (string) {
+          case 'edit':
+            _editPost();
+            break;
+          case 'copyLink':
+            _copyLink();
+            break;
+          case 'share':
+            _share();
+            break;
+        }
+      },
+      itemBuilder: (BuildContext context) {
+        return [
+          if (widget.isEditable)
+            PopupMenuItem<String>(value: 'edit', child: Text('Edit Post')),
+          PopupMenuItem<String>(value: 'copyLink', child: Text('Copy link')),
+          PopupMenuItem<String>(
+              value: 'share',
+              child: Text('Share to..',
+                  style: ThreeKmTextConstants.tk16PXLatoBlackRegular)),
+        ];
+      },
     );
   }
 

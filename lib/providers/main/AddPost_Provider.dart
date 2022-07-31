@@ -35,11 +35,9 @@ import 'package:threekm/utils/api_paths.dart';
 // }
 
 class AddPostProvider extends ChangeNotifier {
-  bool editMode = false;
   final ApiProvider _apiProvider = ApiProvider();
   final client = Dio();
-  List<String> _tagsList = [];
-  List<String> get tagsList => _tagsList;
+
   String _description = '';
   String get description => _description;
 
@@ -47,12 +45,23 @@ class AddPostProvider extends ChangeNotifier {
 
   set description(String text) {
     _description = text;
+    notifyListeners();
+  }
+
+  String _headline = '';
+  String get headline => _headline;
+  set headline(String text) {
+    _headline = text;
+    notifyListeners();
   }
 
   String? tempURl = null;
 
-  Future<Null> addTags(String tagItem) async {
-    _tagsList.add(tagItem);
+  List<String> _tagsList = [];
+  List<String> get tagsList => _tagsList;
+
+  void addTags(String tag) {
+    _tagsList.add(tag);
     notifyListeners();
   }
 
@@ -71,7 +80,7 @@ class AddPostProvider extends ChangeNotifier {
   }
 
   Future removeImages(int Index) async {
-    _moreImages.removeAt(Index);
+    await _moreImages.removeAt(Index).delete();
     notifyListeners();
   }
 
@@ -433,7 +442,7 @@ class SubmitVideo {
 // //     }
 // //   }
 
-  ///
+///
 //   Future<String?> fileUploadMultipart(
 //       {required File file,
 //       required OnUploadProgressCallback onUploadProgress}) async {
@@ -521,13 +530,13 @@ class SubmitVideo {
 //     }
 //   }
 
-  // Future<String> readResponseAsString(HttpClientResponse response) {
-  //   var completer = new Completer<String>();
-  //   var contents = new StringBuffer();
-  //   response.transform(utf8.decoder).listen((String data) {
-  //     contents.write(data);
-  //   }, onDone: () => completer.complete(contents.toString()));
-  //   print("this is compliter ${completer.future}");
-  //   return completer.future;
-  // }
+// Future<String> readResponseAsString(HttpClientResponse response) {
+//   var completer = new Completer<String>();
+//   var contents = new StringBuffer();
+//   response.transform(utf8.decoder).listen((String data) {
+//     contents.write(data);
+//   }, onDone: () => completer.complete(contents.toString()));
+//   print("this is compliter ${completer.future}");
+//   return completer.future;
+// }
 //}

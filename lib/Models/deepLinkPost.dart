@@ -171,7 +171,9 @@ class Post {
       itemType: json["item_type"],
       slugHeadline: json["slug_headline"],
       emotion: json["emotion"] ?? "",
-      listEmotions:json["list_emotions"] != null? List<String>.from(json["list_emotions"].map((x) => x)):[]);
+      listEmotions: json["list_emotions"] != null
+          ? List<String>.from(json["list_emotions"].map((x) => x))
+          : []);
 }
 
 class Video {
@@ -199,6 +201,14 @@ class Video {
         width: json["width"] == null ? null : json["width"],
         height: json["height"] == null ? null : json["height"],
       );
+  Map<String, dynamic> toJson() => {
+        "src": src,
+        "thumbnail": thumbnail,
+        "player": player,
+        "vimeo_url": vimeoUrl,
+        "width": width,
+        "height": height,
+      };
 }
 
 class Approver {
