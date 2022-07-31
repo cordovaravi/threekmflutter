@@ -8,8 +8,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_webservice/src/core.dart';
 import 'package:provider/src/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:threekm/Custom_library/GooleMapsWidget/src/models/pick_result.dart';
-import 'package:threekm/Custom_library/GooleMapsWidget/src/place_picker.dart';
+import 'package:threekm/Custom_library/location2.0/lib/place_picker.dart';
 import 'package:threekm/providers/Location/locattion_Provider.dart';
 import 'package:threekm/providers/shop/address_list_provider.dart';
 import 'package:threekm/utils/api_paths.dart';
@@ -19,7 +18,7 @@ import 'package:threekm/utils/threekm_textstyles.dart';
 
 class NewAddress extends StatefulWidget {
   const NewAddress({Key? key, this.locationResult}) : super(key: key);
-  final PickResult? locationResult;
+  final LocationResult? locationResult;
 
   @override
   State<NewAddress> createState() => _NewAddressState();
@@ -51,29 +50,44 @@ class _NewAddressState extends State<NewAddress> {
 
   setData() {
     setState(() {
-      _selecetedAddress = widget.locationResult?.formattedAddress;
-      searchedText.text = widget.locationResult?.formattedAddress ?? '';
-      geometry = widget.locationResult?.geometry?.location;
-      for (var i = 0;
-          i < widget.locationResult!.addressComponents!.length;
-          i++) {
-        if (widget.locationResult?.addressComponents?[i].types[0] ==
-            'postal_code') {
-          postalCode = widget.locationResult?.addressComponents![i].longName;
-        }
-
-        if (widget.locationResult?.addressComponents?[i].types.first ==
-            'administrative_area_level_2') {
-          city = widget.locationResult?.addressComponents![i].longName;
-        }
-
-        if (widget.locationResult?.addressComponents?[i].types.first ==
-            'administrative_area_level_1') {
-          state = widget.locationResult?.addressComponents![i].longName;
-        }
+      if (widget.locationResult?.formattedAddress
+              ?.contains(widget.locationResult?.name ?? "^") ??
+          false) {
+        _selecetedAddress = "${widget.locationResult?.formattedAddress}";
+      } else {
+        _selecetedAddress =
+            "${widget.locationResult?.name},  ${widget.locationResult?.formattedAddress}";
       }
 
-      print(widget.locationResult?.geometry!.toJson());
+      var raw = _selecetedAddress?.split(",");
+      raw?.removeWhere((element) => element.contains("+"));
+      _selecetedAddress =
+          raw.toString().replaceAll("[", "").replaceAll("]", "");
+
+      log("selected address from map is $_selecetedAddress");
+
+      searchedText.text = widget.locationResult?.formattedAddress ?? '';
+      //geometry = widget.locationResult?.geometry?.location;
+      postalCode = widget.locationResult?.postalCode.toString();
+      city = widget.locationResult?.city?.name.toString();
+      geometry = Location(
+          lat: widget.locationResult?.latLng?.latitude ?? 0,
+          lng: widget.locationResult?.latLng?.longitude ?? 0);
+      state = "Maharatra";
+      // for (var i = 0;
+      //     i < widget.locationResult!.addressComponents!.length;
+      //     i++) {
+      //   if (widget.locationResult?.addressComponents?[i].types[0] ==
+      //       'postal_code') {}
+
+      //   if (widget.locationResult?.addressComponents?[i].types.first ==
+      //       'administrative_area_level_2') {}
+
+      //   if (widget.locationResult?.addressComponents?[i].types.first ==
+      //       'administrative_area_level_1') {}
+      // }
+
+      //print(widget.locationResult?.geometry!.toJson());
     });
   }
 
@@ -103,6 +117,7 @@ class _NewAddressState extends State<NewAddress> {
       body: Container(
         height: size.height,
         color: Colors.white,
+
         //padding: EdgeInsets.only(top: 30),
         child: SingleChildScrollView(
           child: Form(
@@ -121,7 +136,7 @@ class _NewAddressState extends State<NewAddress> {
                           context
                               .read<LocationProvider>()
                               .getLocation()
-                              .whenComplete(() {
+                              .whenComplete(() async {
                             final _locationProvider = context
                                 .read<LocationProvider>()
                                 .getlocationData;
@@ -129,64 +144,29 @@ class _NewAddressState extends State<NewAddress> {
                                 _locationProvider!.latitude!,
                                 _locationProvider.longitude!);
                             if (_locationProvider != null) {
-                              Navigator.push(
+                              LocationResult? result = await Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) => PlacePicker(
-                                      apiKey: GMap_Api_Key,
+                                      GMap_Api_Key,
                                       // initialMapType: MapType.satellite,
-                                      onPlacePicked: (result) {
-                                        //print(result.formattedAddress);
-                                        log(result.toString());
-                                        log('${result.geometry?.location.lat}');
-
-                                        setState(() {
-                                          _selecetedAddress =
-                                              result.formattedAddress;
-                                          searchedText.text =
-                                              result.formattedAddress ?? '';
-                                          geometry = result.geometry?.location;
-                                          for (var i = 0;
-                                              i <
-                                                  result.addressComponents!
-                                                      .length;
-                                              i++) {
-                                            if (result.addressComponents?[i]
-                                                    .types[0] ==
-                                                'postal_code') {
-                                              postalCode = result
-                                                  .addressComponents![i]
-                                                  .longName;
-                                            }
-
-                                            if (result.addressComponents?[i]
-                                                    .types.first ==
-                                                'administrative_area_level_2') {
-                                              city = result
-                                                  .addressComponents![i]
-                                                  .longName;
-                                            }
-
-                                            if (result.addressComponents?[i]
-                                                    .types.first ==
-                                                'administrative_area_level_1') {
-                                              state = result
-                                                  .addressComponents![i]
-                                                  .longName;
-                                            }
-                                          }
-
-                                          print(result.geometry!.toJson());
-                                        });
-                                        Navigator.of(context).pop();
-                                      },
-                                      initialPosition: kInitialPosition,
-                                      useCurrentLocation: true,
-                                      selectInitialPosition: true,
-                                      usePinPointingSearch: true,
-                                      usePlaceDetailSearch: true,
                                     ),
                                   ));
+
+                              _selecetedAddress = "${result?.formattedAddress}";
+                              var raw = _selecetedAddress?.split(",");
+                              raw?.removeWhere(
+                                  (element) => element.contains("+"));
+                              _selecetedAddress = raw
+                                  .toString()
+                                  .replaceAll("[", "")
+                                  .replaceAll("]", "");
+
+                              log("selected address from map is $_selecetedAddress");
+                              postalCode = result?.postalCode.toString();
+                              city = result?.city?.name.toString();
+                              state = "Maharatra";
+                              setState(() {});
                             }
                           });
                         });
@@ -343,8 +323,7 @@ class _NewAddressState extends State<NewAddress> {
                     },
                     autofocus: false,
                     decoration: InputDecoration(
-                      hintText:
-                          'Flat No./House/Society/Building/Street Name No.',
+                      hintText: 'Flat No., Society, Building name',
                       hintStyle: ThreeKmTextConstants.tk16PXPoppinsBlackMedium
                           .copyWith(color: Color(0xFF979EA4)),
                       counterText: '',
@@ -636,7 +615,7 @@ class _NewAddressState extends State<NewAddress> {
                             "longitude": geometry?.lng,
                             "phone_no": phoneNumberText.text,
                             "pincode": postalCode, //postal_code
-                            "state": state, //administrative_area_level_1
+                            "state": "Maharastra", //administrative_area_level_1
                           };
 
                           if (_selecetedAddress != null) {

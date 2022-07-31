@@ -33,12 +33,18 @@ class SinglePostProvider extends ChangeNotifier {
   Future<Null> postLike(String postId, String? emotion) async {
     String token = await _apiProvider.getToken();
     print(token);
-    String requestJson = json.encode(
-        {"module": "news_post", "entity_id": postId}); //"emotion": "$emotion"s
+
+    String requestJson = json.encode({
+      "module": "news_post",
+      "entity_id": postId,
+      "emotion": "$emotion"
+    }); //"emotion": "$emotion"s
     _deepLinkPost!.data!.result!.post!.isLiked = true;
     _deepLinkPost!.data!.result!.post!.likes =
         _deepLinkPost!.data!.result!.post!.likes! + 1;
+    _deepLinkPost?.data?.result?.post?.emotion = emotion;
     notifyListeners();
+
     final response = await _apiProvider.post(like, requestJson);
     print(response);
     if (response != null && response["status"] == "success") {}

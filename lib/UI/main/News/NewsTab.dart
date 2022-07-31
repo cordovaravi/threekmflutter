@@ -11,58 +11,43 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geocoding/geocoding.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:in_app_update/in_app_update.dart';
 import 'package:lottie/lottie.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:screenshot/screenshot.dart';
-import 'package:share_plus/share_plus.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-//import 'package:sliding_up_panel/sliding_up_panel.dart';
-import 'package:threekm/Custom_library/GooleMapsWidget/google_maps_place_picker.dart';
+
 import 'package:threekm/Custom_library/Polls/simple_polls.dart';
-import 'package:threekm/Custom_library/src/reaction.dart';
 import 'package:threekm/Models/home1_model.dart';
-import 'package:threekm/UI/Animation/AnimatedSizeRoute.dart';
-import 'package:threekm/UI/Auth/signup/sign_up.dart';
-import 'package:threekm/UI/Search/SearchPage.dart';
+
 import 'package:threekm/UI/main/News/NewsList.dart';
 import 'package:threekm/UI/main/News/PostView.dart';
 import 'package:threekm/UI/main/News/Widgets/HeighLightPost.dart';
-import 'package:threekm/UI/main/Notification/NotificationPage.dart';
-import 'package:threekm/UI/main/Profile/AuthorProfile.dart';
+import 'package:threekm/UI/main/News/poll_page.dart';
+
+import 'package:threekm/UI/main/News/uppartabs.dart';
+import 'package:threekm/UI/main/News/userInfo.dart';
 import 'package:threekm/UI/main/navigation.dart';
-import 'package:threekm/commenwidgets/CustomSnakBar.dart';
+
+import 'package:threekm/UI/shop/restaurants/biryani_restro.dart';
+import 'package:threekm/UI/shop/showOrderStatus.dart';
+
 import 'package:threekm/commenwidgets/commenwidget.dart';
-import 'package:threekm/localization/localize.dart';
 import 'package:threekm/networkservice/Api_Provider.dart';
 import 'package:threekm/providers/Global/logged_in_or_not.dart';
-import 'package:threekm/providers/Location/locattion_Provider.dart';
-import 'package:threekm/providers/ProfileInfo/ProfileInfo_Provider.dart';
 import 'package:threekm/providers/localization_Provider/appLanguage_provider.dart';
 import 'package:threekm/providers/main/AddPost_Provider.dart';
-import 'package:threekm/providers/main/LikeList_Provider.dart';
-import 'package:threekm/providers/main/NewsFeed_Provider.dart';
 import 'package:threekm/providers/main/Quiz_Provider.dart';
-import 'package:threekm/providers/main/comment_Provider.dart';
 import 'package:threekm/providers/main/home1_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:threekm/providers/main/home2_provider.dart';
-import 'package:threekm/providers/main/newsList_provider.dart';
-import 'package:threekm/utils/api_paths.dart';
+import 'package:threekm/providers/userKyc/verify_credential.dart';
+
 import 'package:threekm/utils/threekm_textstyles.dart';
 import 'package:threekm/widgets/video_widget.dart';
-import 'package:threekm/widgets/vimeoPlayer.dart';
-import 'package:timelines/timelines.dart';
 
 import 'Widgets/Adspopup.dart';
 import 'package:flutter_svg/svg.dart';
-
-import 'Widgets/comment_Loading.dart';
-import 'Widgets/likes_Loading.dart';
 
 class NewsTab extends StatefulWidget {
   final String? deviceId;
@@ -74,9 +59,8 @@ class NewsTab extends StatefulWidget {
   _NewsTabState createState() => _NewsTabState();
 }
 
-class _NewsTabState extends State<NewsTab>
-    with AutomaticKeepAliveClientMixin, TickerProviderStateMixin {
-  late final AnimationController _controller;
+class _NewsTabState extends State<NewsTab> with AutomaticKeepAliveClientMixin {
+  //late final AnimationController _controller;
   String? requestJson;
   int? answerIndex;
   String? _selecetdAddress;
@@ -85,13 +69,6 @@ class _NewsTabState extends State<NewsTab>
   // final List<GlobalKey> imgkey = List.generate(1000, (index) => GlobalKey());
   TextEditingController _commentController = TextEditingController();
 
-  final _formKey = GlobalKey<FormState>();
-
-  ///panel
-  //PanelController _slidingUpPanelcontroller = PanelController();
-
-  ///scroll of main
-  ScrollController _scrollController = ScrollController();
   ScreenshotController screenshotController = ScreenshotController();
 
   ///Post for bottom
@@ -100,10 +77,9 @@ class _NewsTabState extends State<NewsTab>
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(vsync: this);
-    Future.microtask(() => context.read<LocationProvider>().getLocation());
+
     Future.microtask(() => context.read<AppLanguage>().fetchLocale());
-    if (widget.reload != true) {
+    if (widget.reload != true && mounted) {
       Future.delayed(Duration.zero, () async {
         String? token = await ApiProvider().getToken() ?? "";
         requestJson = json.encode({
@@ -128,6 +104,7 @@ class _NewsTabState extends State<NewsTab>
             context.read<HomeSecondProvider>().getNewsSecond(requestJson);
           }).whenComplete(() => checkUpdate());
         });
+        context.read<VerifyKYCCredential>().getUserProfileInfo();
         // Future.microtask(() => context.read<NewsFeedProvider>().getBottomFeed(
         //       languageCode: context.read<AppLanguage>().appLocal == Locale("mr")
         //           ? "mr"
@@ -135,9 +112,11 @@ class _NewsTabState extends State<NewsTab>
         //               ? "en"
         //               : "hi",
         //     ));
+
         context.read<AddPostProvider>();
       });
     }
+    ShowOrderStaus();
     if (widget.isPostUploaded ?? false) {
       // Future.delayed(Duration(seconds: 1), () {
       //   CustomSnackBar(context, Text("Post has been submmitted"));
@@ -151,21 +130,23 @@ class _NewsTabState extends State<NewsTab>
       log('A new onMessageOpenedApp event ${message.notification?.body}');
     }).onData((data) {
       log(data.notification?.title.toString() ?? "");
-      Future.delayed(Duration(seconds: 1), () {
-        Navigator.push(
+      if (data.data["type"] == "polls") {
+        Navigator.push(context, MaterialPageRoute(builder: (_) {
+          return PollPage(
+            PollId: "${int.parse(data.data["poll_id"])}",
+          );
+        })).then((value) => Navigator.pushAndRemoveUntil(
             context,
-            MaterialPageRoute(
-                builder: (context) => Postview(postId: data.data["post_id"])));
-      });
-    });
-
-    // for bottom feed
-    _scrollController.addListener(() {
-      if (_scrollController.position.maxScrollExtent ==
-          _scrollController.position.pixels) {
-        postCount += 10;
-        log("reached bottom");
-        setState(() {});
+            MaterialPageRoute(builder: (_) => TabBarNavigation()),
+            (route) => false));
+      } else {
+        Future.delayed(Duration(seconds: 1), () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) =>
+                      PostView(postId: data.data["post_id"])));
+        });
       }
     });
   }
@@ -177,7 +158,7 @@ class _NewsTabState extends State<NewsTab>
           if (info.updateAvailability == UpdateAvailability.updateAvailable) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text('New Version is deteted.!'),
+                content: Text('New Version is detected.!'),
                 action: SnackBarAction(
                     label: "Update",
                     onPressed: () async {
@@ -187,8 +168,13 @@ class _NewsTabState extends State<NewsTab>
                     }),
               ),
             );
-            // await InAppUpdate.performImmediateUpdate()
-            //     .catchError((e) => log(e.toString()));
+            Future.delayed(Duration(seconds: 5), () async {
+              await InAppUpdate.performImmediateUpdate()
+                  .catchError((e) => SnackBarAction(
+                        label: "${e.toString()}",
+                        onPressed: () {},
+                      ));
+            });
           }
         }).catchError((e) {
           log(e.toString());
@@ -200,20 +186,20 @@ class _NewsTabState extends State<NewsTab>
         .then((RemoteMessage? message) {
       if (message != null) {
         log("message from firebase is $message");
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) =>
-                    Postview(postId: message.data["post_id"])));
+        if (message.data["post_id"] != null)
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) =>
+                      PostView(postId: message.data["post_id"])));
       }
     });
   }
 
   @override
   void dispose() {
-    _controller.dispose();
     _commentController.dispose();
-    _scrollController.dispose();
+    //_scrollController.dispose();
 
     super.dispose();
   }
@@ -228,13 +214,10 @@ class _NewsTabState extends State<NewsTab>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    log("main building");
-    final locationProvider = context.watch<LocationProvider>();
+    //log("main building");
     final newsFirstProvider = context.watch<HomefirstProvider>();
     final newsSecondProvider = context.watch<HomeSecondProvider>();
-    final profileProvider = context.watch<ProfileInfoProvider>();
-    final newsFeedProvider = context.watch<NewsFeedProvider>();
-
+    var _authUserDetails = context.watch<VerifyKYCCredential>().userProfileInfo;
     return RefreshIndicator(
       onRefresh: () {
         return context
@@ -245,216 +228,15 @@ class _NewsTabState extends State<NewsTab>
         });
       },
       child: newsFirstProvider.state == 'loaded' &&
-              newsSecondProvider.state == 'loaded'
+                  newsSecondProvider.state == 'loaded' ||
+              newsSecondProvider.homeNews?.data != null
           ? SingleChildScrollView(
-              controller: _scrollController,
+              //controller: _scrollController,
               physics: BouncingScrollPhysics(),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  SizedBox(
-                    height: 5,
-                  ),
-                  Row(
-                    children: [
-                      IconButton(
-                          onPressed: () {
-                            Future.delayed(Duration.zero, () {
-                              context
-                                  .read<LocationProvider>()
-                                  .getLocation()
-                                  .whenComplete(() {
-                                final _locationProvider = context
-                                    .read<LocationProvider>()
-                                    .getlocationData;
-                                final kInitialPosition = LatLng(
-                                    _locationProvider!.latitude!,
-                                    _locationProvider.longitude!);
-                                if (_locationProvider != null) {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => PlacePicker(
-                                          apiKey: GMap_Api_Key,
-                                          // initialMapType: MapType.satellite,
-                                          onPlacePicked: (result) {
-                                            //print(result.formattedAddress);
-                                            setState(() {
-                                              _selecetdAddress =
-                                                  result.formattedAddress;
-                                              print(result.geometry!.toJson());
-                                              //  _geometry = result.geometry;
-                                            });
-                                            Navigator.of(context).pop();
-                                          },
-                                          initialPosition: kInitialPosition,
-                                          useCurrentLocation: true,
-                                          selectInitialPosition: true,
-                                          usePinPointingSearch: true,
-                                          usePlaceDetailSearch: true,
-                                        ),
-                                      ));
-                                }
-                              });
-                            });
-                          },
-                          icon: Icon(
-                            Icons.location_on_outlined,
-                            color: Colors.redAccent,
-                          )),
-                      Padding(
-                        padding: EdgeInsets.only(left: 0),
-                        child: SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.85,
-                          child: GestureDetector(
-                            onTap: () {
-                              Future.delayed(Duration.zero, () {
-                                context
-                                    .read<LocationProvider>()
-                                    .getLocation()
-                                    .whenComplete(() {
-                                  final _locationProvider = context
-                                      .read<LocationProvider>()
-                                      .getlocationData;
-                                  final kInitialPosition = LatLng(
-                                      _locationProvider!.latitude!,
-                                      _locationProvider.longitude!);
-                                  if (_locationProvider != null) {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => PlacePicker(
-                                            apiKey: GMap_Api_Key,
-                                            // initialMapType: MapType.satellite,
-                                            onPlacePicked: (result) {
-                                              //print(result.formattedAddress);
-                                              setState(() {
-                                                _selecetdAddress =
-                                                    result.formattedAddress;
-                                                print(
-                                                    result.geometry!.toJson());
-                                                //  _geometry = result.geometry;
-                                              });
-                                              Navigator.of(context).pop();
-                                            },
-                                            initialPosition: kInitialPosition,
-                                            useCurrentLocation: true,
-                                            selectInitialPosition: true,
-                                            usePinPointingSearch: true,
-                                            usePlaceDetailSearch: true,
-                                          ),
-                                        ));
-                                  }
-                                });
-                              });
-                            },
-                            child: Text(
-                                _selecetdAddress ??
-                                    locationProvider.AddressFromCordinate ??
-                                    "",
-                                style: ThreeKmTextConstants
-                                    .tk12PXPoppinsBlackSemiBold,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  Container(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        InkWell(
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => SearchPage(
-                                          tabNuber: 0,
-                                        )));
-                          },
-                          child: Container(
-                            height: 32,
-                            width: MediaQuery.of(context).size.width * 0.7,
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(21),
-                                border: Border.all(color: Color(0xffDFE5EE))),
-                            child: Row(
-                              children: [
-                                Padding(
-                                  padding: EdgeInsets.only(left: 15),
-                                  child: Icon(
-                                    Icons.search_rounded,
-                                    color: Colors.grey,
-                                  ),
-                                ),
-                                Padding(
-                                    padding: EdgeInsets.only(left: 11),
-                                    child: Text(
-                                      AppLocalizations.of(context)
-                                              ?.translate("search_news") ??
-                                          "",
-                                      style: ThreeKmTextConstants
-                                          .tk12PXLatoBlackBold
-                                          .copyWith(color: Colors.grey),
-                                    ))
-                              ],
-                            ),
-                          ),
-                        ),
-                        InkWell(
-                          onTap: () {
-                            Navigator.push(context,
-                                AnimatedSizeRoute(page: Notificationpage()));
-                          },
-                          child: Padding(
-                            padding: EdgeInsets.only(left: 12),
-                            child: Container(
-                                height: 32,
-                                width: 32,
-                                decoration: BoxDecoration(
-                                  image: DecorationImage(
-                                      image: AssetImage("assets/bell.png")),
-                                  shape: BoxShape.circle,
-                                  //color: Color(0xff7572ED)
-                                )),
-                          ),
-                        ),
-                        InkWell(
-                          onTap: () async {
-                            SharedPreferences _pref =
-                                await SharedPreferences.getInstance();
-
-                            var token = _pref.getString("token");
-                            token != null
-                                ? drawerController.open!()
-                                : Navigator.pushAndRemoveUntil(
-                                    context,
-                                    MaterialPageRoute(builder: (_) => SignUp()),
-                                    (route) => false);
-                          },
-                          child: Padding(
-                            padding: EdgeInsets.only(left: 12),
-                            child: Container(
-                                height: 32,
-                                width: 32,
-                                decoration: BoxDecoration(
-                                  image: profileProvider.Avatar != null
-                                      ? DecorationImage(
-                                          image: CachedNetworkImageProvider(
-                                              profileProvider.Avatar
-                                                  .toString()))
-                                      : DecorationImage(
-                                          image: AssetImage(
-                                              "assets/male-user.png")),
-                                  shape: BoxShape.circle,
-                                  //color: Color(0xffFF464B)
-                                )),
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
                   //Add baner lokamanya Banner
                   if (newsFirstProvider.homeNewsFirst != null)
                     ListView.builder(
@@ -467,6 +249,7 @@ class _NewsTabState extends State<NewsTab>
                       itemBuilder: (context, index) {
                         final finalPost = newsFirstProvider
                             .homeNewsFirst!.data!.result!.finalposts![index];
+
                         if (finalPost.type == "banner" &&
                             finalPost.banners != null &&
                             finalPost.banners?.length != 0) {
@@ -488,14 +271,17 @@ class _NewsTabState extends State<NewsTab>
                                   items: finalPost.banners![i].imageswcta!
                                       .map((items) => GestureDetector(
                                             onTap: () => {
-                                              showDialog(
-                                                context: context,
-                                                builder: (_) => AdspopUp(
-                                                  phoneNumber:
-                                                      items.phone.toString(),
-                                                  url: items.website.toString(),
-                                                ),
-                                              )
+                                              if (items.phone != "" ||
+                                                  items.website != "")
+                                                showDialog(
+                                                  context: context,
+                                                  builder: (_) => AdspopUp(
+                                                    phoneNumber:
+                                                        items.phone.toString(),
+                                                    url: items.website
+                                                        .toString(),
+                                                  ),
+                                                )
                                             },
                                             child: Container(
                                               child: CachedNetworkImage(
@@ -564,13 +350,14 @@ class _NewsTabState extends State<NewsTab>
                                                             Navigator.push(
                                                                 context,
                                                                 MaterialPageRoute(
-                                                                    builder: (context) => LocalPlayer(
-                                                                        VideoURI: finalPost
-                                                                            .banners![bannerIndex]
-                                                                            .imageswcta!
-                                                                            .first
-                                                                            .video
-                                                                            .toString())
+                                                                    builder:
+                                                                        (context) =>
+                                                                            VideoWidget(
+                                                                              url: finalPost.banners![bannerIndex].imageswcta!.first.video.toString(),
+                                                                              play: false,
+                                                                              isVimeo: finalPost.banners?[bannerIndex].imageswcta?.first.vimeoUrl != null ? true : false,
+                                                                              vimeoID: finalPost.banners?[bannerIndex].imageswcta?.first.vimeoUrl?.split("/").last,
+                                                                            )
                                                                     // VimeoPlayerPage(
                                                                     //     VimeoUri: finalPost
                                                                     //         .banners![
@@ -580,6 +367,28 @@ class _NewsTabState extends State<NewsTab>
                                                                     //         .vimeoUrl
                                                                     //         .toString())
                                                                     ));
+                                                          } else if (finalPost
+                                                                  .banners![
+                                                                      bannerIndex]
+                                                                  .imageswcta!
+                                                                  .first
+                                                                  .type !=
+                                                              null) {
+                                                            log(">>>>>>>>>>>>>>${finalPost.banners![bannerIndex].imageswcta!.first.type}");
+                                                            if (finalPost
+                                                                    .banners![
+                                                                        bannerIndex]
+                                                                    .imageswcta!
+                                                                    .first
+                                                                    .type ==
+                                                                'biryanifest') {
+                                                              Navigator.push(
+                                                                  context,
+                                                                  MaterialPageRoute(
+                                                                      builder:
+                                                                          (context) =>
+                                                                              BiryaniRestro()));
+                                                            }
                                                           }
                                                         },
                                                         child: Container(
@@ -638,30 +447,13 @@ class _NewsTabState extends State<NewsTab>
                                                   // });
                                                 }),
                                           ),
-                                          // Row(
-                                          //   mainAxisAlignment:
-                                          //       MainAxisAlignment.center,
-                                          //   children:
-                                          //       finalPost.banners!.map((banner) {
-                                          //     int index =
-                                          //         finalPost.banners!.indexOf(banner);
-                                          //     return Container(
-                                          //       width: 8.0,
-                                          //       height: 8.0,
-                                          //       margin: EdgeInsets.symmetric(
-                                          //           vertical: 10.0, horizontal: 2.0),
-                                          //       decoration: BoxDecoration(
-                                          //         shape: BoxShape.circle,
-                                          //         color: _current == index
-                                          //             ? Color.fromRGBO(0, 0, 0, 0.9)
-                                          //             : Color.fromRGBO(0, 0, 0, 0.4),
-                                          //       ),
-                                          //     );
-                                          //   }).toList(),
-                                          // ),
                                         ],
                                       )
                                     : Container();
+
+                                /// BillBoard At Top
+                                ///
+                                ///
                               }
                               //if condiation not true return empty
                               return Container();
@@ -669,8 +461,46 @@ class _NewsTabState extends State<NewsTab>
                           );
                         } else if (finalPost.type == "news_cat") {
                           return NewsContainer(finalPost: finalPost);
+                        } else if (finalPost.type == "billboard" &&
+                            finalPost.hoardings?.length != 0) {
+                          return Container(
+                              margin: EdgeInsets.only(bottom: 5),
+                              child: CarouselSlider(
+                                options: CarouselOptions(
+                                  viewportFraction: 0.75,
+                                  aspectRatio: 0.95,
+                                  enlargeCenterPage: true,
+                                  scrollDirection: Axis.horizontal,
+                                  autoPlay: true,
+                                ),
+                                items: finalPost.hoardings!
+                                    .map((items) => GestureDetector(
+                                          child: Container(
+                                            child: CachedNetworkImage(
+                                              fit: BoxFit.contain,
+                                              imageUrl: items.toString(),
+                                              imageBuilder:
+                                                  (context, imageProvider) =>
+                                                      Container(
+                                                decoration: BoxDecoration(
+                                                  image: DecorationImage(
+                                                    image: imageProvider,
+                                                    fit: BoxFit.contain,
+                                                  ),
+                                                ),
+                                              ),
+                                              errorWidget:
+                                                  (context, url, error) =>
+                                                      Icon(Icons.error),
+                                            ),
+                                          ),
+                                        ))
+                                    .toList(),
+                              ));
                         } else {
-                          return Container();
+                          return Container(
+                            height: 0,
+                          );
                         }
                       },
                     )
@@ -678,6 +508,7 @@ class _NewsTabState extends State<NewsTab>
                     Container(),
                   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                   // second Api
+
                   if (newsSecondProvider.homeNews != null)
                     ListView.builder(
                       itemCount: newsSecondProvider
@@ -1006,82 +837,7 @@ class _NewsTabState extends State<NewsTab>
                                   )
                                 ],
                               ));
-                        }
-                        // else if (finalScondPost.type == "product") {
-                        //   return Container(
-                        //     padding: EdgeInsets.only(
-                        //         left: 10, right: 10, top: 15, bottom: 20),
-                        //     margin: EdgeInsets.all(8),
-                        //     decoration: BoxDecoration(
-                        //         color: Colors.black,
-                        //         borderRadius: BorderRadius.circular(20)),
-                        //     child: Column(
-                        //       children: [
-                        //         Text("3km Exclusive Products",
-                        //             style:
-                        //                 ThreeKmTextConstants.tk16PXPoppinsWhiteBold),
-                        //         SizedBox(
-                        //           height: 10,
-                        //         ),
-                        //         Text(
-                        //             "Get exclusive product delivered\n at your doorsteps",
-                        //             textAlign: TextAlign.center,
-                        //             style: ThreeKmTextConstants
-                        //                 .tk12PXPoppinsWhiteRegular),
-                        //         Container(
-                        //           //color: Colors.amber,
-                        //           width: double.infinity,
-                        //           height: 300,
-                        //           child: ListView.builder(
-                        //             physics: BouncingScrollPhysics(),
-                        //             shrinkWrap: true,
-                        //             scrollDirection: Axis.horizontal,
-                        //             itemCount: finalScondPost.products!.length,
-                        //             itemBuilder: (context, productIndex) {
-                        //               return Container(
-                        //                 margin: EdgeInsets.all(10),
-                        //                 //height: 250,
-                        //                 width: 200,
-                        //                 decoration: BoxDecoration(
-                        //                     color: Colors.white,
-                        //                     borderRadius:
-                        //                         BorderRadius.all(Radius.circular(7)),
-                        //                     boxShadow: [
-                        //                       BoxShadow(
-                        //                           color: Colors.black26,
-                        //                           blurRadius: 10.0,
-                        //                           offset: Offset(0.0, 10.0))
-                        //                     ]),
-                        //                 child: Column(children: [
-                        //                   Flexible(
-                        //                     flex: 8,
-                        //                     child: CachedNetworkImage(
-                        //                         imageUrl: finalScondPost
-                        //                             .products![productIndex].image
-                        //                             .toString()),
-                        //                   ),
-                        //                   Flexible(
-                        //                       flex: 2,
-                        //                       child: Text(finalScondPost
-                        //                           .products![productIndex].name
-                        //                           .toString()))
-                        //                 ]),
-                        //               );
-                        //             },
-                        //           ),
-                        //         ),
-                        //         MaterialButton(
-                        //           color: Colors.redAccent,
-                        //           onPressed: () {},
-                        //           child: Text("Shop 3km Exclusive",
-                        //               style: ThreeKmTextConstants
-                        //                   .tk14PXWorkSansWhiteMedium),
-                        //         )
-                        //       ],
-                        //     ),
-                        //   );
-                        // }
-                        else if (finalScondPost.type == "bod") {
+                        } else if (finalScondPost.type == "bod") {
                           return //Text("dob");
                               //  HtmlWidget(
                               //     finalScondPost.business!.submittedStory.toString());
@@ -1122,1027 +878,15 @@ class _NewsTabState extends State<NewsTab>
                     )
                   else
                     Container(),
-
-                  if (newsFeedProvider.newsFeedBottomModel?.data?.result?.posts
-                              ?.length !=
-                          0 &&
-                      newsFeedProvider
-                              .newsFeedBottomModel?.data?.result?.posts !=
-                          null) ...{
-                    ListView.builder(
-                      cacheExtent: 999,
-                      primary: true,
-                      physics: ScrollPhysics(),
-                      shrinkWrap: true,
-                      // itemCount: newsFeedProvider
-                      //     .newsFeedBottomModel!.data!.result!.posts!.length,
-                      itemCount: postCount,
-                      itemBuilder: (context, index) {
-                        final newsData = newsFeedProvider
-                            .newsFeedBottomModel!.data!.result!.posts![index];
-
-                        return Stack(
-                            alignment: AlignmentDirectional.center,
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.only(
-                                    left: 10, right: 10, top: 8, bottom: 8),
-                                child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Container(
-                                        margin: EdgeInsets.only(bottom: 10),
-                                        decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            boxShadow: [
-                                              BoxShadow(
-                                                  color: Color(0xff32335E26),
-                                                  blurRadius: 8),
-                                            ],
-                                            borderRadius:
-                                                BorderRadius.circular(10)),
-                                        child: Container(
-                                            child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          children: [
-                                            Padding(
-                                              padding:
-                                                  const EdgeInsets.all(10.0),
-                                              child: Row(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Container(
-                                                      margin: EdgeInsets.only(
-                                                          right: 10),
-                                                      height: 50,
-                                                      width: 50,
-                                                      child: GestureDetector(
-                                                        onTap: () {
-                                                          Navigator.push(
-                                                              context,
-                                                              MaterialPageRoute(
-                                                                  builder: (context) => AuthorProfile(
-                                                                      authorType: newsData.authorType,
-                                                                      // page: 1,
-                                                                      // authorType:
-                                                                      //     "user",
-                                                                      id: newsData.author!.id!,
-                                                                      avatar: newsData.author!.image!,
-                                                                      userName: newsData.author!.name!)));
-                                                        },
-                                                        child: Container(
-                                                          height: 50,
-                                                          width: 50,
-                                                          decoration: BoxDecoration(
-                                                              shape: BoxShape
-                                                                  .circle,
-                                                              image: DecorationImage(
-                                                                  fit: BoxFit
-                                                                      .cover,
-                                                                  image: CachedNetworkImageProvider(
-                                                                      newsData
-                                                                          .author!
-                                                                          .image
-                                                                          .toString()))),
-                                                          child:
-                                                              newsData.isVerified ==
-                                                                      true
-                                                                  ? Stack(
-                                                                      children: [
-                                                                        Positioned(
-                                                                            left:
-                                                                                0,
-                                                                            child:
-                                                                                Image.asset(
-                                                                              'assets/verified.png',
-                                                                              height: 15,
-                                                                              width: 15,
-                                                                              fit: BoxFit.cover,
-                                                                            ))
-                                                                      ],
-                                                                    )
-                                                                  : Container(),
-                                                        ),
-                                                      )),
-                                                  Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    //mainAxisAlignment: MainAxisAlignment.center,
-                                                    children: [
-                                                      Container(
-                                                        width: MediaQuery.of(
-                                                                    context)
-                                                                .size
-                                                                .width *
-                                                            0.55,
-                                                        child: Text(
-                                                          newsData.author!.name
-                                                              .toString(),
-                                                          style: ThreeKmTextConstants
-                                                              .tk14PXPoppinsBlackBold,
-                                                          overflow: TextOverflow
-                                                              .ellipsis,
-                                                        ),
-                                                      ),
-                                                      Row(
-                                                        children: [
-                                                          Text(newsData
-                                                              .createdDate
-                                                              .toString()),
-                                                          SizedBox(
-                                                            width: 8,
-                                                          ),
-                                                          Consumer<
-                                                                  NewsListProvider>(
-                                                              builder: (context,
-                                                                  newsProvider,
-                                                                  _) {
-                                                            return GestureDetector(
-                                                                onTap: () {
-                                                                  if (newsData
-                                                                          .author!
-                                                                          .isFollowed ==
-                                                                      true) {
-                                                                    print(
-                                                                        "is followed: true");
-                                                                    newsFeedProvider.unfollowUser(newsData
-                                                                        .author!
-                                                                        .id!
-                                                                        .toInt());
-                                                                  } else if (newsData
-                                                                              .author!
-                                                                              .isFollowed ==
-                                                                          false ||
-                                                                      newsData.author!
-                                                                              .isFollowed ==
-                                                                          null) {
-                                                                    newsFeedProvider
-                                                                        .followUser(
-                                                                      newsData
-                                                                          .author!
-                                                                          .id!
-                                                                          .toInt(),
-                                                                    );
-                                                                  }
-                                                                },
-                                                                child: newsData
-                                                                            .author!
-                                                                            .isFollowed ==
-                                                                        true
-                                                                    ? Text(
-                                                                        "Following",
-                                                                        style: ThreeKmTextConstants
-                                                                            .tk11PXLatoGreyBold)
-                                                                    : Text(
-                                                                        "Follow",
-                                                                        style: ThreeKmTextConstants
-                                                                            .tk14PXPoppinsBlueMedium));
-                                                          }),
-                                                        ],
-                                                      )
-                                                    ],
-                                                  ),
-                                                  Spacer(),
-                                                  showPopMenu(
-                                                      newsData.postId
-                                                          .toString(),
-                                                      newsData)
-                                                  // IconButton(
-                                                  //     onPressed: () {}, icon: Icon(Icons.more_vert))
-                                                ],
-                                              ),
-                                            ),
-                                            //both pics and images is present
-
-                                            newsData.images!.length > 1 ||
-                                                    newsData.videos!.length > 1
-                                                ?
-                                                //video and image both
-                                                Container(
-                                                    height: 400,
-                                                    width: 400,
-                                                    decoration: BoxDecoration(
-                                                        color: Colors.black26),
-                                                    child: PageView.builder(
-                                                      itemCount: newsData
-                                                              .images!.length +
-                                                          newsData
-                                                              .videos!.length,
-                                                      itemBuilder: (
-                                                        context,
-                                                        index,
-                                                      ) {
-                                                        List<String?>
-                                                            videoUrls = newsData
-                                                                .videos!
-                                                                .map((e) =>
-                                                                    e.src)
-                                                                .toList();
-                                                        List<String?> imgList =
-                                                            List.from(newsData
-                                                                .images!
-                                                                .toList());
-                                                        List<String?> templist =
-                                                            videoUrls + imgList;
-                                                        return templist != null
-                                                            ? templist[index]
-                                                                    .toString()
-                                                                    .contains(
-                                                                        ".mp4")
-                                                                ? SizedBox(
-                                                                    height: 300,
-                                                                    width: MediaQuery.of(
-                                                                            context)
-                                                                        .size
-                                                                        .width,
-                                                                    child: VideoWidget(
-                                                                        thubnail:
-                                                                            '',
-                                                                        url: templist[index]
-                                                                            .toString(),
-                                                                        play:
-                                                                            false),
-                                                                  )
-                                                                : CachedNetworkImage(
-                                                                    height: 254,
-                                                                    width: MediaQuery.of(
-                                                                            context)
-                                                                        .size
-                                                                        .width,
-                                                                    fit: BoxFit
-                                                                        .contain,
-                                                                    imageUrl: templist[
-                                                                            index]
-                                                                        .toString())
-                                                            : SizedBox(
-                                                                child: Text(
-                                                                    "null"),
-                                                              );
-                                                      },
-                                                    ),
-                                                  )
-                                                // image or video single
-
-                                                : newsData.images != null &&
-                                                        newsData.videos != null
-                                                    ? Container(
-                                                        child: newsData.images!
-                                                                    .length ==
-                                                                1
-                                                            ? CachedNetworkImage(
-                                                                height: 254,
-                                                                width: MediaQuery.of(
-                                                                        context)
-                                                                    .size
-                                                                    .width,
-                                                                fit: BoxFit
-                                                                    .contain,
-                                                                imageUrl:
-                                                                    '${newsData.images!.first}',
-                                                              )
-                                                            : newsData.videos!.length >
-                                                                    0
-                                                                ? VideoWidget(
-                                                                    thubnail: newsData.videos?.first.thumbnail !=
-                                                                            null
-                                                                        ? newsData
-                                                                            .videos!
-                                                                            .first
-                                                                            .thumbnail
-                                                                            .toString()
-                                                                        : '',
-                                                                    url: newsData
-                                                                        .videos!
-                                                                        .first
-                                                                        .src
-                                                                        .toString(),
-                                                                    fromSinglePage:
-                                                                        true,
-                                                                    play: false)
-                                                                : Container(),
-                                                      )
-                                                    : SizedBox.shrink(),
-                                            SizedBox(
-                                              height: 5,
-                                            ),
-                                            newsData.images != null &&
-                                                        newsData.images!
-                                                                .length >
-                                                            1 &&
-                                                        newsData.images!
-                                                                .length !=
-                                                            1 ||
-                                                    newsData.videos != null &&
-                                                        newsData.videos!
-                                                                .length >
-                                                            1 &&
-                                                        newsData.videos!
-                                                                .length !=
-                                                            1
-                                                ? Container(
-                                                    height: 10,
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                            .size
-                                                            .width,
-                                                    child: Builder(
-                                                        builder: (context) {
-                                                      List videoUrls = newsData
-                                                          .videos!
-                                                          .map((e) => e.src)
-                                                          .toList();
-                                                      List templist = List.from(
-                                                          newsData.images!
-                                                              .toList())
-                                                        ..addAll(videoUrls);
-                                                      return Row(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .center,
-                                                          children: templist
-                                                              .asMap()
-                                                              .entries
-                                                              .map((entry) {
-                                                            return Padding(
-                                                              padding:
-                                                                  const EdgeInsets
-                                                                          .only(
-                                                                      left: 2),
-                                                              child:
-                                                                  DotIndicator(
-                                                                size: 8.0,
-                                                                color:
-                                                                    Colors.grey,
-                                                              ),
-                                                            );
-                                                          }).toList());
-                                                    }),
-                                                  )
-                                                : SizedBox.shrink(),
-
-                                            Row(children: [
-                                              Padding(
-                                                  padding: EdgeInsets.only(
-                                                      top: 5,
-                                                      left: 5,
-                                                      bottom: 2),
-                                                  child: InkWell(
-                                                    onTap: () {
-                                                      _showLikedBottomModalSheet(
-                                                          newsData.postId!
-                                                              .toInt(),
-                                                          newsData.likes);
-                                                    },
-                                                    child: newsData.likes != 0
-                                                        ? Row(
-                                                            children: [
-                                                              Text('👍❤️'),
-                                                              Container(
-                                                                child: Center(
-                                                                    child: Text('+' +
-                                                                        newsData
-                                                                            .likes
-                                                                            .toString())),
-                                                              )
-                                                            ],
-                                                          )
-                                                        : SizedBox.shrink(),
-                                                  )),
-                                              Spacer(),
-                                              Padding(
-                                                  padding: EdgeInsets.only(
-                                                      top: 5,
-                                                      right: 5,
-                                                      bottom: 2),
-                                                  child: Text(newsData.views
-                                                          .toString() +
-                                                      ' Views'))
-                                            ]),
-                                            Text(
-                                              newsData.headline.toString(),
-                                              style: ThreeKmTextConstants
-                                                  .tk14PXLatoBlackMedium,
-                                              textAlign: TextAlign.center,
-                                            ),
-                                            TextButton(
-                                                onPressed: () {
-                                                  Navigator.push(context,
-                                                      MaterialPageRoute(builder:
-                                                          (BuildContext
-                                                              context) {
-                                                    return Postview(
-                                                      postId: newsData.postId
-                                                          .toString(),
-                                                    );
-                                                  }));
-                                                },
-                                                child: Text(
-                                                  "Read More",
-                                                  style: TextStyle(
-                                                      fontSize: 14,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: Colors.blue),
-                                                )),
-                                            SizedBox(
-                                              height: 35,
-                                            ),
-                                          ],
-                                        )),
-                                      )
-                                    ]),
-                              ),
-                              Positioned(
-                                  bottom: 0,
-                                  child: Container(
-                                    height: 60,
-                                    width: 230,
-                                    child: ButtonBar(children: [
-                                      Container(
-                                        height: 60,
-                                        width: 60,
-                                        child: InkWell(
-                                          onTap: () async {
-                                            if (await getAuthStatus()) {
-                                              if (newsData.isLiked == true) {
-                                                newsFeedProvider.postUnLike(
-                                                    newsData.postId.toString());
-                                              } else {
-                                                newsFeedProvider.postLike(
-                                                    newsData.postId.toString(),
-                                                    null);
-                                              }
-                                            } else {
-                                              NaviagateToLogin(context);
-                                            }
-                                          },
-                                          child: newsData.isLiked!
-                                              ? Image.asset(
-                                                  "assets/thumbs_up_red.png")
-                                              : Image.asset(
-                                                  "assets/thumbs-up.png"),
-                                        ),
-                                        decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            shape: BoxShape.circle,
-                                            boxShadow: [
-                                              BoxShadow(
-                                                color: Colors.black26,
-                                                blurRadius: 8,
-                                              )
-                                            ]),
-                                      ),
-                                      Container(
-                                        height: 60,
-                                        width: 60,
-                                        child: IconButton(
-                                            onPressed: () async {
-                                              if (await getAuthStatus()) {
-                                                _showCommentsBottomModalSheet(
-                                                    context,
-                                                    newsData.postId!.toInt());
-                                              } else {
-                                                NaviagateToLogin(context);
-                                              }
-                                            },
-                                            icon: Image.asset(
-                                                'assets/icons-topic.png',
-                                                fit: BoxFit.cover)),
-                                        decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            shape: BoxShape.circle,
-                                            boxShadow: [
-                                              BoxShadow(
-                                                color: Colors.black26,
-                                                blurRadius: 8,
-                                              )
-                                            ]),
-                                      ),
-                                      Container(
-                                        height: 60,
-                                        width: 60,
-                                        child: IconButton(
-                                            onPressed: () async {
-                                              // showLoading();
-                                              String imgUrl = newsData.images !=
-                                                          null &&
-                                                      newsData.images!.length >
-                                                          0
-                                                  ? newsData.images!.first
-                                                      .toString()
-                                                  : newsData
-                                                      .videos!.first.thumbnail
-                                                      .toString();
-                                              handleShare(
-                                                  newsData.author!.name
-                                                      .toString(),
-                                                  newsData.author!.image
-                                                      .toString(),
-                                                  newsData.headline.toString(),
-                                                  imgUrl,
-                                                  newsData.createdDate,
-                                                  newsData.postId.toString());
-                                            },
-                                            icon: Center(
-                                              child: Image.asset(
-                                                  'assets/icons-share.png',
-                                                  fit: BoxFit.contain),
-                                            )),
-                                        decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            shape: BoxShape.circle,
-                                            boxShadow: [
-                                              BoxShadow(
-                                                color: Colors.black26,
-                                                blurRadius: 8,
-                                              )
-                                            ]),
-                                      ),
-                                    ]),
-                                  )),
-                            ]);
-                      },
-                    ),
-                  }
+                  // User Info
+                  UserInfo(
+                    authUserDetails: _authUserDetails,
+                  ),
                 ],
               ),
             )
           : showLayoutLoading('news'),
     );
-  }
-
-  _showCommentsBottomModalSheet(BuildContext context, int postId) {
-    //print("this is new :$postId");
-    context.read<CommentProvider>().getAllCommentsApi(postId);
-    showModalBottomSheet<void>(
-      backgroundColor: Colors.transparent,
-      context: context,
-      isScrollControlled: true,
-      builder: (BuildContext context) {
-        return Padding(
-          padding: MediaQuery.of(context).viewInsets,
-          child: StatefulBuilder(
-            builder: (BuildContext context, StateSetter setModalState) {
-              return ClipPath(
-                clipper: OvalTopBorderClipper(),
-                child: Container(
-                  color: Colors.white,
-                  height: MediaQuery.of(context).size.height / 2,
-                  padding: const EdgeInsets.all(15.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      Container(
-                        height: 5,
-                        width: 30,
-                        color: Colors.grey.shade300,
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Row(
-                        children: [
-                          Container(
-                              height: 20,
-                              width: 20,
-                              child: Image.asset('assets/icons-topic.png')),
-                          Padding(padding: EdgeInsets.only(left: 10)),
-                          Consumer<CommentProvider>(
-                              builder: (context, commentProvider, _) {
-                            return commentProvider.commentList?.length != null
-                                ? Text(
-                                    "${commentProvider.commentList!.length}\tComments",
-                                    style: ThreeKmTextConstants
-                                        .tk14PXPoppinsBlackSemiBold,
-                                  )
-                                : Text(
-                                    "Comments",
-                                    style: ThreeKmTextConstants
-                                        .tk14PXPoppinsBlackSemiBold,
-                                  );
-                          })
-                        ],
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Consumer<CommentProvider>(
-                          builder: (context, commentProvider, _) {
-                        return context.read<CommentProvider>().commentList !=
-                                null
-                            ? Expanded(
-                                child: commentProvider.isGettingComments == true
-                                    ? CommentsLoadingEffects()
-                                    : ListView.builder(
-                                        physics: BouncingScrollPhysics(),
-                                        shrinkWrap: true,
-                                        primary: true,
-                                        itemCount:
-                                            commentProvider.commentList!.length,
-                                        itemBuilder: (context, commentIndex) {
-                                          return Container(
-                                            margin: EdgeInsets.all(1),
-                                            decoration: BoxDecoration(
-                                              color: Colors.white,
-                                            ),
-                                            child: ListTile(
-                                              trailing: commentProvider
-                                                          .commentList![
-                                                              commentIndex]
-                                                          .isself ==
-                                                      true
-                                                  ? IconButton(
-                                                      onPressed: () {
-                                                        context
-                                                            .read<
-                                                                CommentProvider>()
-                                                            .removeComment(
-                                                                commentProvider
-                                                                    .commentList![
-                                                                        commentIndex]
-                                                                    .commentId!,
-                                                                postId);
-                                                      },
-                                                      icon: Icon(Icons.delete))
-                                                  : SizedBox(),
-                                              leading: Container(
-                                                height: 40,
-                                                width: 40,
-                                                decoration: BoxDecoration(
-                                                    image: DecorationImage(
-                                                        image: CachedNetworkImageProvider(
-                                                            commentProvider
-                                                                .commentList![
-                                                                    commentIndex]
-                                                                .avatar
-                                                                .toString()))),
-                                              ),
-                                              title: Text(
-                                                commentProvider
-                                                    .commentList![commentIndex]
-                                                    .username
-                                                    .toString(),
-                                                style: ThreeKmTextConstants
-                                                    .tk14PXPoppinsBlackSemiBold,
-                                              ),
-                                              subtitle: Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    SizedBox(
-                                                      height: 4,
-                                                    ),
-                                                    Text(
-                                                      commentProvider
-                                                          .commentList![
-                                                              commentIndex]
-                                                          .comment
-                                                          .toString(),
-                                                      style: ThreeKmTextConstants
-                                                          .tk14PXLatoBlackMedium,
-                                                    ),
-                                                    SizedBox(
-                                                      height: 2,
-                                                    ),
-                                                    Text(
-                                                        commentProvider
-                                                            .commentList![
-                                                                commentIndex]
-                                                            .timeLapsed
-                                                            .toString(),
-                                                        style: TextStyle(
-                                                            fontStyle: FontStyle
-                                                                .italic))
-                                                  ]),
-                                            ),
-                                          );
-                                        },
-                                      ),
-                              )
-                            : SizedBox();
-                      }),
-                      Form(
-                        key: _formKey,
-                        child: Container(
-                          height: 50,
-                          width: 338,
-                          decoration: BoxDecoration(
-                              color: Colors.grey.shade200,
-                              borderRadius: BorderRadius.circular(20)),
-                          child: TextFormField(
-                            autovalidateMode:
-                                AutovalidateMode.onUserInteraction,
-                            validator: (String? value) {
-                              if (value == null) {
-                                return "  Comment cant be blank";
-                              } else if (value.isEmpty) {
-                                return "  Comment cant be blank";
-                              }
-                            },
-                            controller: _commentController,
-                            maxLines: null,
-                            keyboardType: TextInputType.multiline,
-                            decoration:
-                                InputDecoration(border: InputBorder.none),
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: InkWell(
-                          onTap: () {
-                            if (_formKey.currentState!.validate() &&
-                                context.read<CommentProvider>().isLoading ==
-                                    false) {
-                              context
-                                  .read<CommentProvider>()
-                                  .postCommentApi(
-                                      postId, _commentController.text)
-                                  .then((value) => _commentController.clear());
-                            }
-                          },
-                          child: Container(
-                            margin: EdgeInsets.only(left: 10),
-                            height: 36,
-                            width: 112,
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(18),
-                                color: ThreeKmTextConstants.blue2),
-                            child: Center(child: Consumer<CommentProvider>(
-                              builder: (context, _controller, child) {
-                                return _controller.isLoading == false
-                                    ? Text(
-                                        "Submit",
-                                        style: ThreeKmTextConstants
-                                            .tk14PXPoppinsWhiteMedium,
-                                      )
-                                    : CupertinoActivityIndicator();
-                              },
-                            )),
-                          ),
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-              );
-            },
-          ),
-        );
-      },
-    );
-  }
-
-  _showLikedBottomModalSheet(int postId, totalLikes) {
-    context.read<LikeListProvider>().showLikes(context, postId);
-    showModalBottomSheet<void>(
-      backgroundColor: Colors.white,
-      context: context,
-      builder: (BuildContext context) {
-        final _likeProvider = context.watch<LikeListProvider>();
-        return Padding(
-            padding: EdgeInsets.zero,
-            child: StatefulBuilder(
-              builder: (context, _) {
-                return Container(
-                  color: Colors.white,
-                  height: 192,
-                  width: MediaQuery.of(context).size.width,
-                  child: _likeProvider.isLoading
-                      ? LikesLoding()
-                      : Column(
-                          mainAxisSize: MainAxisSize.max,
-                          children: [
-                            Row(
-                              children: [
-                                Padding(
-                                  padding: EdgeInsets.only(
-                                      top: 24, left: 18, bottom: 34),
-                                  child: Text(
-                                      "$totalLikes People reacted to this"),
-                                ),
-                              ],
-                            ),
-                            Container(
-                              height: 90,
-                              width: double.infinity,
-                              child: ListView.builder(
-                                scrollDirection: Axis.horizontal,
-                                itemCount: _likeProvider
-                                    .likeList!.data!.result!.users!.length,
-                                shrinkWrap: true,
-                                itemBuilder: (context, index) {
-                                  return Container(
-                                      margin: EdgeInsets.only(
-                                        left: 21,
-                                      ),
-                                      height: 85,
-                                      width: 85,
-                                      decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          image: DecorationImage(
-                                              fit: BoxFit.cover,
-                                              image: NetworkImage(_likeProvider
-                                                  .likeList!
-                                                  .data!
-                                                  .result!
-                                                  .users![index]
-                                                  .avatar
-                                                  .toString()))),
-                                      child: Stack(
-                                        children: [
-                                          Positioned(
-                                              right: 0,
-                                              child: Image.asset(
-                                                'assets/fblike2x.png',
-                                                height: 15,
-                                                width: 15,
-                                                fit: BoxFit.cover,
-                                              )),
-                                          _likeProvider
-                                                      .likeList!
-                                                      .data!
-                                                      .result!
-                                                      .users![index]
-                                                      .isUnknown !=
-                                                  null
-                                              ? Center(
-                                                  child: Text(
-                                                      "+${_likeProvider.likeList!.data!.result!.anonymousCount}",
-                                                      style: TextStyle(
-                                                          fontSize: 17,
-                                                          color: Colors.white),
-                                                      textAlign:
-                                                          TextAlign.center),
-                                                )
-                                              : SizedBox.shrink()
-                                        ],
-                                      ));
-                                },
-                              ),
-                            ),
-                          ],
-                        ),
-                );
-              },
-            ));
-      },
-    );
-  }
-
-  PopupMenuButton showPopMenu(String postID, newsData) {
-    return PopupMenuButton(
-      icon: Icon(Icons.more_vert),
-      itemBuilder: (BuildContext context) => <PopupMenuEntry>[
-        PopupMenuItem(
-          child: ListTile(
-            title: Text('Copy link'),
-            onTap: () {
-              Clipboard.setData(ClipboardData(
-                      text: "https://3km.in/post-detail?id=$postID&lang=en"))
-                  .then((value) => CustomSnackBar(
-                      context, Text("Link has been coppied to clipboard")))
-                  .whenComplete(() => Navigator.pop(context));
-            },
-          ),
-        ),
-        PopupMenuItem(
-          child: ListTile(
-            onTap: () {
-              String imgUrl =
-                  newsData.images != null && newsData.images!.length > 0
-                      ? newsData.images!.first.toString()
-                      : newsData.videos!.first.thumbnail.toString();
-              handleShare(
-                  newsData.author!.name.toString(),
-                  newsData.author!.image.toString(),
-                  newsData.submittedHeadline.toString(),
-                  imgUrl,
-                  newsData.createdDate,
-                  newsData.postId.toString());
-            },
-            title: Text('Share to..',
-                style: ThreeKmTextConstants.tk16PXLatoBlackRegular),
-          ),
-        ),
-        PopupMenuItem(
-          child: ListTile(
-            onTap: () {
-              Navigator.pop(context);
-            },
-            title: Text(
-              'Cancel',
-              style: ThreeKmTextConstants.tk16PXPoppinsRedSemiBold,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  handleShare(String authorName, String authorProfile, String headLine,
-      String thumbnail, date, String postId) async {
-    showLoading();
-    screenshotController
-        .captureFromWidget(Container(
-      padding: EdgeInsets.only(top: 15, bottom: 15),
-      color: Colors.white,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Row(
-            //mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                  margin: EdgeInsets.only(right: 10),
-                  height: 50,
-                  width: 50,
-                  child: Container(
-                    height: 50,
-                    width: 50,
-                    decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        image: DecorationImage(
-                            fit: BoxFit.cover,
-                            image: CachedNetworkImageProvider(authorProfile))),
-                  )),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    child: Text(
-                      authorName,
-                      style: ThreeKmTextConstants.tk14PXPoppinsBlackBold,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  Text(
-                    date,
-                    style: ThreeKmTextConstants.tk12PXLatoBlackBold,
-                  )
-                ],
-              ),
-              // SizedBox(
-              //   width: 10,
-              // ),
-            ],
-          ),
-          Container(
-              height: 254,
-              width: MediaQuery.of(context).size.width,
-              child: CachedNetworkImage(imageUrl: thumbnail)),
-          Text(
-            headLine,
-            style: ThreeKmTextConstants.tk14PXPoppinsBlackBold,
-            textAlign: TextAlign.center,
-          ),
-          Padding(
-            padding: EdgeInsets.only(top: 5),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Container(
-                  height: 30,
-                  width: 250,
-                  child: Image.asset(
-                    'assets/playstore.jpg',
-                    fit: BoxFit.fitHeight,
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(right: 15),
-                  child: Container(
-                      height: 30,
-                      width: 30,
-                      child: Image.asset('assets/icon_light.png')),
-                )
-              ],
-            ),
-          )
-        ],
-      ),
-    ))
-        .then((capturedImage) async {
-      try {
-        var documentDirectory = Platform.isAndroid
-            ? await getExternalStorageDirectory()
-            : await getApplicationDocumentsDirectory();
-        File file = await File('${documentDirectory!.path}/image.png').create();
-        file.writeAsBytesSync(capturedImage);
-        Share.shareFiles([file.path],
-                text: 'https://3km.in/post-detail?id=$postId&lang=en')
-            .then((value) => hideLoading());
-      } on Exception catch (e) {
-        hideLoading();
-      }
-    });
   }
 
   @override
@@ -2240,7 +984,7 @@ class NewsContainer extends StatelessWidget {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => Postview(
+                                    builder: (context) => PostView(
                                         image: contentPost[postIndex]
                                             .image
                                             .toString(),

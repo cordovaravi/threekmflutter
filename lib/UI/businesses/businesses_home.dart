@@ -10,6 +10,7 @@ import 'package:provider/src/provider.dart';
 import 'package:shimmer/shimmer.dart';
 
 import 'package:threekm/UI/Search/SearchPage.dart';
+import 'package:threekm/UI/businesses/biz_skeleton.dart';
 import 'package:threekm/UI/businesses/businesses_detail.dart';
 import 'package:threekm/UI/businesses/view_all_category_biz.dart';
 
@@ -47,12 +48,12 @@ class _BusinessesHomeState extends State<BusinessesHome>
     final _location = context.read<LocationProvider>().getlocationData;
     return Scaffold(
       // extendBody: true,
-      appBar: AppBar(
-        elevation: 0,
-        title: Text('Businesses'),
-        backgroundColor: Colors.transparent,
-        foregroundColor: Colors.black,
-      ),
+      // appBar: AppBar(
+      //   elevation: 0,
+      //   title: Text('Businesses'),
+      //   backgroundColor: Colors.transparent,
+      //   foregroundColor: Colors.black,
+      // ),
       body: RefreshIndicator(
         onRefresh: () {
           var initJson = json.encode({
@@ -66,8 +67,8 @@ class _BusinessesHomeState extends State<BusinessesHome>
         },
         child: Builder(builder: (context) {
           if (businessesHomeProvider.state == 'loading') {
-            return const Center(
-              child: CircularProgressIndicator(),
+            return SingleChildScrollView(
+              child: Biz_Skeleton(context),
             );
           } else if (businessesHomeProvider.state == "error") {
             context.read<BusinessesHomeProvider>().getBusinesses(mounted);
@@ -100,7 +101,7 @@ class _HomeState extends State<Home> {
     final businessesHomeProvider = context.watch<BusinessesHomeProvider>();
     var data = businessesHomeProvider.businessesHomedata;
     return Container(
-      padding: EdgeInsets.only(top: 20),
+      padding: EdgeInsets.only(top: 0),
       color: Colors.white,
       width: MediaQuery.of(context).size.width,
       height: MediaQuery.of(context).size.height,
@@ -110,86 +111,86 @@ class _HomeState extends State<Home> {
             Container(
               color: Colors.white,
               child: Padding(
-                padding: EdgeInsets.only(top: 10),
+                padding: EdgeInsets.only(top: 0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    InkWell(
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => SearchPage(
-                                      tabNuber: 2,
-                                    )));
-                      },
-                      child: Container(
-                        height: 32,
-                        width: MediaQuery.of(context).size.width * 0.7,
-                        decoration: BoxDecoration(
-                            //color: Colors.white,
-                            borderRadius: BorderRadius.circular(21),
-                            border: Border.all(color: Color(0xffDFE5EE))),
-                        child: Row(
-                          children: [
-                            Padding(
-                              padding: EdgeInsets.only(left: 15),
-                              child: Icon(
-                                Icons.search_rounded,
-                                color: Colors.grey,
-                              ),
-                            ),
-                            Padding(
-                                padding: EdgeInsets.only(left: 11),
-                                child: Text(
-                                  AppLocalizations.of(context)!.translate(
-                                          'Search_Hyperlocal_Business') ??
-                                      "Search Hyperlocal Business",
-                                  style: ThreeKmTextConstants
-                                      .tk12PXLatoBlackBold
-                                      .copyWith(color: Colors.grey),
-                                ))
-                          ],
-                        ),
-                      ),
-                    ),
-                    Stack(
-                      clipBehavior: Clip.none,
-                      children: [
-                        InkWell(
-                          onTap: () => viewCart(context, 'shop'),
-                          child: Padding(
-                            padding: EdgeInsets.only(left: 12),
-                            child: Container(
-                                height: 32,
-                                width: 32,
-                                decoration: BoxDecoration(
-                                  image: DecorationImage(
-                                      image: AssetImage(
-                                          "assets/shopImg/Group 40724.png")),
-                                  shape: BoxShape.circle,
-                                  //color: Color(0xff7572ED)
-                                )),
-                          ),
-                        ),
-                        if (Hive.box('cartBox').length != 0)
-                          Positioned(
-                              top: -12,
-                              right: -6,
-                              child: Container(
-                                  decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: Colors.red),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(4.0),
-                                    child: Text(
-                                      '${Hive.box('cartBox').length}',
-                                      style: TextStyle(
-                                          fontSize: 11, color: Colors.white),
-                                    ),
-                                  )))
-                      ],
-                    ),
+                    // InkWell(
+                    //   onTap: () {
+                    //     Navigator.push(
+                    //         context,
+                    //         MaterialPageRoute(
+                    //             builder: (context) => SearchPage(
+                    //                   tabNuber: 2,
+                    //                 )));
+                    //   },
+                    //   child: Container(
+                    //     height: 32,
+                    //     width: MediaQuery.of(context).size.width * 0.7,
+                    //     decoration: BoxDecoration(
+                    //         //color: Colors.white,
+                    //         borderRadius: BorderRadius.circular(21),
+                    //         border: Border.all(color: Color(0xffDFE5EE))),
+                    //     child: Row(
+                    //       children: [
+                    //         Padding(
+                    //           padding: EdgeInsets.only(left: 15),
+                    //           child: Icon(
+                    //             Icons.search_rounded,
+                    //             color: Colors.grey,
+                    //           ),
+                    //         ),
+                    //         Padding(
+                    //             padding: EdgeInsets.only(left: 11),
+                    //             child: Text(
+                    //               AppLocalizations.of(context)!.translate(
+                    //                       'Search_Hyperlocal_Business') ??
+                    //                   "Search Hyperlocal Business",
+                    //               style: ThreeKmTextConstants
+                    //                   .tk12PXLatoBlackBold
+                    //                   .copyWith(color: Colors.grey),
+                    //             ))
+                    //       ],
+                    //     ),
+                    //   ),
+                    // ),
+                    // Stack(
+                    //   clipBehavior: Clip.none,
+                    //   children: [
+                    //     InkWell(
+                    //       onTap: () => viewCart(context, 'shop'),
+                    //       child: Padding(
+                    //         padding: EdgeInsets.only(left: 12),
+                    //         child: Container(
+                    //             height: 32,
+                    //             width: 32,
+                    //             decoration: BoxDecoration(
+                    //               image: DecorationImage(
+                    //                   image: AssetImage(
+                    //                       "assets/shopImg/Group 40724.png")),
+                    //               shape: BoxShape.circle,
+                    //               //color: Color(0xff7572ED)
+                    //             )),
+                    //       ),
+                    //     ),
+                    //     if (Hive.box('cartBox').length != 0)
+                    //       Positioned(
+                    //           top: -12,
+                    //           right: -6,
+                    //           child: Container(
+                    //               decoration: BoxDecoration(
+                    //                   shape: BoxShape.circle,
+                    //                   color: Colors.red),
+                    //               child: Padding(
+                    //                 padding: const EdgeInsets.all(4.0),
+                    //                 child: Text(
+                    //                   '${Hive.box('cartBox').length}',
+                    //                   style: TextStyle(
+                    //                       fontSize: 11, color: Colors.white),
+                    //                 ),
+                    //               )))
+                    //   ],
+                    // ),
                     // InkWell(
                     //   onTap: () async {
                     //     SharedPreferences _pref =
@@ -224,6 +225,7 @@ class _HomeState extends State<Home> {
             Container(
               //  padding: EdgeInsets.only(left: 20),
               height: 350,
+
               child: GridView.builder(
                   scrollDirection: Axis.horizontal,
                   shrinkWrap: true,

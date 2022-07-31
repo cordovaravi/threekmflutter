@@ -19,8 +19,7 @@ class Notificationpage extends StatefulWidget {
 class _NotificationpageState extends State<Notificationpage> {
   @override
   void initState() {
-    Future.microtask(
-        () => context.read<NotificationProvider>().getNotificationData());
+    Future.microtask(() => context.read<NotificationProvider>().getNotificationData());
     super.initState();
   }
 
@@ -30,45 +29,35 @@ class _NotificationpageState extends State<Notificationpage> {
 
     return Scaffold(
         appBar: AppBar(
-          backgroundColor: Colors.black,
-          title: Text("Notifications",
-              style: ThreeKmTextConstants.tk14PXPoppinsWhiteMedium),
+          backgroundColor: Colors.white,
+          title: Text("Notifications", style: ThreeKmTextConstants.tk14PXLatoBlackSemiBold),
         ),
         // backgroundColor: Colors.green,
         body: RefreshIndicator(
             child: Padding(
                 padding: EdgeInsets.only(top: 20),
-                child: notificationProvider.NotificationDataList?.data?.result
-                            ?.notifications !=
-                        null
-                    ? ListView.builder(
-                        itemCount: notificationProvider.NotificationDataList!
-                            .data!.result!.notifications!.length,
-                        itemBuilder: (context, index) {
-                          return InkWell(
-                            onTap: () => Navigator.push(
-                                context,
-                                AnimatedSizeRoute(
-                                    page: Postview(
-                                        postId: notificationProvider
-                                            .NotificationDataList!
-                                            .data!
-                                            .result!
-                                            .notifications![index]
-                                            .data!
-                                            .postId
-                                            .toString()))),
-                            child: buildNotificationItems(notificationProvider
-                                .NotificationDataList!
-                                .data!
-                                .result!
-                                .notifications![index]),
-                          );
-                        },
-                      )
-                    : Center(
-                        child: CupertinoActivityIndicator(),
-                      )),
+                child:
+                    notificationProvider.NotificationDataList?.data?.result?.notifications != null
+                        ? ListView.builder(
+                            itemCount: notificationProvider
+                                .NotificationDataList!.data!.result!.notifications!.length,
+                            itemBuilder: (context, index) {
+                              return InkWell(
+                                onTap: () => Navigator.push(
+                                    context,
+                                    AnimatedSizeRoute(
+                                        page: PostView(
+                                            postId: notificationProvider.NotificationDataList!.data!
+                                                .result!.notifications![index].data!.postId
+                                                .toString()))),
+                                child: buildNotificationItems(notificationProvider
+                                    .NotificationDataList!.data!.result!.notifications![index]),
+                              );
+                            },
+                          )
+                        : Center(
+                            child: CupertinoActivityIndicator(),
+                          )),
             onRefresh: () => context.read<NotificationProvider>().onRefresh()));
   }
 
@@ -81,10 +70,7 @@ class _NotificationpageState extends State<Notificationpage> {
             color: Colors.white,
             borderRadius: BorderRadius.circular(10),
             boxShadow: [
-              BoxShadow(
-                  color: Color(0x1A0F0F2D),
-                  offset: Offset(0, 3),
-                  blurRadius: 4),
+              BoxShadow(color: Color(0x1A0F0F2D), offset: Offset(0, 3), blurRadius: 4),
             ],
           ),
           child: Row(
@@ -122,9 +108,7 @@ class _NotificationpageState extends State<Notificationpage> {
                     ),
                     space(height: 8),
                     Text(
-                      notification.body != null
-                          ? notification.body.toString()
-                          : "",
+                      notification.body != null ? notification.body.toString() : "",
                       style: generateStyles(
                         type: StylesEnum.LATO,
                         fontSize: 12,
@@ -140,10 +124,7 @@ class _NotificationpageState extends State<Notificationpage> {
               space(width: 15),
             ],
           ),
-        )
-            .size(height: 97, width: double.infinity)
-            .paddingX(18)
-            .padding(bottom: 24),
+        ).size(height: 97, width: double.infinity).paddingX(18).padding(bottom: 24),
         Positioned(
           top: 0,
           left: 18,

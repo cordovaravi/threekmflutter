@@ -68,7 +68,22 @@ class SignUpProvider extends ChangeNotifier {
   }
 
   Future<dynamic> sendOTP(requestJson) async {
+    _isLoading = true;
+    notifyListeners();
     final response = await _apiProvider.auth(send_otp, requestJson);
+    print(response);
+    if (response != null) {
+      _isLoading = false;
+      notifyListeners();
+    }
+    return response;
+  }
+
+  Future<dynamic> sendOTPKyc(requestJson) async {
+    _isLoading = true;
+    notifyListeners();
+    final response =
+        await _apiProvider.post(register_verify_otp_kyc, requestJson);
     print(response);
     if (response != null) {
       _isLoading = false;
@@ -113,7 +128,7 @@ class SignUpProvider extends ChangeNotifier {
       hideLoading();
       if (response['status'] == 'success') {
         CustomSnackBar(context, Text("User Registeerd Successfully"));
-        Navigator.push(
+        Navigator.pushReplacement(
             context, MaterialPageRoute(builder: (context) => SignInScreen()));
       } else {
         CustomSnackBar(context, Text("Error Occured"));

@@ -35,7 +35,7 @@ class _VideoCompressState extends State<VideoCompress> {
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(
           backgroundColor: Color(0xff0F0F2D),
-          title: const Text('Crompressing your video'),
+          title: const Text('Processing your video'),
           actions: <Widget>[
             TextButton(
               child: const Text(
@@ -80,8 +80,7 @@ class _VideoCompressState extends State<VideoCompress> {
                 visible: !_isVideoCompressed,
                 child: StreamBuilder<double>(
                   stream: _lightCompressor.onProgressUpdated,
-                  builder:
-                      (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+                  builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
                     if (snapshot.data != null && snapshot.data > 0) {
                       return Column(
                         children: <Widget>[
@@ -145,8 +144,7 @@ class _VideoCompressState extends State<VideoCompress> {
         iosSaveInGallery: false);
 
     stopwatch.stop();
-    final Duration duration =
-        Duration(milliseconds: stopwatch.elapsedMilliseconds);
+    final Duration duration = Duration(milliseconds: stopwatch.elapsedMilliseconds);
     _duration = duration.inSeconds;
 
     if (response is OnSuccess) {
@@ -175,8 +173,8 @@ Future<String> get _destinationFile async {
   final String videoName = '${DateTime.now().millisecondsSinceEpoch}.mp4';
   if (Platform.isAndroid) {
     // Handle this part the way you want to save it in any directory you wish.
-    final List<Directory>? dir = await path.getExternalStorageDirectories(
-        type: path.StorageDirectory.movies);
+    final List<Directory>? dir =
+        await path.getExternalStorageDirectories(type: path.StorageDirectory.movies);
     directory = dir!.first.path;
     return File('$directory/$videoName').path;
   } else {

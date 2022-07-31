@@ -14,8 +14,10 @@ class BusinessesHomeProvider extends ChangeNotifier {
   BusinessesHomeModel? get businessesHomedata => _businessesHomedata;
 
   Future<Null> getBusinesses(mounted) async {
+    _state = 'loading';
+    // notifyListeners();
     if (mounted) {
-      showLoading();
+      // showLoading();
       // Future.delayed(Duration.zero, () async {
       //   showLoading();
       // });
@@ -24,12 +26,12 @@ class BusinessesHomeProvider extends ChangeNotifier {
         if (response != null) {
           // print(response);
           _businessesHomedata = BusinessesHomeModel.fromJson(response);
-          hideLoading();
+          // hideLoading();
           _state = 'loaded';
           notifyListeners();
         }
       } catch (e) {
-        hideLoading();
+        // hideLoading();
         _state = 'error';
         notifyListeners();
       }

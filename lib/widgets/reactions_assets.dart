@@ -1,68 +1,91 @@
 import 'package:flutter/material.dart';
-import 'package:threekm/Custom_library/flutter_reaction_button.dart';
+import 'package:lottie/lottie.dart';
+import 'package:threekm/Custom_library/Reaction2.0/src/models/reaction.dart';
+import 'package:threekm/utils/threekm_textstyles.dart';
 
 final defaultInitialReaction = Reaction(
-  id: null,
-  icon: _buildIcon('assets/thumbs-up.png'),
-);
+    id: 0,
+    icon: _buildReactionsIcon('assets/un_like_icon.png',
+        Text("Like", style: ThreeKmTextConstants.tk12PXPoppinsBlackSemiBold)),
+    value: "Like",
+    title:
+        Text('like', style: ThreeKmTextConstants.tk12PXPoppinsBlackSemiBold));
 
 final defaulLikeReaction = Reaction(
-  id: 9,
-  icon: _buildIcon('assets/thumbs_up_red.png'),
-);
+    id: 0,
+    icon: _buildReactionsIcon('assets/like_icon.png',
+        Text("Like", style: TextStyle(color: Colors.black))),
+    value: "Like",
+    title: Text('like'));
+
+getReaction(String type) {
+  return Reaction(
+      id: 99,
+      icon: _buildReactionsIcon('assets/$type.png',
+          Text("$type", style: TextStyle(color: Colors.black))),
+      value: "$type",
+      title: Text('$type'));
+}
 
 final reactions = [
   Reaction(
-    id: 1,
-    //title: _buildTitle('Like'),
-    previewIcon: _buildReactionsPreviewIcon('assets/icons8-facebook-like.gif'),
-    icon: _buildReactionsIcon(
-      'assets/icons8-facebook-like-96.png',
-    ),
-  ),
+      id: 1,
+      previewIcon: _buildReactionsPreviewIcon('assets/lottie/like.json'),
+      icon: _buildReactionsIcon('assets/like_icon.png',
+          Text("Like", style: ThreeKmTextConstants.tk12PXPoppinsBlackSemiBold)),
+      value: "Like",
+      title: Text('like')),
   Reaction(
     id: 2,
-    title: _buildTitle('Heart'),
-    previewIcon: _buildReactionsPreviewIcon('assets/icons8-heart.gif'),
-    icon: Image.asset(
-      'assets/icons8-heart-96.png',
-      height: 30,
-      width: 30,
+    title: _buildTitle('Love'),
+    previewIcon: _buildReactionsPreviewIcon(
+      'assets/lottie/love.json',
     ),
+    icon: _buildReactionsIcon('assets/love.png',
+        Text("Love", style: ThreeKmTextConstants.tk12PXPoppinsBlackSemiBold)),
+    value: "Love",
   ),
   Reaction(
     id: 3,
-    title: _buildTitle('Trust'),
-    previewIcon: _buildReactionsPreviewIcon('assets/icons8-trust.gif'),
-    icon: _buildReactionsIcon(
-      'assets/icons8-trust-96.png',
-    ),
+    title: _buildTitle('Care'),
+    previewIcon: _buildReactionsPreviewIcon('assets/lottie/care.json'),
+    icon: _buildReactionsIcon('assets/care.png',
+        Text("Care", style: ThreeKmTextConstants.tk12PXPoppinsBlackSemiBold)),
+    value: "Care",
   ),
   Reaction(
     id: 4,
-    title: _buildTitle('Sad'),
-    previewIcon: _buildReactionsPreviewIcon('assets/icons8-disappointed.gif'),
-    icon: _buildReactionsIcon(
-      'assets/icons8-disappointed-96.png',
-    ),
+    title: _buildTitle('laugh'),
+    previewIcon: _buildReactionsPreviewIcon('assets/lottie/laugh.json'),
+    icon: _buildReactionsIcon('assets/laugh.png',
+        Text("Laugh", style: ThreeKmTextConstants.tk12PXPoppinsBlackSemiBold)),
+    value: "Laugh",
   ),
   Reaction(
     id: 5,
-    title: _buildTitle('Lol'),
-    previewIcon: _buildReactionsPreviewIcon('assets/icons8-lol.gif'),
-    icon: _buildReactionsIcon(
-      'assets/icons8-lol-96.png',
-    ),
+    title: _buildTitle('sad'),
+    previewIcon: _buildReactionsPreviewIcon('assets/lottie/sad.json'),
+    icon: _buildReactionsIcon('assets/sad.png',
+        Text("Sad", style: ThreeKmTextConstants.tk12PXPoppinsBlackSemiBold)),
+    value: "Sad",
   ),
   Reaction(
     id: 6,
-    title: _buildTitle('wink'),
-    previewIcon: _buildReactionsPreviewIcon('assets/icons8-wink.gif'),
-    icon: _buildReactionsIcon(
-      'assets/icons8-wink-96.png',
-    ),
+    title: _buildTitle('angry'),
+    previewIcon: _buildReactionsPreviewIcon('assets/lottie/angry.json'),
+    icon: _buildReactionsIcon('assets/angry.png',
+        Text("Angry", style: ThreeKmTextConstants.tk12PXPoppinsBlackSemiBold)),
+    value: "Angry",
   ),
 ];
+
+Padding _buildReactionsPreviewIcon(String path) {
+  return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 3.5, vertical: 5),
+      child: Lottie.asset(path, height: 40)
+      //Image.asset(path, height: 40),
+      );
+}
 
 Container _buildTitle(String title) {
   return Container(
@@ -82,27 +105,15 @@ Container _buildTitle(String title) {
   );
 }
 
-Padding _buildReactionsPreviewIcon(String path) {
-  return Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 3.5, vertical: 5),
-    child: Image.asset(path, height: 40),
-  );
-}
-
-Image _buildIcon(String path) {
-  return Image.asset(
-    path,
-    height: 30,
-    width: 30,
-  );
-}
-
-Container _buildReactionsIcon(String path) {
+Container _buildReactionsIcon(String path, Text text) {
   return Container(
-    height: 30,
-    width: 30,
-    decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        image: DecorationImage(image: AssetImage(path), fit: BoxFit.contain)),
+    color: Colors.transparent,
+    child: Row(
+      children: <Widget>[
+        Image.asset(path, height: 20),
+        const SizedBox(width: 5),
+        text,
+      ],
+    ),
   );
 }

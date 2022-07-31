@@ -78,11 +78,11 @@ class ApiProvider {
             'Content-Type': 'application/json',
             'Accept': 'application/json'
           })
-          .timeout(Duration(seconds: 15))
+          .timeout(Duration(seconds: 25))
           .onError((error, stackTrace) {
-            CustomSnackBar(navigatorKey.currentContext!,
-                Text("Your Internet Connection is weak"));
-            throw error.toString();
+            CustomSnackBar(
+                navigatorKey.currentContext!, Text("Some thing went wrong!"));
+            throw error!;
           });
       responseJson = _response(response);
       print(_baseUrl! + url);

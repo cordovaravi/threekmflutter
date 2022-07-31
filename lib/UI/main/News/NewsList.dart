@@ -1,33 +1,33 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:lottie/lottie.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:threekm/Custom_library/flutter_reaction_button.dart';
+import 'package:threekm/Custom_library/Reaction2.0/src/flutter_reaction_button.dart';
 import 'package:threekm/Models/newsByCategories_model.dart';
-import 'package:threekm/UI/main/News/Widgets/comment_Loading.dart';
-import 'package:threekm/UI/main/News/Widgets/likes_Loading.dart';
+import 'package:threekm/UI/main/News/likes_and_comments/comment_section.dart';
+import 'package:threekm/UI/main/News/likes_and_comments/like_list.dart';
 import 'package:threekm/UI/main/Profile/AuthorProfile.dart';
 import 'package:threekm/commenwidgets/CustomSnakBar.dart';
 import 'package:threekm/commenwidgets/commenwidget.dart';
 import 'package:threekm/providers/Global/logged_in_or_not.dart';
 import 'package:threekm/providers/localization_Provider/appLanguage_provider.dart';
-import 'package:threekm/providers/main/LikeList_Provider.dart';
-import 'package:threekm/providers/main/comment_Provider.dart';
+import 'package:threekm/providers/main/AthorProfile_Provider.dart';
 import 'package:threekm/providers/main/newsList_provider.dart';
+import 'package:threekm/utils/slugUrl.dart';
 import 'package:threekm/utils/threekm_textstyles.dart';
-import 'package:provider/provider.dart';
+import 'package:threekm/widgets/NewCardUI/card_ui.dart';
 import 'package:threekm/widgets/emotion_Button.dart';
-import 'package:threekm/widgets/video_widget.dart';
-
 import 'package:threekm/widgets/reactions_assets.dart' as reactionAssets;
+import 'package:threekm/widgets/video_widget.dart';
 import 'package:timelines/timelines.dart';
 
 import 'Widgets/newsListLoading.dart';
@@ -252,8 +252,18 @@ class _NewsListPageState extends State<NewsListPage> {
                     child: CircularProgressIndicator(),
                   );
                 } else if (newsProvider.state == "error") {
-                  return Center(
-                    child: Lottie.asset("assets/Caterror.json"),
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Lottie.asset("assets/newsListError.json"),
+                      Text("Opps! It looks like you are offline",
+                          style: ThreeKmTextConstants.tk18PXPoppinsBlackMedium),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Text(
+                          "Please check your internet connection and try again.")
+                    ],
                   );
                 } else if (newsProvider.state == "loaded") {
                   return newsProvider.newsBycategory != null
@@ -293,8 +303,8 @@ class NewsPostCard extends StatefulWidget {
 class _NewsPostCardState extends State<NewsPostCard>
     with AutomaticKeepAliveClientMixin {
   ScreenshotController screenshotController = ScreenshotController();
-  TextEditingController _commentController = TextEditingController();
-  final _formKey = GlobalKey<FormState>();
+  // TextEditingController _commentController = TextEditingController();
+  // final _formKey = GlobalKey<FormState>();
 
   Future<File> getImageFileFromAssets(String path) async {
     final byteData = await rootBundle.load('assets/$path');
@@ -379,562 +389,12 @@ class _NewsPostCardState extends State<NewsPostCard>
                 }
 
                 if (newsData.postId != null) {
-                  return Stack(
-                      alignment: AlignmentDirectional.center,
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.only(
-                              left: 10, right: 10, top: 8, bottom: 8),
-                          child:
-                              Column(mainAxisSize: MainAxisSize.min, children: [
-                            Container(
-                              margin: EdgeInsets.only(bottom: 10),
-                              decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  boxShadow: [
-                                    BoxShadow(
-                                        color: Color(0xff32335E26),
-                                        blurRadius: 8),
-                                  ],
-                                  borderRadius: BorderRadius.circular(10)),
-                              child: Container(
-                                  child: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.all(10.0),
-                                    child: Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Container(
-                                            margin: EdgeInsets.only(right: 10),
-                                            height: 50,
-                                            width: 50,
-                                            child: GestureDetector(
-                                              onTap: () {
-                                                Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            AuthorProfile(
-                                                                authorType: newsData
-                                                                    .authorType,
-                                                                // page: 1,
-                                                                // authorType:
-                                                                //     "user",
-                                                                id: newsData
-                                                                    .author!
-                                                                    .id!,
-                                                                avatar: newsData
-                                                                    .author!
-                                                                    .image!,
-                                                                userName: newsData
-                                                                    .author!
-                                                                    .name!)));
-                                              },
-                                              child: Container(
-                                                height: 50,
-                                                width: 50,
-                                                decoration: BoxDecoration(
-                                                    shape: BoxShape.circle,
-                                                    image: DecorationImage(
-                                                        fit: BoxFit.cover,
-                                                        image: CachedNetworkImageProvider(
-                                                            newsData
-                                                                .author!.image
-                                                                .toString()))),
-                                                child: newsData.isVerified ==
-                                                        true
-                                                    ? Stack(
-                                                        children: [
-                                                          Positioned(
-                                                              left: 0,
-                                                              child:
-                                                                  Image.asset(
-                                                                'assets/verified.png',
-                                                                height: 15,
-                                                                width: 15,
-                                                                fit: BoxFit
-                                                                    .cover,
-                                                              ))
-                                                        ],
-                                                      )
-                                                    : Container(),
-                                              ),
-                                            )),
-                                        Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          //mainAxisAlignment: MainAxisAlignment.center,
-                                          children: [
-                                            Container(
-                                              width: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.55,
-                                              child: Text(
-                                                newsData.author!.name
-                                                    .toString(),
-                                                style: ThreeKmTextConstants
-                                                    .tk14PXPoppinsBlackBold,
-                                                overflow: TextOverflow.ellipsis,
-                                              ),
-                                            ),
-                                            Row(
-                                              children: [
-                                                Text(newsData.createdDate
-                                                    .toString()),
-                                                SizedBox(
-                                                  width: 8,
-                                                ),
-                                                Consumer<NewsListProvider>(
-                                                    builder: (context,
-                                                        newsProvider, _) {
-                                                  return GestureDetector(
-                                                      onTap: () {
-                                                        print(
-                                                            "is foloowed:${newsData.author!.isFollowed}---------------------");
-                                                        print(
-                                                            "post id is: ${newsData.postId}");
-                                                        if (newsData.author!
-                                                                .isFollowed ==
-                                                            true) {
-                                                          print(
-                                                              "is followed: true");
-                                                          context
-                                                              .read<
-                                                                  NewsListProvider>()
-                                                              .unfollowUser(
-                                                                  newsData
-                                                                      .author!
-                                                                      .id!
-                                                                      .toInt());
-                                                        } else if (newsData
-                                                                    .author!
-                                                                    .isFollowed ==
-                                                                false ||
-                                                            newsData.author!
-                                                                    .isFollowed ==
-                                                                null) {
-                                                          print(
-                                                              "is followed: false");
-                                                          context
-                                                              .read<
-                                                                  NewsListProvider>()
-                                                              .followUser(
-                                                                newsData
-                                                                    .author!.id!
-                                                                    .toInt(),
-                                                              );
-                                                        }
-                                                      },
-                                                      child: newsData.author!
-                                                                  .isFollowed ==
-                                                              true
-                                                          ? Text("Following",
-                                                              style: ThreeKmTextConstants
-                                                                  .tk11PXLatoGreyBold)
-                                                          : Text("Follow",
-                                                              style: ThreeKmTextConstants
-                                                                  .tk14PXPoppinsBlueMedium));
-                                                }),
-                                              ],
-                                            )
-                                          ],
-                                        ),
-                                        Spacer(),
-                                        showPopMenu(newsData.postId.toString(),
-                                            newsData)
-                                        // IconButton(
-                                        //     onPressed: () {}, icon: Icon(Icons.more_vert))
-                                      ],
-                                    ),
-                                  ),
-                                  //both pics and images is present
-
-                                  newsData.images!.length > 1 ||
-                                          newsData.videos!.length > 1
-                                      ?
-                                      //video and image both
-                                      Container(
-                                          height: 400,
-                                          width: 400,
-                                          decoration: BoxDecoration(
-                                              color: Colors.black26),
-                                          child: PageView.builder(
-                                            itemCount: newsData.images!.length +
-                                                newsData.videos!.length,
-                                            // options: CarouselOptions(
-                                            //   // aspectRatio: null,
-                                            //   viewportFraction: 0.99,
-                                            // ),
-                                            itemBuilder: (
-                                              context,
-                                              index,
-                                            ) {
-                                              List<String?> videoUrls = newsData
-                                                  .videos!
-                                                  .map((e) => e.src)
-                                                  .toList();
-                                              List<String?> imgList = List.from(
-                                                  newsData.images!.toList());
-                                              List<String?> templist =
-                                                  videoUrls + imgList;
-                                              return templist != null
-                                                  ? templist[index]
-                                                          .toString()
-                                                          .contains(".mp4")
-                                                      ? SizedBox(
-                                                          height: 300,
-                                                          width: MediaQuery.of(
-                                                                  context)
-                                                              .size
-                                                              .width,
-                                                          child: VideoWidget(
-                                                              thubnail: '',
-                                                              url: templist[
-                                                                      index]
-                                                                  .toString(),
-                                                              play: false),
-                                                        )
-                                                      : CachedNetworkImage(
-                                                          height: 254,
-                                                          width: MediaQuery.of(
-                                                                  context)
-                                                              .size
-                                                              .width,
-                                                          fit: BoxFit.contain,
-                                                          imageUrl:
-                                                              templist[index]
-                                                                  .toString())
-                                                  : SizedBox(
-                                                      child: Text("null"),
-                                                    );
-                                            },
-                                          ),
-                                        )
-                                      // image or video single
-
-                                      : newsData.images != null &&
-                                              newsData.videos != null
-                                          ? Container(
-                                              child: newsData.images!.length ==
-                                                      1
-                                                  ? CachedNetworkImage(
-                                                      key: imgkey[postIndex],
-                                                      height: imgkey[postIndex]
-                                                          .currentContext
-                                                          ?.size
-                                                          ?.height,
-                                                      width:
-                                                          MediaQuery.of(context)
-                                                              .size
-                                                              .width,
-                                                      fit: BoxFit.fitWidth,
-                                                      imageUrl:
-                                                          '${newsData.images!.first}',
-                                                    )
-                                                  : newsData.videos!.length > 0
-                                                      ? VideoWidget(
-                                                          thubnail: newsData
-                                                                      .videos
-                                                                      ?.first
-                                                                      .thumbnail !=
-                                                                  null
-                                                              ? newsData
-                                                                  .videos!
-                                                                  .first
-                                                                  .thumbnail
-                                                                  .toString()
-                                                              : '',
-                                                          url: newsData
-                                                              .videos!.first.src
-                                                              .toString(),
-                                                          fromSinglePage: true,
-                                                          play: false)
-                                                      : Container(),
-                                            )
-                                          : SizedBox.shrink(),
-                                  SizedBox(
-                                    height: 5,
-                                  ),
-                                  newsData.images != null &&
-                                              newsData.images!.length > 1 &&
-                                              newsData.images!.length != 1 ||
-                                          newsData.videos != null &&
-                                              newsData.videos!.length > 1 &&
-                                              newsData.videos!.length != 1
-                                      ? Container(
-                                          height: 10,
-                                          width:
-                                              MediaQuery.of(context).size.width,
-                                          child: Builder(builder: (context) {
-                                            List videoUrls = newsData.videos!
-                                                .map((e) => e.src)
-                                                .toList();
-                                            List templist = List.from(
-                                                newsData.images!.toList())
-                                              ..addAll(videoUrls);
-                                            return Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                children: templist
-                                                    .asMap()
-                                                    .entries
-                                                    .map((entry) {
-                                                  return Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                            left: 2),
-                                                    child: DotIndicator(
-                                                      size: 8.0,
-                                                      color: Colors.grey,
-                                                    ),
-                                                  );
-                                                }).toList());
-                                          }),
-                                          // child: ListView.builder(
-                                          //     shrinkWrap: true,
-                                          //     scrollDirection: Axis.horizontal,
-                                          //     itemCount:
-                                          //         newsData.images!.length +
-                                          //             newsData.videos!.length,
-                                          //     itemBuilder: (context, index) {
-                                          //       return Center(
-                                          //           child: DotIndicator());
-                                          //     }),
-                                        )
-                                      : SizedBox.shrink(),
-
-                                  // if (newsData.images != null &&
-                                  //     newsData.images!.length > 0)
-                                  //   newsData.images!.length == 1
-                                  //       ? CachedNetworkImage(
-                                  //           height: 254,
-                                  //           width: MediaQuery.of(context)
-                                  //               .size
-                                  //               .width,
-                                  //           fit: BoxFit.fitWidth,
-                                  //           imageUrl:
-                                  //               '${newsData.images!.first}',
-                                  //         )
-                                  //       : CarouselSlider.builder(
-                                  //           itemCount: newsData.images!.length,
-                                  //           itemBuilder: (context, index, _) {
-                                  //             return Container(
-                                  //                 child: CachedNetworkImage(
-                                  //               height: 254,
-                                  //               width: MediaQuery.of(context)
-                                  //                   .size
-                                  //                   .width,
-                                  //               fit: BoxFit.fitWidth,
-                                  //               imageUrl:
-                                  //                   '${newsData.images![index]}',
-                                  //             ));
-                                  //           },
-                                  //           options: CarouselOptions(
-                                  //             autoPlay: true,
-                                  //             viewportFraction: 0.99,
-                                  //           )),
-                                  // if (newsData.videos != null &&
-                                  //     newsData.videos!.length > 0)
-                                  //   Stack(children: [
-                                  //     Container(
-                                  //       //height: 254,
-                                  //       width:
-                                  //           MediaQuery.of(context).size.width,
-                                  //       child: newsData
-                                  //                   .videos?.first.vimeoUrl !=
-                                  //               null
-                                  //           ? Container(
-                                  //               height: 254,
-                                  //               width: MediaQuery.of(context)
-                                  //                   .size
-                                  //                   .width,
-                                  //               child: VimeoPlayer(
-                                  //                   videoId: Uri.parse(newsData
-                                  //                           .videos!
-                                  //                           .first
-                                  //                           .vimeoUrl
-                                  //                           .toString())
-                                  //                       .pathSegments
-                                  //                       .last),
-                                  //             )
-                                  //           : VideoWidget(
-                                  //               thubnail: newsData.videos?.first
-                                  //                           .thumbnail !=
-                                  //                       null
-                                  //                   ? newsData
-                                  //                       .videos!.first.thumbnail
-                                  //                       .toString()
-                                  //                   : '',
-                                  //               url: newsData.videos!.first.src
-                                  //                   .toString(),
-                                  //               play: false),
-                                  //     ),
-                                  //   ]),
-
-                                  Row(children: [
-                                    Padding(
-                                        padding: EdgeInsets.only(
-                                            top: 5, left: 5, bottom: 2),
-                                        child: InkWell(
-                                          onTap: () {
-                                            _showLikedBottomModalSheet(
-                                                newsData.postId!.toInt(),
-                                                newsData.likes);
-                                          },
-                                          child: newsData.likes != 0
-                                              ? Row(
-                                                  children: [
-                                                    Text('👍 ❤️ '),
-                                                    Container(
-                                                      child: Center(
-                                                          child: Text('+' +
-                                                              newsData.likes
-                                                                  .toString())),
-                                                    )
-                                                  ],
-                                                )
-                                              : SizedBox.shrink(),
-                                        )),
-                                    Spacer(),
-                                    Padding(
-                                        padding: EdgeInsets.only(
-                                            top: 5, right: 5, bottom: 2),
-                                        child: Text(newsData.views.toString() +
-                                            ' Views'))
-                                  ]),
-                                  Text(
-                                    newsData.headline.toString(),
-                                    style: ThreeKmTextConstants
-                                        .tk14PXLatoBlackMedium,
-                                    textAlign: TextAlign.center,
-                                  ),
-                                  TextButton(
-                                      onPressed: () {
-                                        Navigator.push(context,
-                                            MaterialPageRoute(builder:
-                                                (BuildContext context) {
-                                          return newsDetails(newsData, context);
-                                        }));
-                                      },
-                                      child: Text(
-                                        "Read More",
-                                        style: TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.blue),
-                                      )),
-                                  SizedBox(
-                                    height: 35,
-                                  ),
-                                ],
-                              )),
-                            )
-                          ]),
-                        ),
-                        Positioned(
-                            bottom: 0,
-                            child: Container(
-                              height: 60,
-                              width: 230,
-                              child: ButtonBar(children: [
-                                Container(
-                                  height: 60,
-                                  width: 60,
-                                  child: EmotionButton(
-                                      isLiked: newsData.isLiked!,
-                                      initalReaction: newsData.isLiked!
-                                          ? Reaction(
-                                              icon: Image.asset(
-                                                  "assets/thumbs_up_red.png"))
-                                          : Reaction(
-                                              icon: Image.asset(
-                                                  "assets/thumbs-up.png")),
-                                      selectedReaction: newsData.isLiked!
-                                          ? Reaction(
-                                              icon: Image.asset(
-                                                  "assets/thumbs_up_red.png"))
-                                          : Reaction(
-                                              icon: Image.asset(
-                                                  "assets/thumbs-up.png")),
-                                      postId: newsData.postId!.toInt(),
-                                      reactions: reactionAssets.reactions),
-                                  decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      shape: BoxShape.circle,
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.black26,
-                                          blurRadius: 8,
-                                        )
-                                      ]),
-                                ),
-                                Container(
-                                  height: 60,
-                                  width: 60,
-                                  child: IconButton(
-                                      onPressed: () async {
-                                        if (await getAuthStatus()) {
-                                          _showCommentsBottomModalSheet(context,
-                                              newsData.postId!.toInt());
-                                        } else {
-                                          NaviagateToLogin(context);
-                                        }
-                                      },
-                                      icon: Image.asset(
-                                          'assets/icons-topic.png',
-                                          fit: BoxFit.cover)),
-                                  decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      shape: BoxShape.circle,
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.black26,
-                                          blurRadius: 8,
-                                        )
-                                      ]),
-                                ),
-                                Container(
-                                  height: 60,
-                                  width: 60,
-                                  child: IconButton(
-                                      onPressed: () async {
-                                        // showLoading();
-                                        String imgUrl = newsData.images !=
-                                                    null &&
-                                                newsData.images!.length > 0
-                                            ? newsData.images!.first.toString()
-                                            : newsData.videos!.first.thumbnail
-                                                .toString();
-                                        handleShare(
-                                            newsData.author!.name.toString(),
-                                            newsData.author!.image.toString(),
-                                            newsData.headline.toString(),
-                                            imgUrl,
-                                            newsData.createdDate,
-                                            newsData.postId.toString());
-                                      },
-                                      icon: Center(
-                                        child: Image.asset(
-                                            'assets/icons-share.png',
-                                            fit: BoxFit.contain),
-                                      )),
-                                  decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      shape: BoxShape.circle,
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.black26,
-                                          blurRadius: 8,
-                                        )
-                                      ]),
-                                ),
-                              ]),
-                            )),
-                      ]);
+                  return newsData != null
+                      ? CardUI(
+                          providerType: 'NewsListProvider',
+                          data: newsData,
+                        )
+                      : Container();
                 } else {
                   return Container();
                 }
@@ -1037,15 +497,16 @@ class _NewsPostCardState extends State<NewsPostCard>
         File file = await File('${documentDirectory!.path}/image.png').create();
         file.writeAsBytesSync(capturedImage);
         Share.shareFiles([file.path],
-                text: 'https://3km.in/post-detail?id=$postId&lang=en')
+                text: '${slugUrl(headLine: headLine, postId: postId)}')
             .then((value) => hideLoading());
       } on Exception catch (e) {
+        log(e.toString());
         hideLoading();
       }
     });
   }
 
-  Widget newsDetails(Post newsData, context) {
+  Widget newsDetails(Post newsData, BuildContext context) {
     final _imagKey = GlobalKey();
     return Material(
       //color: Colors.black.withOpacity(0.1),
@@ -1112,15 +573,16 @@ class _NewsPostCardState extends State<NewsPostCard>
                                                     AuthorProfile(
                                                         authorType:
                                                             newsData.authorType,
-                                                        // page: 1,
-                                                        // authorType:
-                                                        //     "user",
                                                         id: newsData
                                                             .author!.id!,
                                                         avatar: newsData
                                                             .author!.image!,
                                                         userName: newsData
-                                                            .author!.name!)));
+                                                            .author!
+                                                            .name!))).then(
+                                            (value) => context
+                                                .read<AutthorProfileProvider>()
+                                                .clearAuthorProfileData());
                                       },
                                       child: Container(
                                           margin: EdgeInsets.only(right: 10),
@@ -1208,7 +670,7 @@ class _NewsPostCardState extends State<NewsPostCard>
                                         ) {
                                           List<String?> videoUrls = newsData
                                               .videos!
-                                              .map((e) => e.src)
+                                              .map((e) => e.src.toString())
                                               .toList();
                                           List<String?> imglist = List.from(
                                               newsData.images!.toList());
@@ -1226,6 +688,25 @@ class _NewsPostCardState extends State<NewsPostCard>
                                                               .size
                                                               .width,
                                                       child: VideoWidget(
+                                                          isVimeo: newsData
+                                                                      .videos!
+                                                                      .first
+                                                                      .player ==
+                                                                  "vimeo"
+                                                              ? true
+                                                              : false,
+                                                          vimeoID: newsData
+                                                                      .videos!
+                                                                      .first
+                                                                      .player ==
+                                                                  "vimeo"
+                                                              ? newsData
+                                                                  .videos!
+                                                                  .first
+                                                                  .vimeoUrl!
+                                                                  .split("/")
+                                                                  .last
+                                                              : "",
                                                           thubnail: '',
                                                           url: templist[index]
                                                               .toString(),
@@ -1266,6 +747,19 @@ class _NewsPostCardState extends State<NewsPostCard>
                                             )
                                           : newsData.videos!.length > 0
                                               ? VideoWidget(
+                                                  isVimeo: newsData.videos!
+                                                              .first.player ==
+                                                          "vimeo"
+                                                      ? true
+                                                      : false,
+                                                  vimeoID: newsData.videos!
+                                                              .first.player ==
+                                                          "vimeo"
+                                                      ? newsData.videos!.first
+                                                          .vimeoUrl!
+                                                          .split("/")
+                                                          .last
+                                                      : "",
                                                   thubnail: newsData
                                                               .videos
                                                               ?.first
@@ -1297,7 +791,7 @@ class _NewsPostCardState extends State<NewsPostCard>
                                       child: Builder(builder: (context) {
                                         List<String?> videoUrls = newsData
                                             .videos!
-                                            .map((e) => e.src)
+                                            .map((e) => e.src.toString())
                                             .toList();
                                         List<String?> templist =
                                             List.from(newsData.images!.toList())
@@ -1383,9 +877,16 @@ class _NewsPostCardState extends State<NewsPostCard>
                                       builder: (context, newsProvider, _) {
                                         return InkWell(
                                           onTap: () {
-                                            _showLikedBottomModalSheet(
-                                                newsData.postId!.toInt(),
-                                                newsData.likes);
+                                            // _showLikedBottomModalSheet(
+                                            //     newsData.postId!.toInt(),
+                                            //     newsData.likes);
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        LikeList(
+                                                            postId: newsData
+                                                                .postId!)));
                                           },
                                           child: newsData.likes != 0
                                               ? Text("👍 ❤️ " +
@@ -1451,21 +952,28 @@ class _NewsPostCardState extends State<NewsPostCard>
                       child: Consumer<NewsListProvider>(
                         builder: (context, newslistProvider, _) {
                           return EmotionButton(
+                              providerType: 'NewsListProvider',
                               isLiked: newsData.isLiked!,
                               initalReaction: newsData.isLiked!
                                   ? Reaction(
-                                      icon: Image.asset(
-                                          "assets/thumbs_up_red.png"))
+                                      icon: Image.asset("assets/like_icon.png"),
+                                      value: "Like",
+                                    )
                                   : Reaction(
-                                      icon:
-                                          Image.asset("assets/thumbs-up.png")),
+                                      icon: Image.asset(
+                                          "assets/un_like_icon.png"),
+                                      value: "",
+                                    ),
                               selectedReaction: newsData.isLiked!
                                   ? Reaction(
-                                      icon: Image.asset(
-                                          "assets/thumbs_up_red.png"))
+                                      icon: Image.asset("assets/like_icon.png"),
+                                      value: "Like",
+                                    )
                                   : Reaction(
-                                      icon:
-                                          Image.asset("assets/thumbs-up.png")),
+                                      icon: Image.asset(
+                                          "assets/un_like_icon.png"),
+                                      value: "",
+                                    ),
                               postId: newsData.postId!.toInt(),
                               reactions: reactionAssets.reactions);
                         },
@@ -1486,8 +994,12 @@ class _NewsPostCardState extends State<NewsPostCard>
                       child: IconButton(
                           onPressed: () async {
                             if (await getAuthStatus()) {
-                              _showCommentsBottomModalSheet(
-                                  context, newsData.postId!);
+                              // _showCommentsBottomModalSheet(context, newsData.postId!);
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => CommentSection(
+                                          postId: newsData.postId!)));
                             } else {
                               NaviagateToLogin(context);
                             }
@@ -1516,7 +1028,9 @@ class _NewsPostCardState extends State<NewsPostCard>
                             handleShare(
                                 newsData.author!.name.toString(),
                                 newsData.author!.image.toString(),
-                                newsData.headline.toString(),
+                                newsData.headline ??
+                                    newsData.submittedHeadline ??
+                                    "",
                                 imgUrl,
                                 newsData.createdDate,
                                 newsData.postId.toString());
@@ -1543,327 +1057,286 @@ class _NewsPostCardState extends State<NewsPostCard>
     );
   }
 
-  _showLikedBottomModalSheet(int postId, totalLikes) {
-    context.read<LikeListProvider>().showLikes(context, postId);
-    showModalBottomSheet<void>(
-      backgroundColor: Colors.white,
-      context: context,
-      builder: (BuildContext context) {
-        final _likeProvider = context.watch<LikeListProvider>();
-        return Padding(
-            padding: EdgeInsets.zero,
-            child: StatefulBuilder(
-              builder: (context, _) {
-                return Container(
-                  color: Colors.white,
-                  height: 192,
-                  width: MediaQuery.of(context).size.width,
-                  child: _likeProvider.isLoading
-                      ? LikesLoding()
-                      : Column(
-                          mainAxisSize: MainAxisSize.max,
-                          children: [
-                            Row(
-                              children: [
-                                Padding(
-                                  padding: EdgeInsets.only(
-                                      top: 24, left: 18, bottom: 34),
-                                  child: Text(
-                                      "$totalLikes People reacted to this"),
-                                ),
-                              ],
-                            ),
-                            Container(
-                              height: 90,
-                              width: double.infinity,
-                              child: ListView.builder(
-                                scrollDirection: Axis.horizontal,
-                                itemCount: _likeProvider
-                                    .likeList!.data!.result!.users!.length,
-                                shrinkWrap: true,
-                                itemBuilder: (context, index) {
-                                  return Container(
-                                      margin: EdgeInsets.only(
-                                        left: 21,
-                                      ),
-                                      height: 85,
-                                      width: 85,
-                                      decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          image: DecorationImage(
-                                              fit: BoxFit.cover,
-                                              image: NetworkImage(_likeProvider
-                                                  .likeList!
-                                                  .data!
-                                                  .result!
-                                                  .users![index]
-                                                  .avatar
-                                                  .toString()))),
-                                      child: Stack(
-                                        children: [
-                                          Positioned(
-                                              right: 0,
-                                              child: Image.asset(
-                                                'assets/fblike2x.png',
-                                                height: 15,
-                                                width: 15,
-                                                fit: BoxFit.cover,
-                                              )),
-                                          _likeProvider
-                                                      .likeList!
-                                                      .data!
-                                                      .result!
-                                                      .users![index]
-                                                      .isUnknown !=
-                                                  null
-                                              ? Center(
-                                                  child: Text(
-                                                      "+${_likeProvider.likeList!.data!.result!.anonymousCount}",
-                                                      style: TextStyle(
-                                                          fontSize: 17,
-                                                          color: Colors.white),
-                                                      textAlign:
-                                                          TextAlign.center),
-                                                )
-                                              : SizedBox.shrink()
-                                        ],
-                                      ));
-                                },
-                              ),
-                            ),
-                          ],
-                        ),
-                );
-              },
-            ));
-      },
-    );
-  }
+  // _showLikedBottomModalSheet(int postId, totalLikes) {
+  //   context.read<LikeListProvider>().showLikes(context, postId);
+  //   showModalBottomSheet<void>(
+  //     backgroundColor: Colors.white,
+  //     context: context,
+  //     builder: (BuildContext context) {
+  //       final _likeProvider = context.watch<LikeListProvider>();
+  //       return Padding(
+  //           padding: EdgeInsets.zero,
+  //           child: StatefulBuilder(
+  //             builder: (context, _) {
+  //               return Container(
+  //                 color: Colors.white,
+  //                 height: 192,
+  //                 width: MediaQuery.of(context).size.width,
+  //                 child: _likeProvider.isLoading
+  //                     ? LikesLoding()
+  //                     : Column(
+  //                         mainAxisSize: MainAxisSize.max,
+  //                         children: [
+  //                           Row(
+  //                             children: [
+  //                               Padding(
+  //                                 padding: EdgeInsets.only(top: 24, left: 18, bottom: 34),
+  //                                 child: Text("$totalLikes People reacted to this"),
+  //                               ),
+  //                             ],
+  //                           ),
+  //                           Container(
+  //                             height: 90,
+  //                             width: double.infinity,
+  //                             child: ListView.builder(
+  //                               scrollDirection: Axis.horizontal,
+  //                               itemCount: _likeProvider.likeList!.data!.result!.users!.length,
+  //                               shrinkWrap: true,
+  //                               itemBuilder: (context, index) {
+  //                                 return Container(
+  //                                     margin: EdgeInsets.only(
+  //                                       left: 21,
+  //                                     ),
+  //                                     height: 85,
+  //                                     width: 85,
+  //                                     decoration: BoxDecoration(
+  //                                         shape: BoxShape.circle,
+  //                                         image: DecorationImage(
+  //                                             fit: BoxFit.cover,
+  //                                             image: NetworkImage(_likeProvider
+  //                                                 .likeList!.data!.result!.users![index].avatar
+  //                                                 .toString()))),
+  //                                     child: Stack(
+  //                                       children: [
+  //                                         Positioned(
+  //                                             right: 0,
+  //                                             child: Image.asset(
+  //                                               'assets/fblike2x.png',
+  //                                               height: 15,
+  //                                               width: 15,
+  //                                               fit: BoxFit.cover,
+  //                                             )),
+  //                                         _likeProvider.likeList!.data!.result!.users![index]
+  //                                                     .isUnknown !=
+  //                                                 null
+  //                                             ? Center(
+  //                                                 child: Text(
+  //                                                     "+${_likeProvider.likeList!.data!.result!.anonymousCount}",
+  //                                                     style: TextStyle(
+  //                                                         fontSize: 17, color: Colors.white),
+  //                                                     textAlign: TextAlign.center),
+  //                                               )
+  //                                             : SizedBox.shrink()
+  //                                       ],
+  //                                     ));
+  //                               },
+  //                             ),
+  //                           ),
+  //                         ],
+  //                       ),
+  //               );
+  //             },
+  //           ));
+  //     },
+  //   );
+  // }
 
-  _showCommentsBottomModalSheet(BuildContext context, int postId) {
-    //print("this is new :$postId");
-    context.read<CommentProvider>().getAllCommentsApi(postId);
-    showModalBottomSheet<void>(
-      backgroundColor: Colors.transparent,
-      context: context,
-      isScrollControlled: true,
-      builder: (BuildContext context) {
-        return Padding(
-          padding: MediaQuery.of(context).viewInsets,
-          child: StatefulBuilder(
-            builder: (BuildContext context, StateSetter setModalState) {
-              return ClipPath(
-                clipper: OvalTopBorderClipper(),
-                child: Container(
-                  color: Colors.white,
-                  height: MediaQuery.of(context).size.height / 2,
-                  padding: const EdgeInsets.all(15.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      Container(
-                        height: 5,
-                        width: 30,
-                        color: Colors.grey.shade300,
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Row(
-                        children: [
-                          Container(
-                              height: 20,
-                              width: 20,
-                              child: Image.asset('assets/icons-topic.png')),
-                          Padding(padding: EdgeInsets.only(left: 10)),
-                          Consumer<CommentProvider>(
-                              builder: (context, commentProvider, _) {
-                            return commentProvider.commentList?.length != null
-                                ? Text(
-                                    "${commentProvider.commentList!.length}\tComments",
-                                    style: ThreeKmTextConstants
-                                        .tk14PXPoppinsBlackSemiBold,
-                                  )
-                                : Text(
-                                    "Comments",
-                                    style: ThreeKmTextConstants
-                                        .tk14PXPoppinsBlackSemiBold,
-                                  );
-                          })
-                        ],
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Consumer<CommentProvider>(
-                          builder: (context, commentProvider, _) {
-                        return context.read<CommentProvider>().commentList !=
-                                null
-                            ? Expanded(
-                                child: commentProvider.isGettingComments == true
-                                    ? CommentsLoadingEffects()
-                                    : ListView.builder(
-                                        physics: BouncingScrollPhysics(),
-                                        shrinkWrap: true,
-                                        primary: true,
-                                        itemCount:
-                                            commentProvider.commentList!.length,
-                                        itemBuilder: (context, commentIndex) {
-                                          return Container(
-                                            margin: EdgeInsets.all(1),
-                                            decoration: BoxDecoration(
-                                              color: Colors.white,
-                                            ),
-                                            child: ListTile(
-                                              trailing: commentProvider
-                                                          .commentList![
-                                                              commentIndex]
-                                                          .isself ==
-                                                      true
-                                                  ? IconButton(
-                                                      onPressed: () {
-                                                        context
-                                                            .read<
-                                                                CommentProvider>()
-                                                            .removeComment(
-                                                                commentProvider
-                                                                    .commentList![
-                                                                        commentIndex]
-                                                                    .commentId!,
-                                                                postId);
-                                                      },
-                                                      icon: Icon(Icons.delete))
-                                                  : SizedBox(),
-                                              leading: Container(
-                                                height: 40,
-                                                width: 40,
-                                                decoration: BoxDecoration(
-                                                    image: DecorationImage(
-                                                        image: CachedNetworkImageProvider(
-                                                            commentProvider
-                                                                .commentList![
-                                                                    commentIndex]
-                                                                .avatar
-                                                                .toString()))),
-                                              ),
-                                              title: Text(
-                                                commentProvider
-                                                    .commentList![commentIndex]
-                                                    .username
-                                                    .toString(),
-                                                style: ThreeKmTextConstants
-                                                    .tk14PXPoppinsBlackSemiBold,
-                                              ),
-                                              subtitle: Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    SizedBox(
-                                                      height: 4,
-                                                    ),
-                                                    Text(
-                                                      commentProvider
-                                                          .commentList![
-                                                              commentIndex]
-                                                          .comment
-                                                          .toString(),
-                                                      style: ThreeKmTextConstants
-                                                          .tk14PXLatoBlackMedium,
-                                                    ),
-                                                    SizedBox(
-                                                      height: 2,
-                                                    ),
-                                                    Text(
-                                                        commentProvider
-                                                            .commentList![
-                                                                commentIndex]
-                                                            .timeLapsed
-                                                            .toString(),
-                                                        style: TextStyle(
-                                                            fontStyle: FontStyle
-                                                                .italic))
-                                                  ]),
-                                            ),
-                                          );
-                                        },
-                                      ),
-                              )
-                            : SizedBox();
-                      }),
-                      Form(
-                        key: _formKey,
-                        child: Container(
-                          height: 50,
-                          width: 338,
-                          decoration: BoxDecoration(
-                              color: Colors.grey.shade200,
-                              borderRadius: BorderRadius.circular(20)),
-                          child: TextFormField(
-                            autovalidateMode:
-                                AutovalidateMode.onUserInteraction,
-                            validator: (String? value) {
-                              if (value == null) {
-                                return "  Comment cant be blank";
-                              } else if (value.isEmpty) {
-                                return "  Comment cant be blank";
-                              }
-                            },
-                            controller: _commentController,
-                            maxLines: null,
-                            keyboardType: TextInputType.multiline,
-                            decoration:
-                                InputDecoration(border: InputBorder.none),
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: InkWell(
-                          onTap: () {
-                            if (_formKey.currentState!.validate() &&
-                                context.read<CommentProvider>().isLoading ==
-                                    false) {
-                              context
-                                  .read<CommentProvider>()
-                                  .postCommentApi(
-                                      postId, _commentController.text)
-                                  .then((value) => _commentController.clear());
-                            }
-                          },
-                          child: Container(
-                            margin: EdgeInsets.only(left: 10),
-                            height: 36,
-                            width: 112,
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(18),
-                                color: ThreeKmTextConstants.blue2),
-                            child: Center(child: Consumer<CommentProvider>(
-                              builder: (context, _controller, child) {
-                                return _controller.isLoading == false
-                                    ? Text(
-                                        "Submit",
-                                        style: ThreeKmTextConstants
-                                            .tk14PXPoppinsWhiteMedium,
-                                      )
-                                    : CupertinoActivityIndicator();
-                              },
-                            )),
-                          ),
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-              );
-            },
-          ),
-        );
-      },
-    );
-  }
+  // _showCommentsBottomModalSheet(BuildContext context, int postId) {
+  //   //print("this is new :$postId");
+  //   context.read<CommentProvider>().getAllCommentsApi(postId);
+  //   showModalBottomSheet<void>(
+  //     backgroundColor: Colors.transparent,
+  //     context: context,
+  //     isScrollControlled: true,
+  //     builder: (BuildContext context) {
+  //       return Padding(
+  //         padding: MediaQuery.of(context).viewInsets,
+  //         child: StatefulBuilder(
+  //           builder: (BuildContext context, StateSetter setModalState) {
+  //             return ClipPath(
+  //               clipper: OvalTopBorderClipper(),
+  //               child: Container(
+  //                 color: Colors.white,
+  //                 height: MediaQuery.of(context).size.height / 2,
+  //                 padding: const EdgeInsets.all(15.0),
+  //                 child: Column(
+  //                   crossAxisAlignment: CrossAxisAlignment.center,
+  //                   children: <Widget>[
+  //                     Container(
+  //                       height: 5,
+  //                       width: 30,
+  //                       color: Colors.grey.shade300,
+  //                     ),
+  //                     SizedBox(
+  //                       height: 10,
+  //                     ),
+  //                     Row(
+  //                       children: [
+  //                         Container(
+  //                             height: 20, width: 20, child: Image.asset('assets/icons-topic.png')),
+  //                         Padding(padding: EdgeInsets.only(left: 10)),
+  //                         Consumer<CommentProvider>(builder: (context, commentProvider, _) {
+  //                           return commentProvider.commentList.length != null
+  //                               ? Text(
+  //                                   "${commentProvider.commentList.length}\tComments",
+  //                                   style: ThreeKmTextConstants.tk14PXPoppinsBlackSemiBold,
+  //                                 )
+  //                               : Text(
+  //                                   "Comments",
+  //                                   style: ThreeKmTextConstants.tk14PXPoppinsBlackSemiBold,
+  //                                 );
+  //                         })
+  //                       ],
+  //                     ),
+  //                     SizedBox(
+  //                       height: 10,
+  //                     ),
+  //                     Consumer<CommentProvider>(builder: (context, commentProvider, _) {
+  //                       return context.read<CommentProvider>().commentList != null
+  //                           ? Expanded(
+  //                               child: commentProvider.isGettingComments == true
+  //                                   ? CommentsLoadingEffects()
+  //                                   : ListView.builder(
+  //                                       physics: BouncingScrollPhysics(),
+  //                                       shrinkWrap: true,
+  //                                       primary: true,
+  //                                       itemCount: commentProvider.commentList!.length,
+  //                                       itemBuilder: (context, commentIndex) {
+  //                                         return Container(
+  //                                           margin: EdgeInsets.all(1),
+  //                                           decoration: BoxDecoration(
+  //                                             color: Colors.white,
+  //                                           ),
+  //                                           child: ListTile(
+  //                                             trailing: commentProvider
+  //                                                         .commentList![commentIndex].isself ==
+  //                                                     true
+  //                                                 ? IconButton(
+  //                                                     onPressed: () {
+  //                                                       context
+  //                                                           .read<CommentProvider>()
+  //                                                           .removeComment(
+  //                                                               commentProvider
+  //                                                                   .commentList![commentIndex]
+  //                                                                   .commentId!,
+  //                                                               postId);
+  //                                                     },
+  //                                                     icon: Icon(Icons.delete))
+  //                                                 : SizedBox(),
+  //                                             leading: Container(
+  //                                               height: 40,
+  //                                               width: 40,
+  //                                               decoration: BoxDecoration(
+  //                                                   image: DecorationImage(
+  //                                                       image: CachedNetworkImageProvider(
+  //                                                           commentProvider
+  //                                                               .commentList![commentIndex].avatar
+  //                                                               .toString()))),
+  //                                             ),
+  //                                             title: Text(
+  //                                               commentProvider.commentList![commentIndex].username
+  //                                                   .toString(),
+  //                                               style:
+  //                                                   ThreeKmTextConstants.tk14PXPoppinsBlackSemiBold,
+  //                                             ),
+  //                                             subtitle: Column(
+  //                                                 crossAxisAlignment: CrossAxisAlignment.start,
+  //                                                 children: [
+  //                                                   SizedBox(
+  //                                                     height: 4,
+  //                                                   ),
+  //                                                   Text(
+  //                                                     commentProvider
+  //                                                         .commentList![commentIndex].comment
+  //                                                         .toString(),
+  //                                                     style: ThreeKmTextConstants
+  //                                                         .tk14PXLatoBlackMedium,
+  //                                                   ),
+  //                                                   SizedBox(
+  //                                                     height: 2,
+  //                                                   ),
+  //                                                   Text(
+  //                                                       commentProvider
+  //                                                           .commentList![commentIndex].timeLapsed
+  //                                                           .toString(),
+  //                                                       style:
+  //                                                           TextStyle(fontStyle: FontStyle.italic))
+  //                                                 ]),
+  //                                           ),
+  //                                         );
+  //                                       },
+  //                                     ),
+  //                             )
+  //                           : SizedBox();
+  //                     }),
+  //                     Form(
+  //                       key: _formKey,
+  //                       child: Container(
+  //                         height: 50,
+  //                         width: 338,
+  //                         decoration: BoxDecoration(
+  //                             color: Colors.grey.shade200, borderRadius: BorderRadius.circular(20)),
+  //                         child: TextFormField(
+  //                           autovalidateMode: AutovalidateMode.onUserInteraction,
+  //                           validator: (String? value) {
+  //                             if (value == null) {
+  //                               return "  Comment cant be blank";
+  //                             } else if (value.isEmpty) {
+  //                               return "  Comment cant be blank";
+  //                             }
+  //                           },
+  //                           controller: _commentController,
+  //                           maxLines: null,
+  //                           keyboardType: TextInputType.multiline,
+  //                           decoration: InputDecoration(border: InputBorder.none),
+  //                         ),
+  //                       ),
+  //                     ),
+  //                     SizedBox(
+  //                       height: 10,
+  //                     ),
+  //                     Align(
+  //                       alignment: Alignment.centerLeft,
+  //                       child: InkWell(
+  //                         onTap: () {
+  //                           if (_formKey.currentState!.validate() &&
+  //                               context.read<CommentProvider>().isLoading == false) {
+  //                             context
+  //                                 .read<CommentProvider>()
+  //                                 .postCommentApi(postId, _commentController.text)
+  //                                 .then((value) => _commentController.clear());
+  //                           }
+  //                         },
+  //                         child: Container(
+  //                           margin: EdgeInsets.only(left: 10),
+  //                           height: 36,
+  //                           width: 112,
+  //                           decoration: BoxDecoration(
+  //                               borderRadius: BorderRadius.circular(18),
+  //                               color: ThreeKmTextConstants.blue2),
+  //                           child: Center(child: Consumer<CommentProvider>(
+  //                             builder: (context, _controller, child) {
+  //                               return _controller.isLoading == false
+  //                                   ? Text(
+  //                                       "Submit",
+  //                                       style: ThreeKmTextConstants.tk14PXPoppinsWhiteMedium,
+  //                                     )
+  //                                   : CupertinoActivityIndicator();
+  //                             },
+  //                           )),
+  //                         ),
+  //                       ),
+  //                     )
+  //                   ],
+  //                 ),
+  //               ),
+  //             );
+  //           },
+  //         ),
+  //       );
+  //     },
+  //   );
+  // }
 
   PopupMenuButton showPopMenu(String postID, newsData) {
     return PopupMenuButton(
@@ -1874,9 +1347,10 @@ class _NewsPostCardState extends State<NewsPostCard>
             title: Text('Copy link'),
             onTap: () {
               Clipboard.setData(ClipboardData(
-                      text: "https://3km.in/post-detail?id=$postID&lang=en"))
+                      text:
+                          "${slugUrl(headLine: newsData.slugHeadline ?? newsData.submittedHeadline, postId: postID)}"))
                   .then((value) => CustomSnackBar(
-                      context, Text("Link has been coppied to clipboard")))
+                      context, Text("Link has been copied to clipboard")))
                   .whenComplete(() => Navigator.pop(context));
             },
           ),
@@ -1891,7 +1365,7 @@ class _NewsPostCardState extends State<NewsPostCard>
               handleShare(
                   newsData.author!.name.toString(),
                   newsData.author!.image.toString(),
-                  newsData.submittedHeadline.toString(),
+                  newsData.slugHeadline ?? newsData.submittedHeadline,
                   imgUrl,
                   newsData.createdDate,
                   newsData.postId.toString());

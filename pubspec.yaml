@@ -6,7 +6,7 @@ description: A NewsApp With Ecommerce.
 publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 5.0.5+30010
+version: 5.2.2+30033
 
 environment:
   sdk: ">=2.12.0 <3.0.0"
@@ -31,6 +31,7 @@ dependencies:
   intl:
   provider:
   device_info: ^2.0.2
+  flutter_feed_reaction: ^0.0.3
   lottie: ^1.2.1
   flutter_feather_icons:
   carousel_slider: ^4.0.0
@@ -50,8 +51,10 @@ dependencies:
   image_editor: ^1.0.2
   hive: ^2.0.5
   timeago: ^3.1.0
-  flutter_zoom_drawer: ^2.1.2
-  hidden_drawer_menu: ^3.0.1
+  mime: 
+  dio: ^4.0.6
+  #flutter_zoom_drawer: ^2.1.2
+  # hidden_drawer_menu: ^3.0.1
   light_compressor: ^1.2.2
   sliding_up_panel: ^2.0.0+1
   #firebase
@@ -62,6 +65,7 @@ dependencies:
   #Location
   location: ^4.3.0
   google_maps_flutter: ^2.1.1
+  flutter_google_places: ^0.3.0
   geolocator:
   google_api_headers: ^1.1.1
   google_maps_webservice: ^0.0.20-nullsafety.2
@@ -89,6 +93,15 @@ dependencies:
   dotted_border:
   flutter_rating_bar:
   timelines:
+  positioned_tap_detector_2: ^1.0.4
+  webview_flutter:
+  flutter_html:
+  lazy_load_scrollview: ^1.3.0
+  rive: ^0.9.0
+  html: ^0.15.0
+
+  # lazy_load_scrollview: 
+
 
 dev_dependencies:
   flutter_test:
@@ -115,6 +128,13 @@ flutter:
     - i18n/mr.json
     - assets/shopImg/
     - assets/BusinessesImg/
+    - assets/dayzero/
+    - assets/json/
+    - assets/reactions/
+    - assets/images/
+    - assets/emojies/
+    - assets/lottie/
+
     #- buzzer.mp3
 
   # An image asset can refer to one or more resolution-specific "variants", see

@@ -10,15 +10,20 @@ import 'package:flutter/services.dart';
 import 'package:hive/hive.dart';
 import 'package:provider/src/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:threekm/Models/shopModel/restaurants_model.dart';
 import 'package:threekm/UI/businesses/businesses_detail.dart';
 import 'package:threekm/UI/main/News/PostView.dart';
+
 import 'package:threekm/UI/main/News/poll_page.dart';
 import 'package:threekm/UI/main/navigation.dart';
 import 'package:threekm/UI/Auth/signup/sign_up.dart';
 import 'package:threekm/UI/shop/product/product_details.dart';
 import 'package:threekm/UI/shop/product_listing.dart';
+import 'package:threekm/UI/shop/restaurants/biryani_restro.dart';
+import 'package:threekm/UI/shop/restaurants/restaurants_menu.dart';
 import 'package:threekm/main.dart';
 import 'package:threekm/providers/FCM/fcm_sendToken_Provider.dart';
+import 'package:threekm/providers/Global/logged_in_or_not.dart';
 import 'package:uni_links/uni_links.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
@@ -36,9 +41,11 @@ class _SplashScreenState extends State<SplashScreen> {
 
   //ScreenshotController screenshotController = ScreenshotController();
   getDeviceId() async {
+    SharedPreferences _prefs = await SharedPreferences.getInstance();
     DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
     if (Platform.isAndroid) {
       await deviceInfo.androidInfo.then((value) async {
+        _prefs.setString("deviceID", value.androidId);
         String requestJson = json.encode({
           "uuid": value.id,
           "platform": "Android",
@@ -52,6 +59,7 @@ class _SplashScreenState extends State<SplashScreen> {
       });
     } else if (Platform.isIOS) {
       await deviceInfo.iosInfo.then((value) async {
+        _prefs.setString("deviceID", value.identifierForVendor);
         String requestJson = json.encode({
           "uuid": "23423423423423423423",
           "platform": "iOS",
@@ -71,6 +79,7 @@ class _SplashScreenState extends State<SplashScreen> {
     Future.microtask(() {
       getDeviceId();
       openBox();
+      context.read<CheckLoginProvider>().getAuthStatus();
     });
     super.initState();
     handleDeepLink();
@@ -112,7 +121,9 @@ class _SplashScreenState extends State<SplashScreen> {
                 playSound: true,
               ),
             ),
-            payload: message.data["post_id"]);
+            payload: message.data["poll_id"] != null
+                ? 'poll_id=${message.data["poll_id"]}'
+                : message.data["post_id"]);
       }
     });
 
@@ -187,13 +198,36 @@ class _SplashScreenState extends State<SplashScreen> {
               context,
               MaterialPageRoute(builder: (_) => TabBarNavigation()),
               (route) => false));
+        } else if (initialLink.contains("/food/restaurant/menu/")) {
+          await Hive.openBox('restroCartBox').whenComplete(() {
+            Navigator.push(context, MaterialPageRoute(builder: (_) {
+              return RestaurantMenu(
+                  data: Creators(
+                      creatorId: int.parse(initialLink.split('/').last))
+                  //{creatorId: "${int.parse(initialLink.split('/').last)}"},
+                  );
+            })).then((value) => Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (_) => TabBarNavigation()),
+                (route) => false));
+          });
+        } else if (initialLink.contains("/food/restaurant/list/")) {
+          await Hive.openBox('restroCartBox').whenComplete(() {
+            Navigator.push(context, MaterialPageRoute(builder: (_) {
+              return BiryaniRestro();
+            })).then((value) => Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (_) => TabBarNavigation()),
+                (route) => false));
+          });
         } else {
           Navigator.push(context,
               MaterialPageRoute(builder: (BuildContext context) {
-            return Postview(
-                postId: initialLink
-                    .substring(30, initialLink.length)
-                    .replaceAll('&lang=en', ''));
+            return PostView(postId: "${int.parse(initialLink.split('/').last)}"
+                // initialLink
+                //     .substring(30, initialLink.length)
+                //     .replaceAll('&lang=en', '')
+                );
           })).then((value) => Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(builder: (_) => TabBarNavigation()),

@@ -23,11 +23,15 @@ class HomefirstProvider extends ChangeNotifier {
       log("token is $token");
       try {
         //showLoading();
-        _state = 'loading';
+        if (_homeModel == null) {
+          _state = 'loading';
+        }
         final response = await _apiProvider.post(getHomePage, requestJson);
         if (response != null) {
           // hideLoading();
-          _state = 'loaded';
+          if (_homeModel == null) {
+            _state = 'loaded';
+          }
           _homeModel = NewsHomeModel.fromJson(response);
           _prefs.remove("homeModel");
           String offlineStringObj = json.encode(response);

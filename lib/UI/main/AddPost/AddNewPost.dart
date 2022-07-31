@@ -1,25 +1,20 @@
 import 'dart:io';
-import 'dart:ui';
+
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_webservice/directions.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:threekm/Custom_library/GooleMapsWidget/src/place_picker.dart';
+import 'package:provider/provider.dart';
 import 'package:threekm/UI/main/AddPost/ImageEdit/editImage.dart';
 import 'package:threekm/UI/main/AddPost/utils/FileUtils.dart';
 import 'package:threekm/UI/main/AddPost/utils/uploadPost.dart';
-import 'package:threekm/UI/main/AddPost/utils/video.dart';
-import 'package:threekm/UI/main/News/NewsList.dart';
-import 'package:threekm/commenwidgets/CustomSnakBar.dart';
 import 'package:threekm/providers/Location/locattion_Provider.dart';
 import 'package:threekm/providers/main/AddPost_Provider.dart';
-import 'package:threekm/utils/api_paths.dart';
 import 'package:threekm/utils/utils.dart';
-import 'package:provider/provider.dart';
+
+import 'add_post_location.dart';
 
 class AddNewPost extends StatefulWidget {
   //final File imageFile;
@@ -30,502 +25,408 @@ class AddNewPost extends StatefulWidget {
 }
 
 class _AddNewPostState extends State<AddNewPost> {
-  TextEditingController _tagscontroller = TextEditingController();
+  TextEditingController _tagsController = TextEditingController();
   TextEditingController _storyController = TextEditingController();
   TextEditingController _headLineController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   final ImagePicker _imagePicker = ImagePicker();
 
-  Geometry? _geometry;
-  var padding = EdgeInsets.only(
-    right: 18,
-    left: 18,
-  );
-
-  int headlineCount = 0;
-  int descriptionCount = 0;
-  String? _selecetdAddress;
-
   @override
   void initState() {
-    Future.microtask(() => context.read<AddPostProvider>());
     super.initState();
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      final addPost = Provider.of<AddPostProvider>(context, listen: false);
+      final location = Provider.of<LocationProvider>(context, listen: false);
+      addPost.selectedAddress = location.AddressFromCordinate;
+      addPost.geometry = Geometry(
+          location: Location(
+              lat: location.getLatitude!, lng: location.getLongitude!));
+    });
   }
+
+  @override
+  void dispose() {
+    _tagsController.dispose();
+    _storyController.dispose();
+    _headLineController.dispose();
+    super.dispose();
+  }
+
+  TextStyle get _titleStyle =>
+      GoogleFonts.poppins(fontSize: 14, color: const Color(0xFF7c7c7c));
 
   @override
   Widget build(BuildContext context) {
     final imageList = context.watch<AddPostProvider>();
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          "NEW POST",
-          style: ThreeKmTextConstants.tk16PXPoppinsWhiteBold,
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).unfocus();
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(
+            "Add Post",
+            style: ThreeKmTextConstants.appBarTitleTextStyle,
+          ),
+          titleSpacing: 0,
+          actions: [_postUploadButton(context), SizedBox(width: 6)],
+          backgroundColor: Colors.white,
+          elevation: 0.5,
+          foregroundColor: Colors.black,
         ),
-        actions: [
-          TextButton(
-              onPressed: () {
-                if (_headLineController.text.isNotEmpty) {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => PostUploadPage(
-                                Title: _headLineController.text,
-                                Story: _storyController.text,
-                                address: _selecetdAddress ?? "",
-                                lat: _geometry?.location.lat,
-                                long: _geometry?.location.lng,
-                              )));
-                } else {
-                  // CustomSnackBar(
-                  //     context, Text("Please add atlest Headline of the Post"));
-                  Fluttertoast.showToast(
-                      msg: "Please add At least Headline of the Post");
-                }
-                // if (_formKey.currentState!.validate()) {
-                //   if (_geometry?.location.lat != null) {
-                //     context
-                //         .read<AddPostProvider>()
-                //         .uploadPng(
-                //             context,
-                //             _headLineController.text,
-                //             _storyController.text,
-                //             _selecetdAddress ?? "",
-                //             _geometry!.location.lat,
-                //             _geometry!.location.lng)
-                //         .whenComplete(() {
-                //       Navigator.pushAndRemoveUntil(
-                //           context,
-                //           MaterialPageRoute(
-                //               builder: (context) => TabBarNavigation(
-                //                     redirectedFromPost: true,
-                //                   )),
-                //           (route) => false);
-                //     });
-                //   } else {
-                //     CustomSnackBar(context, Text("Please Select Location"));
-                //   }
-                // }
-              },
-              child: Text(
-                "Post",
-                style: ThreeKmTextConstants.tk14PXPoppinsWhiteMedium,
-              ))
-        ],
-        backgroundColor: Color(0xff0F0F2D),
+        body: Form(
+          key: _formKey,
+          child: ListView(
+            physics: BouncingScrollPhysics(),
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            shrinkWrap: true,
+            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+            children: [
+              SizedBox(height: 20),
+              locationSection(context),
+              Divider(color: Color(0xFFa7abad).withOpacity(0.5), thickness: 1),
+              SizedBox(height: 20),
+              buildMediaHeading,
+              SizedBox(height: 2),
+              buildImageGrid(imageList),
+              SizedBox(height: 4),
+              _addPhotosVideosButton(),
+              SizedBox(height: 30),
+              builddescriptionHeading,
+              buildDescriptionField(),
+              SizedBox(height: 20),
+              buildPostTitleHeading,
+              buildPostTitleField(),
+              SizedBox(height: 20),
+              buildTagsHeading,
+              SizedBox(height: 6),
+              buildTags,
+              // SizedBox(height: 16),
+              Divider(color: Color(0xff7c7c7c).withOpacity(0.5), thickness: 1),
+            ],
+          ),
+        ),
       ),
-      body: Container(
-        height: MediaQuery.of(context).size.height,
-        width: MediaQuery.of(context).size.width,
-        child: SingleChildScrollView(
-          child: Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Space Top of headline
-                SizedBox(
-                  height: 18,
-                ),
-                // Headline
-                buildHeadline,
-                // Space top of headline input
-                SizedBox(
-                  height: 7,
-                ),
-                // Headline input
-                Container(
-                  padding: padding,
-                  height: 52,
-                  child: TextFormField(
-                    validator: (String? story) {
-                      if (story == null || story == "" || story == " ") {
-                        return "Please Add Headline";
-                      }
-                    },
-                    controller: _headLineController,
-                    maxLines: 1,
-                    minLines: null,
-                    expands: false,
-                    maxLength: 100,
-                    textAlignVertical: TextAlignVertical.top,
-                    maxLengthEnforcement: MaxLengthEnforcement.enforced,
-                    buildCounter: (context,
-                        {required currentLength,
-                        required isFocused,
-                        maxLength}) {
-                      WidgetsBinding.instance!
-                          .addPostFrameCallback((timeStamp) {
-                        setState(() {
-                          headlineCount = currentLength;
-                        });
-                      });
-                      return Container(
-                        height: 1,
-                      );
-                    },
-                    style: ThreeKmTextConstants.tk16PXLatoBlackRegular.copyWith(
-                      color: Color(0xFF0F0F2D),
-                      fontWeight: FontWeight.w500,
-                    ),
-                    decoration: InputDecoration(
-                      border: InputBorder.none,
-                    ),
-                  ),
-                ),
-                // Divider
-                SizedBox(
-                  height: 5,
-                ),
-                Divider(
-                  color: Color(0xFFD5D5D5),
-                  thickness: 0.5,
-                ),
-                // Space top of description
-                SizedBox(
-                  height: 24,
-                ),
-                // Description
-                buildDescription,
-                // Space top of description input
-                SizedBox(
-                  height: 8,
-                ),
-                // Description input
-                Container(
-                  padding: padding,
-                  height: 135,
-                  child: TextFormField(
-                    validator: (String? story) {
-                      if (story == null || story == "" || story == " ") {
-                        return "Please Add Story";
-                      }
-                    },
-                    controller: _storyController,
-                    maxLines: null,
-                    minLines: null,
-                    expands: true,
-                    //maxLength: 2500,
-                    maxLengthEnforcement: MaxLengthEnforcement.enforced,
-                    buildCounter: (context,
-                        {required currentLength,
-                        required isFocused,
-                        maxLength}) {
-                      WidgetsBinding.instance!
-                          .addPostFrameCallback((timeStamp) {
-                        // setState(() {
-                        //   descriptionCount = currentLength;
-                        // });
-                      });
-                      Container(
-                        height: 1,
-                      );
-                    },
-                    style: ThreeKmTextConstants.tk16PXLatoBlackRegular.copyWith(
-                      color: Color(0xFF0F0F2D),
-                      fontWeight: FontWeight.w500,
-                    ),
-                    decoration: InputDecoration(
-                      border: InputBorder.none,
-                    ),
-                  ),
-                ),
-                // Spaced before divider
-                SizedBox(
-                  height: 32,
-                ),
-                // Divider
-                Divider(
-                  color: Color(0xFFD5D5D5),
-                  thickness: 0.5,
-                ),
-                // Spacer for tags
-                SizedBox(
-                  height: 16,
-                ),
-                // Tags
-                Container(
-                  padding: padding,
-                  child: Text(
-                    "Tags".toUpperCase(),
-                    style:
-                        ThreeKmTextConstants.tk12PXPoppinsWhiteRegular.copyWith(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                      color: Color(0xFF0F0F2D),
-                    ),
-                  ),
-                ),
-                // Spacer after tags
-                SizedBox(
-                  height: 12,
-                ),
-                // Tag List
-                buildTags,
-                // Spacer for divider on location
-                SizedBox(
-                  height: 16,
-                ),
-                // Divider
-                Divider(
-                  color: Color(0xFFD5D5D5),
-                  thickness: 0.5,
-                ),
-                // Location
-                Builder(
-                  builder: (_controller) => Container(
-                    padding: padding,
-                    child: Row(
+    );
+  }
+
+  Center _postUploadButton(BuildContext context) {
+    return Center(
+      child: Consumer<AddPostProvider>(builder: (_, provider, __) {
+        return ElevatedButton(
+          onPressed: provider.isCompressionOngoing ||
+                  (provider.description.trim().isEmpty &&
+                      provider.getMoreImages.isEmpty)
+              ? null
+              : () {
+                  FocusScope.of(context).unfocus();
+                  if (_formKey.currentState?.validate() ?? false) {
+                    if (provider.selectedAddress == null) {
+                      Fluttertoast.showToast(msg: "Location required");
+                      return;
+                    }
+                    if (!(_storyController.text.trim().length > 0 ||
+                        provider.getMoreImages.isNotEmpty)) {
+                      Fluttertoast.showToast(
+                          msg:
+                              "Add either a description or upload image/video");
+                      return;
+                    }
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => PostUploadPage(
+                                  Title: _headLineController.text,
+                                  Story: provider.description,
+                                  address: provider.selectedAddress ?? "",
+                                  lat: provider.geometry?.location.lat,
+                                  long: provider.geometry?.location.lng,
+                                )));
+                  }
+                },
+          child: Text(
+            "Post",
+            style:
+                GoogleFonts.poppins(fontWeight: FontWeight.w500, fontSize: 16),
+          ),
+          style: ElevatedButton.styleFrom(
+            primary: provider.selectedAddress != null
+                ? const Color(0xff3E7EFF)
+                : const Color(0xffF1F2F6),
+            elevation: 0,
+            shape: const StadiumBorder(),
+            padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+          ),
+        );
+      }),
+    );
+  }
+
+  TextFormField buildDescriptionField() {
+    final provider = context.read<AddPostProvider>();
+    return TextFormField(
+      autovalidateMode: AutovalidateMode.onUserInteraction,
+      textAlignVertical: TextAlignVertical.top,
+      controller: _storyController,
+      onChanged: (String text) {
+        provider.description = text;
+      },
+      maxLines: null,
+      // minLines: 2,
+      maxLength: 2000,
+      style: ThreeKmTextConstants.tk16PXLatoBlackRegular.copyWith(
+        color: Color(0xFF0F0F2D),
+        fontWeight: FontWeight.w400,
+      ),
+      decoration:
+          buildInputDecoration.copyWith(hintText: "Enter your text here"),
+    );
+  }
+
+  Text get builddescriptionHeading => Text("Description", style: _titleStyle);
+
+  Text get buildMediaHeading => Text("Media", style: _titleStyle);
+
+  TextFormField buildPostTitleField() {
+    return TextFormField(
+      controller: _headLineController,
+      maxLength: 100,
+      textAlignVertical: TextAlignVertical.top,
+      // maxLengthEnforcement: MaxLengthEnforcement.enforced,
+      style: ThreeKmTextConstants.tk16PXLatoBlackRegular.copyWith(
+        color: Color(0xFF0F0F2D),
+        fontWeight: FontWeight.w400,
+      ),
+      minLines: 1,
+      maxLines: null,
+      decoration:
+          buildInputDecoration.copyWith(hintText: "Enter your Headline/Title"),
+    );
+  }
+
+  Column get buildPostTitleHeading {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Row(mainAxisSize: MainAxisSize.min, children: [
+          Text("Headline/Title ", style: _titleStyle),
+          Text("(optional)", style: _titleStyle.copyWith(fontSize: 12)),
+        ]),
+        SizedBox(height: 2),
+        Text(
+          "Adding a Headline will help your post to stand out",
+          style: _titleStyle.copyWith(
+              fontSize: 11, color: ThreeKmTextConstants.grey2),
+        ),
+      ],
+    );
+  }
+
+  Consumer<AddPostProvider> locationSection(BuildContext context) {
+    return Consumer<AddPostProvider>(
+      builder: (_, provider, __) {
+        addOrChangeLocation() async {
+          FocusScope.of(context).unfocus();
+          if (context.read<LocationProvider>().ispermitionGranted) {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => AddPostLocation()));
+          }
+        }
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _locationFieldTitle,
+            SizedBox(height: 10),
+            Text(
+              provider.selectedAddress ?? "",
+              style: GoogleFonts.poppins(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            SizedBox(width: 10),
+            InkWell(
+              onTap: addOrChangeLocation,
+              child: Text(
+                provider.selectedAddress == null
+                    ? "Add Post location"
+                    : "Change Location",
+                style: GoogleFonts.poppins(
+                    fontWeight: FontWeight.w600,
+                    color: const Color(0xFF3E7EFF),
+                    fontSize: 16),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Consumer<AddPostProvider> buildImageGrid(AddPostProvider imageList) {
+    return Consumer<AddPostProvider>(builder: (context, provider, _) {
+      return Visibility(
+        visible: provider.getMoreImages.isNotEmpty ||
+            (provider.getMoreImages.isEmpty && provider.isCompressionOngoing),
+        child: GridView.builder(
+            physics: NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3, mainAxisSpacing: 4, crossAxisSpacing: 4),
+            itemCount: imageList.getMoreImages.length +
+                (provider.isCompressionOngoing ? 1 : 0),
+            itemBuilder: (BuildContext context, int index) {
+              return index == imageList.getMoreImages.length
+                  ?
+                  // Placeholder item during video processing event
+                  provider.isCompressionOngoing
+                      ? StreamBuilder<double>(
+                          stream: provider.lightCompressor?.onProgressUpdated,
+                          builder: (context, AsyncSnapshot<dynamic> snapshot) {
+                            return Stack(children: [
+                              Visibility(
+                                visible: provider.isCompressionOngoing,
+                                child: Positioned.fill(
+                                  child: Container(
+                                    height: 82,
+                                    width: 82,
+                                    padding: EdgeInsets.only(left: 5, top: 5),
+                                    clipBehavior: Clip.hardEdge,
+                                    decoration: BoxDecoration(
+                                        color: ThreeKmTextConstants.black,
+                                        borderRadius: BorderRadius.circular(8)),
+                                    alignment: Alignment.topLeft,
+                                    child: Icon(
+                                      Icons.videocam,
+                                      size: 20,
+                                      color: ThreeKmTextConstants.white,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Center(
+                                  child: Container(
+                                      height: 55,
+                                      width: 55,
+                                      child: CircularProgressIndicator(
+                                          strokeWidth: 6,
+                                          backgroundColor:
+                                              ThreeKmTextConstants.white,
+                                          color: ThreeKmTextConstants.blue2,
+                                          value: snapshot.data / 100))),
+                              Center(
+                                  child: Text(
+                                      '${snapshot.data.toStringAsFixed(0)}%',
+                                      style: TextStyle(
+                                          color: ThreeKmTextConstants.white,
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.w600)))
+                            ]);
+                          })
+                      : SizedBox.shrink()
+                  : Stack(
                       children: [
-                        Container(
-                          height: 52,
-                          width: 52,
-                          margin: EdgeInsets.symmetric(vertical: 16),
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Color(0xFFF4F3F8),
-                          ),
-                          child: Center(
-                            child: Icon(
-                              Icons.place_rounded,
-                              size: 40,
-                            ),
-                          ),
-                        ),
-                        SizedBox(width: 16),
-                        Expanded(
+                        Positioned.fill(
                           child: Container(
-                            padding: EdgeInsets.symmetric(
-                                vertical: 8, horizontal: 12),
-                            child: Text(
-                              "${_selecetdAddress ?? "Unspecified location"}"
-                                  .toUpperCase(),
-                              style: ThreeKmTextConstants
-                                  .tk12PXPoppinsWhiteRegular
-                                  .copyWith(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                                color: Color(0xFF0F0F2D),
-                              ),
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ),
-                        SizedBox(width: 16),
-                        InkWell(
-                          onTap: () async {
-                            Future.delayed(Duration.zero, () {
-                              context
-                                  .read<LocationProvider>()
-                                  .getLocation()
-                                  .whenComplete(() {
-                                final _locationProvider = context
-                                    .read<LocationProvider>()
-                                    .getlocationData;
-                                final kInitialPosition = LatLng(
-                                    _locationProvider!.latitude!,
-                                    _locationProvider.longitude!);
-                                if (_locationProvider != null) {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => PlacePicker(
-                                          apiKey: GMap_Api_Key,
-                                          // initialMapType: MapType.satellite,
-                                          onPlacePicked: (result) {
-                                            //print(result.formattedAddress);
-                                            setState(() {
-                                              _selecetdAddress =
-                                                  result.formattedAddress;
-                                              print(result.geometry!.toJson());
-                                              _geometry = result.geometry;
-                                            });
-                                            Navigator.of(context).pop();
-                                          },
-                                          initialPosition: kInitialPosition,
-                                          useCurrentLocation: true,
-                                          selectInitialPosition: true,
-                                          usePinPointingSearch: true,
-                                          usePlaceDetailSearch: true,
-                                        ),
-                                      ));
-                                }
-                              });
-                            });
-                            FocusScope.of(context).unfocus();
-                            // await Navigator.of(context)
-                            //     .pushNamed(LocationBasePage.path);
-                          },
-                          child: Container(
-                            padding: EdgeInsets.symmetric(
-                                vertical: 8, horizontal: 12),
+                            height: 82,
+                            width: 82,
+                            clipBehavior: Clip.hardEdge,
                             decoration: BoxDecoration(
-                              color: Color(0xFFF4F3F8),
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Center(
-                              child: Text(
-                                "Change",
-                                style: ThreeKmTextConstants
-                                    .tk12PXPoppinsWhiteRegular
-                                    .copyWith(
-                                        fontWeight: FontWeight.w900,
-                                        color: Color(0xFF3E7EFF)),
-                              ),
-                            ),
+                                color: const Color(0xffD9D9D9),
+                                borderRadius: BorderRadius.circular(8)),
+                            child: imageList.getMoreImages[index].path
+                                    .contains("mp4")
+                                ? Image.asset(
+                                    "assets/ring_icon.png",
+                                    fit: BoxFit.cover,
+                                  )
+                                : Image.file(imageList.getMoreImages[index],
+                                    fit: BoxFit.cover),
                           ),
+                        ),
+                        Positioned(
+                          right: 0,
+                          top: 0,
+                          child: Container(
+                              height: 20,
+                              width: 20,
+                              // margin: EdgeInsets.all(20),
+                              decoration: BoxDecoration(
+                                  color: Color(0xffFF5858),
+                                  borderRadius: BorderRadius.circular(8)),
+                              child: InkWell(
+                                onTap: () {
+                                  context
+                                      .read<AddPostProvider>()
+                                      .removeImages(index);
+                                },
+                                child: Icon(
+                                  FeatherIcons.x,
+                                  size: 12,
+                                  color: Colors.white,
+                                ),
+                              )),
                         ),
                       ],
-                    ),
-                  ),
-                ),
-                // Divider
-                Divider(
-                  color: Color(0xFFD5D5D5),
-                  thickness: 0.5,
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                buildFooter(imageList),
-                SizedBox(
-                  height: 10,
-                ),
-                imageList.getMoreImages.length > 0
-                    ? Consumer<AddPostProvider>(
-                        builder: (context, controller, _) {
-                        return Container(
-                          // height: 400,
-                          // width: MediaQuery.of(context).size.width,
-                          child: GridView.builder(
-                              shrinkWrap: true,
-                              gridDelegate:
-                                  SliverGridDelegateWithFixedCrossAxisCount(
-                                      crossAxisCount: 3),
-                              itemCount: imageList.getMoreImages.length,
-                              itemBuilder: (BuildContext context, int index) {
-                                return Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Container(
-                                      height: 80,
-                                      width: 80,
-                                      child: Stack(
-                                        alignment: Alignment.center,
-                                        children: [
-                                          Container(
-                                            height: 80,
-                                            width: 80,
-                                            color: Color(0xffF4F3F8),
-                                            child: imageList
-                                                    .getMoreImages[index].path
-                                                    .contains("mp4")
-                                                ? Image.asset(
-                                                    "assets/ring_icon.png")
-                                                : Image.file(
-                                                    imageList
-                                                        .getMoreImages[index],
-                                                    fit: BoxFit.contain),
-                                            //
-                                          ),
-                                          Positioned(
-                                            right: -15,
-                                            top: -15,
-                                            child: Container(
-                                                height: 20,
-                                                width: 20,
-                                                margin: EdgeInsets.all(20),
-                                                decoration: BoxDecoration(
-                                                    color: Color(0xffFF5858),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            8)),
-                                                child: InkWell(
-                                                  onTap: () {
-                                                    context
-                                                        .read<AddPostProvider>()
-                                                        .removeImages(index);
-                                                  },
-                                                  child: Icon(
-                                                    FeatherIcons.x,
-                                                    size: 12,
-                                                    color: Colors.white,
-                                                  ),
-                                                )),
-                                          ),
-                                        ],
-                                      )),
-                                );
-                              }),
-                        );
-                      })
-                    : const SizedBox.shrink(),
+                    );
+            }),
+      );
+    });
+  }
 
-                SizedBox(
-                  height: 30,
-                )
-              ],
-            ),
-          ),
+  Row get _locationFieldTitle {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(
+          Icons.location_on_rounded,
+          size: 28,
+          color: const Color(0xFF7c7c7c).withOpacity(0.5),
         ),
-      ),
+        SizedBox(width: 5),
+        Text(
+          "Post Location ",
+          style: _titleStyle,
+        ),
+        Text(
+          "(required)",
+          style: _titleStyle.copyWith(fontSize: 12),
+        ),
+      ],
     );
   }
 
-  Widget get buildHeadline {
-    return Container(
-      padding: padding,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            "Headline".toUpperCase(),
-            style: GoogleFonts.poppins(
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-              color: headlineCount > 0 ? Color(0xFF979EA4) : Color(0xFF0F0F2D),
-            ),
-          ),
-          Text(
-            "($headlineCount/100)",
-            style: ThreeKmTextConstants.tk12PXPoppinsWhiteRegular.copyWith(
-              fontSize: 10.5,
-              fontWeight: FontWeight.w700,
-              color: Color(0xFF979EA4),
-            ),
-          ),
-        ],
-      ),
-    );
+  InputDecoration get buildInputDecoration {
+    return InputDecoration(
+        border: _underlineInputBorder,
+        focusedErrorBorder: _underlineInputBorder,
+        focusedBorder: _underlineInputBorder,
+        enabledBorder: _underlineInputBorder);
   }
 
-  Widget get buildDescription {
-    return Container(
-      padding: padding,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            "Description".toUpperCase(),
-            style: GoogleFonts.poppins(
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-              color:
-                  descriptionCount > 0 ? Color(0xFF979EA4) : Color(0xFF0F0F2D),
+  UnderlineInputBorder get _underlineInputBorder => UnderlineInputBorder(
+      borderSide: BorderSide(color: const Color(0xff7c7c7c)));
+
+  Widget get buildTagsHeading => Container(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Row(mainAxisSize: MainAxisSize.min, children: [
+              Text("Tags ", style: _titleStyle),
+              Text("(optional)", style: _titleStyle.copyWith(fontSize: 12))
+            ]),
+            SizedBox(height: 2),
+            Text(
+              "Adding tags will help your post reach more people",
+              style: _titleStyle.copyWith(
+                  fontSize: 11, color: ThreeKmTextConstants.grey2),
             ),
-          ),
-          Text(
-            "",
-            //"($descriptionCount/250)",
-            style: ThreeKmTextConstants.tk12PXPoppinsWhiteRegular.copyWith(
-              fontSize: 10.5,
-              fontWeight: FontWeight.w700,
-              color: Color(0xFF979EA4),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+          ],
+        ),
+      );
 
   // Widget get buildFooter {
   //   return Positioned(
@@ -580,191 +481,104 @@ class _AddNewPostState extends State<AddNewPost> {
   //   );
   // }
 
-  Widget buildFooter(AddPostProvider imageList) {
-    return Container(
-      height: 130,
-      width: MediaQuery.of(context).size.width,
-      padding: EdgeInsets.symmetric(vertical: 16, horizontal: 18),
-      color: Color(0xFFF4F3F8),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(
-                Icons.grid_view,
-                size: 24,
-              ),
-              SizedBox(
-                width: 8,
-              ),
-              Expanded(
-                child: Container(
-                  margin: EdgeInsets.only(top: 2),
-                  child: Text(
-                    imageList.getMoreImages.length > 0
-                        ? "UPLOADED MEDIA".toUpperCase()
-                        : "UPLOAD MEDIA".toUpperCase(),
-                    style:
-                        ThreeKmTextConstants.tk14PXPoppinsWhiteMedium.copyWith(
-                      color: Color(0xFF0F0F2D),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          SizedBox(
-            height: 20,
-          ),
-          Container(
-            alignment: Alignment.centerLeft,
-            height: 40,
-            width: 338,
-            padding: EdgeInsets.only(left: 5),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(8),
-              color: Color(0xffF4F3F8),
-              border: Border.all(color: Color(0xff3E7EFF)),
-            ),
-            child: InkWell(
-              onTap: () {
+  Widget _addPhotosVideosButton() {
+    return Consumer<AddPostProvider>(
+      builder: (context, provider, __) => InkWell(
+        onTap: provider.isCompressionOngoing
+            ? null
+            : () {
                 FocusScope.of(context).unfocus();
                 _showImageVideoBottomModalSheet(context);
               },
-              child: Text(
-                  imageList.getMoreImages.length > 0
-                      ? "Add More Media"
-                      : "UPLOAD IMAGE/VIDEO",
-                  style: ThreeKmTextConstants.tk14PXPoppinsWhiteMedium
-                      .copyWith(color: Color(0xff3E7EFF))),
+        borderRadius: BorderRadius.circular(8),
+        child: Container(
+          padding: EdgeInsets.all(16),
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: const Color(0xfff5f5f5),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Container(
+            width: MediaQuery.of(context).size.width *
+                (provider.getMoreImages.length > 0 ? 0.6 : 0.4),
+            child: Wrap(
+              alignment: WrapAlignment.center,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              spacing: 5, runSpacing: 5,
+              // mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  Icons.add_photo_alternate,
+                  size: 24,
+                  color: provider.isCompressionOngoing
+                      ? ThreeKmTextConstants.grey3.withOpacity(0.5)
+                      : const Color(0xff3E7EFF),
+                ),
+                Text(
+                  "Add Photos/Videos",
+                  style: GoogleFonts.poppins(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 14,
+                      color: provider.isCompressionOngoing
+                          ? ThreeKmTextConstants.grey3.withOpacity(0.5)
+                          : const Color(0xff3E7EFF)),
+                ),
+              ],
             ),
-          )
-
-          // IconButton(
-          //   icon: Icon(
-          //     Icons.file_upload_outlined,
-          //     size: 24,
-          //   ),
-          //   onPressed: () {
-          //     FocusScope.of(context).unfocus();
-          //     _showImageVideoBottomModalSheet(context);
-
-          //     // Navigator.push(
-          //     //     context,
-          //     //     MaterialPageRoute(
-          //     //         builder: (context) => AddmorePhotos(
-          //     //             //imageFile: widget.imageFile,
-          //     //             )));
-          //   },
-          // ),
-        ],
+          ),
+        ),
       ),
     );
   }
 
   Widget get buildTags {
     return Container(
-      padding: padding,
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: Consumer<AddPostProvider>(
-          builder: (context, addpostProvider, _) {
-            return Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: addpostProvider.tagsList.length > 0
-                    ? [
-                        ...addpostProvider.tagsList.map((value) {
-                          return GestureDetector(
-                            onTap: () {
-                              context.read<AddPostProvider>().removeTag(value);
-                            },
-                            child: Container(
-                                margin: EdgeInsets.only(right: 12),
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 8, vertical: 4),
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(20),
-                                    //color: Colors.blue
-                                    // color: e.value.active
-                                    //     ? Colors.blue
-                                    //     : Colors.white,
-                                    border: Border.all(
-                                        color: Color(0xFF979EA4), width: 1)
-                                    //     : Border.all(color: Colors.transparent)
-                                    ),
-                                child: Row(
-                                  children: [
-                                    Center(
-                                      child: Text(
-                                        value.toString(),
-                                        style: ThreeKmTextConstants
-                                            .tk12PXPoppinsWhiteRegular
-                                            .copyWith(
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w700,
-                                          color: Color(0xFF979EA4),
-                                        ),
-                                      ),
-                                    ),
-                                    Icon(Icons.cancel_outlined)
-                                  ],
-                                )),
-                          );
-                        }).toList(),
-                        InkWell(
-                          onTap: () => addTag(context),
-                          child: Container(
-                            margin: EdgeInsets.only(right: 12),
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 8, vertical: 4),
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(20),
-                                color: Colors.white,
-                                border: Border.all(
-                                    color: Color(0xFF979EA4), width: 1)),
-                            child: Center(
-                              child: Text(
-                                "+ Add",
-                                style: ThreeKmTextConstants
-                                    .tk12PXPoppinsWhiteRegular
-                                    .copyWith(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w700,
-                                        color: Colors.black),
-                              ),
-                            ),
-                          ),
-                        )
-                      ]
-                    : [
-                        InkWell(
-                          onTap: () => addTag(context),
-                          child: Container(
-                            margin: EdgeInsets.only(right: 12),
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 8, vertical: 4),
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(20),
-                                color: Colors.white,
-                                border: Border.all(
-                                    color: Color(0xFF979EA4), width: 1)),
-                            child: Center(
-                              child: Text(
-                                "+ Add",
-                                style: ThreeKmTextConstants
-                                    .tk12PXPoppinsWhiteRegular
-                                    .copyWith(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w700,
-                                        color: Colors.black),
-                              ),
-                            ),
-                          ),
-                        )
-                      ]);
-          },
-        ),
+      width: MediaQuery.of(context).size.width,
+      child: Consumer<AddPostProvider>(
+        builder: (context, addPostProvider, _) {
+          return Wrap(
+            runAlignment: WrapAlignment.start,
+            crossAxisAlignment: WrapCrossAlignment.start,
+            runSpacing: -5,
+            spacing: 5,
+            children: [
+              ...addPostProvider.tagsList.map((value) {
+                return Chip(
+                  label: Text(value.toString()),
+                  backgroundColor: Colors.white,
+                  shape: StadiumBorder(),
+                  side: BorderSide(color: const Color(0xFF8E8A8A)),
+                  labelStyle: GoogleFonts.poppins(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: const Color(0xFF8E8A8A),
+                  ),
+                  deleteButtonTooltipMessage: 'Remove tag',
+                  useDeleteButtonTooltip: true,
+                  onDeleted: () {
+                    context.read<AddPostProvider>().removeTag(value);
+                  },
+                  deleteIconColor: const Color(0xFF8E8A8A),
+                  deleteIcon: Icon(Icons.cancel_rounded),
+                  visualDensity: VisualDensity.adaptivePlatformDensity,
+                );
+              }).toList(),
+              ActionChip(
+                label: Text('+ Add'),
+                onPressed: () => addTag(context),
+                backgroundColor: Colors.white,
+                shape: StadiumBorder(),
+                labelStyle: GoogleFonts.poppins(
+                    fontSize: 14,
+                    color: const Color(0xff3e7eff),
+                    fontWeight: FontWeight.w700),
+                elevation: 0,
+                visualDensity: VisualDensity.adaptivePlatformDensity,
+                side: BorderSide(width: 1, color: const Color(0xFF3E7EFF)),
+              ),
+            ],
+          );
+        },
       ),
     );
   }
@@ -782,7 +596,7 @@ class _AddNewPostState extends State<AddNewPost> {
                 .copyWith(color: Colors.black, fontWeight: FontWeight.w900),
           ),
           content: TextField(
-            controller: _tagscontroller,
+            controller: _tagsController,
             decoration: InputDecoration(
                 hintText: "Tag",
                 hintStyle: ThreeKmTextConstants.tk14PXPoppinsBlackSemiBold
@@ -810,7 +624,7 @@ class _AddNewPostState extends State<AddNewPost> {
                     .copyWith(color: Colors.blue),
               ),
               onPressed: () {
-                Navigator.of(context).pop(_tagscontroller.text);
+                Navigator.of(context).pop(_tagsController.text.trim());
                 FocusScope.of(context).unfocus();
               },
             )
@@ -818,11 +632,11 @@ class _AddNewPostState extends State<AddNewPost> {
         );
       },
     );
-    if (tag != null && _tagscontroller.text.isNotEmpty) {
+    if (tag != null && _tagsController.text.isNotEmpty) {
       context
           .read<AddPostProvider>()
-          .addTags(_tagscontroller.text)
-          .whenComplete(() => _tagscontroller.clear());
+          .addTags(_tagsController.text)
+          .whenComplete(() => _tagsController.clear());
     }
   }
 
@@ -880,106 +694,103 @@ class _AddNewPostState extends State<AddNewPost> {
           padding: MediaQuery.of(context).viewInsets,
           child: StatefulBuilder(
             builder: (BuildContext context, StateSetter setModalState) {
-              return ClipPath(
-                clipper: OvalTopBorderClipper(),
-                child: Container(
-                  color: Colors.white,
-                  height: MediaQuery.of(context).size.height / 4,
-                  padding: const EdgeInsets.all(15.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      SizedBox(
-                        height: 20,
-                      ),
-                      InkWell(
-                        onTap: () async {
-                          List<XFile>? imageFileList = [];
-                          final List<XFile>? images =
-                              await _imagePicker.pickMultiImage();
-                          if (imageFileList.isEmpty) {
-                            imageFileList.addAll(images!);
-                          }
-                          imageFileList.forEach((element) {
-                            print(element.name);
-                            print(element.path);
-                          });
-                          Navigator.pop(context);
-                          if (imageFileList != null) {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        EditImage(images: imageFileList)));
-                          }
-                        },
-                        child: Container(
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(20),
-                              border: Border.all(
-                                color: Color(0xff0F0F2D),
-                              )),
-                          child: ListTile(
-                            leading: Image.asset(
-                              "assets/camera.png",
+              return Container(
+                color: Colors.white,
+                height: MediaQuery.of(context).size.height / 4,
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    SizedBox(height: 20),
+                    InkWell(
+                      onTap: () async {
+                        List<XFile>? imageFileList = [];
+                        final List<XFile>? images =
+                            await _imagePicker.pickMultiImage();
+                        if (imageFileList.isEmpty) {
+                          imageFileList.addAll(images!);
+                        }
+                        imageFileList.forEach((element) {
+                          print("name: " + element.name);
+                          print("path: " + element.path);
+                        });
+                        Navigator.pop(context);
+                        if (imageFileList.isNotEmpty) {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      EditImage(images: imageFileList)));
+                        }
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(
                               color: Color(0xff0F0F2D),
-                            ),
-                            title: Text(
-                              "Upload Image via Gallery",
-                              style: ThreeKmTextConstants.tk14PXLatoBlackBold,
-                            ),
+                            )),
+                        child: ListTile(
+                          leading: Image.asset(
+                            "assets/camera.png",
+                            color: Color(0xff0F0F2D),
+                          ),
+                          title: Text(
+                            "Upload Image via Gallery",
+                            style: ThreeKmTextConstants.tk14PXLatoBlackBold,
                           ),
                         ),
                       ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      InkWell(
-                        onTap: () async {
-                          final pickedVideo = await _imagePicker.pickVideo(
-                              source: ImageSource.gallery);
-                          //final file = XFile(pickedVideo!.path);
-                          Navigator.pop(context);
-                          if (pickedVideo != null) {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => VideoCompress(
-                                        videoFile: File(pickedVideo.path))));
-                            // final size =
-                            //     getVideoSize(file: File(pickedVideo.path));
-                            // log("size is $size");
-                            // final lenght = size.replaceAll(" MB", "");
-                            // log(lenght);
-                            // if (double.tryParse(lenght)!.toDouble() < 20.0) {
-                            //   context
-                            //       .read<AddPostProvider>()
-                            //       .addImages(File(pickedVideo.path));
-                            // } else {
-                            //   log("go to copressor");
-                            // }
-                          }
-                        },
-                        child: Container(
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(20),
-                              border: Border.all(
-                                color: Color(0xff0F0F2D),
-                              )),
-                          child: ListTile(
-                            leading: Image.asset(
-                              "assets/videocam.png",
+                    ),
+                    SizedBox(height: 10),
+                    InkWell(
+                      onTap: () async {
+                        final pickedVideo = await _imagePicker.pickVideo(
+                            source: ImageSource.gallery);
+                        //final file = XFile(pickedVideo!.path);
+
+                        Navigator.pop(context);
+                        if (pickedVideo != null) {
+                          // Navigator.push(
+                          //     context,
+                          //     MaterialPageRoute(
+                          //         builder: (context) =>
+                          //             VideoCompress(videoFile: File(pickedVideo.path))));
+                          context
+                              .read<AddPostProvider>()
+                              .compressVideoFile(File(pickedVideo.path));
+                          // final size =
+                          //     getVideoSize(file: File(pickedVideo.path));
+                          // log("size is $size");
+                          // final lenght = size.replaceAll(" MB", "");
+                          // log(lenght);
+                          // if (double.tryParse(lenght)!.toDouble() < 20.0) {
+                          //   context
+                          //       .read<AddPostProvider>()
+                          //       .addImages(File(pickedVideo.path));
+                          // } else {
+                          //   log("go to copressor");
+                          // }
+                        }
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(
                               color: Color(0xff0F0F2D),
-                            ),
-                            title: Text(
-                              "Upload Video via Gallery",
-                              style: ThreeKmTextConstants.tk14PXLatoBlackBold,
-                            ),
+                            )),
+                        child: ListTile(
+                          leading: Image.asset(
+                            "assets/videocam.png",
+                            color: Color(0xff0F0F2D),
+                          ),
+                          title: Text(
+                            "Upload Video via Gallery",
+                            style: ThreeKmTextConstants.tk14PXLatoBlackBold,
                           ),
                         ),
-                      )
-                    ],
-                  ),
+                      ),
+                    )
+                  ],
                 ),
               );
             },

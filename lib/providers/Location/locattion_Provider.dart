@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:location/location.dart';
 import 'package:threekm/providers/Location/getAddress.dart';
 
@@ -6,7 +7,7 @@ class LocationProvider extends ChangeNotifier {
   double? _lattitude;
   double? _longitude;
   double? get getLatitude => _lattitude;
-  double? get getLangitude => _longitude;
+  double? get getLongitude => _longitude;
   LocationData? _getlocationData;
   LocationData? get getlocationData => _getlocationData;
   bool _ispermmitionGranted = false;
@@ -14,6 +15,7 @@ class LocationProvider extends ChangeNotifier {
 
   String? _address;
   String? get AddressFromCordinate => _address;
+  Stream<ServiceStatus> serviceStatusStream = Geolocator.getServiceStatusStream();
 
   Future<Null> getLocation() async {
     Location location = new Location();
@@ -41,6 +43,7 @@ class LocationProvider extends ChangeNotifier {
           return;
         } else if (_ispermmitionGranted == PermissionStatus.granted) {
           _ispermmitionGranted = true;
+          notifyListeners();
         }
       }
       _locationData = await location.getLocation();
@@ -54,8 +57,7 @@ class LocationProvider extends ChangeNotifier {
         notifyListeners();
       }
       _address = await getAddressFromKlatlong(
-          _locationData.latitude ?? 18.569910,
-          _locationData.longitude ?? 73.897530);
+          _locationData.latitude ?? 18.569910, _locationData.longitude ?? 73.897530);
       notifyListeners();
     } on Exception catch (e) {
       print(e);

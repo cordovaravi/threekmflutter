@@ -12,7 +12,9 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:threekm/UI/main/News/PostView.dart';
+import 'package:threekm/UI/main/News/poll_page.dart';
 import 'package:threekm/providers/FCM/fcm_sendToken_Provider.dart';
+import 'package:threekm/providers/Global/logged_in_or_not.dart';
 import 'package:threekm/providers/Location/locattion_Provider.dart';
 import 'package:threekm/providers/Notification/Notification_Provider.dart';
 import 'package:threekm/providers/ProfileInfo/ProfileInfo_Provider.dart';
@@ -36,6 +38,7 @@ import 'package:threekm/providers/main/singlePost_provider.dart';
 import 'package:threekm/providers/shop/checkout/order_realtime_detail_provider.dart';
 import 'package:threekm/providers/shop/checkout/past_order_provider.dart';
 import 'package:threekm/providers/shop/shop_home_provider.dart';
+import 'package:threekm/providers/userKyc/verify_credential.dart';
 import 'package:threekm/theme/setup.dart';
 import 'Models/businessesModel/businesses_wishlist_model.dart';
 import 'Models/shopModel/cart_hive_model.dart';
@@ -170,6 +173,10 @@ void main() async {
 
   // Directory directory = await pathProvider.getApplicationDocumentsDirectory();
   // Hive.init(directory.path);
+  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+    statusBarIconBrightness: Brightness.dark, // For Android (dark icons)
+    statusBarBrightness: Brightness.light,
+  ));
 }
 
 class MyApp extends StatelessWidget {
@@ -267,6 +274,13 @@ class MyApp extends StatelessWidget {
 
           ChangeNotifierProvider<NewsFeedProvider>(
               create: (context) => NewsFeedProvider()),
+
+          //Login or not check
+          ChangeNotifierProvider<CheckLoginProvider>(
+              create: (context) => CheckLoginProvider()),
+
+          ChangeNotifierProvider<VerifyKYCCredential>(
+              create: (context) => VerifyKYCCredential())
         ],
         child: Consumer<AppLanguage>(
           builder: (context, controller, child) {
@@ -275,6 +289,7 @@ class MyApp extends StatelessWidget {
               DeviceOrientation.portraitUp,
               DeviceOrientation.portraitDown,
             ]);
+
             return MaterialApp(
               locale: controller.appLocal ?? appLanguage.appLocal,
               //controller.appLocal,
@@ -303,8 +318,17 @@ class MyApp extends StatelessWidget {
 }
 
 onSelectNotification(String? payload) {
-  Navigator.of(navigatorKey.currentContext!)
-      .push(MaterialPageRoute(builder: (_) {
-    return Postview(postId: payload!);
-  }));
+  if (payload?.contains('poll_id') ?? false) {
+    Navigator.of(navigatorKey.currentContext!)
+        .push(MaterialPageRoute(builder: (_) {
+      return PollPage(
+        PollId: "${payload?.split("=")[1]}",
+      );
+    }));
+  } else {
+    Navigator.of(navigatorKey.currentContext!)
+        .push(MaterialPageRoute(builder: (_) {
+      return PostView(postId: payload!);
+    }));
+  }
 }

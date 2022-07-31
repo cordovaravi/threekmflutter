@@ -25,7 +25,9 @@ class SinglePostLoading extends StatelessWidget {
                       height: 44,
                     ),
                     InkWell(
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
                       child: Container(
                         height: 40,
                         width: 40,
@@ -116,14 +118,14 @@ class SinglePostLoading extends StatelessWidget {
                     ),
                   ],
                 ),
-                Positioned(
-                  bottom: 0,
-                  child: Container(
-                    color: Colors.blueAccent,
-                    height: MediaQuery.of(context).size.height * 0.1,
-                    width: MediaQuery.of(context).size.width,
-                  ),
-                ),
+                // Positioned(
+                //   bottom: 0,
+                //   child: Container(
+                //     color: Colors.blueAccent,
+                //     height: MediaQuery.of(context).size.height * 0.1,
+                //     width: MediaQuery.of(context).size.width,
+                //   ),
+                // ),
                 Positioned(
                   bottom: MediaQuery.of(context).size.height * 0.06,
                   child: Container(

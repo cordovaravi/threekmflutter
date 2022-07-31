@@ -4,6 +4,8 @@
 
 import 'dart:convert';
 
+import 'dart:developer';
+
 NewsbyCategoryModel newsbyCategoryModelFromJson(String str) =>
     NewsbyCategoryModel.fromJson(json.decode(str));
 
@@ -54,42 +56,49 @@ class Result {
 }
 
 class Post {
-  Post({
-    this.postId,
-    this.submittedHeadline,
-    this.submittedStory,
-    this.headline,
-    this.story,
-    this.images,
-    this.videos,
-    this.type,
-    this.tags,
-    this.publishFrom,
-    this.author,
-    this.authorType,
-    this.authorClassification,
-    this.status,
-    this.originalLanguage,
-    this.impressions,
-    this.views,
-    this.postCreatedDate,
-    this.createdDate,
-    this.context,
-    this.isUgc,
-    this.likes,
-    this.comments,
-    this.locations,
-    this.userDetails,
-    this.creatorDetails,
-    this.id,
-    this.isVerified,
-    this.isLiked,
-    this.areas,
-    this.shares,
-    this.origHeadline,
-    this.origStory,
-    this.itemType,
-  });
+  Post(
+      {this.postId,
+      this.submittedHeadline,
+      this.submittedStory,
+      this.headline,
+      this.story,
+      this.images,
+      this.videos,
+      this.type,
+      this.tags,
+      this.publishFrom,
+      this.author,
+      this.authorType,
+      this.authorClassification,
+      this.status,
+      this.originalLanguage,
+      this.impressions,
+      this.views,
+      this.postCreatedDate,
+      this.createdDate,
+      this.context,
+      this.isUgc,
+      this.likes,
+      this.comments,
+      this.locations,
+      this.userDetails,
+      this.creatorDetails,
+      this.id,
+      this.isVerified,
+      this.isLiked,
+      this.areas,
+      this.shares,
+      this.origHeadline,
+      this.origStory,
+      this.itemType,
+      this.slugHeadline,
+      this.preheaderLike,
+      this.preheaderComment,
+      this.latestComment,
+      this.emotion,
+      this.preaheaderLikeUser,
+      this.preheaderCommentUSer,
+      this.listEmotions});
 
   int? postId;
   String? submittedHeadline;
@@ -125,8 +134,18 @@ class Post {
   String? origHeadline;
   String? origStory;
   String? itemType;
+  String? slugHeadline;
+  String? preheaderLike;
+  String? preheaderComment;
+  LatestComment? latestComment;
+  String? emotion;
+  String? preaheaderLikeUser;
+  String? preheaderCommentUSer;
+  List<String>? listEmotions;
 
-  factory Post.fromJson(Map<String, dynamic> json) => Post(
+  factory Post.fromJson(Map<String, dynamic> json) {
+    log('${json["post_id"]}');
+    return Post(
         postId: json["post_id"] == null ? null : json["post_id"],
         submittedHeadline: json["submitted_headline"] == null
             ? null
@@ -187,7 +206,21 @@ class Post {
             json["orig_headline"] == null ? null : json["orig_headline"],
         origStory: json["orig_story"] == null ? null : json["orig_story"],
         itemType: json["item_type"] == null ? null : json["item_type"],
-      );
+        slugHeadline: json["slug_headline"],
+        preheaderLike: json["preheader_like"],
+        preheaderComment: json["preheader_comment"],
+        preaheaderLikeUser: json["preheader_like_user"] == null
+            ? null
+            : json["preheader_like_user"],
+        preheaderCommentUSer: json["preheader_comment_user"] == null
+            ? null
+            : json["preheader_comment_user"],
+        latestComment: json['latest_comment'] == null
+            ? null
+            : LatestComment.fromJson(json['latest_comment']),
+        emotion: json['emotion'] ?? "",
+        listEmotions:json["list_emotions"] != null ? List<String>.from(json["list_emotions"].map((x) => x)): []);
+  }
 }
 
 class Author {
@@ -280,7 +313,7 @@ class Video {
       this.height,
       this.width});
 
-  String? src;
+  dynamic src;
   String? thumbnail;
   String? player;
   String? vimeoUrl;
@@ -288,7 +321,7 @@ class Video {
   int? height;
 
   factory Video.fromJson(Map<String, dynamic> json) => Video(
-        src: json["src"] == null ? null : json["src"],
+        src: json["src"] == null && json["src"] is Object ? null : json["src"],
         thumbnail: json["thumbnail"] == null ? null : json["thumbnail"],
         player: json["player"] == null ? null : json["player"],
         vimeoUrl: json["vimeo_url"] == null ? null : json["vimeo_url"],
@@ -297,6 +330,51 @@ class Video {
       );
 }
 
+class LatestComment {
+  LatestComment({
+    this.comment,
+    this.user,
+  });
+  String? comment;
+  User? user;
+
+  LatestComment.fromJson(Map<String, dynamic> json) {
+    comment = json['comment'] ?? "";
+    user = json['user'] != null ? User.fromJson(json['user']) : null;
+  }
+
+  Map<String, dynamic> toJson() {
+    final _data = <String, dynamic>{};
+    _data['comment'] = comment;
+    _data['user'] = user?.toJson();
+    return _data;
+  }
+}
+
+class User {
+  User({
+    required this.userId,
+    required this.name,
+    required this.avatar,
+  });
+  late final int userId;
+  late final String name;
+  late final String avatar;
+
+  User.fromJson(Map<String, dynamic> json) {
+    userId = json['user_id'];
+    name = json['name'];
+    avatar = json['avatar'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final _data = <String, dynamic>{};
+    _data['user_id'] = userId;
+    _data['name'] = name;
+    _data['avatar'] = avatar;
+    return _data;
+  }
+}
 
 // import 'dart:convert';
 
@@ -855,11 +933,6 @@ class Video {
 //     return reverseMap!;
 //   }
 // }
-
-
-
-
-
 
 // To parse this JSON data, do
 //

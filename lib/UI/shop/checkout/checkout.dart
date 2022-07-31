@@ -15,6 +15,7 @@ import 'package:threekm/providers/shop/address_list_provider.dart';
 import 'package:threekm/providers/shop/cart_provider.dart';
 import 'package:threekm/providers/shop/checkout/checkout_provider.dart';
 import 'package:threekm/utils/constants.dart';
+import 'package:threekm/utils/screen_util.dart';
 
 import 'package:threekm/utils/threekm_textstyles.dart';
 
@@ -44,6 +45,13 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
   void dispose() {
     _pageController.dispose();
     super.dispose();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    ThreeKmScreenUtil().init(context);
+    //ThreeKmScreenUtil.getInstance();
   }
 
   deliveryAddress() async {

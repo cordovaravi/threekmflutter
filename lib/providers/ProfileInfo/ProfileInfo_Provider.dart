@@ -14,18 +14,25 @@ import 'package:http/http.dart' as http;
 //enum status { loading, hasData }
 
 class ProfileInfoProvider extends ChangeNotifier {
+  
   ApiProvider _apiProvider = ApiProvider();
   String? _userName;
   String? _Phonenumber;
   String? _avatar;
   String? _email;
   String? _Gender;
+  String? _fName;
+  String? _lName;
+  String? _bloodGroup;
 
   String? get UserName => this._userName;
   String? get Phonenumber => this._Phonenumber;
   String? get Avatar => this._avatar;
   String? get Email => this._email;
   String? get Gender => this._Gender;
+  String? get Fname => this._fName;
+  String? get Lname => this._lName;
+  String? get BloodGroup => this._bloodGroup;
 
   DateTime? _dob;
   DateTime? get dateOfBirth => _dob;
@@ -51,7 +58,7 @@ class ProfileInfoProvider extends ChangeNotifier {
     SharedPreferences _pref = await SharedPreferences.getInstance();
     String? dob = await _pref.getString("dob");
     log("dob is from function $dob");
-    return dob;
+    return dob ?? null;
   }
 
   //String get email =>  _getEmail();
@@ -61,12 +68,18 @@ class ProfileInfoProvider extends ChangeNotifier {
     return _pref.getString("email");
   }
 
+  static Future<String?> getPhone() async {
+    SharedPreferences _pref = await SharedPreferences.getInstance();
+    return _pref.getString('userphone');
+  }
+
   static Future<String?> _getGender() async {
     SharedPreferences _pref = await SharedPreferences.getInstance();
     return _pref.getString("gender");
   }
 
   Future<Null> getProfileBasicData() async {
+    SharedPreferences _pref = await SharedPreferences.getInstance();
     String? dateOfBirth = await _getDob();
     log("this is dob from getDob in basic data $dateOfBirth");
     _avatar = await _getAvatar();
@@ -76,6 +89,8 @@ class ProfileInfoProvider extends ChangeNotifier {
     _dob = dateOfBirth != null ? DateTime.parse(dateOfBirth) : null;
 
     _Gender = await _getGender() ?? null;
+    _fName = await _pref.getString("userfname");
+    _lName = await _pref.getString("userlname");
     log("dob is $_dob");
 
     notifyListeners();
@@ -89,7 +104,13 @@ class ProfileInfoProvider extends ChangeNotifier {
       String? Gender,
       String? avatar,
       DateTime? dob,
-      String? email}) async {
+      String? email,
+      String? phone,
+      bool? is_verified,
+      bool? is_document_verified,
+      bool? isDocumentUploaded,
+      String? bloodGroup,
+      List<String>? language}) async {
     _isUpdating = true;
     notifyListeners();
     SharedPreferences _pref = await SharedPreferences.getInstance();
@@ -101,7 +122,13 @@ class ProfileInfoProvider extends ChangeNotifier {
       "avatar": avatar ?? await _getAvatar(),
       "gender": Gender ?? await _getGender(),
       "email": email ?? await getEmail(),
-      "dob": dob != null ? "${dob.year}-${dob.month}-${dob.day}" : ""
+      "dob": dob != null ? "${dob.year}-${dob.month}-${dob.day}" : "",
+      "phone_no": phone ?? await getPhone(),
+      "is_verified": is_verified ?? _pref.getBool('is_verified'),
+      "is_document_verified": is_document_verified ?? null,
+      "is_document_uploaded": isDocumentUploaded ?? null,
+      "blood_group": bloodGroup ?? null,
+      "languages": language ?? null
     });
     final response = await _apiProvider.post(Update_User_Info, requestJson);
     if (response != null) {
@@ -115,7 +142,11 @@ class ProfileInfoProvider extends ChangeNotifier {
         prefs.setString("gender", data.data!.result!.user!.gender ?? "");
         prefs.setString("email", data.data!.result!.user!.email ?? "");
         prefs.setString("dob", data.data!.result!.user?.dob.toString() ?? "");
+        prefs.setString("userphone", data.data!.result!.user?.phoneNo ?? "");
+
         getProfileBasicData();
+        _isUpdating = false;
+        notifyListeners();
       }
     }
   }

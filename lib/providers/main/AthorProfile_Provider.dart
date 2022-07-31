@@ -24,20 +24,22 @@ class AutthorProfileProvider extends ChangeNotifier {
       notifyListeners();
       final response = await _apiProvider.get(Self_Profile);
       if (response != null) {
-        _isGettingSelfProfile = false;
-        notifyListeners();
+        //notifyListeners();
         if (response["status"] == "success") {
           print("self profile \n$response");
           _selfProfile = SelfProfileModel.fromJson(response);
+          _isGettingSelfProfile = false;
+          notifyListeners();
           print("this is selfmodel $_selfProfile");
         } else {
+          _isGettingSelfProfile = false;
+          notifyListeners();
           Fluttertoast.showToast(
               msg: "error while getteing profile",
               backgroundColor: Colors.redAccent);
         }
-        //notifyListeners();
       }
-    } on Exception catch (e) {
+    } catch (e) {
       log("${e.toString()}");
       _isGettingSelfProfile = false;
       notifyListeners();
@@ -80,6 +82,11 @@ class AutthorProfileProvider extends ChangeNotifier {
       if (element.postId.toString() == postId) {
         element.likes = element.likes! + 1;
         element.isLiked = true;
+        element.emotion = emotion;
+        if (emotion != null &&
+            emotion != "" &&
+            !element.listEmotions!.contains(emotion))
+          element.listEmotions?.add(emotion);
         notifyListeners();
       }
       //notifyListeners();
@@ -94,8 +101,15 @@ class AutthorProfileProvider extends ChangeNotifier {
         json.encode({"module": "news_post", "entity_id": postId});
     _selfProfile!.data!.result!.posts!.forEach((element) {
       if (element.postId.toString() == postId) {
+        if (element.isLiked == true) {
+          element.likes = element.likes! - 1;
+        }
         element.isLiked = false;
-        element.likes = element.likes! - 1;
+        element.emotion = null;
+        if (element.likes == 1) {
+          element.listEmotions = [];
+          element.listEmotions?.clear();
+        }
         notifyListeners();
       }
     });
@@ -129,11 +143,27 @@ class AutthorProfileProvider extends ChangeNotifier {
   bool _gettingAuthorprofile = false;
   bool get gettingAuthorprofile => _gettingAuthorprofile;
 
+  clearData() async {
+    _authorProfilePostModel?.data.result?.posts?.clear();
+  }
+
+  clearAuthorProfileData() {
+    clearData();
+    _authorProfilePostModel = null;
+    log("deleting author profile data ");
+  }
+
   // get Author profile data and post
   Future<Null> getAuthorProfile(
-      {required int authorId, String? authorType, String? language}) async {
-    _gettingAuthorprofile = true;
+    int pageNumber,
+    bool? isSecondLoading, {
+    required int authorId,
+    String? authorType,
+    String? language,
+  }) async {
+    _gettingAuthorprofile = isSecondLoading == true ? false : true;
     notifyListeners();
+
     String? _token = await _apiProvider.getToken();
     String requestJson = json.encode({
       "id": authorId,
@@ -141,12 +171,19 @@ class AutthorProfileProvider extends ChangeNotifier {
       "token": _token ?? "",
       "lang": language
     });
-    final response = await _apiProvider.post(Author_Profile, requestJson);
+    final response = await _apiProvider.post(
+        Author_Profile + "?page=$pageNumber", requestJson);
     if (response != null) {
       //print(response);
       if (response["status"] == "success") {
-        log("athor profile response is ${response}");
+        List<Post>? tempPost = _authorProfilePostModel?.data.result?.posts;
         _authorProfilePostModel = ProfilePostModel.fromJson(response);
+        print(tempPost?[0].postId);
+        if (tempPost != null) {
+          tempPost.addAll(_authorProfilePostModel?.data.result?.posts ?? []);
+          _authorProfilePostModel?.data.result?.posts = tempPost;
+        }
+
         _gettingAuthorprofile = false;
         notifyListeners();
       }
@@ -206,6 +243,11 @@ class AutthorProfileProvider extends ChangeNotifier {
       if (element.postId.toString() == postId) {
         element.likes = element.likes! + 1;
         element.isLiked = true;
+        element.emotion = emotion;
+        if (emotion != null &&
+            emotion != "" &&
+            !element.listEmotions!.contains(emotion))
+          element.listEmotions?.add(emotion);
         notifyListeners();
       }
       //notifyListeners();
@@ -222,6 +264,10 @@ class AutthorProfileProvider extends ChangeNotifier {
       if (element.postId.toString() == postId) {
         element.isLiked = false;
         element.likes = element.likes! - 1;
+        if (element.likes == 1) {
+          element.listEmotions = [];
+          element.listEmotions?.clear();
+        }
         notifyListeners();
       }
     });
