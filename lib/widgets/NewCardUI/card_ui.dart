@@ -15,6 +15,7 @@ import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:threekm/Custom_library/BoldText/Text_chunking.dart';
 import 'package:threekm/Custom_library/src/reaction.dart';
+import 'package:threekm/UI/main/EditPost/edit_post.dart';
 import 'package:threekm/UI/main/News/PostView.dart';
 import 'package:threekm/UI/main/Profile/AuthorProfile.dart';
 import 'package:threekm/UI/main/Profile/MyProfilePost.dart';
@@ -40,10 +41,15 @@ class CardUI extends StatefulWidget {
   final providerType;
 
   const CardUI(
-      {Key? key, required this.data, this.isfollow, required this.providerType})
+      {Key? key,
+      required this.data,
+      this.isfollow,
+      required this.providerType,
+      this.isEditable = false})
       : super(key: key);
   final data;
   final isfollow;
+  final bool isEditable;
 
   @override
   State<CardUI> createState() => _CardUIState();
@@ -74,20 +80,26 @@ class _CardUIState extends State<CardUI> {
       decoration: BoxDecoration(
           color: Colors.white,
           boxShadow: const [
-            BoxShadow(
-                blurRadius: 40, offset: Offset(0, 8), color: Color(0x29092C4C))
+            BoxShadow(blurRadius: 40, offset: Offset(0, 8), color: Color(0x29092C4C))
           ],
           borderRadius: BorderRadius.circular(8)),
       padding: const EdgeInsets.only(top: 20, left: 10, right: 10),
       margin: const EdgeInsets.only(top: 20, left: 20, right: 20),
       child: InkWell(
         onTap: () {
-          Navigator.push(context,
-              MaterialPageRoute(builder: (BuildContext context) {
+          Navigator.push<bool>(context, MaterialPageRoute(builder: (BuildContext context) {
             return PostView(
+              isEditable: widget.isEditable,
               postId: data.postId.toString(),
             );
-          }));
+          })).then((isPostChanged) {
+            // refresh MyProfilePost after editing
+            if (widget.isEditable && (isPostChanged ?? false)) {
+              if (widget.providerType == "AutthorProfileProvider") {
+                context.read<AutthorProfileProvider>().getSelfProfile();
+              }
+            }
+          });
         },
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -125,8 +137,7 @@ class _CardUIState extends State<CardUI> {
                 data.author?.image != null
                     ? InkWell(
                         onTap: () {
-                          if (context.read<ProfileInfoProvider>().UserName !=
-                              data.author!.name!) {
+                          if (context.read<ProfileInfoProvider>().UserName != data.author!.name!) {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -154,7 +165,7 @@ class _CardUIState extends State<CardUI> {
                         child: ClipRRect(
                             borderRadius: BorderRadius.circular(80),
                             child: Image(
-                              image: NetworkImage('${data.author?.image}'),
+                              image: CachedNetworkImageProvider('${data.author?.image}'),
                               errorBuilder: (context, error, stackTrace) {
                                 return Container(
                                   width: 48,
@@ -210,8 +221,7 @@ class _CardUIState extends State<CardUI> {
                             margin: const EdgeInsets.only(left: 5, right: 5),
                             height: 4,
                             width: 4,
-                            decoration: BoxDecoration(
-                                color: Colors.black, shape: BoxShape.circle),
+                            decoration: BoxDecoration(color: Colors.black, shape: BoxShape.circle),
                           ),
                         ),
                         if (widget.isfollow != false)
@@ -239,16 +249,11 @@ class _CardUIState extends State<CardUI> {
                                 );
                               }
                             },
-                            child: Text(
-                                data.author?.isFollowed == true
-                                    ? 'Following'
-                                    : 'Follow',
+                            child: Text(data.author?.isFollowed == true ? 'Following' : 'Follow',
                                 style: data.author?.isFollowed == true
-                                    ? ThreeKmTextConstants
-                                        .tk14PXPoppinsBlackMedium
+                                    ? ThreeKmTextConstants.tk14PXPoppinsBlackMedium
                                         .copyWith(color: Colors.grey)
-                                    : ThreeKmTextConstants
-                                        .tk14PXPoppinsBlueMedium),
+                                    : ThreeKmTextConstants.tk14PXPoppinsBlueMedium),
                           )
                       ],
                     )
@@ -267,13 +272,19 @@ class _CardUIState extends State<CardUI> {
               height: 23,
             ),
             InkWell(
-              onTap: () {
-                Navigator.push(context,
+              onTap: () async {
+                bool? isPostChanged = await Navigator.push<bool>(context,
                     MaterialPageRoute(builder: (BuildContext context) {
                   return PostView(
+                    isEditable: widget.isEditable,
                     postId: data.postId.toString(),
                   );
                 }));
+                if (widget.isEditable && (isPostChanged ?? false)) {
+                  if (widget.providerType == "AutthorProfileProvider") {
+                    context.read<AutthorProfileProvider>().getSelfProfile();
+                  }
+                }
               },
               child: ImageLayout(
                 images: data.images ?? [],
@@ -294,13 +305,20 @@ class _CardUIState extends State<CardUI> {
             data.submittedStory!.length > 170
                 ? HtmlWidget(
                     '${data.submittedStory!.substring(0, 170)}<a id="seemore" href="#"> ....See More</a>',
-                    onTapUrl: (string) {
-                      Navigator.push(context,
+                    onTapUrl: (string) async {
+                      bool? isPostChanged = await Navigator.push<bool>(context,
                           MaterialPageRoute(builder: (BuildContext context) {
                         return PostView(
+                          isEditable: widget.isEditable,
                           postId: data.postId.toString(),
                         );
                       }));
+                      if (widget.isEditable && (isPostChanged ?? false)) {
+                        if (widget.providerType == "AutthorProfileProvider") {
+                          context.read<AutthorProfileProvider>().getSelfProfile();
+                        }
+                      }
+
                       return true;
                     },
                   )
@@ -323,11 +341,9 @@ class _CardUIState extends State<CardUI> {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) =>
-                                      LikeList(postId: data.postId!)));
+                                  builder: (context) => LikeList(postId: data.postId!)));
                         },
-                        icon: const Image(
-                            image: AssetImage('assets/like_heart.png')),
+                        icon: const Image(image: AssetImage('assets/like_heart.png')),
                         label: Text(
                           '  ${data.likes}',
                           style: ThreeKmTextConstants.tk12PXPoppinsBlackSemiBold
@@ -380,19 +396,12 @@ class _CardUIState extends State<CardUI> {
                                     data.emotion != null &&
                                     data.emotion != "null"
                                 ? Reaction(
-                                    icon: Lottie.asset(
-                                        "assets/lottie/${data.emotion}.json",
-                                        width: 35,
-                                        height: 35,
-                                        fit: BoxFit.cover,
-                                        repeat: false),
+                                    icon: Lottie.asset("assets/lottie/${data.emotion}.json",
+                                        width: 35, height: 35, fit: BoxFit.cover, repeat: false),
                                   )
                                 : Reaction(
-                                    icon: Lottie.asset(
-                                        "assets/lottie/like.json",
-                                        width: 35,
-                                        height: 35,
-                                        repeat: false),
+                                    icon: Lottie.asset("assets/lottie/like.json",
+                                        width: 35, height: 35, repeat: false),
                                   )
                             : Reaction(
                                 icon: Image.asset(
@@ -498,9 +507,7 @@ class _CardUIState extends State<CardUI> {
                     color: Colors.grey,
                   ),
                   TextButton.icon(
-                      style: ButtonStyle(
-                          foregroundColor:
-                              MaterialStateProperty.all(Colors.black)),
+                      style: ButtonStyle(foregroundColor: MaterialStateProperty.all(Colors.black)),
                       onPressed: () async {
                         if (await getAuthStatus()) {
                           // showCommentsBottomModalSheet(context, data.postId!.toInt());
@@ -525,28 +532,23 @@ class _CardUIState extends State<CardUI> {
                     color: Colors.grey,
                   ),
                   TextButton.icon(
-                      style: ButtonStyle(
-                          foregroundColor:
-                              MaterialStateProperty.all(Colors.black)),
+                      style: ButtonStyle(foregroundColor: MaterialStateProperty.all(Colors.black)),
                       onPressed: () {
-                        String? imgUrl =
-                            data.images != null && data.images.isNotEmpty
-                                ? data.images?.first.toString()
-                                : data.videos?.first.thumbnail.toString();
+                        String? imgUrl = data.images != null && data.images.isNotEmpty
+                            ? data.images?.first.toString()
+                            : data.videos?.first.thumbnail.toString();
                         if (imgUrl != null) {
                           handleShare(
                               data.author!.name.toString(),
                               data.author!.image.toString(),
-                              data.slugHeadline != null ||
-                                      data.slugHeadline != ""
+                              data.slugHeadline != null || data.slugHeadline != ""
                                   ? data.slugHeadline ?? " "
                                   : data.submittedHeadline,
                               imgUrl,
                               data.createdDate,
                               data.postId.toString());
                         } else {
-                          CustomSnackBar(
-                              context, Text("Can't share post with no images"));
+                          CustomSnackBar(context, Text("Can't share post with no images"));
                         }
                       },
                       icon: Icon(Icons.share_outlined),
@@ -557,16 +559,13 @@ class _CardUIState extends State<CardUI> {
                 ],
               ),
             if (data.comments > 0) Text('${data.comments} comments'),
-            if (data.comments > 0 &&
-                data.latestComment != null &&
-                data.latestComment.user != null)
+            if (data.comments > 0 && data.latestComment != null && data.latestComment.user != null)
               InkWell(
                 onTap: () {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) =>
-                              CommentSection(postId: data.postId!)));
+                          builder: (context) => CommentSection(postId: data.postId!)));
                 },
                 splashFactory: InkRipple.splashFactory,
                 child: Padding(
@@ -578,8 +577,7 @@ class _CardUIState extends State<CardUI> {
                       ClipRRect(
                         borderRadius: BorderRadius.circular(50),
                         child: Image(
-                          image:
-                              NetworkImage('${data.latestComment.user.avatar}'),
+                          image: CachedNetworkImageProvider('${data.latestComment.user.avatar}'),
                           width: 48,
                           height: 48,
                         ),
@@ -589,18 +587,15 @@ class _CardUIState extends State<CardUI> {
                       ),
                       Expanded(
                         child: Container(
-                          padding: const EdgeInsets.only(
-                              left: 10, right: 10, top: 8),
+                          padding: const EdgeInsets.only(left: 10, right: 10, top: 8),
                           decoration: BoxDecoration(
-                              color: Color(0xFFF4F4F4),
-                              borderRadius: BorderRadius.circular(10)),
+                              color: Color(0xFFF4F4F4), borderRadius: BorderRadius.circular(10)),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
                                 '${data.latestComment.user.name}',
-                                style:
-                                    ThreeKmTextConstants.tk14PXPoppinsBlackBold,
+                                style: ThreeKmTextConstants.tk14PXPoppinsBlackBold,
                               ),
                               Padding(
                                 padding: const EdgeInsets.only(bottom: 10),
@@ -908,60 +903,69 @@ class _CardUIState extends State<CardUI> {
   // }
 
   PopupMenuButton showPopMenu(String postID, newsData) {
-    return PopupMenuButton(
+    void _editPost() async {
+      Navigator.push<bool>(
+              context, MaterialPageRoute(builder: (context) => EditPost(postId: newsData.postId)))
+          .then((value) {
+        if (value ?? false) {
+          if (widget.providerType == "AutthorProfileProvider") {
+            context.read<AutthorProfileProvider>().getSelfProfile();
+          }
+        }
+      });
+    }
+
+    void _copyLink() {
+      Clipboard.setData(ClipboardData(
+              text:
+                  "${slugUrl(headLine: newsData.slugHeadline ?? newsData.submittedHeadline, postId: postID)}"))
+          .then((value) => CustomSnackBar(context, Text("Link has been coppied to clipboard")));
+    }
+
+    void _share() {
+      String imgUrl = newsData.images != null && newsData.images!.length > 0
+          ? newsData.images!.first.toString()
+          : newsData.videos!.first.thumbnail.toString();
+      handleShare(
+          newsData.author!.name.toString(),
+          newsData.author!.image.toString(),
+          newsData.slugHeadline != null || newsData.slugHeadline != ""
+              ? newsData.slugHeadline
+              : newsData.submittedHeadline,
+          imgUrl,
+          newsData.createdDate,
+          newsData.postId.toString());
+    }
+
+    return PopupMenuButton<String>(
       icon: Icon(Icons.more_vert),
-      itemBuilder: (BuildContext context) => <PopupMenuEntry>[
-        PopupMenuItem(
-          child: ListTile(
-            title: Text('Copy link'),
-            onTap: () {
-              Clipboard.setData(ClipboardData(
-                      text:
-                          "${slugUrl(headLine: newsData.slugHeadline.toString(), postId: postID)}"))
-                  .then((value) => CustomSnackBar(
-                      context, Text("Link has been coppied to clipboard")))
-                  .whenComplete(() => Navigator.pop(context));
-            },
-          ),
-        ),
-        PopupMenuItem(
-          child: ListTile(
-            onTap: () {
-              String imgUrl =
-                  newsData.images != null && newsData.images!.length > 0
-                      ? newsData.images!.first.toString()
-                      : newsData.videos!.first.thumbnail.toString();
-              handleShare(
-                  newsData.author!.name.toString(),
-                  newsData.author!.image.toString(),
-                  newsData.slugHeadline != null || newsData.slugHeadline != ""
-                      ? newsData.slugHeadline
-                      : newsData.submittedHeadline,
-                  imgUrl,
-                  newsData.createdDate,
-                  newsData.postId.toString());
-            },
-            title: Text('Share to..',
-                style: ThreeKmTextConstants.tk16PXLatoBlackRegular),
-          ),
-        ),
-        PopupMenuItem(
-          child: ListTile(
-            onTap: () {
-              Navigator.pop(context);
-            },
-            title: Text(
-              'Cancel',
-              style: ThreeKmTextConstants.tk16PXPoppinsRedSemiBold,
-            ),
-          ),
-        ),
-      ],
+      onSelected: (string) {
+        switch (string) {
+          case 'edit':
+            _editPost();
+            break;
+          case 'copyLink':
+            _copyLink();
+            break;
+          case 'share':
+            _share();
+            break;
+        }
+      },
+      itemBuilder: (BuildContext context) {
+        return [
+          if (widget.isEditable) PopupMenuItem<String>(value: 'edit', child: Text('Edit Post')),
+          PopupMenuItem<String>(value: 'copyLink', child: Text('Copy link')),
+          PopupMenuItem<String>(
+              value: 'share',
+              child: Text('Share to..', style: ThreeKmTextConstants.tk16PXLatoBlackRegular)),
+        ];
+      },
     );
   }
 
-  handleShare(String authorName, String authorProfile, String headLine,
-      String thumbnail, date, String postId) async {
+  handleShare(String authorName, String authorProfile, String headLine, String thumbnail, date,
+      String postId) async {
     showLoading();
     screenshotController
         .captureFromWidget(Container(
@@ -984,8 +988,7 @@ class _CardUIState extends State<CardUI> {
                     decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         image: DecorationImage(
-                            fit: BoxFit.cover,
-                            image: CachedNetworkImageProvider(authorProfile))),
+                            fit: BoxFit.cover, image: CachedNetworkImageProvider(authorProfile))),
                   )),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -1032,10 +1035,8 @@ class _CardUIState extends State<CardUI> {
                 ),
                 Padding(
                   padding: EdgeInsets.only(right: 15),
-                  child: Container(
-                      height: 30,
-                      width: 30,
-                      child: Image.asset('assets/icon_light.png')),
+                  child:
+                      Container(height: 30, width: 30, child: Image.asset('assets/icon_light.png')),
                 )
               ],
             ),
@@ -1051,8 +1052,7 @@ class _CardUIState extends State<CardUI> {
         File file = await File('${documentDirectory!.path}/image.png').create();
         log(slugUrl(headLine: headLine, postId: postId));
         file.writeAsBytesSync(capturedImage);
-        Share.shareFiles([file.path],
-                text: '${slugUrl(headLine: headLine, postId: postId)}')
+        Share.shareFiles([file.path], text: '${slugUrl(headLine: headLine, postId: postId)}')
             .then((value) => hideLoading());
       } on Exception catch (e) {
         log(e.toString());

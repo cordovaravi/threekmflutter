@@ -11,12 +11,13 @@ import 'package:threekm/Custom_library/location2.0/lib/widgets/place_api_provide
 import 'package:threekm/Custom_library/location2.0/lib/widgets/prediction_list_loading.dart';
 import 'package:threekm/providers/Location/locattion_Provider.dart';
 import 'package:threekm/providers/main/AddPost_Provider.dart';
+import 'package:threekm/providers/main/EditPost_Provider.dart';
 import 'package:threekm/utils/api_paths.dart';
 import 'package:threekm/utils/threekm_textstyles.dart';
 
 class PlacePickerNew extends StatefulWidget {
-  const PlacePickerNew({Key? key}) : super(key: key);
-
+  const PlacePickerNew({Key? key, this.isEditing = false}) : super(key: key);
+  final bool isEditing;
   @override
   State<PlacePickerNew> createState() => _PlacePickerNewState();
 }
@@ -52,6 +53,7 @@ class _PlacePickerNewState extends State<PlacePickerNew> {
   TextFormField _searchField(Size md) {
     return TextFormField(
       controller: _textController,
+      autofocus: true,
       onChanged: (text) async {
         if (text.isNotEmpty && text.length > 1) {
           setState(() {
@@ -152,10 +154,17 @@ class _PlacePickerNewState extends State<PlacePickerNew> {
               builder: (context) => PickFromMap(LatLng(latitude, longitude))));
 
       if (_details != null) {
-        context.read<AddPostProvider>()
-          ..selectedAddress =
-              (_details.result.name) + '\n' + (_details.result.formattedAddress ?? '')
-          ..geometry = _details.result.geometry;
+        if (widget.isEditing) {
+          context.read<EditPostProvider>()
+            ..selectedAddress =
+                (_details.result.name) + '\n' + (_details.result.formattedAddress ?? '')
+            ..geometry = _details.result.geometry;
+        } else {
+          context.read<AddPostProvider>()
+            ..selectedAddress =
+                (_details.result.name) + '\n' + (_details.result.formattedAddress ?? '')
+            ..geometry = _details.result.geometry;
+        }
         Navigator.pop(context);
       }
     }
@@ -169,9 +178,15 @@ class _PlacePickerNewState extends State<PlacePickerNew> {
     );
     webService.PlacesDetailsResponse _details =
         await places.getDetailsByPlaceId(list[index].placeId!);
-    context.read<AddPostProvider>()
-      ..selectedAddress = (_details.result.name) + '\n' + (_details.result.formattedAddress ?? '')
-      ..geometry = _details.result.geometry;
+    if (widget.isEditing) {
+      context.read<EditPostProvider>()
+        ..selectedAddress = (_details.result.name) + '\n' + (_details.result.formattedAddress ?? '')
+        ..geometry = _details.result.geometry;
+    } else {
+      context.read<AddPostProvider>()
+        ..selectedAddress = (_details.result.name) + '\n' + (_details.result.formattedAddress ?? '')
+        ..geometry = _details.result.geometry;
+    }
     Navigator.pop(context);
   }
 

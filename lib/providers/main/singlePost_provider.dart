@@ -16,8 +16,8 @@ class SinglePostProvider extends ChangeNotifier {
     String _token = await _apiProvider.getToken() ?? "";
     if (mounted) {
       try {
-        var response = await _apiProvider
-            .get(post_details + postId + "&token=$_token" + "&lang=$lang");
+        var response =
+            await _apiProvider.get(post_details + "$postId" + "&token=$_token" + "&lang=$lang");
         print(response);
         if (response != null) {
           _deepLinkPost = DeepLinkPost.fromJson(response);
@@ -40,8 +40,7 @@ class SinglePostProvider extends ChangeNotifier {
       "emotion": "$emotion"
     }); //"emotion": "$emotion"s
     _deepLinkPost!.data!.result!.post!.isLiked = true;
-    _deepLinkPost!.data!.result!.post!.likes =
-        _deepLinkPost!.data!.result!.post!.likes! + 1;
+    _deepLinkPost!.data!.result!.post!.likes = _deepLinkPost!.data!.result!.post!.likes! + 1;
     _deepLinkPost?.data?.result?.post?.emotion = emotion;
     notifyListeners();
 
@@ -51,11 +50,9 @@ class SinglePostProvider extends ChangeNotifier {
   }
 
   Future<Null> postUnLike(String postId) async {
-    String requestJson =
-        json.encode({"module": "news_post", "entity_id": postId});
+    String requestJson = json.encode({"module": "news_post", "entity_id": postId});
     _deepLinkPost!.data!.result!.post!.isLiked = false;
-    _deepLinkPost!.data!.result!.post!.likes =
-        _deepLinkPost!.data!.result!.post!.likes! - 1;
+    _deepLinkPost!.data!.result!.post!.likes = _deepLinkPost!.data!.result!.post!.likes! - 1;
     notifyListeners();
     final response = await _apiProvider.post(unlike, requestJson);
     print(response);
