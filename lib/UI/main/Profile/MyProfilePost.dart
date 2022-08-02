@@ -6,9 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-
 import 'package:google_fonts/google_fonts.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
@@ -16,30 +14,17 @@ import 'package:provider/src/provider.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:threekm/Models/SelfProfile_Model.dart';
-import 'package:threekm/Models/getUserInfoModel.dart' as UserInfoModel;
-import 'package:threekm/Models/newsByCategories_model.dart'
-    as newsListByCategoryModel;
 import 'package:threekm/UI/Animation/AnimatedSizeRoute.dart';
-import 'package:threekm/UI/DayZero/DayZeroforTabs.dart';
 import 'package:threekm/UI/Help_Supportpage.dart';
 import 'package:threekm/UI/main/AddPost/AddPost.dart';
-
-import 'package:threekm/UI/main/News/NewsList.dart';
-import 'package:threekm/UI/main/News/Widgets/comment_Loading.dart';
-import 'package:threekm/UI/main/News/Widgets/likes_Loading.dart';
-import 'package:threekm/UI/shop/product/full_image.dart';
 import 'package:threekm/UI/userkyc/user_kyc_main.dart';
-import 'package:threekm/commenwidgets/CustomSnakBar.dart';
 import 'package:threekm/commenwidgets/commenwidget.dart';
 import 'package:threekm/commenwidgets/fullImage.dart';
 import 'package:threekm/providers/main/AddPost_Provider.dart';
 import 'package:threekm/providers/main/AthorProfile_Provider.dart';
-import 'package:threekm/providers/main/LikeList_Provider.dart';
-import 'package:threekm/providers/main/comment_Provider.dart';
 import 'package:threekm/providers/userKyc/verify_credential.dart';
-import 'package:threekm/widgets/NewCardUI/card_ui.dart';
-
 import 'package:threekm/utils/utils.dart';
+import 'package:threekm/widgets/NewCardUI/card_ui.dart';
 
 class MyProfilePost extends StatefulWidget {
   final int id;
@@ -62,13 +47,14 @@ class MyProfilePost extends StatefulWidget {
   _MyProfilePostState createState() => _MyProfilePostState();
 }
 
-class _MyProfilePostState extends State<MyProfilePost>
-    with TickerProviderStateMixin {
+class _MyProfilePostState extends State<MyProfilePost> with TickerProviderStateMixin {
   ScrollController controller = ScrollController();
 
   int index = 0;
   bool addingAbout = false;
   int aboutCount = 0;
+
+  TextEditingController _aboutTextController = TextEditingController();
 
   List<String> questions = [
     "What can you share/post on 3km?",
@@ -89,7 +75,6 @@ class _MyProfilePostState extends State<MyProfilePost>
       "title": "Hiring Requirement",
       "subtitle": "Job Descriptions",
     },
-
     {
       "title": "Business specialities",
       "subtitle": "Notable custom products made by you",
@@ -114,21 +99,12 @@ class _MyProfilePostState extends State<MyProfilePost>
   ];
   List<dynamic> As_a_citizen = [
     {"title": "Report", "subtitle": "Accidents, Crime, Utility failure, Scam"},
-    {
-      "title": "Informative Post",
-      "subtitle": "Food & Product Reviews, Quick Tutorials"
-    },
-    {
-      "title": "Events",
-      "subtitle": "Invites, Marathons, Competitions, Sports, Flea Markets"
-    },
+    {"title": "Informative Post", "subtitle": "Food & Product Reviews, Quick Tutorials"},
+    {"title": "Events", "subtitle": "Invites, Marathons, Competitions, Sports, Flea Markets"},
     {"title": "Ask help", "subtitle": "Blood Requirement, Find Missing Pet"},
     {"title": "Showcase your talent", "subtitle": "Dance, Music, Baking etc"},
     {"title": "Entertainment", "subtitle": "One-Act Plays, Poems"},
-    {
-      "title": "Cityscape",
-      "subtitle": "Good photos of the city and its moods."
-    },
+    {"title": "Cityscape", "subtitle": "Good photos of the city and its moods."},
   ];
 
   List<dynamic> not_to_Share = [
@@ -136,14 +112,8 @@ class _MyProfilePostState extends State<MyProfilePost>
       "title": "No Selfies/ Personal photos",
       "subtitle": "Personal Photos(Unless you are a professional model)"
     },
-    {
-      "title": "No Greetings ",
-      "subtitle": "No Good Morning, Birthday and Anniversary wishes"
-    },
-    {
-      "title": "Quotes Posts",
-      "subtitle": "No Inspirational / Motivational Quotes"
-    },
+    {"title": "No Greetings ", "subtitle": "No Good Morning, Birthday and Anniversary wishes"},
+    {"title": "Quotes Posts", "subtitle": "No Inspirational / Motivational Quotes"},
   ];
 
   @override
@@ -153,8 +123,9 @@ class _MyProfilePostState extends State<MyProfilePost>
       Future.delayed(Duration.zero, () {
         context.read<AutthorProfileProvider>().getSelfProfile();
         context.read<VerifyKYCCredential>().getUserProfileInfo();
-        context.read<AddPostProvider>().resetUpload();
-        context.read<AddPostProvider>().setPostUploaded();
+        context.read<AddPostProvider>()
+          ..resetUpload()
+          ..setPostUploaded();
       });
     }
   }
@@ -181,13 +152,11 @@ class _MyProfilePostState extends State<MyProfilePost>
                       onPrimary: Colors.white,
                       shadowColor: Colors.blueAccent,
                       elevation: 3,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(32.0)),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32.0)),
                       minimumSize: Size(100, 40), //////// HERE
                     ),
                     onPressed: () {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (_) => UserKycMain()));
+                      Navigator.push(context, MaterialPageRoute(builder: (_) => UserKycMain()));
                     },
                     child: Text('Continue')),
               ),
@@ -207,10 +176,9 @@ class _MyProfilePostState extends State<MyProfilePost>
 
   @override
   Widget build(BuildContext context) {
-    final selfProfile = context.watch<AutthorProfileProvider>();
-    final userInfo = context.watch<VerifyKYCCredential>().userProfileInfo;
-    var data = userInfo.data?.result;
+    final AutthorProfileProvider selfProfile = context.watch<AutthorProfileProvider>();
     var selfProfileModel = selfProfile.selfProfile;
+    var data = context.watch<VerifyKYCCredential>().userProfileInfo.data?.result;
 
     return RefreshIndicator(
       onRefresh: () {
@@ -218,265 +186,222 @@ class _MyProfilePostState extends State<MyProfilePost>
         return context.read<VerifyKYCCredential>().getUserProfileInfo();
       },
       child: Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
-        elevation: 0.0,
-        title: Text(
-          "My posts",
-          style: ThreeKmTextConstants.tk18PXLatoBlackMedium,
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          foregroundColor: Colors.black,
+          elevation: 0.0,
+          title: Text(
+            "My posts",
+            style: ThreeKmTextConstants.tk18PXLatoBlackMedium,
+          ),
         ),
-        ),
-      body:
-          selfProfile.isGettingSelfProfile == true &&
-                  selfProfile.selfProfile?.data == null
-              ? Container(
-                  height: MediaQuery.of(context).size.height,
-                  width: MediaQuery.of(context).size.width,
-                  color: Colors.white,
-                  child: Center(
-                    child: Transform.translate(
-                      offset: Offset(0, 0),
-                      child: CupertinoActivityIndicator(),
-                    ),
+        body: selfProfile.isGettingSelfProfile == true && selfProfile.selfProfile?.data == null
+            ? Container(
+                height: MediaQuery.of(context).size.height,
+                width: MediaQuery.of(context).size.width,
+                color: Colors.white,
+                child: Center(
+                  child: Transform.translate(
+                    offset: Offset(0, 0),
+                    child: CupertinoActivityIndicator(),
                   ),
-                )
-              : Column(
-                  mainAxisSize: MainAxisSize.max,
-                  children: [
-                    //  buildBackButton(context),
-                    selfProfile.selfProfile != null
-                        ? Expanded(
-                            child: Container(
-                              //clipBehavior: Clip.antiAlias,
-                              width: MediaQuery.of(context).size.width,
-                              //padding: EdgeInsets.symmetric(horizontal: 8),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                // borderRadius: BorderRadius.only(
-                                //   topLeft: Radius.circular(40),
-                                //   topRight: Radius.circular(40),
-                                // ),
-                              ),
-                              child: Stack(
-                                children: [
-                                  CustomScrollView(
-                                    controller: controller,
-                                    slivers: [
-                                      SliverAppBar(
-                                        title: Text(""),
-                                        collapsedHeight: 0,
-                                        expandedHeight: data != null &&
-                                                data.isDocumentVerified
-                                            ? 300
-                                            : 450,
-                                        // addingAbout == true &&
-                                        //         selfProfileModel!.data!.result!.author!.about == null
-                                        //     ? 340
-                                        //     : 290,
-                                        // widget.isFromSelfProfileNavigate != true
-                                        //     ? (addingAbout != true ? 250 : 300)
-                                        //     : 250,
-                                        toolbarHeight: 0,
-                                        backgroundColor: Colors.white,
-                                        flexibleSpace: FlexibleSpaceBar(
-                                          background: Column(
-                                            children: [
-                                              buildAvatar(selfProfileModel!),
-                                              SizedBox(
-                                                width: 5,
-                                              ),
-                                              Center(
-                                                child: Text(
-                                                  "${selfProfileModel.data!.result!.author!.name}",
-                                                  maxLines: 1,
+                ),
+              )
+            : Column(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  //  buildBackButton(context),
+                  selfProfile.selfProfile != null
+                      ? Expanded(
+                          child: Container(
+                            //clipBehavior: Clip.antiAlias,
+                            width: MediaQuery.of(context).size.width,
+                            //padding: EdgeInsets.symmetric(horizontal: 8),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              // borderRadius: BorderRadius.only(
+                              //   topLeft: Radius.circular(40),
+                              //   topRight: Radius.circular(40),
+                              // ),
+                            ),
+                            child: Stack(
+                              children: [
+                                CustomScrollView(controller: controller, slivers: [
+                                  SliverAppBar(
+                                    title: Text(""),
+                                    collapsedHeight: 0,
+                                    expandedHeight:
+                                        data != null && data.isDocumentVerified ? 300 : 450,
+                                    // addingAbout == true &&
+                                    //         selfProfileModel!.data!.result!.author!.about == null
+                                    //     ? 340
+                                    //     : 290,
+                                    // widget.isFromSelfProfileNavigate != true
+                                    //     ? (addingAbout != true ? 250 : 300)
+                                    //     : 250,
+                                    toolbarHeight: 0,
+                                    backgroundColor: Colors.white,
+                                    flexibleSpace: FlexibleSpaceBar(
+                                      background: Column(
+                                        children: [
+                                          buildAvatar(selfProfileModel!),
+                                          SizedBox(
+                                            width: 5,
+                                          ),
+                                          Center(
+                                            child: Text(
+                                              "${selfProfileModel.data!.result!.author!.name}",
+                                              maxLines: 1,
                                               overflow: TextOverflow.ellipsis,
                                               style: ThreeKmTextConstants.tk14PXPoppinsBlackSemiBold
                                                   .copyWith(fontSize: 18),
-                                                ),
-                                              ),
-                                              widget.isFromSelfProfileNavigate ==
-                                                      false
-                                                  ? Column(
-                                                      children: [
-                                                        space(height: 32),
-                                                        buildFollowing(context),
-                                                        space(height: 32),
-                                                        buildFollowingButton,
-                                                        buildFollowingButton,
-                                                      ],
-                                                    )
-                                                  : Container(),
-                                              Padding(
+                                            ),
+                                          ),
+                                          widget.isFromSelfProfileNavigate == false
+                                              ? Column(
+                                                  children: [
+                                                    space(height: 32),
+                                                    buildFollowing(context),
+                                                    space(height: 32),
+                                                    buildFollowingButton,
+                                                    buildFollowingButton,
+                                                  ],
+                                                )
+                                              : Container(),
+                                          Padding(
                                             padding:
                                                 EdgeInsets.symmetric(vertical: 18, horizontal: 55),
-                                                child: Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceAround,
+                                            child: Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                              children: [
+                                                Column(
                                                   children: [
-                                                    Column(
-                                                      children: [
-                                                        Text(
-                                                            selfProfileModel
-                                                                .data!
-                                                                .result!
-                                                                .author!
-                                                                .totalPosts
-                                                                .toString(),
-                                                            style: GoogleFonts.poppins(
-                                                                color: Colors
-                                                                    .black,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w500,
-                                                                fontSize: 18)),
-                                                        Text(
-                                                          "Posts",
-                                                          style: ThreeKmTextConstants
-                                                              .tk14PXPoppinsBlackSemiBold
-                                                              .copyWith(
-                                                                  color: Color(
-                                                                      0xff979EA4)),
-                                                        )
-                                                      ],
-                                                    ),
-                                                    Column(
-                                                      children: [
-                                                        Text(
-                                                            selfProfileModel
-                                                                .data!
-                                                                .result!
-                                                                .author!
-                                                                .followers
-                                                                .toString(),
+                                                    Text(
+                                                        selfProfileModel
+                                                            .data!.result!.author!.totalPosts
+                                                            .toString(),
                                                         style: GoogleFonts.poppins(
                                                             color: Colors.black,
                                                             fontWeight: FontWeight.w500,
                                                             fontSize: 18)),
-                                                        Text(
-                                                          "Followers",
-                                                          style: ThreeKmTextConstants
-                                                              .tk14PXPoppinsBlackSemiBold
-                                                              .copyWith(
-                                                                  color: Color(
-                                                                      0xff979EA4)),
-                                                        )
-                                                      ],
-                                                    ),
-                                                    Column(
-                                                      children: [
-                                                        Text(
-                                                            selfProfileModel
-                                                                .data!
-                                                                .result!
-                                                                .author!
-                                                                .following
-                                                                .toString(),
-                                                        style: GoogleFonts.poppins(
-                                                            color: Colors.black,
-                                                            fontWeight: FontWeight.w500,
-                                                            fontSize: 18)),
-                                                        Text(
-                                                          "Following",
-                                                          style: ThreeKmTextConstants
-                                                              .tk14PXPoppinsBlackSemiBold
-                                                              .copyWith(
-                                                                  color: Color(
-                                                                      0xff979EA4)),
-                                                        ),
-                                                      ],
+                                                    Text(
+                                                      "Posts",
+                                                      style: ThreeKmTextConstants
+                                                          .tk14PXPoppinsBlackSemiBold
+                                                          .copyWith(color: Color(0xff979EA4)),
                                                     )
                                                   ],
                                                 ),
-                                              ),
-                                              Container(
-                                                margin: EdgeInsets.only(
-                                                    left: 16, right: 16),
-                                                width: size.width,
-                                                height: 50,
-                                                child: ElevatedButton(
-                                                  style: ButtonStyle(
+                                                Column(
+                                                  children: [
+                                                    Text(
+                                                        selfProfileModel
+                                                            .data!.result!.author!.followers
+                                                            .toString(),
+                                                        style: GoogleFonts.poppins(
+                                                            color: Colors.black,
+                                                            fontWeight: FontWeight.w500,
+                                                            fontSize: 18)),
+                                                    Text(
+                                                      "Followers",
+                                                      style: ThreeKmTextConstants
+                                                          .tk14PXPoppinsBlackSemiBold
+                                                          .copyWith(color: Color(0xff979EA4)),
+                                                    )
+                                                  ],
+                                                ),
+                                                Column(
+                                                  children: [
+                                                    Text(
+                                                        selfProfileModel
+                                                            .data!.result!.author!.following
+                                                            .toString(),
+                                                        style: GoogleFonts.poppins(
+                                                            color: Colors.black,
+                                                            fontWeight: FontWeight.w500,
+                                                            fontSize: 18)),
+                                                    Text(
+                                                      "Following",
+                                                      style: ThreeKmTextConstants
+                                                          .tk14PXPoppinsBlackSemiBold
+                                                          .copyWith(color: Color(0xff979EA4)),
+                                                    ),
+                                                  ],
+                                                )
+                                              ],
+                                            ),
+                                          ),
+                                          Container(
+                                            margin: EdgeInsets.only(left: 16, right: 16),
+                                            width: size.width,
+                                            height: 50,
+                                            child: ElevatedButton(
+                                              style: ButtonStyle(
                                                   shape: MaterialStateProperty.all(StadiumBorder()),
-                                                      backgroundColor:
-                                                          MaterialStateProperty
-                                                              .resolveWith<
-                                                                  Color>(
-                                                        (Set<MaterialState>
-                                                            states) {
-                                                          if (states.contains(
-                                                              MaterialState
-                                                                  .pressed))
-                                                            return Theme.of(
-                                                                    context)
-                                                                .colorScheme
-                                                                .primary
+                                                  backgroundColor:
+                                                      MaterialStateProperty.resolveWith<Color>(
+                                                    (Set<MaterialState> states) {
+                                                      if (states.contains(MaterialState.pressed))
+                                                        return Theme.of(context)
+                                                            .colorScheme
+                                                            .primary
                                                             .withOpacity(0.5);
                                                       else if (states
                                                           .contains(MaterialState.disabled))
                                                         return Colors.grey[300]!;
-                                                          return Color(
-                                                              0xFF3E7EFF); // Use the component's default.
-                                                        },
-                                                      ),
-                                                      foregroundColor:
+                                                      return Color(
+                                                          0xFF3E7EFF); // Use the component's default.
+                                                    },
+                                                  ),
+                                                  foregroundColor:
                                                       MaterialStateProperty.all(Colors.black),
-                                                      enableFeedback: true,
+                                                  enableFeedback: true,
                                                   padding: MaterialStateProperty.all(
                                                       const EdgeInsets.only(
-                                                                      left: 30,
-                                                                      right: 30,
-                                                                      top: 15,
-                                                                      bottom:
-                                                                          15))),
-                                                  child: Text(
-                                                    'Add Post',
+                                                          left: 30,
+                                                          right: 30,
+                                                          top: 15,
+                                                          bottom: 15))),
+                                              child: Text(
+                                                'Add Post',
                                                 style: TextStyle(color: Colors.white),
-                                                  ),
-                                                  onPressed: data != null &&
-                                                          data.isVerified
-                                                      ? () {
-                                                          context
-                                                              .read<
-                                                                  AddPostProvider>()
-                                                              .setPostUploaded();
-                                                          Navigator.push(
-                                                              context,
-                                                              MaterialPageRoute(
-                                                                  builder: (context) =>
-                                                                      //VideoCompress()
-                                                                      AddNewPost()));
-                                                        }
-                                                      : null,
-                                                ),
                                               ),
-                                              if (data != null &&
-                                                  !data.isDocumentVerified)
-                                                Container(
+                                              onPressed: data != null && data.isVerified
+                                                  ? () {
+                                                      context
+                                                          .read<AddPostProvider>()
+                                                          .setPostUploaded();
+                                                      Navigator.push(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                              builder: (context) =>
+                                                                  //VideoCompress()
+                                                                  const AddNewPost()));
+                                                    }
+                                                  : null,
+                                            ),
+                                          ),
+                                          if (data != null && !data.isDocumentVerified)
+                                            Container(
                                               margin: EdgeInsets.only(left: 16, right: 16, top: 24),
                                               padding: EdgeInsets.all(16),
-                                                  decoration: BoxDecoration(
+                                              decoration: BoxDecoration(
                                                   color: Color(0xFFF8F8F8),
                                                   borderRadius: BorderRadius.circular(10)),
                                               child: data.isDocumentUploaded == false
-                                                          ? Column(
-                                                              children: [
-                                                                Row(
-                                                                  crossAxisAlignment:
-                                                                      CrossAxisAlignment
-                                                                          .center,
-                                                                  mainAxisAlignment:
-                                                                      MainAxisAlignment
-                                                                          .center,
-                                                                  children: [
-                                                                    Image(
-                                                                      image: AssetImage(
-                                                                          'assets/verified3.png'),
-                                                                    ),
-                                                                        Spacer(),
-                                                                    SizedBox(
-                                                              width: 11,
+                                                  ? Column(
+                                                      children: [
+                                                        Row(
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment.center,
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment.center,
+                                                          children: [
+                                                            Image(
+                                                              image: AssetImage(
+                                                                  'assets/verified3.png'),
                                                             ),
+                                                            SizedBox(width: 11),
                                                             Expanded(
                                                               child: InkWell(
                                                                 onTap: () {
@@ -486,13 +411,6 @@ class _MyProfilePostState extends State<MyProfilePost>
                                                                           builder: (_) =>
                                                                               UserKycMain()));
                                                                 },
-                                                                            child:
-                                                                                RichText(
-                                                                              maxLines: 2,
-                                                                              // softWrap: true,
-                                                                              textAlign: TextAlign.left,
-                                                                              text: TextSpan(children: [
-                                                                                TextSpan(text: data != null && data.isVerified ? 'To show your post to more people in the community,verify your identity.' : 'To share post on your wall you need a basic verification', style: ThreeKmTextConstants.tk14PXPoppinsBlackMedium.copyWith(fontWeight: FontWeight.w400)),
                                                                 child: RichText(
                                                                   maxLines: 2,
                                                                   softWrap: true,
@@ -501,7 +419,7 @@ class _MyProfilePostState extends State<MyProfilePost>
                                                                     TextSpan(
                                                                         text: data != null &&
                                                                                 data.isVerified
-                                                                            ? 'To show your post to more people in the community, verify your identity.'
+                                                                            ? 'To show your post to more people in the community,verify your identity.'
                                                                             : 'To share post on your wall you need a basic verification',
                                                                         style: ThreeKmTextConstants
                                                                             .tk14PXPoppinsBlackMedium
@@ -509,34 +427,35 @@ class _MyProfilePostState extends State<MyProfilePost>
                                                                                 fontWeight:
                                                                                     FontWeight
                                                                                         .w400)),
-                                                                            TextSpan(
-                                                                                text: ' -Know more',
-                                                                        style: ThreeKmTextConstants
-                                                                            .tk14PXPoppinsBlueMedium.copyWith(fontSize: 12),
-                                                                                )
-                                                                          ]),
-                                                                        ),
-                                                                      ),
-                                                                    ),
-                                                                  ],
+                                                                    TextSpan(
+                                                                      text: ' -Know more',
+                                                                      style: ThreeKmTextConstants
+                                                                          .tk14PXPoppinsBlueMedium
+                                                                          .copyWith(fontSize: 12),
+                                                                    )
+                                                                  ]),
                                                                 ),
-                                                                SizedBox(
-                                                                  height: 16,
-                                                                ),
-                                                                InkWell(
-                                                                  onTap: () {
-                                                                    Navigator.push(
-                                                                        context,
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        SizedBox(
+                                                          height: 16,
+                                                        ),
+                                                        InkWell(
+                                                          onTap: () {
+                                                            Navigator.push(
+                                                                context,
                                                                 MaterialPageRoute(
                                                                     builder: (_) => UserKycMain()));
-                                                                    // showKycMessage(context);
-                                                                    // Navigator.push(
-                                                                    //     context,
-                                                                    //     MaterialPageRoute(
-                                                                    //         builder: (context) =>
-                                                                    //             //VideoCompress()
-                                                                    //             AddNewPost()));
-                                                                  },
+                                                            // showKycMessage(context);
+                                                            // Navigator.push(
+                                                            //     context,
+                                                            //     MaterialPageRoute(
+                                                            //         builder: (context) =>
+                                                            //             //VideoCompress()
+                                                            //             AddNewPost()));
+                                                          },
                                                           child: Container(
                                                             height: 47,
                                                             alignment: Alignment.center,
@@ -544,26 +463,27 @@ class _MyProfilePostState extends State<MyProfilePost>
                                                                 MediaQuery.of(context).size.width,
                                                             margin:
                                                                 EdgeInsets.only(left: 8, right: 8),
-                                                                    decoration: BoxDecoration(
-                                                                        border: Border.all(color: Color(0xff3E7EFF)),
-                                                                        // color: Color(
-                                                                        //     0xff3E7EFF),
+                                                            decoration: BoxDecoration(
+                                                                border: Border.all(
+                                                                    color: Color(0xff3E7EFF)),
+                                                                // color: Color(
+                                                                //     0xff3E7EFF),
                                                                 borderRadius:
                                                                     BorderRadius.circular(28)),
                                                             child: Text(
                                                               data != null && data.isVerified
-                                                                          ? "Identity verification"
-                                                                          : "Start verification",
-                                                              style:
-                                                                  TextStyle(color: Color(0xff3E7EFF)),
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                              ],
-                                                            )
-                                                          : Column(
-                                                              children: [
-                                                                RichText(
+                                                                  ? "Identity verification"
+                                                                  : "Start verification",
+                                                              style: TextStyle(
+                                                                  color: Color(0xff3E7EFF)),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    )
+                                                  : Column(
+                                                      children: [
+                                                        RichText(
                                                             textAlign: TextAlign.center,
                                                             text: TextSpan(children: [
                                                               TextSpan(
@@ -571,144 +491,118 @@ class _MyProfilePostState extends State<MyProfilePost>
                                                                       'We have received your documents. Our team will review it soon.',
                                                                   style: ThreeKmTextConstants
                                                                       .tk16PXPoppinsBlackMedium),
-                                                                          WidgetSpan(
-                                                                              child: Image.asset(
-                                                                                "assets/3kmVerify.png",
-                                                                                width: 15,
-                                                                                height: 15,
-                                                                              ),
-                                                                              baseline: TextBaseline.ideographic,
-                                                                              alignment: PlaceholderAlignment.baseline),
-                                                                        ])),
+                                                              WidgetSpan(
+                                                                  child: Image.asset(
+                                                                    "assets/3kmVerify.png",
+                                                                    width: 15,
+                                                                    height: 15,
+                                                                  ),
+                                                                  baseline:
+                                                                      TextBaseline.ideographic,
+                                                                  alignment: PlaceholderAlignment
+                                                                      .baseline),
+                                                            ])),
                                                         SizedBox(height: 11),
-                                                                Text(
-                                                                  'Our team will verify your documents soon',
-                                                                  style: ThreeKmTextConstants
-                                                                      .tk14PXPoppinsBlackMedium
+                                                        Text(
+                                                          'Our team will verify your documents soon',
+                                                          style: ThreeKmTextConstants
+                                                              .tk14PXPoppinsBlackMedium
                                                               .copyWith(color: Color(0xFFA7ABAD)),
-                                                                )
-                                                              ],
-                                                            ),
-                                                ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                      //////////// tabs widget
-                                      // SliverPersistentHeader(
-                                      //   delegate: PersistentHeader(
-                                      //     widget: buildTabBar,
-                                      //   ),
-                                      //   pinned: true,
-                                      // ),
-
-                                      if (index == 0) ...{
-                                    selfProfileModel.data!.result!.posts!.length != 0
-                                            ? SliverList(
-                                                delegate:
-                                                    SliverChildBuilderDelegate(
-                                                  (context, _index) {
-                                                    if (selfProfileModel
-                                                                    .data!
-                                                                    .result!
-                                                                    .posts!
-                                                                    .length >=
-                                                                5 &&
-                                                            _index == 5) {
-                                                          return Column(
-                                                            children: [
-                                                              NewsCard(
-                                                                  selfProfileModel:
-                                                                      selfProfileModel,
-                                                                  index:
-                                                                      _index),
-                                                              InstructionCard(
-                                                                  questions:
-                                                                      questions,
-                                                                  subtitle:
-                                                                      subtitle,
-                                                                  As_a_citizen:
-                                                                      As_a_citizen,
-                                                                  As_a_Business:
-                                                                      As_a_Business,
-                                                                  not_to_Share:
-                                                                      not_to_Share),
-                                                            ],
-                                                          );
-                                                        }
-                                                        if (selfProfileModel
-                                                                    .data!
-                                                                    .result!
-                                                                    .posts!
-                                                                    .length <=
-                                                                5 &&
-                                                            selfProfileModel
-                                                                        .data!
-                                                                        .result!
-                                                                        .posts!
-                                                                        .length -
-                                                                    1 ==
-                                                                _index) {
-                                                          return Column(
-                                                            children: [
-                                                              NewsCard(
-                                                                  selfProfileModel:
-                                                                      selfProfileModel,
-                                                                  index:
-                                                                      _index),
-                                                              InstructionCard(
-                                                                  questions:
-                                                                      questions,
-                                                                  subtitle:
-                                                                      subtitle,
-                                                                  As_a_citizen:
-                                                                      As_a_citizen,
-                                                                  As_a_Business:
-                                                                      As_a_Business,
-                                                                  not_to_Share:
-                                                                      not_to_Share),
-                                                            ],
-                                                          );
-                                                        }
-                                                        return NewsCard(
-                                                        selfProfileModel:
-                                                            selfProfileModel,
-                                                        index: _index);
-                                                      },
-                                                      childCount:
-                                                          selfProfileModel
-                                                              .data!
-                                                              .result!
-                                                              .posts!
-                                                              .length,
+                                                        )
+                                                      ],
                                                     ),
-                                                  )
-                                                : SliverToBoxAdapter(
-                                                    child: InstructionCard(
-                                                        questions: questions,
-                                                        subtitle: subtitle,
-                                                        As_a_citizen:
-                                                            As_a_citizen,
-                                                        As_a_Business:
-                                                            As_a_Business,
-                                                        not_to_Share:
-                                                            not_to_Share),
-                                                  )
-                                          } else ...{
-                                            Center(
-                                              child: Text("Saved posts"),
-                                            )
-                                          }
-                                        ])
-                                  ],
-                                ),
-                              ),
-                            )
-                          : Center(
-                              child: Text("Some error while getting data"),
-                            )
-                    ],
-                  ),
+                                            ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  //////////// tabs widget
+                                  // SliverPersistentHeader(
+                                  //   delegate: PersistentHeader(
+                                  //     widget: buildTabBar,
+                                  //   ),
+                                  //   pinned: true,
+                                  // ),
+                                  SliverToBoxAdapter(
+                                    child: Container(
+                                      height: 36,
+                                    ),
+                                  ),
+                                  if (index == 0) ...{
+                                    selfProfileModel.data!.result!.posts!.length != 0
+                                        ? SliverList(
+                                            delegate: SliverChildBuilderDelegate(
+                                              (context, _index) {
+                                                if (selfProfileModel.data!.result!.posts!.length >=
+                                                        5 &&
+                                                    _index == 5) {
+                                                  return Column(
+                                                    children: [
+                                                      NewsCard(
+                                                          isEditable: true,
+                                                          selfProfileModel: selfProfileModel,
+                                                          index: _index),
+                                                      InstructionCard(
+                                                          questions: questions,
+                                                          subtitle: subtitle,
+                                                          As_a_citizen: As_a_citizen,
+                                                          As_a_Business: As_a_Business,
+                                                          not_to_Share: not_to_Share),
+                                                    ],
+                                                  );
+                                                }
+                                                if (selfProfileModel.data!.result!.posts!.length <=
+                                                        5 &&
+                                                    selfProfileModel.data!.result!.posts!.length -
+                                                            1 ==
+                                                        _index) {
+                                                  return Column(
+                                                    children: [
+                                                      NewsCard(
+                                                          isEditable: true,
+                                                          selfProfileModel: selfProfileModel,
+                                                          index: _index),
+                                                      InstructionCard(
+                                                          questions: questions,
+                                                          subtitle: subtitle,
+                                                          As_a_citizen: As_a_citizen,
+                                                          As_a_Business: As_a_Business,
+                                                          not_to_Share: not_to_Share),
+                                                    ],
+                                                  );
+                                                }
+                                                return NewsCard(
+                                                    isEditable: true,
+                                                    selfProfileModel: selfProfileModel,
+                                                    index: _index);
+                                              },
+                                              childCount:
+                                                  selfProfileModel.data!.result!.posts!.length,
+                                            ),
+                                          )
+                                        : SliverToBoxAdapter(
+                                            child: InstructionCard(
+                                                questions: questions,
+                                                subtitle: subtitle,
+                                                As_a_citizen: As_a_citizen,
+                                                As_a_Business: As_a_Business,
+                                                not_to_Share: not_to_Share),
+                                          )
+                                  } else ...{
+                                    Center(
+                                      child: Text("Saved posts"),
+                                    )
+                                  }
+                                ])
+                              ],
+                            ),
+                          ),
+                        )
+                      : Center(
+                          child: Text("Some error while getting data"),
+                        )
+                ],
+              ),
       ),
     );
   }
@@ -784,8 +678,7 @@ class _MyProfilePostState extends State<MyProfilePost>
       children: [
         Text(
           value,
-          style: ThreeKmTextConstants.tk14PXPoppinsBlackSemiBold
-              .copyWith(fontSize: 18),
+          style: ThreeKmTextConstants.tk14PXPoppinsBlackSemiBold.copyWith(fontSize: 18),
         ),
         Text(
           text,
@@ -850,8 +743,7 @@ class _MyProfilePostState extends State<MyProfilePost>
                           context,
                           MaterialPageRoute(
                               builder: (_) => ProfileFullImage(
-                                    src: selfProfileModel
-                                        .data!.result!.author!.image!,
+                                    src: selfProfileModel.data!.result!.author!.image!,
                                     Imagetag: "profilePhoto",
                                   )));
                     },
@@ -875,8 +767,7 @@ class _MyProfilePostState extends State<MyProfilePost>
             : Container(
                 width: 120,
                 height: 120,
-                decoration:
-                    BoxDecoration(shape: BoxShape.circle, color: Colors.grey),
+                decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.grey),
               ),
       ],
     );
@@ -960,12 +851,10 @@ class InstructionCard extends StatelessWidget {
                                     ),
                                   ),
                                   SizedBox(
-                                    width:
-                                        MediaQuery.of(context).size.width / 1.7,
+                                    width: MediaQuery.of(context).size.width / 1.7,
                                     child: Text(
                                       'Violation of 3km community Rules and Regulations will lead to Account Suspension.',
-                                      style: ThreeKmTextConstants
-                                          .tk14PXPoppinsBlackMedium,
+                                      style: ThreeKmTextConstants.tk14PXPoppinsBlackMedium,
                                     ),
                                   )
                                 ],
@@ -1335,8 +1224,7 @@ class _NewsCardState extends State<NewsCard> {
                     padding: EdgeInsets.zero,
                     child: TextButton(
                         onPressed: () {
-                          Navigator.push(context,
-                              AnimatedSizeRoute(page: HelpAndSupport()));
+                          Navigator.push(context, AnimatedSizeRoute(page: HelpAndSupport()));
                         },
                         child: Text(
                           "Get Help",
@@ -1345,70 +1233,20 @@ class _NewsCardState extends State<NewsCard> {
                   )
                 ],
               ),
-              decoration: BoxDecoration(
-                  color: Colors.white, borderRadius: BorderRadius.circular(20)),
+              decoration:
+                  BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(20)),
             )
           : SizedBox.shrink()
     ]);
   }
 
-  PopupMenuButton showPopMenu(String postID, Result newsData) {
-    return PopupMenuButton(
-      icon: Icon(Icons.more_vert),
-      itemBuilder: (BuildContext context) => <PopupMenuEntry>[
-        PopupMenuItem(
-          child: ListTile(
-            title: Text('Copy link'),
-            onTap: () {
-              Clipboard.setData(ClipboardData(
-                      text: "https://3km.in/post-detail?id=$postID&lang=en"))
-                  .then((value) => CustomSnackBar(
-                      context, Text("Link has been coppied to clipboard")))
-                  .whenComplete(() => Navigator.pop(context));
-            },
-          ),
-        ),
-        // PopupMenuItem(
-        //   child: ListTile(
-        //     onTap: () {
-        //       String imgUrl =
-        //           newsData.images != null && newsData.images!.length > 0
-        //               ? newsData.images!.first.toString()
-        //               : newsData.videos!.first.thumbnail.toString();
-        //       handleShare(
-        //           newsData.author!.name.toString(),
-        //           newsData.author!.image.toString(),
-        //           newsData.submittedHeadline.toString(),
-        //           imgUrl,
-        //           newsData.createdDate,
-        //           newsData.postId.toString());
-        //     },
-        //     title: Text('Share to..',
-        //         style: ThreeKmTextConstants.tk16PXLatoBlackRegular),
-        //   ),
-        // ),
-        PopupMenuItem(
-          child: ListTile(
-            onTap: () {
-              Navigator.pop(context);
-            },
-            title: Text(
-              'Cancel',
-              style: ThreeKmTextConstants.tk16PXPoppinsRedSemiBold,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
   // previous param String imgUrl, String name, String newsHeadLine, int index
-  handleShare(String authorName, String authorProfile, String headLine,
-      String thumbnail, date, String postId) async {
+  handleShare(String authorName, String authorProfile, String headLine, String thumbnail, date,
+      String postId) async {
     showLoading();
     screenshotController
         .captureFromWidget(Container(
-      padding: EdgeInsets.only(top: 15, bottom: 15),
+      padding: EdgeInsets.symmetric(vertical: 15),
       color: Colors.white,
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -1427,8 +1265,7 @@ class _NewsCardState extends State<NewsCard> {
                     decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         image: DecorationImage(
-                            fit: BoxFit.cover,
-                            image: CachedNetworkImageProvider(authorProfile))),
+                            fit: BoxFit.cover, image: CachedNetworkImageProvider(authorProfile))),
                   )),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -1475,10 +1312,8 @@ class _NewsCardState extends State<NewsCard> {
                 ),
                 Padding(
                   padding: EdgeInsets.only(right: 15),
-                  child: Container(
-                      height: 30,
-                      width: 30,
-                      child: Image.asset('assets/icon_light.png')),
+                  child:
+                      Container(height: 30, width: 30, child: Image.asset('assets/icon_light.png')),
                 )
               ],
             ),
@@ -1493,9 +1328,8 @@ class _NewsCardState extends State<NewsCard> {
             : await getApplicationDocumentsDirectory();
         File file = await File('${documentDirectory!.path}/image.png').create();
         file.writeAsBytesSync(capturedImage);
-        Share.shareFiles([file.path],
-                text: 'https://3km.in/post-detail?id=$postId&lang=en')
-            .then((value) => hideLoading());
+        Share.shareFiles([file.path], text: 'https://3km.in/post-detail?id=$postId&lang=en')
+            .then((_) => hideLoading());
       } on Exception catch (e) {
         log(e.toString());
         hideLoading();

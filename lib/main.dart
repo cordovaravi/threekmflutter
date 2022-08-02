@@ -118,8 +118,7 @@ void main() async {
     flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
     //update after 1st relase
-    var initializationSettingsAndroid =
-        AndroidInitializationSettings('icon_light');
+    var initializationSettingsAndroid = AndroidInitializationSettings('icon_light');
     var initializationSettingsIOs = IOSInitializationSettings();
     var initSetttings = InitializationSettings(
         android: initializationSettingsAndroid, iOS: initializationSettingsIOs);
@@ -131,14 +130,12 @@ void main() async {
     /// We use this channel in the `AndroidManifest.xml` file to override the
     /// default FCM channel to enable heads up notifications.
     await flutterLocalNotificationsPlugin
-        .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>()
+        .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
         ?.createNotificationChannel(channel);
 
     /// Update the iOS foreground notification presentation options to allow
     /// heads up notifications.
-    await FirebaseMessaging.instance
-        .setForegroundNotificationPresentationOptions(
+    await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
       alert: true,
       badge: true,
       sound: true,
@@ -166,9 +163,7 @@ void main() async {
     statusBarColor: Colors.transparent,
   ));
 
-  await FirebaseMessaging.instance
-      .getToken()
-      .then((value) => log(value.toString()));
+  await FirebaseMessaging.instance.getToken().then((value) => log(value.toString()));
 
   //end fcm code------------------------------------------------------------
 
@@ -189,69 +184,46 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
         providers: [
           //Applanguage
-          ChangeNotifierProvider<AppLanguage>(
-              create: (context) => AppLanguage()),
+          ChangeNotifierProvider<AppLanguage>(create: (context) => AppLanguage()),
 
           //Auth
-          ChangeNotifierProvider<SignUpProvider>(
-              create: (context) => SignUpProvider()),
-          ChangeNotifierProvider<GoogleSignInprovider>(
-              create: (context) => GoogleSignInprovider()),
-          ChangeNotifierProvider<SignInProvider>(
-              create: (context) => SignInProvider()),
-          ChangeNotifierProvider<FaceAuthProvider>(
-              create: (context) => FaceAuthProvider()),
+          ChangeNotifierProvider<SignUpProvider>(create: (context) => SignUpProvider()),
+          ChangeNotifierProvider<GoogleSignInprovider>(create: (context) => GoogleSignInprovider()),
+          ChangeNotifierProvider<SignInProvider>(create: (context) => SignInProvider()),
+          ChangeNotifierProvider<FaceAuthProvider>(create: (context) => FaceAuthProvider()),
           ChangeNotifierProvider<ForgetPasswordProvider>(
               create: (context) => ForgetPasswordProvider()),
-          ChangeNotifierProvider<HomefirstProvider>(
-              create: (context) => HomefirstProvider()),
-          ChangeNotifierProvider<HomeSecondProvider>(
-              create: (context) => HomeSecondProvider()),
-          ChangeNotifierProvider<NewsListProvider>(
-              create: (context) => NewsListProvider()),
+          ChangeNotifierProvider<HomefirstProvider>(create: (context) => HomefirstProvider()),
+          ChangeNotifierProvider<HomeSecondProvider>(create: (context) => HomeSecondProvider()),
+          ChangeNotifierProvider<NewsListProvider>(create: (context) => NewsListProvider()),
           ChangeNotifierProvider(create: (context) => SinglePostProvider()),
-          ChangeNotifierProvider<CommentProvider>(
-              create: (context) => CommentProvider()),
-          ChangeNotifierProvider<LikeListProvider>(
-              create: (context) => LikeListProvider()),
-          ChangeNotifierProvider<QuizProvider>(
-              create: (context) => QuizProvider()),
-          ChangeNotifierProvider<LocationProvider>(
-              create: (context) => LocationProvider()),
-          ChangeNotifierProvider<AddPostProvider>(
-              create: (context) => AddPostProvider()),
-          ChangeNotifierProvider<EditPostProvider>(
-              create: (context) => EditPostProvider()),
+          ChangeNotifierProvider<CommentProvider>(create: (context) => CommentProvider()),
+          ChangeNotifierProvider<LikeListProvider>(create: (context) => LikeListProvider()),
+          ChangeNotifierProvider<QuizProvider>(create: (context) => QuizProvider()),
+          ChangeNotifierProvider<LocationProvider>(create: (context) => LocationProvider()),
+          ChangeNotifierProvider<AddPostProvider>(create: (context) => AddPostProvider()),
+          ChangeNotifierProvider<EditPostProvider>(create: (context) => EditPostProvider()),
           ChangeNotifierProvider<AutthorProfileProvider>(
               create: (context) => AutthorProfileProvider()),
-          ChangeNotifierProvider<LocalPlayerProvider>(
-              create: (context) => LocalPlayerProvider()),
+          ChangeNotifierProvider<LocalPlayerProvider>(create: (context) => LocalPlayerProvider()),
 
           ///shops providers
-          ChangeNotifierProvider<ShopHomeProvider>(
-              create: (context) => ShopHomeProvider()),
+          ChangeNotifierProvider<ShopHomeProvider>(create: (context) => ShopHomeProvider()),
           ChangeNotifierProvider<AllCategoryListProvider>(
               create: (context) => AllCategoryListProvider()),
           ChangeNotifierProvider<ProductListingProvider>(
               create: (context) => ProductListingProvider()),
           ChangeNotifierProvider<ProductDetailsProvider>(
               create: (context) => ProductDetailsProvider()),
-          ChangeNotifierProvider<UserReviewProvider>(
-              create: (context) => UserReviewProvider()),
+          ChangeNotifierProvider<UserReviewProvider>(create: (context) => UserReviewProvider()),
           ChangeNotifierProvider<RestaurantMenuProvider>(
               create: (context) => RestaurantMenuProvider()),
-          ChangeNotifierProvider<CartProvider>(
-              create: (context) => CartProvider()),
-          ChangeNotifierProvider<AddressListProvider>(
-              create: (context) => AddressListProvider()),
-          ChangeNotifierProvider<WishListProvider>(
-              create: (context) => WishListProvider()),
-          ChangeNotifierProvider<LocationProvider>(
-              create: (context) => LocationProvider()),
-          ChangeNotifierProvider<CheckoutProvider>(
-              create: (context) => CheckoutProvider()),
-          ChangeNotifierProvider<PastOrderProvider>(
-              create: (context) => PastOrderProvider()),
+          ChangeNotifierProvider<CartProvider>(create: (context) => CartProvider()),
+          ChangeNotifierProvider<AddressListProvider>(create: (context) => AddressListProvider()),
+          ChangeNotifierProvider<WishListProvider>(create: (context) => WishListProvider()),
+          ChangeNotifierProvider<LocationProvider>(create: (context) => LocationProvider()),
+          ChangeNotifierProvider<CheckoutProvider>(create: (context) => CheckoutProvider()),
+          ChangeNotifierProvider<PastOrderProvider>(create: (context) => PastOrderProvider()),
           ChangeNotifierProvider<OrderRealtimeDetailProvider>(
               create: (context) => OrderRealtimeDetailProvider()),
 
@@ -262,25 +234,19 @@ class MyApp extends StatelessWidget {
               create: (context) => BusinessDetailProvider()),
           ChangeNotifierProvider<BusinessesWishListProvider>(
               create: (context) => BusinessesWishListProvider()),
-          ChangeNotifierProvider<ProfileInfoProvider>(
-              create: (context) => ProfileInfoProvider()),
+          ChangeNotifierProvider<ProfileInfoProvider>(create: (context) => ProfileInfoProvider()),
 
           /// Search Provider
-          ChangeNotifierProvider<SearchBarProvider>(
-              create: (context) => SearchBarProvider()),
+          ChangeNotifierProvider<SearchBarProvider>(create: (context) => SearchBarProvider()),
 
           ///Notification Provider
-          ChangeNotifierProvider<NotificationProvider>(
-              create: (context) => NotificationProvider()),
-          ChangeNotifierProvider<FCMProvider>(
-              create: (context) => FCMProvider()),
+          ChangeNotifierProvider<NotificationProvider>(create: (context) => NotificationProvider()),
+          ChangeNotifierProvider<FCMProvider>(create: (context) => FCMProvider()),
 
-          ChangeNotifierProvider<NewsFeedProvider>(
-              create: (context) => NewsFeedProvider()),
+          ChangeNotifierProvider<NewsFeedProvider>(create: (context) => NewsFeedProvider()),
 
           //Login or not check
-          ChangeNotifierProvider<CheckLoginProvider>(
-              create: (context) => CheckLoginProvider()),
+          ChangeNotifierProvider<CheckLoginProvider>(create: (context) => CheckLoginProvider()),
 
           ChangeNotifierProvider<VerifyKYCCredential>(create: (context) => VerifyKYCCredential())
         ],
@@ -321,16 +287,14 @@ class MyApp extends StatelessWidget {
 
 onSelectNotification(String? payload) {
   if (payload?.contains('poll_id') ?? false) {
-    Navigator.of(navigatorKey.currentContext!)
-        .push(MaterialPageRoute(builder: (_) {
+    Navigator.of(navigatorKey.currentContext!).push(MaterialPageRoute(builder: (_) {
       return PollPage(
         PollId: "${payload?.split("=")[1]}",
       );
     }));
   } else {
-    Navigator.of(navigatorKey.currentContext!)
-        .push(MaterialPageRoute(builder: (_) {
-    return PostView(postId: payload!);
-  }));
-}
+    Navigator.of(navigatorKey.currentContext!).push(MaterialPageRoute(builder: (_) {
+      return PostView(postId: payload!);
+    }));
+  }
 }
