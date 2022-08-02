@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'package:flutter/cupertino.dart';
 import 'package:threekm/Models/deepLinkPost.dart';
 import 'package:threekm/networkservice/Api_Provider.dart';
@@ -25,6 +26,7 @@ class SinglePostProvider extends ChangeNotifier {
           notifyListeners();
         }
       } on Exception catch (e) {
+        log(e.toString());
         _isLoading = false;
       }
     }

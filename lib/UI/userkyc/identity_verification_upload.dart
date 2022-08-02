@@ -116,9 +116,17 @@ class _IdentityUploadState extends State<IdentityUpload> {
                   children: [
                     Align(
                       alignment: Alignment.bottomLeft,
-                      child: Text(
-                        'Identity verification',
-                        style: ThreeKmTextConstants.tk18PXPoppinsBlackMedium,
+                      child: Row(
+                        children: [
+                          InkWell(
+                              onTap: () => Navigator.pop(context),
+                              child: Icon(Icons.arrow_back)),
+                          Text(
+                            '   Identity verification',
+                            style:
+                                ThreeKmTextConstants.tk18PXPoppinsBlackMedium,
+                          ),
+                        ],
                       ),
                     ),
                     InkWell(

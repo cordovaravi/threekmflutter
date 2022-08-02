@@ -98,13 +98,20 @@ class _UserInfoState extends State<UserInfo> {
 
   var list = List<int>.generate(31, (i) => i + 1);
   var yearlist =
-      List<int>.generate(40, (i) => DateTime.now().year - i - 1).reversed;
+      List<int>.generate(80, (i) => DateTime.now().year - i - 1).reversed;
 
   var selectedYear;
   String selectedMonth = "Jan";
   int selectedDate = 1;
 
-  @override 
+  FixedExtentScrollController? yearController = FixedExtentScrollController();
+  initListData(_) async {
+    log('dfdfhshgdjdhtyt');
+    yearController?.animateToItem(40,
+        duration: Duration(milliseconds: 1000), curve: Curves.easeInCirc);
+  }
+
+  @override
   void initState() {
     super.initState();
     log('user info =======================================');
@@ -136,6 +143,7 @@ class _UserInfoState extends State<UserInfo> {
           _isSkip[0] = false;
         });
     });
+    WidgetsBinding.instance?.addPostFrameCallback(initListData);
   }
 
   @override
@@ -699,6 +707,7 @@ class _UserInfoState extends State<UserInfo> {
                                                             height: 240,
                                                             width: 80,
                                                             child: ListWheelScrollView(
+                                                                controller: yearController,
                                                                 // clipBehavior: Clip.none,
                                                                 // renderChildrenOutsideViewport: true,
                                                                 physics: const FixedExtentScrollPhysics(),

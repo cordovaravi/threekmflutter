@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:extended_image/extended_image.dart';
@@ -70,14 +71,13 @@ class _ProfileImagePopUpState extends State<ProfileImagePopUp> {
 
   XFile? image;
 
-  final GlobalKey<ExtendedImageEditorState> editorKey =
-      GlobalKey<ExtendedImageEditorState>();
+  final GlobalKey<ExtendedImageEditorState> editorKey = GlobalKey<ExtendedImageEditorState>();
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.only(left: 25, top: 48, right: 25, bottom: 30),
-      height: 643,
       width: double.infinity,
+      height: MediaQuery.of(context).size.height / 1.3,
       margin: EdgeInsets.only(
         top: 24,
         bottom: 24,
@@ -88,81 +88,83 @@ class _ProfileImagePopUpState extends State<ProfileImagePopUp> {
         color: Colors.white,
         borderRadius: BorderRadius.circular(50),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Text(
-            "Crop and adjust".toUpperCase(),
-            style: ThreeKmTextConstants.tk16PXPoppinsBlackSemiBold.copyWith(
-              fontWeight: FontWeight.w900,
-              color: Color(0xFF0F0F2D),
-            ),
-          ),
-          space(
-            height: 24,
-          ),
-          buildProfileButton(
-            title: "Select other Photo",
-            onTap: () async {
-              image = await _imagePicker.pickImage(source: ImageSource.gallery);
-              if (image != null) {
-                //Navigator.pop(context);
-                setState(() {});
-              }
-            },
-            width: 177,
-          ),
-          space(
-            height: 62,
-          ),
-          Container(
-              height: 289,
-              width: 289,
-              decoration: BoxDecoration(
-                color: Colors.grey.withOpacity(0.2),
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(
+              "Crop and adjust".toUpperCase(),
+              style: ThreeKmTextConstants.tk16PXPoppinsBlackSemiBold.copyWith(
+                fontWeight: FontWeight.w900,
+                color: Color(0xFF0F0F2D),
               ),
-              child: image == null
-                  ? Icon(
-                      Icons.collections,
-                      size: 100,
-                      color: Colors.grey,
-                    )
-                  // : Image.file(
-                  //     File(image!.path),
-                  //     fit: BoxFit.contain,
-                  //   ),
-                  : ExtendedImage.file(
-                      File(image!.path),
-                      cacheRawData: true,
-                      fit: BoxFit.contain,
-                      clearMemoryCacheWhenDispose: true,
-                      // enableLoadState: true,
-                      mode: ExtendedImageMode.editor,
-                      extendedImageEditorKey: editorKey,
-                      initEditorConfigHandler: (state) {
-                        return EditorConfig(
-                            maxScale: 8.0,
-                            cropRectPadding: EdgeInsets.all(20.0),
-                            hitTestSize: 20.0,
-                            cropAspectRatio: CropAspectRatios.custom);
-                      },
-                    )),
-          space(
-            height: 72,
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              buildSaveButton(context),
-            ],
-          )
-        ],
+            ),
+            space(
+              height: 24,
+            ),
+            buildProfileButton(
+              title: "Select other Photo",
+              onTap: () async {
+                image =
+                    await _imagePicker.pickImage(source: ImageSource.gallery);
+                if (image != null) {
+                  //Navigator.pop(context);
+                  setState(() {});
+                }
+              },
+              width: 177,
+            ),
+            space(
+              height: 62,
+            ),
+            Container(
+                height: 289,
+                width: 289,
+                decoration: BoxDecoration(
+                  color: Colors.grey.withOpacity(0.2),
+                ),
+                child: image == null
+                    ? Icon(
+                        Icons.collections,
+                        size: 100,
+                        color: Colors.grey,
+                      )
+                    // : Image.file(
+                    //     File(image!.path),
+                    //     fit: BoxFit.contain,
+                    //   ),
+                    : ExtendedImage.file(
+                        File(image!.path),
+                        cacheRawData: true,
+                        fit: BoxFit.contain,
+                        clearMemoryCacheWhenDispose: true,
+                        // enableLoadState: true,
+                        mode: ExtendedImageMode.editor,
+                        extendedImageEditorKey: editorKey,
+                        initEditorConfigHandler: (state) {
+                          return EditorConfig(
+                              maxScale: 8.0,
+                              cropRectPadding: EdgeInsets.all(20.0),
+                              hitTestSize: 20.0,
+                              cropAspectRatio: CropAspectRatios.custom);
+                        },
+                      )),
+            space(
+              height: 72,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                buildSaveButton(context),
+              ],
+            )
+          ],
+        ),
       ),
     );
   }
 
-  Widget buildProfileButton(
-      {required String title, double? width, required VoidCallback onTap}) {
+  Widget buildProfileButton({required String title, double? width, required VoidCallback onTap}) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -208,15 +210,12 @@ class _ProfileImagePopUpState extends State<ProfileImagePopUp> {
         // }
         Uint8List? fileData;
         if (editorKey.currentState?.rawImageData != null) {
-          fileData = await cropImageDataWithNativeLibrary(
-              state: editorKey.currentState!);
+          fileData = await cropImageDataWithNativeLibrary(state: editorKey.currentState!);
           final tempDir = await getTemporaryDirectory();
           File file = await File('${tempDir.path}/image.png').create();
           file.writeAsBytesSync(fileData!);
           print(file.path);
-          context
-              .read<ProfileInfoProvider>()
-              .uploadPhoto(context: context, filePath: file.path);
+          context.read<ProfileInfoProvider>().uploadPhoto(context: context, filePath: file.path);
         }
       },
       borderRadius: BorderRadius.circular(26),
@@ -234,8 +233,8 @@ class _ProfileImagePopUpState extends State<ProfileImagePopUp> {
                     ),
                     Text(
                       "Save Image",
-                      style: ThreeKmTextConstants.tk14PXPoppinsBlackBold
-                          .copyWith(color: Colors.white),
+                      style:
+                          ThreeKmTextConstants.tk14PXPoppinsBlackBold.copyWith(color: Colors.white),
                     )
                   ],
                 )

@@ -35,8 +35,7 @@ class AutthorProfileProvider extends ChangeNotifier {
           _isGettingSelfProfile = false;
           notifyListeners();
           Fluttertoast.showToast(
-              msg: "error while getteing profile",
-              backgroundColor: Colors.redAccent);
+              msg: "error while getteing profile", backgroundColor: Colors.redAccent);
         }
       }
     } catch (e) {
@@ -48,8 +47,7 @@ class AutthorProfileProvider extends ChangeNotifier {
 
   bool _updateLoading = false;
   bool get updateLoading => _updateLoading;
-  void updateAbout(
-      {required BuildContext context, required String about}) async {
+  void updateAbout({required BuildContext context, required String about}) async {
     _updateLoading = true;
     notifyListeners();
     String requestJson = json.encode({"about": "$about"});
@@ -64,6 +62,7 @@ class AutthorProfileProvider extends ChangeNotifier {
         }
       }
     } on Exception catch (e) {
+      log(e.toString());
       _updateLoading = false;
       CustomSnackBar(context, Text("Something went Wrong"));
     }
@@ -76,13 +75,17 @@ class AutthorProfileProvider extends ChangeNotifier {
   }
 
   Future<Null> postLike(String postId, String? emotion) async {
-    String requestJson = json.encode(
-        {"module": "news_post", "entity_id": postId, "emotion": "$emotion"});
+    String requestJson =
+        json.encode({"module": "news_post", "entity_id": postId, "emotion": "$emotion"});
     _selfProfile!.data!.result!.posts!.forEach((element) {
       if (element.postId.toString() == postId) {
         element.likes = element.likes! + 1;
         element.isLiked = true;
         element.emotion = emotion;
+        if (emotion != null &&
+            emotion != "" &&
+            !element.listEmotions!.contains(emotion))
+          element.listEmotions?.add(emotion);
         notifyListeners();
       }
       //notifyListeners();
@@ -93,8 +96,7 @@ class AutthorProfileProvider extends ChangeNotifier {
   }
 
   Future<Null> postUnLike(String postId) async {
-    String requestJson =
-        json.encode({"module": "news_post", "entity_id": postId});
+    String requestJson = json.encode({"module": "news_post", "entity_id": postId});
     _selfProfile!.data!.result!.posts!.forEach((element) {
       if (element.postId.toString() == postId) {
         if (element.isLiked == true) {
@@ -102,6 +104,10 @@ class AutthorProfileProvider extends ChangeNotifier {
         }
         element.isLiked = false;
         element.emotion = null;
+        if (element.likes == 1) {
+          element.listEmotions = [];
+          element.listEmotions?.clear();
+        }
         notifyListeners();
       }
     });
@@ -135,16 +141,27 @@ class AutthorProfileProvider extends ChangeNotifier {
   bool _gettingAuthorprofile = false;
   bool get gettingAuthorprofile => _gettingAuthorprofile;
 
-  _clearData() async {
+  clearData() async {
     _authorProfilePostModel?.data.result?.posts?.clear();
+  }
+
+  clearAuthorProfileData() {
+    clearData();
+    _authorProfilePostModel = null;
+    log("deleting author profile data ");
   }
 
   // get Author profile data and post
   Future<Null> getAuthorProfile(
-      {required int authorId, String? authorType, String? language}) async {
-    await _clearData();
-    _gettingAuthorprofile = true;
+    int pageNumber,
+    bool? isSecondLoading, {
+    required int authorId,
+    String? authorType,
+    String? language,
+  }) async {
+    _gettingAuthorprofile = isSecondLoading == true ? false : true;
     notifyListeners();
+
     String? _token = await _apiProvider.getToken();
     String requestJson = json.encode({
       "id": authorId,
@@ -152,12 +169,19 @@ class AutthorProfileProvider extends ChangeNotifier {
       "token": _token ?? "",
       "lang": language
     });
-    final response = await _apiProvider.post(Author_Profile, requestJson);
+    final response = await _apiProvider.post(
+        Author_Profile + "?page=$pageNumber", requestJson);
     if (response != null) {
       //print(response);
       if (response["status"] == "success") {
-        log("athor profile response is ${response}");
+        List<Post>? tempPost = _authorProfilePostModel?.data.result?.posts;
         _authorProfilePostModel = ProfilePostModel.fromJson(response);
+        print(tempPost?[0].postId);
+        if (tempPost != null) {
+          tempPost.addAll(_authorProfilePostModel?.data.result?.posts ?? []);
+          _authorProfilePostModel?.data.result?.posts = tempPost;
+        }
+
         _gettingAuthorprofile = false;
         notifyListeners();
       }
@@ -168,8 +192,7 @@ class AutthorProfileProvider extends ChangeNotifier {
   Future<Null> followAuthor(int autherId) async {
     _followLoading = true;
     notifyListeners();
-    String requestJson =
-        json.encode({"entity": "user", "type": "user", "entity_id": autherId});
+    String requestJson = json.encode({"entity": "user", "type": "user", "entity_id": autherId});
     final response = await _apiProvider.post(follow_User, requestJson);
     print(response);
     notifyListeners();
@@ -181,13 +204,11 @@ class AutthorProfileProvider extends ChangeNotifier {
         _followLoading = false;
         notifyListeners();
       } else {
-        CustomSnackBar(navigatorKey.currentContext!,
-            Text("Error occuered.Please try later.!"));
+        CustomSnackBar(navigatorKey.currentContext!, Text("Error occuered.Please try later.!"));
       }
     } on SocketException {
       print("socket Exception");
-      CustomSnackBar(
-          navigatorKey.currentContext!, Text("Check your internet Connection"));
+      CustomSnackBar(navigatorKey.currentContext!, Text("Check your internet Connection"));
     }
   }
 
@@ -196,8 +217,7 @@ class AutthorProfileProvider extends ChangeNotifier {
   Future<Null> unfollowAuthor(int autherId) async {
     _followLoading = true;
     notifyListeners();
-    String requestJson =
-        json.encode({"entity": "user", "type": "user", "entity_id": autherId});
+    String requestJson = json.encode({"entity": "user", "type": "user", "entity_id": autherId});
     final response = await _apiProvider.post(unfollow_user, requestJson);
     print(response);
     if (response != null && response["status"] == "success") {
@@ -211,12 +231,17 @@ class AutthorProfileProvider extends ChangeNotifier {
   }
 
   Future<Null> authorPostLike(String postId, String? emotion) async {
-    String requestJson = json.encode(
-        {"module": "news_post", "entity_id": postId, "emotion": "$emotion"});
+    String requestJson =
+        json.encode({"module": "news_post", "entity_id": postId, "emotion": "$emotion"});
     _authorProfilePostModel!.data.result!.posts!.forEach((element) {
       if (element.postId.toString() == postId) {
         element.likes = element.likes! + 1;
         element.isLiked = true;
+        element.emotion = emotion;
+        if (emotion != null &&
+            emotion != "" &&
+            !element.listEmotions!.contains(emotion))
+          element.listEmotions?.add(emotion);
         notifyListeners();
       }
       //notifyListeners();
@@ -227,12 +252,15 @@ class AutthorProfileProvider extends ChangeNotifier {
   }
 
   Future<Null> authorPostUnLike(String postId) async {
-    String requestJson =
-        json.encode({"module": "news_post", "entity_id": postId});
+    String requestJson = json.encode({"module": "news_post", "entity_id": postId});
     _authorProfilePostModel!.data.result!.posts!.forEach((element) {
       if (element.postId.toString() == postId) {
         element.isLiked = false;
         element.likes = element.likes! - 1;
+        if (element.likes == 1) {
+          element.listEmotions = [];
+          element.listEmotions?.clear();
+        }
         notifyListeners();
       }
     });

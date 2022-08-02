@@ -79,6 +79,19 @@ class SignUpProvider extends ChangeNotifier {
     return response;
   }
 
+  Future<dynamic> sendOTPKyc(requestJson) async {
+    _isLoading = true;
+    notifyListeners();
+    final response =
+        await _apiProvider.post(register_verify_otp_kyc, requestJson);
+    print(response);
+    if (response != null) {
+      _isLoading = false;
+      notifyListeners();
+    }
+    return response;
+  }
+
   Future<Null> verifyOTP(requestJson, phoneNumber, BuildContext context) async {
     try {
       showLoading();

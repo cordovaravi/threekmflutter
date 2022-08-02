@@ -216,17 +216,17 @@ class _LikeListState extends State<LikeList> {
           itemCount: userList.length,
           itemBuilder: (context, index) => ListTile(
                 // TODO: for future build
-                onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => AuthorProfile(
-                                authorType: userList[index].userType,
-                                id: userList[index].id!,
-                                avatar: userList[index].avatar ?? '',
-                                userName: userList[index].name ?? '',
-                              )));
-                },
+                // onTap: () {
+                //   Navigator.push(
+                //       context,
+                //       MaterialPageRoute(
+                //           builder: (context) => AuthorProfile(
+                //                 authorType: userList[index].userType,
+                //                 id: userList[index].id!,
+                //                 avatar: userList[index].avatar ?? '',
+                //                 userName: userList[index].name ?? '',
+                //               )));
+                // },
                 leading: Stack(
                   children: [
                     Container(
@@ -275,16 +275,16 @@ class _LikeListState extends State<LikeList> {
                     : '...and ${anonymousCount} more'),
               ));
 
-  goToProfile({required List<User> users, required int index}) {
-    if (users[index].isUnknown == null)
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => AuthorProfile(
-                    authorType: users[index].userType,
-                    id: users[index].id!,
-                    avatar: users[index].avatar ?? '',
-                    userName: users[index].name ?? '',
-                  )));
-  }
+  // goToProfile({required List<User> users, required int index}) {
+  //   if (users[index].isUnknown == null)
+  //     Navigator.push(
+  //         context,
+  //         MaterialPageRoute(
+  //             builder: (context) => AuthorProfile(
+  //                   authorType: users[index].userType,
+  //                   id: users[index].id!,
+  //                   avatar: users[index].avatar ?? '',
+  //                   userName: users[index].name ?? '',
+  //                 )));
+  // }
 }

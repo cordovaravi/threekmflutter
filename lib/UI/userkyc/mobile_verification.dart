@@ -31,6 +31,7 @@ class _MobileVerificationState extends State<MobileVerification> {
   bool isSendOtp = false;
   bool isVisibleResendOtp = false;
   SharedPreferences? _pref;
+
   Widget get buildPhoneNumber {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -96,11 +97,13 @@ class _MobileVerificationState extends State<MobileVerification> {
 
   @override
   void initState() {
+    context.read<VerifyKYCCredential>().disposeAllData(mounted);
     WidgetsBinding.instance?.addPostFrameCallback((_) async {
       _pref = await SharedPreferences.getInstance();
       phonenumber.text = _pref?.getString("userphone") ?? "";
       setState(() {});
     });
+    _focusNodes[0].requestFocus();
     super.initState();
   }
 
@@ -204,41 +207,41 @@ class _MobileVerificationState extends State<MobileVerification> {
               const SizedBox(
                 height: 38,
               ),
-              //  if (isSendOtp)
-              Padding(
-                padding: const EdgeInsets.only(bottom: 16),
-                child: Text(
-                  'Please Enter 4 Digit OTP ',
-                  style: ThreeKmTextConstants.tk16PXPoppinsBlackMedium
-                      .copyWith(fontWeight: FontWeight.w400),
+              if (isSendOtp)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 16),
+                  child: Text(
+                    'Please Enter 4 Digit OTP ',
+                    style: ThreeKmTextConstants.tk16PXPoppinsBlackMedium
+                        .copyWith(fontWeight: FontWeight.w400),
+                  ),
                 ),
-              ),
-              //if (isSendOtp)
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  OtpBox(
-                      i: 0,
-                      focusNode: _focusNodes,
-                      controller: _controllers,
-                      onChange: verifyotpfn),
-                  OtpBox(
-                      i: 1,
-                      focusNode: _focusNodes,
-                      controller: _controllers,
-                      onChange: verifyotpfn),
-                  OtpBox(
-                      i: 2,
-                      focusNode: _focusNodes,
-                      controller: _controllers,
-                      onChange: verifyotpfn),
-                  OtpBox(
-                      i: 3,
-                      focusNode: _focusNodes,
-                      controller: _controllers,
-                      onChange: verifyotpfn),
-                ],
-              ),
+              if (isSendOtp)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    OtpBox(
+                        i: 0,
+                        focusNode: _focusNodes,
+                        controller: _controllers,
+                        onChange: verifyotpfn),
+                    OtpBox(
+                        i: 1,
+                        focusNode: _focusNodes,
+                        controller: _controllers,
+                        onChange: verifyotpfn),
+                    OtpBox(
+                        i: 2,
+                        focusNode: _focusNodes,
+                        controller: _controllers,
+                        onChange: verifyotpfn),
+                    OtpBox(
+                        i: 3,
+                        focusNode: _focusNodes,
+                        controller: _controllers,
+                        onChange: verifyotpfn),
+                  ],
+                ),
               if (Kycprovider.iswrongOTP)
                 Padding(
                   padding: const EdgeInsets.only(top: 16),
@@ -273,7 +276,7 @@ class _MobileVerificationState extends State<MobileVerification> {
                             ? InkWell(
                                 onTap: () {
                                   provider
-                                      .sendOTP(json.encode(
+                                      .sendOTPKyc(json.encode(
                                           {"phone_no": phonenumber.text}))
                                       .whenComplete(() => setState(() {
                                             isSendOtp = true;
@@ -320,47 +323,52 @@ class _MobileVerificationState extends State<MobileVerification> {
                         );
                       },
                       child: state == false
-                          ? Container(
-                              key: ValueKey(1),
-                              margin: const EdgeInsets.only(top: 20),
-                              width: double.infinity,
-                              child: ElevatedButton(
-                                  style: ButtonStyle(
-                                      shape: MaterialStateProperty.all<
-                                              OutlinedBorder>(
-                                          const StadiumBorder())),
-                                  onPressed: phonenumber.text.length == 10
-                                      ? () async {
-                                          if (!isSendOtp) {
-                                            if (phonenumber.text.length == 10) {
-                                              provider
-                                                  .sendOTP(json.encode({
-                                                    "phone_no": phonenumber.text
-                                                  }))
-                                                  .whenComplete(
-                                                      () => setState(() {
-                                                            isSendOtp = true;
-                                                            isVisibleResendOtp =
-                                                                false;
-                                                          }));
+                          ? !Kycprovider.isTrueOTP && !isSendOtp
+                              ? Container(
+                                  key: ValueKey(1),
+                                  margin: const EdgeInsets.only(top: 20),
+                                  width: double.infinity,
+                                  child: ElevatedButton(
+                                      style: ButtonStyle(
+                                          shape: MaterialStateProperty.all<
+                                                  OutlinedBorder>(
+                                              const StadiumBorder())),
+                                      onPressed: phonenumber.text.length == 10
+                                          ? () async {
+                                              if (!isSendOtp) {
+                                                if (phonenumber.text.length ==
+                                                    10) {
+                                                  provider
+                                                      .sendOTPKyc(json.encode({
+                                                        "phone_no":
+                                                            phonenumber.text
+                                                      }))
+                                                      .whenComplete(
+                                                          () => setState(() {
+                                                                isSendOtp =
+                                                                    true;
+                                                                isVisibleResendOtp =
+                                                                    false;
+                                                              }));
+                                                }
+                                              }
+                                              if (Kycprovider.isTrueOTP)
+                                                Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (_) =>
+                                                            const EmailVerification()));
                                             }
-                                          }
-                                          if (Kycprovider.isTrueOTP)
-                                            Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (_) =>
-                                                        const EmailVerification()));
-                                        }
-                                      : null,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(15.0),
-                                    child: Text(
-                                      isSendOtp ? "Next" : 'Send OTP',
-                                      style: ThreeKmTextConstants
-                                          .tk16PXPoppinsWhiteBold,
-                                    ),
-                                  )))
+                                          : null,
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(15.0),
+                                        child: Text(
+                                          isSendOtp ? "Next" : 'Send OTP',
+                                          style: ThreeKmTextConstants
+                                              .tk16PXPoppinsWhiteBold,
+                                        ),
+                                      )))
+                              : SizedBox()
                           : Container(
                               key: ValueKey(2),
                               child: const CircularProgressIndicator(),

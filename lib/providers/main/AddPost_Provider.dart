@@ -40,6 +40,7 @@ class AddPostProvider extends ChangeNotifier {
 
   String _description = '';
   String get description => _description;
+
   set description(String text) {
     _description = text;
     notifyListeners();
@@ -123,8 +124,8 @@ class AddPostProvider extends ChangeNotifier {
   bool get isUploadError => _isUploadeerror;
   bool _islastUpload = false;
   //UploadedFileProvider _uploadedFileProvider = UploadedFileProvider();
-  Future<Null> uploadPng(
-      context, String? headLine, String? story, String? address, double? lat, double? long) async {
+  Future<Null> uploadPng(context, String? headLine, String? story,
+      String? address, double? lat, double? long) async {
     if (_moreImages.isNotEmpty && _moreImages.length != null) {
       /// Showing snackbar of uploading
       //  showUploadingSnackbar(context, _moreImages.first);
@@ -136,8 +137,9 @@ class AddPostProvider extends ChangeNotifier {
             element.path.contains(".jpg") ||
             element.path.contains(".jpeg")) {
           try {
-            String requestJson = json.encode({"fileextention": "png", "modulename": "news"});
-            initalizeUpload(context, headLine, story, address, lat, long,
+            String requestJson =
+                json.encode({"fileextention": "png", "modulename": "news"});
+            await initalizeUpload(context, headLine, story, address, lat, long,
                 uploadFile: element, requestJson: requestJson);
             log("more img ${_moreImages.length}");
             log("upload imgs ${_uploadImageUrls.length}");
@@ -150,8 +152,9 @@ class AddPostProvider extends ChangeNotifier {
             element.path.contains(".avi") ||
             element.path.contains(".mkv")) {
           try {
-            String requestJson = json.encode({"fileextention": "mp4", "modulename": "news"});
-            initalizeUpload(context, headLine, story, address, lat, long,
+            String requestJson =
+                json.encode({"fileextention": "mp4", "modulename": "news"});
+            await initalizeUpload(context, headLine, story, address, lat, long,
                 uploadFile: element, requestJson: requestJson);
           } on Exception catch (e) {
             print(e);
@@ -187,8 +190,8 @@ class AddPostProvider extends ChangeNotifier {
     }
   }
 
-  Future<Null> initalizeUpload(
-      context, String? headLine, String? story, String? address, double? lat, double? long,
+  Future<Null> initalizeUpload(context, String? headLine, String? story,
+      String? address, double? lat, double? long,
       {required File uploadFile, required String requestJson}) async {
     String? signedUrl = await getsignedURl(requestJson: requestJson);
     log("\n");
@@ -198,14 +201,16 @@ class AddPostProvider extends ChangeNotifier {
       try {
         Uint8List image = uploadFile.readAsBytesSync();
 
-        Options options = Options(contentType: lookupMimeType(uploadFile.path), headers: {
+        Options options =
+            Options(contentType: lookupMimeType(uploadFile.path), headers: {
           'Accept': "*/*",
           'Content-Length': image.length,
           'Connection': 'keep-alive',
           'User-Agent': 'ClinicPlush'
         });
         final fileUploadResponse = await client.put(signedUrl,
-            data: uploadFile.openRead(), options: options, onSendProgress: (val1, val2) {
+            data: uploadFile.openRead(),
+            options: options, onSendProgress: (val1, val2) {
           log("${val1 / val2 * 100}");
           _uploadPercent = "${val1 / val2 * 100}";
           notifyListeners();
@@ -230,12 +235,14 @@ class AddPostProvider extends ChangeNotifier {
   }
 
   int postUploaded = 0;
-  Future<Null> uploadPost(
-      context, String? headLine, String? story, String? address, double? lat, double? long) async {
+  Future<Null> uploadPost(context, String? headLine, String? story,
+      String? address, double? lat, double? long) async {
     List tempImages = [];
     List _videosUrl = [];
     uploadedImagesUrl.forEach((element) {
-      if (element.contains(".png") || element.contains(".jpg") || element.contains(".jpeg")) {
+      if (element.contains(".png") ||
+          element.contains(".jpg") ||
+          element.contains(".jpeg")) {
         tempImages.add(element);
       } else {
         SubmitVideo objvideoUrls = SubmitVideo(element);
@@ -251,8 +258,8 @@ class AddPostProvider extends ChangeNotifier {
       "type": "Strory",
       "tags": _tagsList.toList(),
       // "areas": ["kothrud", "karve nagar"],
-      "latitude": lat,
-      "longitude": long,
+      "latitude": lat ?? 18.5204,
+      "longitude": long ?? 73.8567,
       "location": address,
       // "business": [],
       // "products": []
@@ -270,7 +277,8 @@ class AddPostProvider extends ChangeNotifier {
           Future.delayed(Duration(seconds: 1), () {
             //CustomSnackBar(context, Text("Post Submitted"));
             Fluttertoast.showToast(
-                msg: "Post has been Submitted", backgroundColor: Color(0xFF0044CE));
+                msg: "Post has been Submitted",
+                backgroundColor: Color(0xFF0044CE));
             _isUploaded = true;
             notifyListeners();
             Future.delayed(Duration.zero, () {
@@ -290,7 +298,6 @@ class AddPostProvider extends ChangeNotifier {
           notifyListeners();
         }
       }
-    } else {}
   }
 
   void removeSnack() {
@@ -340,7 +347,8 @@ class AddPostProvider extends ChangeNotifier {
       _desFile = response.destinationPath;
       addImages(File(response.destinationPath));
     } else if (response is OnFailure) {
-      Fluttertoast.showToast(msg: "Unable to process video.\nPlease try again later.");
+      Fluttertoast.showToast(
+          msg: "Unable to process video.\nPlease try again later.");
       print("compression failed");
     } else if (response is OnCancelled) {
       Fluttertoast.showToast(msg: "Cancelled");
@@ -353,8 +361,8 @@ class AddPostProvider extends ChangeNotifier {
     final String videoName = '${DateTime.now().millisecondsSinceEpoch}.mp4';
     if (Platform.isAndroid) {
       // Handle this part the way you want to save it in any directory you wish.
-      final List<Directory>? dir =
-          await path.getExternalStorageDirectories(type: path.StorageDirectory.movies);
+      final List<Directory>? dir = await path.getExternalStorageDirectories(
+          type: path.StorageDirectory.movies);
       directory = dir!.first.path;
       return File('$directory/$videoName').path;
     } else {
@@ -427,7 +435,7 @@ class SubmitVideo {
 // //     }
 // //   }
 
-///
+  ///
 //   Future<String?> fileUploadMultipart(
 //       {required File file,
 //       required OnUploadProgressCallback onUploadProgress}) async {
@@ -515,13 +523,13 @@ class SubmitVideo {
 //     }
 //   }
 
-// Future<String> readResponseAsString(HttpClientResponse response) {
-//   var completer = new Completer<String>();
-//   var contents = new StringBuffer();
-//   response.transform(utf8.decoder).listen((String data) {
-//     contents.write(data);
-//   }, onDone: () => completer.complete(contents.toString()));
-//   print("this is compliter ${completer.future}");
-//   return completer.future;
-// }
+  // Future<String> readResponseAsString(HttpClientResponse response) {
+  //   var completer = new Completer<String>();
+  //   var contents = new StringBuffer();
+  //   response.transform(utf8.decoder).listen((String data) {
+  //     contents.write(data);
+  //   }, onDone: () => completer.complete(contents.toString()));
+  //   print("this is compliter ${completer.future}");
+  //   return completer.future;
+  // }
 //}

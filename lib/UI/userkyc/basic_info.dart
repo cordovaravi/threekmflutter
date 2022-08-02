@@ -129,8 +129,8 @@ class _BasicInfoState extends State<BasicInfo> {
                   ),
                 ],
               ),
-              const SizedBox(
-                height: 24,
+              SizedBox(
+                height: size(context).height / 25,
               ),
               LinearProgressIndicator(
                 valueColor: const AlwaysStoppedAnimation(Color(0xFF3E7EFF)),
@@ -140,8 +140,8 @@ class _BasicInfoState extends State<BasicInfo> {
                 value: 0.4,
                 semanticsLabel: 'Linear progress indicator',
               ),
-              const SizedBox(
-                height: 46,
+              SizedBox(
+                height: size(context).height / 25,
               ),
               TextFormField(
                 autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -171,12 +171,6 @@ class _BasicInfoState extends State<BasicInfo> {
                 },
                 onFieldSubmitted: (val) {
                   FocusScope.of(context).unfocus();
-                  if (val.isNotEmpty &&
-                      val.contains(".") &&
-                      val.contains("@")) {
-                    print("save");
-                    //   controller.updateProfileInfo(email: emailController.text);
-                  }
                 },
 
                 validator: (val) {
@@ -191,8 +185,8 @@ class _BasicInfoState extends State<BasicInfo> {
                   // }
                 },
               ),
-              const SizedBox(
-                height: 24,
+              SizedBox(
+                height: size(context).height / 33,
               ),
               TextFormField(
                 controller: lname,
@@ -220,12 +214,6 @@ class _BasicInfoState extends State<BasicInfo> {
                 },
                 onFieldSubmitted: (val) {
                   FocusScope.of(context).unfocus();
-                  if (val.isNotEmpty &&
-                      val.contains(".") &&
-                      val.contains("@")) {
-                    print("save");
-                    //   controller.updateProfileInfo(email: emailController.text);
-                  }
                 },
                 validator: (val) {
                   // if (val!.isEmpty || val == null) {
@@ -239,12 +227,12 @@ class _BasicInfoState extends State<BasicInfo> {
                   // }
                 },
               ),
-              const SizedBox(
-                height: 24,
+              SizedBox(
+                height: size(context).height / 33,
               ),
               buildPhoneNumber,
-              const SizedBox(
-                height: 24,
+              SizedBox(
+                height: size(context).height / 33,
               ),
               SizedBox(
                   width: size(context).width,

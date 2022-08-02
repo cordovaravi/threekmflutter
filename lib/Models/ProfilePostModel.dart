@@ -115,7 +115,8 @@ class Post {
       this.emotion,
       this.latestComment,
       this.preaheaderLikeUser,
-      this.preheaderCommentUSer});
+      this.preheaderCommentUSer,
+      this.listEmotions});
 
   int? postId;
   String? slugHeadline;
@@ -146,57 +147,58 @@ class Post {
   String? emotion;
   String? preaheaderLikeUser;
   String? preheaderCommentUSer;
+  List<String>? listEmotions;
 
   factory Post.fromJson(Map<String, dynamic> json) => Post(
-        postId: json["post_id"] == null ? null : json["post_id"],
-        submittedHeadline: json["submitted_headline"] == null
-            ? null
-            : json["submitted_headline"],
-        submittedStory:
-            json["submitted_story"] == null ? null : json["submitted_story"],
-        headline: json["headline"] == null ? null : json["headline"],
-        story: json["story"] == null ? null : json["story"],
-        images: json["images"] == null
-            ? null
-            : List<String>.from(json["images"].map((x) => x)),
-        videos: json["videos"] == null
-            ? null
-            : List<Video>.from(json["videos"].map((x) => Video.fromJson(x))),
-        type: json["type"] == null ? null : json["type"],
-        tags: json["tags"] == null
-            ? null
-            : List<String>.from(json["tags"].map((x) => x)),
-        author: json["author"] == null ? null : Author.fromJson(json["author"]),
-        authorType: json["author_type"] == null ? null : json["author_type"],
-        authorClassification: json["author_classification"] == null
-            ? null
-            : json["author_classification"],
-        status: json["status"] == null ? null : json["status"],
-        views: json["views"] == null ? null : json["views"],
-        createdDate: json["created_date"] == null ? null : json["created_date"],
-        context: json["context"],
-        likes: json["likes"] == null ? null : json["likes"],
-        comments: json["comments"] == null ? null : json["comments"],
-        id: json["id"],
-        isVerified: json["is_verified"] == null ? null : json["is_verified"],
-        isLiked: json["is_liked"] == null ? null : json["is_liked"],
-        itemType: json["item_type"] == null ? null : json["item_type"],
-        slugHeadline: json["slug_headline"],
-        preheaderLike: json["preheader_like"],
-        preheaderComment: json["preheader_comment"],
-        emotion: json["emotion"] ?? null,
-        latestComment: json['latest_comment'] == null
-            ? null
-            : LatestComment.fromJson(
-                json['latest_comment'],
-              ),
-        preaheaderLikeUser: json["preheader_like_user"] == null
-            ? null
-            : json["preheader_like_user"],
-        preheaderCommentUSer: json["preheader_comment_user"] == null
-            ? null
-            : json["preheader_comment_user"],
-      );
+      postId: json["post_id"] == null ? null : json["post_id"],
+      submittedHeadline: json["submitted_headline"] == null
+          ? null
+          : json["submitted_headline"],
+      submittedStory:
+          json["submitted_story"] == null ? null : json["submitted_story"],
+      headline: json["headline"] == null ? null : json["headline"],
+      story: json["story"] == null ? null : json["story"],
+      images: json["images"] == null
+          ? null
+          : List<String>.from(json["images"].map((x) => x)),
+      videos: json["videos"] == null
+          ? null
+          : List<Video>.from(json["videos"].map((x) => Video.fromJson(x))),
+      type: json["type"] == null ? null : json["type"],
+      tags: json["tags"] == null
+          ? null
+          : List<String>.from(json["tags"].map((x) => x)),
+      author: json["author"] == null ? null : Author.fromJson(json["author"]),
+      authorType: json["author_type"] == null ? null : json["author_type"],
+      authorClassification: json["author_classification"] == null
+          ? null
+          : json["author_classification"],
+      status: json["status"] == null ? null : json["status"],
+      views: json["views"] == null ? null : json["views"],
+      createdDate: json["created_date"] == null ? null : json["created_date"],
+      context: json["context"],
+      likes: json["likes"] == null ? null : json["likes"],
+      comments: json["comments"] == null ? null : json["comments"],
+      id: json["id"],
+      isVerified: json["is_verified"] == null ? null : json["is_verified"],
+      isLiked: json["is_liked"] == null ? null : json["is_liked"],
+      itemType: json["item_type"] == null ? null : json["item_type"],
+      slugHeadline: json["slug_headline"],
+      preheaderLike: json["preheader_like"],
+      preheaderComment: json["preheader_comment"],
+      emotion: json["emotion"] ?? null,
+      latestComment: json['latest_comment'] == null
+          ? null
+          : LatestComment.fromJson(
+              json['latest_comment'],
+            ),
+      preaheaderLikeUser: json["preheader_like_user"] == null
+          ? null
+          : json["preheader_like_user"],
+      preheaderCommentUSer: json["preheader_comment_user"] == null
+          ? null
+          : json["preheader_comment_user"],
+      listEmotions:json["list_emotions"] != null ? List<String>.from(json["list_emotions"].map((x) => x)):[]);
 }
 
 class Video {
