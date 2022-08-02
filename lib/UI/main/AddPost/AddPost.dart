@@ -39,8 +39,9 @@ class _AddNewPostState extends State<AddNewPost> {
 
       addPost
         ..selectedAddress = location.AddressFromCordinate
-        ..geometry =
-            Geometry(location: Location(lat: location.getLatitude!, lng: location.getLongitude!));
+        ..geometry = Geometry(
+            location: Location(
+                lat: location.getLatitude!, lng: location.getLongitude!));
     });
   }
 
@@ -107,7 +108,8 @@ class _AddNewPostState extends State<AddNewPost> {
       child: Consumer<AddPostProvider>(builder: (_, provider, __) {
         return ElevatedButton(
           onPressed: provider.isCompressionOngoing ||
-                  (provider.description.trim().isEmpty && provider.getMoreImages.isEmpty)
+                  (provider.description.trim().isEmpty &&
+                      provider.getMoreImages.isEmpty)
               ? null
               : () {
                   FocusScope.of(context).unfocus();
@@ -120,7 +122,9 @@ class _AddNewPostState extends State<AddNewPost> {
                     }
                     if (!(_storyController.text.trim().length > 0 ||
                         provider.getMoreImages.isNotEmpty)) {
-                      Fluttertoast.showToast(msg: "Add either a description or upload image/video");
+                      Fluttertoast.showToast(
+                          msg:
+                              "Add either a description or upload image/video");
                       return;
                     }
                     Navigator.push(
@@ -137,7 +141,8 @@ class _AddNewPostState extends State<AddNewPost> {
                 },
           child: Text(
             "Post",
-            style: GoogleFonts.poppins(fontWeight: FontWeight.w500, fontSize: 16),
+            style:
+                GoogleFonts.poppins(fontWeight: FontWeight.w500, fontSize: 16),
           ),
           style: ElevatedButton.styleFrom(
             primary: provider.selectedAddress != null
@@ -168,7 +173,8 @@ class _AddNewPostState extends State<AddNewPost> {
         color: Color(0xFF0F0F2D),
         fontWeight: FontWeight.w400,
       ),
-      decoration: buildInputDecoration.copyWith(hintText: "Enter your text here"),
+      decoration:
+          buildInputDecoration.copyWith(hintText: "Enter your text here"),
     );
   }
 
@@ -191,7 +197,8 @@ class _AddNewPostState extends State<AddNewPost> {
       ),
       minLines: 1,
       maxLines: null,
-      decoration: buildInputDecoration.copyWith(hintText: "Enter your Headline/Title"),
+      decoration:
+          buildInputDecoration.copyWith(hintText: "Enter your Headline/Title"),
     );
   }
 
@@ -207,7 +214,8 @@ class _AddNewPostState extends State<AddNewPost> {
         SizedBox(height: 2),
         Text(
           "Adding a Headline will help your post to stand out",
-          style: _titleStyle.copyWith(fontSize: 11, color: ThreeKmTextConstants.grey2),
+          style: _titleStyle.copyWith(
+              fontSize: 11, color: ThreeKmTextConstants.grey2),
         ),
       ],
     );
@@ -216,12 +224,13 @@ class _AddNewPostState extends State<AddNewPost> {
   Consumer<AddPostProvider> locationSection(BuildContext context) {
     return Consumer<AddPostProvider>(
       builder: (_, provider, __) {
-        addOrChangeLocation() async {
-          FocusScope.of(context).unfocus();
-          if (context.read<LocationProvider>().ispermitionGranted) {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => InsertPostLocation()));
-          }
-        }
+        // addOrChangeLocation() async {
+        //   FocusScope.of(context).unfocus();
+        //   if (context.read<LocationProvider>().ispermitionGranted) {
+        //     Navigator.push(context,
+        //         MaterialPageRoute(builder: (context) => InsertPostLocation()));
+        //   }
+        // }
 
         return Wrap(
           crossAxisAlignment: WrapCrossAlignment.start,
@@ -234,14 +243,14 @@ class _AddNewPostState extends State<AddNewPost> {
               ),
             ),
             // SizedBox(width: 10),
-            InkWell(
-              onTap: addOrChangeLocation,
-              child: Text(
-                provider.selectedAddress == null ? "Add Post location" : "Change Location",
-                style: GoogleFonts.poppins(
-                    fontWeight: FontWeight.w600, color: const Color(0xFF3E7EFF), fontSize: 16),
-              ),
-            ),
+            // InkWell(
+            //   onTap: addOrChangeLocation,
+            //   child: Text(
+            //     provider.selectedAddress == null ? "Add Post location" : "Change Location",
+            //     style: GoogleFonts.poppins(
+            //         fontWeight: FontWeight.w600, color: const Color(0xFF3E7EFF), fontSize: 16),
+            //   ),
+            // ),
           ],
         );
       },
@@ -258,7 +267,8 @@ class _AddNewPostState extends State<AddNewPost> {
             shrinkWrap: true,
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 3, mainAxisSpacing: 4, crossAxisSpacing: 4),
-            itemCount: imageList.getMoreImages.length + (provider.isCompressionOngoing ? 1 : 0),
+            itemCount: imageList.getMoreImages.length +
+                (provider.isCompressionOngoing ? 1 : 0),
             itemBuilder: (BuildContext context, int index) {
               return index == imageList.getMoreImages.length
                   ?
@@ -294,11 +304,13 @@ class _AddNewPostState extends State<AddNewPost> {
                                       width: 55,
                                       child: CircularProgressIndicator(
                                           strokeWidth: 6,
-                                          backgroundColor: ThreeKmTextConstants.white,
+                                          backgroundColor:
+                                              ThreeKmTextConstants.white,
                                           color: ThreeKmTextConstants.blue2,
                                           value: snapshot.data / 100))),
                               Center(
-                                  child: Text('${snapshot.data.toStringAsFixed(0)}%',
+                                  child: Text(
+                                      '${snapshot.data.toStringAsFixed(0)}%',
                                       style: TextStyle(
                                           color: ThreeKmTextConstants.white,
                                           fontSize: 15,
@@ -316,12 +328,14 @@ class _AddNewPostState extends State<AddNewPost> {
                             decoration: BoxDecoration(
                                 color: const Color(0xffD9D9D9),
                                 borderRadius: BorderRadius.circular(8)),
-                            child: imageList.getMoreImages[index].path.contains("mp4")
+                            child: imageList.getMoreImages[index].path
+                                    .contains("mp4")
                                 ? Image.asset(
                                     "assets/ring_icon.png",
                                     fit: BoxFit.cover,
                                   )
-                                : Image.file(imageList.getMoreImages[index], fit: BoxFit.cover),
+                                : Image.file(imageList.getMoreImages[index],
+                                    fit: BoxFit.cover),
                           ),
                         ),
                         Positioned(
@@ -332,10 +346,13 @@ class _AddNewPostState extends State<AddNewPost> {
                               width: 20,
                               // margin: EdgeInsets.all(20),
                               decoration: BoxDecoration(
-                                  color: Color(0xffFF5858), borderRadius: BorderRadius.circular(8)),
+                                  color: Color(0xffFF5858),
+                                  borderRadius: BorderRadius.circular(8)),
                               child: InkWell(
                                 onTap: () {
-                                  context.read<AddPostProvider>().removeImages(index);
+                                  context
+                                      .read<AddPostProvider>()
+                                      .removeImages(index);
                                 },
                                 child: Icon(
                                   FeatherIcons.x,
@@ -366,10 +383,10 @@ class _AddNewPostState extends State<AddNewPost> {
           "Post Location ",
           style: _titleStyle,
         ),
-        Text(
-          "(required)",
-          style: _titleStyle.copyWith(fontSize: 12),
-        ),
+        // Text(
+        //   "(required)",
+        //   style: _titleStyle.copyWith(fontSize: 12),
+        // ),
       ],
     );
   }
@@ -382,8 +399,8 @@ class _AddNewPostState extends State<AddNewPost> {
         enabledBorder: _underlineInputBorder);
   }
 
-  UnderlineInputBorder get _underlineInputBorder =>
-      UnderlineInputBorder(borderSide: BorderSide(color: const Color(0xff7c7c7c)));
+  UnderlineInputBorder get _underlineInputBorder => UnderlineInputBorder(
+      borderSide: BorderSide(color: const Color(0xff7c7c7c)));
 
   Widget get buildTagsHeading => Container(
         child: Column(
@@ -397,13 +414,15 @@ class _AddNewPostState extends State<AddNewPost> {
             SizedBox(height: 2),
             Text(
               "Adding tags will help your post reach more people",
-              style: _titleStyle.copyWith(fontSize: 11, color: ThreeKmTextConstants.grey2),
+              style: _titleStyle.copyWith(
+                  fontSize: 11, color: ThreeKmTextConstants.grey2),
             ),
           ],
         ),
       );
 
-  TextStyle get _titleStyle => GoogleFonts.poppins(fontSize: 14, color: const Color(0xFF7c7c7c));
+  TextStyle get _titleStyle =>
+      GoogleFonts.poppins(fontSize: 14, color: const Color(0xFF7c7c7c));
 
   Widget _addPhotosVideosButton() {
     return Consumer<AddPostProvider>(
@@ -423,10 +442,11 @@ class _AddNewPostState extends State<AddNewPost> {
             borderRadius: BorderRadius.circular(8),
           ),
           child: Container(
-            width:
-                MediaQuery.of(context).size.width * (provider.getMoreImages.length > 0 ? 0.6 : 0.4),
+            width: MediaQuery.of(context).size.width *
+                (provider.getMoreImages.length > 0 ? 0.6 : 0.4),
             child: Wrap(
-              alignment: WrapAlignment.center, crossAxisAlignment: WrapCrossAlignment.center,
+              alignment: WrapAlignment.center,
+              crossAxisAlignment: WrapCrossAlignment.center,
               spacing: 5, runSpacing: 5,
               // mainAxisSize: MainAxisSize.min,
               children: [
@@ -492,7 +512,9 @@ class _AddNewPostState extends State<AddNewPost> {
                 backgroundColor: Colors.white,
                 shape: StadiumBorder(),
                 labelStyle: GoogleFonts.poppins(
-                    fontSize: 14, color: const Color(0xff3e7eff), fontWeight: FontWeight.w700),
+                    fontSize: 14,
+                    color: const Color(0xff3e7eff),
+                    fontWeight: FontWeight.w700),
                 elevation: 0,
                 visualDensity: VisualDensity.adaptivePlatformDensity,
                 side: BorderSide(width: 1, color: const Color(0xFF3E7EFF)),
@@ -509,7 +531,8 @@ class _AddNewPostState extends State<AddNewPost> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
           title: Text(
             "Add Tag",
             style: ThreeKmTextConstants.tk14PXPoppinsBlackSemiBold
@@ -529,7 +552,8 @@ class _AddNewPostState extends State<AddNewPost> {
             TextButton(
               child: Text(
                 "Cancel",
-                style: ThreeKmTextConstants.tk14PXPoppinsBlackSemiBold.copyWith(color: Colors.red),
+                style: ThreeKmTextConstants.tk14PXPoppinsBlackSemiBold
+                    .copyWith(color: Colors.red),
               ),
               onPressed: () {
                 Navigator.of(context).pop();
@@ -539,7 +563,8 @@ class _AddNewPostState extends State<AddNewPost> {
             TextButton(
               child: Text(
                 "Continue",
-                style: ThreeKmTextConstants.tk14PXPoppinsBlackSemiBold.copyWith(color: Colors.blue),
+                style: ThreeKmTextConstants.tk14PXPoppinsBlackSemiBold
+                    .copyWith(color: Colors.blue),
               ),
               onPressed: () {
                 Navigator.of(context).pop(_tagsController.text.trim());
@@ -577,7 +602,8 @@ class _AddNewPostState extends State<AddNewPost> {
                     InkWell(
                       onTap: () async {
                         List<XFile>? imageFileList = [];
-                        final List<XFile>? images = await _imagePicker.pickMultiImage();
+                        final List<XFile>? images =
+                            await _imagePicker.pickMultiImage();
                         if (imageFileList.isEmpty) {
                           imageFileList.addAll(images!);
                         }
@@ -590,7 +616,8 @@ class _AddNewPostState extends State<AddNewPost> {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => EditImage(images: imageFileList)));
+                                  builder: (context) =>
+                                      EditImage(images: imageFileList)));
                         }
                       },
                       child: Container(
@@ -614,8 +641,8 @@ class _AddNewPostState extends State<AddNewPost> {
                     SizedBox(height: 10),
                     InkWell(
                       onTap: () async {
-                        final pickedVideo =
-                            await _imagePicker.pickVideo(source: ImageSource.gallery);
+                        final pickedVideo = await _imagePicker.pickVideo(
+                            source: ImageSource.gallery);
                         //final file = XFile(pickedVideo!.path);
 
                         Navigator.pop(context);
@@ -625,7 +652,9 @@ class _AddNewPostState extends State<AddNewPost> {
                           //     MaterialPageRoute(
                           //         builder: (context) =>
                           //             VideoCompress(videoFile: File(pickedVideo.path))));
-                          context.read<AddPostProvider>().compressVideoFile(File(pickedVideo.path));
+                          context
+                              .read<AddPostProvider>()
+                              .compressVideoFile(File(pickedVideo.path));
                           // final size =
                           //     getVideoSize(file: File(pickedVideo.path));
                           // log("size is $size");
